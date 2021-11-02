@@ -19,6 +19,7 @@ using MultiFamilyPortal.Extensions;
 using Telerik.Blazor;
 using Telerik.Blazor.Components;
 using Telerik.Blazor.Components.Editor;
+using MultiFamilyPortal.Data.Models;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 {
@@ -34,6 +35,9 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         public UnderwritingAnalysisMortgage Mortgage { get; set; }
 
         [Parameter]
+        public UnderwritingLoanType LoanType { get; set; }
+
+        [Parameter]
         public EventCallback<UnderwritingAnalysisMortgage> MortgageChanged { get; set; }
 
         [Parameter]
@@ -41,6 +45,8 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
         private bool showBalloon;
         private string SaveBtn => Update ? "Update" : "Save";
+        private bool enableLoanAmountEdit => LoanType == UnderwritingLoanType.Custom;
+
         private async Task SaveMortgage()
         {
             await OnSave.InvokeAsync(Mortgage);

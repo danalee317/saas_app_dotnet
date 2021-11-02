@@ -88,32 +88,35 @@
             </div>
           </FooterTemplate>
         </GridColumn>
-        @if(Property.LoanType == Data.Models.UnderwritingLoanType.Custom)
-        {
-          <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
-            <GridCommandColumn Width="220px">
-              <div class="text-center">
-                <GridCommandButton Command="CustomEdit" Icon="edit" Title="Edit" OnClick=@OnEdit>Edit</GridCommandButton>
+        <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
+          <GridCommandColumn Width="220px">
+            <div class="text-center">
+              <GridCommandButton Command="CustomEdit" Icon="edit" Title="Edit" OnClick=@OnEdit>Edit</GridCommandButton>
+              @if(Property.LoanType == Data.Models.UnderwritingLoanType.Custom)
+              {
                 <GridCommandButton Command="Delete" Icon="delete" Title="Delete">Delete</GridCommandButton>
-              </div>
-            </GridCommandColumn>
-          </AuthorizedPolicy>
-        }
+              }
+            </div>
+          </GridCommandColumn>
+        </AuthorizedPolicy>
+        
       </GridColumns>
     </TelerikGrid>
   </div>
 </div>
 
-@if (Property.LoanType == Data.Models.UnderwritingLoanType.Custom)
-{
-  <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
+<AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
+  @if (Property.LoanType == Data.Models.UnderwritingLoanType.Custom)
+  {
     <UnderwritingMortgageDialog Title="Add Mortgage"
+                                LoanType=@Property.LoanType
                                 @bind-Mortgage=@AddMortgage
                                 OnSave=@OnSaveNewMortage />
+  }
 
-    <UnderwritingMortgageDialog Title="Edit Mortgage"
-                                @bind-Mortgage=@EditMortgage
-                                Update="true"
-                                OnSave=@OnUpdateMortgage />
-  </AuthorizedPolicy>
-}
+  <UnderwritingMortgageDialog Title="Edit Mortgage"
+                              LoanType=@Property.LoanType
+                              @bind-Mortgage=@EditMortgage
+                              Update="true"
+                              OnSave=@OnUpdateMortgage />
+</AuthorizedPolicy>

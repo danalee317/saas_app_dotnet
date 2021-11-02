@@ -48,22 +48,54 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         }
 
         [Authorize(Policy = PortalPolicy.Underwriter)]
-        [HttpGet("/investors")]
+        [HttpGet("investors")]
         public async Task<IActionResult> Investors()
         {
-            var users = await _dbContext.Users
-                .Where(x => x.Roles.Any(r => r.Role.Name == PortalRoles.Investor))
-                .Select(x => new UserAccountResponse {
-                    Email = x.Email,
-                    FirstName = x.FirstName,
-                    LastName = x.LastName,
-                    Id = x.Id,
-                    Phone = x.PhoneNumber,
-                    Roles = x.Roles.Select(r => r.Role.Name).ToArray()
-                })
+            var investorRole = await _dbContext.Roles.Where(x => x.Name == PortalRoles.Investor).Select(x => x.Id).FirstAsync();
+            var sponsorRole = await _dbContext.Roles.Where(x => x.Name == PortalRoles.Sponsor).Select(x => x.Id).FirstAsync();
+            var mapping = new Dictionary<string, string>
+            {
+                { investorRole, PortalRoles.Investor },
+                { sponsorRole, PortalRoles.Sponsor },
+            };
+
+            var userIds = await _dbContext.UserRoles.Where(x => x.RoleId == investorRole || x.RoleId == sponsorRole)
+                .GroupBy(x => x.UserId)
                 .ToArrayAsync();
 
+            var users = new List<UserAccountResponse>();
+            foreach(var user in userIds)
+            {
+                var userAccount = await _dbContext.Users
+                    .Select(x => new UserAccountResponse
+                    {
+                        Email = x.Email,
+                        FirstName = x.FirstName,
+                        LastName = x.LastName,
+                        Id = x.Id,
+                        Phone = x.PhoneNumber,
+                    })
+                    .FirstAsync(x => x.Id == user.Key);
+
+                userAccount.Roles = user.Select(x => mapping[x.RoleId]).ToArray();
+                users.Add(userAccount);
+            }
+
             return Ok(users);
+        }
+
+        [HttpGet("investors/prospects")]
+        public async Task<IActionResult> GetInvestorProspects()
+        {
+            var prospects = await _dbContext.InvestorProspects.ToArrayAsync();
+            return Ok(prospects);
+        }
+
+        [HttpGet("subscribers")]
+        public async Task<IActionResult> GetSubscribers()
+        {
+            var subscribers = await ((IBlogContext)_dbContext).Subscribers.ToArrayAsync();
+            return Ok(subscribers);
         }
 
         [HttpPost("create")]

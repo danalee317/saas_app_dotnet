@@ -2,4 +2,30 @@
 
 <h3>Investors</h3>
 
-
+<TelerikGrid Data=@_data>
+  <GridColumns>
+    <GridColumn Field="Email" Title=" ">
+      <Template>
+        @{ var user = context as UserAccountResponse; }
+        <div class="text-center">
+          <Gravatar Email=@user.Email />
+        </div>
+      </Template>
+    </GridColumn>
+    <GridColumn Field=@(nameof(UserAccountResponse.FirstName)) Title="First" />
+    <GridColumn Field=@(nameof(UserAccountResponse.LastName)) Title="Last" />
+    <GridColumn Field=@(nameof(UserAccountResponse.Email)) />
+    <GridColumn Field=@(nameof(UserAccountResponse.Phone)) />
+    <GridColumn Field=@(nameof(UserAccountResponse.Roles))>
+      <Template>
+        @{ var user = context as UserAccountResponse; }
+        <ul>
+          @foreach(var role in user.Roles)
+          {
+            <li>@role</li>
+          }
+        </ul>
+      </Template>
+    </GridColumn>
+  </GridColumns>
+</TelerikGrid>

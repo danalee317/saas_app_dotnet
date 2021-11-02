@@ -1,0 +1,93 @@
+﻿<div class="row pt-3">
+  <div class="col-12">
+    <TelerikGrid Data=@Prospects
+                  Pageable="true"
+                  PageSize="25"
+                  Height="800px">
+      <GridToolBar>
+
+        <div class="flex" style="margin-left: auto;">
+          <GridCommandButton Command="NewProperty"
+                              Icon="add"
+                              Primary="true"
+                              Class="float-right"
+                              OnClick=@CreateProperty>
+            Add Property
+          </GridCommandButton>
+        </div>
+      </GridToolBar>
+
+      <GridColumns>
+        <GridColumn Field="@(nameof(ProspectPropertyResponse.UnderwriterEmail))" Title="Underwriter">
+          <Template>
+            @{ var property = context as ProspectPropertyResponse; }
+            <div class="text-center">
+              <Gravatar Email=@property.UnderwriterEmail
+                        Size="90"
+                        Default="DefaultGravatar.MysteryPerson" />
+              <br />
+              <strong>@property.Underwriter</strong>
+            </div>
+          </Template>
+        </GridColumn>
+
+        <GridColumn Field="@(nameof(ProspectPropertyResponse.Name))" Title="Name" />
+        <GridColumn Field="@(nameof(ProspectPropertyResponse.City))" Title="City" />
+        <GridColumn Field="@(nameof(ProspectPropertyResponse.State))" Title="State" Width="120px" />
+        <GridColumn Field="@(nameof(ProspectPropertyResponse.Units))" Title="Units" Width="120px" />
+        <GridColumn Field="@(nameof(ProspectPropertyResponse.CapRate))" Title="Cap" Width="120px" />
+        <GridColumn Field="@(nameof(ProspectPropertyResponse.CoC))" Title="Cash on Cash" Width="120px" />
+        <GridColumn Field="@(nameof(ProspectPropertyResponse.Created))" Title="Date" Width="160px" />
+        <GridCommandColumn Width="140px">
+          <GridCommandButton Command="View" IconClass="fad fa-eye" Class="btn-secondary" OnClick="ViewProperty">View</GridCommandButton>
+        </GridCommandColumn>
+      </GridColumns>
+    </TelerikGrid>
+  </div>
+</div>
+
+<TelerikWindow Modal="true"
+               Centered="true"
+               Width="400px"
+               Visible="@(NewProspect != null)">
+  <WindowTitle>Create Property</WindowTitle>
+  <WindowContent>
+    <form>
+    <div class="row g-3">
+      <div class="col-12">
+        <label for="Name" class="form-label">Name</label>
+        <TelerikTextBox @bind-Value=@NewProspect.Name Class="form-control" />
+      </div>
+      <div class="col-12">
+        <label for="Units" class="form-label">Units</label>
+        <TelerikNumericTextBox T="int"
+                               @bind-Value=@NewProspect.Units
+                               Min="1"
+                               Max="1500"
+                               Class="form-control" />
+      </div>
+    </div>
+    <div class="row g-3 mt-2">
+      <div class="col-lg-6 text-center">
+        <TelerikButton ButtonType="ButtonType.Reset"
+                        Primary="true"
+                        Title="Cancel"
+                        OnClick="@(() => NewProspect = null)">
+          Cancel
+        </TelerikButton>
+      </div>
+      <div class="col-lg-6 text-center">
+        <TelerikButton ButtonType="ButtonType.Button"
+                       Primary="true"
+                       Enabled="@(!string.IsNullOrEmpty(NewProspect.Name) && NewProspect.Name.Length > 3 && NewProspect.Units > 0)"
+                       Title="Start Underwriting"
+                       OnClick="StartUnderwriting">
+          Start Underwriting
+        </TelerikButton>
+      </div>
+    </div>
+    </form>
+  </WindowContent>
+</TelerikWindow>
+
+

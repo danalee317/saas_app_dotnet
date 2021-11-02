@@ -1,0 +1,53 @@
+﻿<TelerikArcGauge Height="80px">
+  <ArcGaugeCenterLabel>
+    <Template>
+      <div><strong>@(CapRate.ToString("P"))</strong></div>
+      <small>Cap Rate</small>
+    </Template>
+  </ArcGaugeCenterLabel>
+  <ArcGaugeScales>
+    <ArcGaugeScale Min="0" Max=@Max() />
+  </ArcGaugeScales>
+  <ArcGaugePointers>
+    <ArcGaugePointer Size="10" Value="@CapRate" Color=@Color() />
+  </ArcGaugePointers>
+</TelerikArcGauge>
+
+@code {
+    [Parameter]
+    public double CapRate { get; set; }
+
+    private string Color()
+    {
+        if (CapRate < .05)
+            return "red";
+
+        if (CapRate < .08)
+            return "yellow";
+
+        return "green";
+    }
+
+    private double Max()
+    {
+        if (CapRate < .15)
+            return .15;
+
+        if (CapRate < .25)
+            return .25;
+
+        if (CapRate < .40)
+            return .40;
+
+        if (CapRate < .60)
+            return .60;
+
+        if (CapRate < .80)
+            return .80;
+
+        if (CapRate <= 1)
+            return 1;
+
+        return CapRate;
+    }
+}

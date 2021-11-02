@@ -1,0 +1,76 @@
+﻿@page "/admin/underwriting/property/{propertyId:guid}"
+@using MultiFamilyPortal.AdminTheme.Components.Underwriting
+
+@if(Property is null)
+{
+    <TelerikLoader Type="LoaderType.ConvergingSpinner" />
+}
+else
+{
+<h3>@Property.Name</h3>
+
+<div class="row gt-3 mt-3 mb-4">
+  <div class="col-md-3">
+    <CapRateGauge CapRate=@Property.CapRate />
+  </div>
+  <div class="col-md-3">
+    <CashOnCashGauge CashOnCash=@Property.CashOnCash />
+  </div>
+  <div class="col-md-3">
+    <DebtCoverageGauge DebtCoverageRatio=@Property.DebtCoverage />
+  </div>
+  <div class="col-md-3">
+    <NetOperatingIncomeGauge Property=@Property />
+  </div>
+</div>
+
+<div class="row my-2">
+  <div class="col-md-9"></div>
+  <div class="col-md-3">
+    <TelerikDropDownList Data=@AvailableStatus
+                         @bind-Value=@Property.Status />
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <TelerikTabStrip TabPosition="TabPosition.Top"
+                      ActiveTabIndexChanged="OnTabChanged">
+      <TabStripTab Title="Property Info">
+        <UnderwritingPropertyInfoTab Property=@Property />
+      </TabStripTab>
+      <TabStripTab Title="Seller Info">
+        <UnderwritingSellerInfoTab Property=@Property />
+      </TabStripTab>
+      <TabStripTab Title="Our Info">
+        <UnderwritingOurInfoTab Property=@Property />
+      </TabStripTab>
+      <TabStripTab Title="Mortgage">
+        <UnderwritingMortgagesTab Property=@Property />
+      </TabStripTab>
+      <TabStripTab Title="Summary">
+        <UnderwritingSummaryTab Property=@Property />
+      </TabStripTab>
+      <TabStripTab Title="Notes">
+        <UnderwritingNotesTab Property=@Property />
+      </TabStripTab>
+    </TelerikTabStrip>
+  </div>
+</div>
+
+<AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
+  <div class="row text-center my-4">
+    <div class="col">
+      <TelerikButton Title="Update"
+                     Primary="true"
+                     ButtonType=@ButtonType.Button
+                     OnClick=@OnUpdateProperty>
+        Update
+      </TelerikButton>
+    </div>
+  </div>
+</AuthorizedPolicy>
+
+}
+
+<PortalNotification @ref="notification" />

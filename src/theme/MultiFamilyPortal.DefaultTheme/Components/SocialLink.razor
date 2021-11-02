@@ -1,0 +1,15 @@
+﻿@if(!string.IsNullOrEmpty(Link))
+{
+    <li><a href="@Link" title="@Title"><i class="@Icon"></i></a></li>
+}
+
+@code {
+    [Parameter]
+    public string Link { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Icon { get; set; }
+}

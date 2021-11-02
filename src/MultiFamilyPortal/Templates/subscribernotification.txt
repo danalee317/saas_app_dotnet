@@ -1,0 +1,11 @@
+﻿Hello {0},
+
+We just published a brand new post: {1}
+
+Head over to {2} to read more!
+
+{3}
+
+
+You Subscribed on: {4}
+To Unsubscribe visit this link: {5}

@@ -1,0 +1,51 @@
+﻿<TelerikGrid Data=@_guidance
+             Groupable="true"
+             FilterMode="GridFilterMode.None"
+             Sortable="false"
+             ShowColumnMenu="false"
+             @ref="grid">
+  <GridToolBar>
+    <TelerikButton ButtonType=@ButtonType.Button
+                   Primary=@true
+                   IconClass="fad fa-copy"
+                   OnClick=@OnAddMarket
+                   Title="Add Market">Add Market</TelerikButton>
+  </GridToolBar>
+  <GridColumns>
+    <GridColumn Field="Market" Groupable="true">
+      <Template>
+        @{ var guidance = context as Data.Models.UnderwritingGuidance; }
+        @if(string.IsNullOrEmpty(guidance.Market))
+        {
+          <span>Default</span>
+        }
+        else
+        {
+          <span>@guidance.Market</span>
+        }
+      </Template>
+    </GridColumn>
+    <GridColumn Field="Category" Groupable="false" />
+    @*<GridColumn Field="Type" Groupable="false" />*@
+    <GridColumn Title="Amount">
+      <Template>
+        @{ var guidance = context as Data.Models.UnderwritingGuidance; }
+        @if(guidance.Type == Data.Models.CostType.PerDoor)
+        {
+          <span>@guidance.Min.ToString("C") - @guidance.Max.ToString("C") Per Door</span>
+        }
+        else if(guidance.Type == Data.Models.CostType.PercentOfPurchase)
+        {
+          <span>@guidance.Max.ToString("P") of Purchase</span>
+        }
+        else
+        {
+          <span>@guidance.Max.ToString("C")</span>
+        }
+      </Template>
+    </GridColumn>
+    @*<GridColumn Field="Min" Groupable="false" />
+    <GridColumn Field="Max" Groupable="false" />*@
+  </GridColumns>
+</TelerikGrid>
+

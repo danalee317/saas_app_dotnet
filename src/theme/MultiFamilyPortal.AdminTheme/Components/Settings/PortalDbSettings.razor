@@ -1,0 +1,11 @@
+﻿<TelerikGrid Data=@SiteSettings
+              EditMode="GridEditMode.Inline">
+  <GridColumns>
+    <GridColumn Field="Key" Editable="false" />
+    <GridColumn Field="Value" />
+    <GridCommandColumn Width="160px">
+      <GridCommandButton Command="Edit" Icon="edit">Edit</GridCommandButton>
+      <GridCommandButton Command="Save" Icon="save" ShowInEdit="true" OnClick=@UpdateSetting>Save</GridCommandButton>
+    </GridCommandColumn>
+  </GridColumns>
+</TelerikGrid>

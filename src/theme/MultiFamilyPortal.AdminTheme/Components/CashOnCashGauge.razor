@@ -1,0 +1,53 @@
+﻿<TelerikArcGauge Height="80px">
+  <ArcGaugeCenterLabel>
+    <Template>
+      <div><strong>@(CashOnCash.ToString("P"))</strong></div>
+      <small>Cash on Cash</small>
+    </Template>
+  </ArcGaugeCenterLabel>
+  <ArcGaugeScales>
+    <ArcGaugeScale Min="0" Max=@Max() />
+  </ArcGaugeScales>
+  <ArcGaugePointers>
+    <ArcGaugePointer Size="10" Value="@CashOnCash" Color=@Color() />
+  </ArcGaugePointers>
+</TelerikArcGauge>
+
+@code {
+    [Parameter]
+    public double CashOnCash { get; set; }
+
+    private string Color()
+    {
+        if (CashOnCash < .07)
+            return "red";
+
+        if (CashOnCash < .12)
+            return "yellow";
+
+        return "green";
+    }
+
+    private double Max()
+    {
+        if (CashOnCash < .15)
+            return .15;
+
+        if (CashOnCash < .25)
+            return .25;
+
+        if (CashOnCash < .40)
+            return .40;
+
+        if (CashOnCash < .60)
+            return .60;
+
+        if (CashOnCash < .80)
+            return .80;
+
+        if (CashOnCash <= 1)
+            return 1;
+
+        return CashOnCash;
+    }
+}

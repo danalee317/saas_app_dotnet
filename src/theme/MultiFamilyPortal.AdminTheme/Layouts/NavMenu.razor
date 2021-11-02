@@ -1,0 +1,95 @@
+﻿@using MultiFamilyPortal.Authentication
+
+<div class="top-row ps-3 navbar navbar-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/admin">
+      <img src="/theme/branding/logo-dark-side" class="img img-fluid logo" />
+    </a>
+
+    <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  </div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+  <ul class="nav flex-column">
+    <AuthorizedPolicy Policy=@PortalPolicy.AdminPortalViewer>
+      <li class="nav-item px-3">
+        <NavLink class="nav-link" href="/admin" Match="NavLinkMatch.All">
+          <i class="fad fa-tachometer-alt-fastest" aria-hidden="true"></i>&nbsp;&nbsp;Dashboard
+        </NavLink>
+      </li>
+    </AuthorizedPolicy>
+    @*<AuthorizedPolicy Policy=@PortalPolicy.Blogger>
+      <li class="nav-item px-3">
+        <a class="nav-link px-3" role="button" @onclick=@ToggleContentMenu>
+          <i class="fad fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;Content
+        </a>
+        @if(showContentMenu)
+        {
+          <ul>
+            <li><NavLink class="dropdown-item" href="/pages">Pages</NavLink></li>
+            <li><NavLink class="dropdown-item" href="/posts">Blogs</NavLink></li>
+            <li><NavLink class="dropdown-item" href="/create-post">New Post</NavLink></li>
+          </ul>
+        }
+      </li>
+    </AuthorizedPolicy>*@
+    <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
+      <li class="nav-item px-3">
+        <NavLink class="nav-link" href="/admin/activity-log">
+          <span class="fad fa-mobile" aria-hidden="true"></span>&nbsp;&nbsp;Activity Log
+        </NavLink>
+      </li>
+      <li class="nav-item px-3">
+        <a class="nav-link px-3" role="button" @onclick=@TogglePropertyMenu>
+          <i class="fad fa-city" aria-hidden="true"></i>&nbsp;&nbsp;Properties
+        </a>
+        @if(showPropertyMenu)
+        {
+          <ul>
+            @*<li><NavLink class="dropdown-item" href="/property-leads">Leads</NavLink></li>*@
+            <li><NavLink class="dropdown-item" href="/admin/properties/underwriting">Underwriting</NavLink></li>
+            <li><NavLink class="dropdown-item" href="/admin/properties/assets-under-management">Portfolio</NavLink></li>
+          </ul>
+        }
+      </li>
+      <li class="nav-item px-3">
+        <a class="nav-link px-3" role="button" @onclick=@ToggleUsersMenu>
+          <i class="fad fa-users" aria-hidden="true"></i>&nbsp;&nbsp;Users
+        </a>
+        @if(showUsersMenu)
+        {
+          <ul>
+            <li><NavLink class="dropdown-item" href="/admin/investors">Investors</NavLink></li>
+            <li><NavLink class="dropdown-item" href="/admin/investors-prospects">Prospects</NavLink></li>
+            <AuthorizedRole Role=@PortalRoles.PortalAdministrator>
+              <li><NavLink class="dropdown-item" href="/admin/users">Website Users</NavLink></li>
+              <li><NavLink class="dropdown-item" href="/admin/subscribers">Subscribers</NavLink></li>
+            </AuthorizedRole>
+          </ul>
+        }
+      </li>
+    </AuthorizedPolicy>
+    <AuthorizedPolicy Policy=@PortalPolicy.AdminPortalViewer>
+      <li class="nav-item px-3">
+        <NavLink class="nav-link" href="/admin/user-profile">
+          <span class="fad fa-user" aria-hidden="true"></span>&nbsp;&nbsp;Profile
+        </NavLink>
+      </li>
+    </AuthorizedPolicy>
+    <AuthorizedRole Role=@PortalRoles.PortalAdministrator>
+      <li class="nav-item px-3">
+        <NavLink class="nav-link" href="/admin/settings">
+          <span class="fad fa-cogs" aria-hidden="true"></span>&nbsp;&nbsp;Settings
+        </NavLink>
+      </li>
+    </AuthorizedRole>
+    <li class="nav-item px-3">
+      <NavLink class="nav-link" href="/logout">
+        <i class="fad fa-sign-out-alt" aria-hidden="true"></i>&nbsp;&nbsp;Logout
+      </NavLink>
+    </li>
+  </ul>
+</div>

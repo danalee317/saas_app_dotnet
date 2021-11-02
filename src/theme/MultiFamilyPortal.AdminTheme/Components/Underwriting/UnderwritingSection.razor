@@ -1,0 +1,221 @@
+﻿<div class="row">
+  <div class="col-md-10">
+    <h3>@Type</h3>
+  </div>
+  <div class="col-md-2 flex" style="margin-left: auto;">
+    @TopLevelMenu
+  </div>
+</div>
+
+<TelerikGrid Data=@Items
+             EditMode="GridEditMode.Popup"
+             ConfirmDelete="true"
+             OnDelete=@OnDelete
+             @ref="grid">
+  <GridToolBar>
+    <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
+      <div class="flex" style="margin-left: auto;">
+        <GridCommandButton Command="CreateLineItem"
+                           Icon="add"
+                           Title="Add"
+                           Primary="true"
+                           OnClick=@OnCreate>
+          Add
+        </GridCommandButton>
+      </div>
+    </AuthorizedPolicy>
+  </GridToolBar>
+  <GridColumns>
+    <GridColumn Field="@(nameof(UnderwritingAnalysisLineItem.Category))"
+                TextAlign="ColumnTextAlign.Center"
+                Width="220px"
+                Title="Category">
+      <Template>
+        @{ var item = context as UnderwritingAnalysisLineItem; }
+        <span>@item.Category.GetDisplayName()</span>
+      </Template>
+    </GridColumn>
+    <GridColumn Field="@(nameof(UnderwritingAnalysisLineItem.Description))" />
+    <GridColumn Field="@(nameof(UnderwritingAnalysisLineItem.AnnualizedTotal))"
+                TextAlign="ColumnTextAlign.Center"
+                Editable="false"
+                DisplayFormat="{0:C}"
+                Title="Annualized Total"
+                Width="250px">
+      <FooterTemplate>
+        <div class="text-center">
+          @{
+            var total = Items.Sum(x => x.AnnualizedTotal);
+            if(Type == Data.Models.UnderwritingType.Income)
+            {
+              var negValues = Items.Where(x => x.Category == Data.Models.UnderwritingCategory.ConsessionsNonPayment || x.Category == Data.Models.UnderwritingCategory.PhysicalVacancy).Sum(x => x.AnnualizedTotal);
+              total -= (negValues * 2);
+            }
+          }
+          Total: @total.ToString("C")
+        </div>
+      </FooterTemplate>
+    </GridColumn>
+    <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
+      <GridCommandColumn Width="240px">
+        <div class="text-center">
+          @{
+            var item = context as UnderwritingAnalysisLineItem;
+          }
+          @if(!(Column == Data.Models.UnderwritingColumn.Ours && (item.Category == Data.Models.UnderwritingCategory.Management || item.Category == Data.Models.UnderwritingCategory.PhysicalVacancy)))
+          {
+            <GridCommandButton Command="CustomEdit" Icon="edit" Title="Edit" OnClick=@ShowEditDialog>Edit</GridCommandButton>
+            <GridCommandButton Command="Delete" Icon="delete" Title="Delete">Delete</GridCommandButton>
+          }
+        </div>
+      </GridCommandColumn>
+    </AuthorizedPolicy>
+  </GridColumns>
+</TelerikGrid>
+
+<AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
+  <TelerikWindow Modal="true"
+                 Visible=@(NewItem != null)
+                 Width="550px">
+    <WindowTitle>Add @Type Item</WindowTitle>
+    <WindowContent>
+      <div class="gt-3">
+        <div class="row">
+          <label for="Description" class="col-sm-2 col-form-label">Description</label>
+          <div class="col-sm-10">
+            <TelerikTextBox @bind-Value=@NewItem.Description
+                            Class="form-control"
+                            PlaceHolder="Description" />
+          </div>
+          <label for="ExpenseType" class="col-sm-2 col-form-label">Type</label>
+          <div class="col-sm-10">
+            <TelerikDropDownList Data=@AllowableCategories()
+                                 Class="form-control"
+                                 @bind-Value=@NewItem.Category>
+              <ItemTemplate>
+                @{
+                  var category = Data.Models.UnderwritingCategory.GrossScheduledRent;
+                  if(context is Data.Models.UnderwritingCategory cat)
+                    category = cat;
+                }
+                <span>@category.GetDisplayName()</span>
+              </ItemTemplate>
+              <ValueTemplate>
+                @{
+                  var category = Data.Models.UnderwritingCategory.GrossScheduledRent;
+                  if(context is Data.Models.UnderwritingCategory cat)
+                    category = cat;
+                }
+                <span>@category.GetDisplayName()</span>
+              </ValueTemplate>
+            </TelerikDropDownList>
+          </div>
+          <label for="Amount" class="col-sm-2 col-form-label">Amount</label>
+          <div class="col-sm-10">
+            <TelerikNumericTextBox @bind-Value=@NewItem.Amount
+                                   Format="C"
+                                   Min="0"
+                                   Class="form-control" />
+          </div>
+          <label for="ExpenseType" class="col-sm-2 col-form-label">Type</label>
+          <div class="col-sm-10">
+            <TelerikDropDownList Data=@ExpenseTypes
+                                 Class="form-control"
+                                 @bind-Value=@NewItem.ExpenseType />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col text-center">
+            <TelerikButton ButtonType="ButtonType.Reset"
+                           Primary="false"
+                           Title="Cancel"
+                           OnClick=@(() => NewItem = null)>
+              Cancel
+            </TelerikButton>
+            <TelerikButton ButtonType="ButtonType.Button"
+                           Primary="true"
+                           Title="Save"
+                           OnClick=@SaveNewLineItem>
+              Save
+            </TelerikButton>
+          </div>
+        </div>
+      </div>
+    </WindowContent>
+  </TelerikWindow>
+
+
+  <TelerikWindow Modal="true"
+                 Visible=@(EditItem != null)
+                 Width="550px">
+    <WindowTitle>Edit @Type Item</WindowTitle>
+    <WindowContent>
+      <div class="gt-3">
+        <div class="row">
+          <label for="Description" class="col-sm-2 col-form-label">Description</label>
+          <div class="col-sm-10">
+            <TelerikTextBox @bind-Value=@EditItem.Description
+                            Class="form-control"
+                            PlaceHolder="Description" />
+          </div>
+          <label for="ExpenseType" class="col-sm-2 col-form-label">Type</label>
+          <div class="col-sm-10">
+            <TelerikDropDownList Data=@AllowableCategories()
+                                 Class="form-control"
+                                 @bind-Value=@EditItem.Category>
+              <ItemTemplate>
+                @{
+                  var category = Data.Models.UnderwritingCategory.GrossScheduledRent;
+                  if(context is Data.Models.UnderwritingCategory cat)
+                    category = cat;
+                }
+                <span>@category.GetDisplayName()</span>
+              </ItemTemplate>
+              <ValueTemplate>
+                @{
+                  var category = Data.Models.UnderwritingCategory.GrossScheduledRent;
+                  if(context is Data.Models.UnderwritingCategory cat)
+                    category = cat;
+                }
+                <span>@category.GetDisplayName()</span>
+              </ValueTemplate>
+            </TelerikDropDownList>
+          </div>
+          <label for="Amount" class="col-sm-2 col-form-label">Amount</label>
+          <div class="col-sm-10">
+            <TelerikNumericTextBox @bind-Value=@EditItem.Amount
+                                   Format="C"
+                                   Min="0"
+                                   Class="form-control" />
+          </div>
+          <label for="ExpenseType" class="col-sm-2 col-form-label">Type</label>
+          <div class="col-sm-10">
+            <TelerikDropDownList Data=@ExpenseTypes
+                                 Class="form-control"
+                                 @bind-Value=@EditItem.ExpenseType />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col text-center">
+            <TelerikButton ButtonType="ButtonType.Reset"
+                           Primary="false"
+                           Title="Cancel"
+                           OnClick=@(() => EditItem = null)>
+              Cancel
+            </TelerikButton>
+            <TelerikButton ButtonType="ButtonType.Button"
+                           Primary="true"
+                           Title="Save"
+                           OnClick=@SaveEditLineItem>
+              Update
+            </TelerikButton>
+          </div>
+        </div>
+      </div>
+    </WindowContent>
+  </TelerikWindow>
+</AuthorizedPolicy>
+
+<PortalNotification @ref="notification" />
+
+

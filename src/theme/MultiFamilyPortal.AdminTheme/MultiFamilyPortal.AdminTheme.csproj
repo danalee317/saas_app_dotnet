@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Layouts\MainLayout.razor.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Layouts\LoginDisplay.razor" />
+    <Content Remove="Layouts\MainLayout.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Layouts\MainLayout.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.0-rc.2.21480.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\core\MultiFamilyPortal.CoreUI\MultiFamilyPortal.CoreUI.csproj" />
+    <ProjectReference Include="..\MultiFamilyPortal.SideBarTheme\MultiFamilyPortal.SideBarTheme.csproj" />
+    <ProjectReference Include="..\MultiFamilyPortal.Themes\MultiFamilyPortal.Themes.csproj" />
+  </ItemGroup>
+
+</Project>

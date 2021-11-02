@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-MultiFamilyPortal-A2383384-ED5F-485A-A219-847C6E4277DE</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Templates\**" />
+    <EmbeddedResource Include="Templates\*.html;Templates\*.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="6.0.0-rc.2.21480.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.0-rc.2.21480.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0-rc.2.21480.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="6.0.0-rc.2.21480.10" />
+    <PackageReference Include="Microsoft.SyndicationFeed.ReaderWriter" Version="1.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.0-rc.2.21480.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.0-rc.2.21480.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.0-rc.2.21480.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.0-rc.2.21480.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\core\MultiFamilyPortal.Caching\MultiFamilyPortal.Caching.csproj" />
+    <ProjectReference Include="..\core\MultiFamilyPortal.Core\MultiFamilyPortal.Core.csproj" />
+    <ProjectReference Include="..\theme\MultiFamilyPortal.AdminTheme\MultiFamilyPortal.AdminTheme.csproj" />
+    <ProjectReference Include="..\theme\MultiFamilyPortal.DefaultTheme\MultiFamilyPortal.DefaultTheme.csproj" />
+    <ProjectReference Include="..\theme\MultiFamilyPortal.PortalTheme\MultiFamilyPortal.PortalTheme.csproj" />
+    <ProjectReference Include="..\theme\MultiFamilyPortal.SideBarTheme\MultiFamilyPortal.SideBarTheme.csproj" />
+  </ItemGroup>
+
+</Project>

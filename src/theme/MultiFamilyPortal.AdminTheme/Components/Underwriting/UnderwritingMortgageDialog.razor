@@ -1,0 +1,87 @@
+﻿<TelerikWindow Modal="true"
+               Visible="@(Mortgage != null)"
+               Width="600px">
+  <WindowTitle>@Title</WindowTitle>
+  <WindowContent>
+    <div class="row g-3">
+      <label for="LoanAmount" class="col-sm-2 col-form-label">Loan Amount</label>
+      <div class="col-sm-4">
+        <TelerikNumericTextBox @bind-Value=@Mortgage.LoanAmount
+                        Format="C"
+                        Min="0"
+                        Step="1000"
+                        Class="form-control" />
+      </div>
+
+      <label for="InterestRate" class="col-sm-2 col-form-label">Interest Rate</label>
+      <div class="col-sm-4">
+        <TelerikNumericTextBox @bind-Value=@Mortgage.InterestRate
+                        Format="P"
+                        Min="0"
+                        Max="1"
+                        Step="0.005"
+                        Decimals="6"
+                        Class="form-control" />
+      </div>
+
+      <label for="TermInYears" class="col-sm-2 col-form-label">Term (years)</label>
+      <div class="col-sm-4">
+        <TelerikNumericTextBox @bind-Value=@Mortgage.TermInYears
+                        Format="G"
+                        Min="0"
+                        Max="45"
+                        Step="1"
+                        Class="form-control" />
+      </div>
+
+      <label for="InterestOnly" class="col-sm-2 col-form-label">Interest Only</label>
+      <div class="col-sm-4">
+        <TelerikCheckBox @bind-Value=@Mortgage.InterestOnly />
+      </div>
+
+      <label for="HasBalloon" class="col-sm-2 col-form-label">Has Balloon</label>
+      <div class="col-sm-4">
+        <TelerikCheckBox @bind-Value=@showBalloon />
+      </div>
+
+      @if(showBalloon)
+      {
+        <label for="BallonMonths" class="col-sm-2 col-form-label">Months</label>
+        <div class="col-sm-4">
+          <TelerikNumericTextBox @bind-Value=@Mortgage.BalloonMonths
+                          Format="G"
+                          Min="0"
+                          Max="360"
+                          Step="1"
+                          Class="form-control" />
+        </div>
+      }
+      else
+      {
+        <div class="col-sm-6"></div>
+      }
+
+      <label for="Points" class="col-sm-2 col-form-label">Points</label>
+      <div class="col-sm-4">
+        <TelerikNumericTextBox @bind-Value=@Mortgage.Points
+                        Format="P"
+                        Min="0"
+                        Max="1"
+                        Step="0.005"
+                        Decimals="4"
+                        Class="form-control" />
+      </div>
+
+      <div class="col-sm-12 text-center">
+        <TelerikButton ButtonType="ButtonType.Button"
+                       Title="Cancel"
+                       OnClick="@(() => Mortgage = null)">Cancel</TelerikButton>
+
+        <TelerikButton ButtonType="ButtonType.Button"
+                       Primary="true"
+                       Title=@SaveBtn
+                       OnClick=@SaveMortgage>@SaveBtn</TelerikButton>
+      </div>
+    </div>
+  </WindowContent>
+</TelerikWindow>

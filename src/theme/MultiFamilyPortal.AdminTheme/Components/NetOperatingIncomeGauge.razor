@@ -1,0 +1,17 @@
+﻿<TelerikArcGauge Height="90px">
+  <ArcGaugeCenterLabel>
+    <Template>
+      <small>NOI</small>
+      <div><strong>@Property.NOI.ToString("C")</strong></div>
+      @*<small>Net Operating Income</small>*@
+    </Template>
+  </ArcGaugeCenterLabel>
+  <ArcGaugeScales>
+    <ArcGaugeScale Min="0" Max=@Income />
+  </ArcGaugeScales>
+  <ArcGaugePointers>
+    <ArcGaugePointer Size="10" Value=@Expenses Color=@Color() />
+  </ArcGaugePointers>
+</TelerikArcGauge>
+
+

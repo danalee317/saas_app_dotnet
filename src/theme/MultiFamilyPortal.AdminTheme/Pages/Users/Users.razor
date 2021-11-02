@@ -1,0 +1,92 @@
+﻿@page "/admin/users"
+
+<h3>Users</h3>
+
+<TelerikGrid Data=@_data
+             ConfirmDelete="true"
+             EnableLoaderContainer="true">
+  <GridToolBar>
+    <GridCommandButton Command="CustomAdd" Title="Add" IconClass="fad fa-plus" Primary="true" OnClick=@OnAddUser>Add</GridCommandButton>
+  </GridToolBar>
+  <GridColumns>
+    <GridColumn Field="Email" Title=" ">
+      <Template>
+        @{ var user = context as UserAccountResponse; }
+        <div class="text-center">
+          <Gravatar Email=@user.Email />
+        </div>
+      </Template>
+    </GridColumn>
+    <GridColumn Field=@(nameof(UserAccountResponse.FirstName)) Title="First" />
+    <GridColumn Field=@(nameof(UserAccountResponse.LastName)) Title="Last" />
+    <GridColumn Field=@(nameof(UserAccountResponse.Email)) />
+    <GridColumn Field=@(nameof(UserAccountResponse.Phone)) />
+    <GridColumn Field=@(nameof(UserAccountResponse.Roles))>
+      <Template>
+        @{ var user = context as UserAccountResponse; }
+        <ul>
+          @foreach(var role in user.Roles)
+          {
+            <li>@role</li>
+          }
+        </ul>
+      </Template>
+    </GridColumn>
+    <GridCommandColumn>
+      @{ var user = context as UserAccountResponse; }
+      @if(user.Email != User.FindFirstValue(ClaimTypes.Email))
+      {
+        <GridCommandButton Command="EditRoles" Title="Edit Roles">Edit Roles</GridCommandButton>
+        <GridCommandButton Command="ResetPassword" Title="Reset Password">Reset Password</GridCommandButton>
+        <GridCommandButton Command="Delete" Icon="delete" Title="Delete">Delete</GridCommandButton>
+      }
+    </GridCommandColumn>
+  </GridColumns>
+</TelerikGrid>
+
+<TelerikWindow Visible="@(_createUser != null)"
+               Modal="true"
+               Width="650px">
+  <WindowTitle>
+    New User
+  </WindowTitle>
+  <WindowActions>
+    <WindowAction Name="Close" OnClick="() => _createUser = null"/>
+  </WindowActions>
+  <WindowContent>
+    <div class="row px-3 py-1">
+      <div class="col-12 form-floating">
+        <TelerikTextBox @bind-Value=@_createUser.FirstName Class="form-control" />
+        <label for="FirstName" class="form-label">First Name</label>
+      </div>
+    </div>
+    <div class="row px-3 py-1">
+      <div class="col-12 form-floating">
+        <TelerikTextBox @bind-Value=@_createUser.LastName Class="form-control" />
+        <label for="LastName" class="form-label">Last Name</label>
+      </div>
+    </div>
+    <div class="row px-3 py-1">
+      <div class="col-12 form-floating">
+        <TelerikTextBox @bind-Value=@_createUser.Email Class="form-control" />
+        <label for="Email" class="form-label">Email</label>
+      </div>
+    </div>
+    <div class="row px-3 py-1">
+      <div class="col-12 form-floating">
+        <TelerikTextBox @bind-Value=@_createUser.Phone Class="form-control" />
+        <label for="Phone" class="form-label">Phone</label>
+      </div>
+    </div>
+    <div class="row px-3 py-1">
+      <div class="col-12 form-group">
+        <TelerikMultiSelect Data=@_roles @bind-Value=@_createUser.Roles Class="form-control" Placeholder="Roles" />
+      </div>
+    </div>
+    <div class="row text-center p-3">
+      <TelerikButton Title="Create User" Primary="true" IconClass="fad fa-plus" OnClick=@OnCreateNewUser>Create User</TelerikButton>
+    </div>
+  </WindowContent>
+</TelerikWindow>
+
+<PortalNotification @ref="notification" />

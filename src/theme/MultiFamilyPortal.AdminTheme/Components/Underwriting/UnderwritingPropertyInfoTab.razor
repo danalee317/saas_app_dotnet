@@ -1,0 +1,248 @@
+﻿<div class="row g-3">
+  <label for="name" class="col-sm-2 col-form-label">Property Name <span style="color:red">*</span></label>
+  <div class="col-sm-10">
+    <TelerikTextBox @bind-Value=@Property.Name
+                    Class="form-control" />
+  </div>
+</div>
+<div class="row g-3 mt-1">
+  <label for="address" class="col-sm-2 col-form-label">Address</label>
+  <div class="col-sm-10">
+    <TelerikTextBox @bind-Value=@Property.Address
+                    Class="form-control"
+                    PlaceHolder="Address" />
+  </div>
+</div>
+<div class="row g-3">
+  <div class="col-sm-2"></div>
+  <div class="col-sm-5">
+    <TelerikTextBox @bind-Value=@Property.City
+                    Class="form-control"
+                    PlaceHolder="City" />
+  </div>
+  <div class="col-sm">
+    <TelerikTextBox @bind-Value=@Property.State
+                    Class="form-control"
+                    PlaceHolder="State" />
+  </div>
+  <div class="col-sm">
+    <TelerikTextBox @bind-Value=@Property.Zip
+                    Class="form-control"
+                    PlaceHolder="Zip" />
+  </div>
+</div>
+<div class="row g-3 mt-1">
+  <label for="address" class="col-sm-2 col-form-label">Market</label>
+  <div class="col-sm-10">
+    <TelerikAutoComplete @bind-Value=@Property.Market
+                    Class="form-control"
+                    ClearButton="true"
+                    Data=@_markets />
+  </div>
+</div>
+
+<hr class="mt-3 mb-3" />
+
+<div class="row g-3">
+  <label for="Units" class="col-sm-2 col-form col-form-label">Units</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.Units
+                    Min="2"
+                    Max="1500"
+                    Class="form-control" />
+  </div>
+
+  <label for="vintage" class="col-sm-2 col-form col-form-label">Vintage</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.Vintage
+                    Min="1900"
+                    Max="@DateTime.Now.Year"
+                    Class="form-control" />
+  </div>
+
+  <label for="RentableSqFt" class="col-sm-2 col-form col-form-label">Rentable SqFt</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.RentableSqFt
+                    Min="0"
+                    Format="G"
+                    Class="form-control" />
+  </div>
+
+  <label for="GrossPotentialRent" class="col-sm-2 col-form col-form-label">Gross Potential Rent</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.GrossPotentialRent
+                    Min="0"
+                    Step="1000"
+                    Format="C"
+                    Class="form-control" />
+  </div>
+
+  <label for="MarketVacancy" class="col-sm-2 col-form col-form-label">Market Vacancy</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.MarketVacancy
+                    Min="0"
+                    Max="1"
+                    Step="0.01"
+                    Decimals="4"
+                    Format="P"
+                    Class="form-control" />
+  </div>
+
+  <label for="PhysicalVacancy" class="col-sm-2 col-form col-form-label">Physical Vacancy</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.PhysicalVacancy
+                    Min="0"
+                    Max="1"
+                    Step="0.01"
+                    Decimals="4"
+                    Format="P"
+                    Class="form-control" />
+  </div>
+
+  <label for="Management" class="col-sm-2 col-form col-form-label">Management</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.Management
+                    Min="0"
+                    Max="1"
+                    Step="0.01"
+                    Decimals="4"
+                    Format="P"
+                    Class="form-control" />
+  </div>
+
+  <label for="CapX" class="col-sm-2 col-form col-form-label">CapX</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.CapX
+                    Min="0"
+                    Step="1000"
+                    Format="C"
+                    Class="form-control" />
+  </div>
+
+  <label for="CapX" class="col-sm-2 col-form col-form-label">CapX Type</label>
+  <div class="col-sm-4">
+    <TelerikDropDownList Data=@CostTypes
+                         @bind-Value=@Property.CapXType
+                         Class="form-control"/>
+  </div>
+</div>
+
+<hr class="mt-3 mb-3" />
+
+<div class="row g-3">
+  <label for="AskingPrice" class="col-sm-2 col-form col-form-label">Asking Price</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.AskingPrice
+                    Min="0"
+                    Step="1000"
+                    Format="C"
+                    Class="form-control" />
+  </div>
+
+  <label for="StrikePrice" class="col-sm-2 col-form col-form-label">Strike Price</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.StrikePrice
+                    Min="0"
+                    Step="1000"
+                    Format="C"
+                    Class="form-control" />
+  </div>
+
+  <label for="OfferPrice" class="col-sm-2 col-form col-form-label">Offer Price</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.OfferPrice
+                    Min="0"
+                    Step="1000"
+                    Format="C"
+                    Class="form-control" />
+  </div>
+
+  <label for="PurchasePrice" class="col-sm-2 col-form col-form-label">Purchase Price</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.PurchasePrice
+                    Min="0"
+                    Step="1000"
+                    Format="C"
+                    Class="form-control" />
+  </div>
+</div>
+
+<hr class="mt-3 mb-3" />
+
+<div class="row g-3">
+
+  <label for="ClosingCosts" class="col-sm-2 col-form col-form-label">Closing Costs</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.ClosingCostPercent
+                    Min="0"
+                    Max="1"
+                    Step="0.01"
+                    Decimals="4"
+                    Format="P"
+                    Class="form-control" />
+  </div>
+
+  <label for="ClosingCostOther" class="col-sm-2 col-form col-form-label">Closing Costs (Miscellaneous)</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.ClosingCostMiscellaneous
+                    Min="0"
+                    Step="1000"
+                    Format="C"
+                    Class="form-control" />
+  </div>
+
+  <label for="DeferredMaintenance" class="col-sm-2 col-form col-form-label">Deferred Maintenance</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.DeferredMaintenance
+                    Min="0"
+                    Step="1000"
+                    Format="C"
+                    Class="form-control" />
+  </div>
+
+  <label for="SECAttorney" class="col-sm-2 col-form col-form-label">SEC Attorney</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.SECAttorney
+                    Min="0"
+                    Step="1000"
+                    Format="C"
+                    Class="form-control" />
+  </div>
+
+  <label for="AquisitionFeePercent" class="col-sm-2 col-form col-form-label">Aquisition Fee</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.AquisitionFeePercent
+                    Min="0"
+                    Max="1"
+                    Step="0.01"
+                    Decimals="4"
+                    Format="P"
+                    Class="form-control" />
+  </div>
+
+  <div class="col-sm-6"></div>
+
+  <label for="LoanType" class="col-sm-2 col-form col-form-label">Loan Type</label>
+  <div class="col-sm-4">
+    <TelerikDropDownList Data=@UnderwritingLoanTypes
+                         @bind-Value=@Property.LoanType
+                         Class="form-control" />
+  </div>
+
+  @if(Property.LoanType == Data.Models.UnderwritingLoanType.Automatic)
+  {
+    <label for="LTV" class="col-sm-2 col-form col-form-label">Loan to Value</label>
+    <div class="col-sm-4">
+      <TelerikNumericTextBox @bind-Value=@Property.LTV
+                      Min="0"
+                      Max="1"
+                      Step="0.01"
+                      Decimals="4"
+                      Format="P"
+                      Class="form-control" />
+    </div>
+  }
+
+</div>
+
+<PortalNotification @ref="notification" />

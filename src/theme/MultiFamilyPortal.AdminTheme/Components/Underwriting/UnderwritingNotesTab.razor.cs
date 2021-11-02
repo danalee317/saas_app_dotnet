@@ -20,6 +20,7 @@ using Telerik.Blazor.Components.Editor;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using MultiFamilyPortal.Collections;
+using System.Net.Http.Json;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 {
@@ -31,8 +32,12 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         [CascadingParameter]
         private ClaimsPrincipal User { get; set; }
 
+        [Inject]
+        private HttpClient _client { get; set; }
+
         private UnderwritingAnalysisNote NewNote;
         private UnderwritingAnalysisNote UpdateNote;
+        private PortalNotification notification { get; set; }
 
         private readonly ObservableRangeCollection<UnderwritingAnalysisNote> Notes = new();
 
@@ -63,7 +68,12 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         }
         private async Task SaveUpdateNote()
         {
-            // TODO: Persist Updated Note
+            using var response = await _client.PostAsJsonAsync($"/api/admin/underwriting/update/note/{UpdateNote.Id}", UpdateNote);
+
+            if (response.IsSuccessStatusCode)
+                notification.ShowSuccess("Note successfully updated.");
+            else
+                notification.ShowWarning("Unable to update note.");
         }
 
         private async Task OnDeleteNote(GridCommandEventArgs args)
@@ -72,7 +82,12 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             Property.Notes.Remove(note);
             Notes.Remove(note);
 
-            // TODO: Persist Deleted Note
+            using var response = await _client.DeleteAsync($"/api/admin/underwriting/delete/note/{note.Id}");
+
+            if (response.IsSuccessStatusCode)
+                notification.ShowSuccess("Note successfully deleted.");
+            else
+                notification.ShowWarning("Unable to delete note.");
         }
     }
 }

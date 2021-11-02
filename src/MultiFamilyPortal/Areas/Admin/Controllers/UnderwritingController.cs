@@ -172,6 +172,39 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         }
 
         [Authorize(Policy = PortalPolicy.Underwriter)]
+        [HttpPost("update/note/{id:guid}")]
+        public async Task<IActionResult> UpdateNote(Guid id, [FromBody]UnderwritingAnalysisNote model)
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            var note = await _dbContext.UnderwritingNotes.FirstOrDefaultAsync(x => x.Id == id && x.Underwriter.Email == email);
+
+            if (note is null)
+                return BadRequest();
+
+            note.Note = model.Note;
+            _dbContext.UnderwritingNotes.Update(note);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [Authorize(Policy = PortalPolicy.Underwriter)]
+        [HttpDelete("delete/note/{id:guid}")]
+        public async Task<IActionResult> DeleteNote(Guid id)
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            var note = await _dbContext.UnderwritingNotes.FirstOrDefaultAsync(x => x.Id == id && x.Underwriter.Email == email);
+
+            if (note is null)
+                return Ok();
+
+            _dbContext.UnderwritingNotes.Remove(note);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [Authorize(Policy = PortalPolicy.Underwriter)]
         [HttpPost("update/{propertyId:guid}")]
         public async Task<IActionResult> UpdateProperty(Guid propertyId, [FromBody] UnderwritingAnalysis analysis)
         {

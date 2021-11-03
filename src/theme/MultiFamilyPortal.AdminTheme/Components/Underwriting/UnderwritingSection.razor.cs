@@ -35,6 +35,8 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private UnderwritingAnalysisLineItem EditItem;
         private readonly ObservableRangeCollection<UnderwritingAnalysisLineItem> Items = new ObservableRangeCollection<UnderwritingAnalysisLineItem>();
         private IEnumerable<ExpenseSheetType> ExpenseTypes = new[]{ExpenseSheetType.T12, ExpenseSheetType.T6, ExpenseSheetType.T4, ExpenseSheetType.T3, ExpenseSheetType.T1};
+
+        private IEnumerable<UnderwritingAnalysisLineItem> _allItems => Column == UnderwritingColumn.Sellers ? Property.Sellers : Property.Ours;
         protected override void OnInitialized()
         {
             //var desiredState = new GridState<UnderwritingAnalysisLineItem> {

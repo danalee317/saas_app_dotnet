@@ -56,6 +56,31 @@
         </div>
       </FooterTemplate>
     </GridColumn>
+    <GridColumn Title="Per Unit"
+                TextAlign="ColumnTextAlign.Center">
+      <Template>
+        @{
+          var item = context as UnderwritingAnalysisLineItem;
+          var perUnit = item.AnnualizedTotal / Math.Max(1, Property.Units);
+        }
+        <span>@perUnit.ToString("C")</span>
+      </Template>
+    </GridColumn>
+    <GridColumn Title="% of GSR"
+                TextAlign="ColumnTextAlign.Center">
+      <Template>
+        @{
+            var item = context as UnderwritingAnalysisLineItem;
+            var gsr = _allItems.FirstOrDefault(x => x.Category == Data.Models.UnderwritingCategory.GrossScheduledRent)?.AnnualizedTotal ?? 1;
+            var percent = item.AnnualizedTotal / gsr;
+            var a = "";
+        }
+        @if(item.Category != Data.Models.UnderwritingCategory.GrossScheduledRent)
+        {
+          <span>@percent.ToString("P")</span>
+        }
+      </Template>
+    </GridColumn>
     <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
       <GridCommandColumn Width="240px">
         <div class="text-center">

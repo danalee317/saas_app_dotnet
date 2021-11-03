@@ -9,13 +9,13 @@ namespace MultiFamilyPortal.AdminTheme
     //    public string[] RequiredStyles { get; } = new[] { "_content/MultiFamilyPortal.AdminTheme/css/site.css" };
     //}
 
-    public class AdminTheme : SideBarTheme.SideBarTheme, IPortalAdminTheme
+    public class AdminTheme : InspiniaTheme.InspiniaTheme, IPortalAdminTheme
     {
         public AdminTheme()
         {
         }
 
         public override string Name { get; } = "Admin Theme";
-        public override Type SideBar { get; } = typeof(Layouts.NavMenu);
+        public override Type SideBar { get; } = typeof(Layouts.InspiniaNavBar);
     }
 }

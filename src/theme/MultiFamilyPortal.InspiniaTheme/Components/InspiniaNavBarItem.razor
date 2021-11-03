@@ -1,0 +1,20 @@
+﻿@if(string.IsNullOrEmpty(IconClass))
+{
+  <li><a href="@Href">@Name</a></li>
+}
+else if(ChildContent is null)
+{
+  <li class="_active">
+    <a href="@Href"><i class="@IconClass" aria-hidden="true"></i> <span class="nav-label">@Name</span> </a>
+  </li>
+}
+else
+{
+  <li class="active">
+    <a><i class="@IconClass" aria-hidden="true"></i> <span class="nav-label">@Name</span> <span class="far fa-arrow"></span></a>
+    <ul class="nav nav-second-level">
+        @ChildContent
+    </ul>
+  </li>
+
+}

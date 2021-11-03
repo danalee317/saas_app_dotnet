@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+
   <ItemGroup>
     <SupportedPlatform Include="browser" />
   </ItemGroup>
@@ -15,7 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\core\MultiFamilyPortal.CoreUI\MultiFamilyPortal.CoreUI.csproj" />
-    <ProjectReference Include="..\MultiFamilyPortal.InspiniaTheme\MultiFamilyPortal.InspiniaTheme.csproj" />
     <ProjectReference Include="..\MultiFamilyPortal.Themes\MultiFamilyPortal.Themes.csproj" />
   </ItemGroup>
 

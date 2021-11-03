@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\core\MultiFamilyPortal.CoreUI\MultiFamilyPortal.CoreUI.csproj" />
     <ProjectReference Include="..\MultiFamilyPortal.InspiniaTheme\MultiFamilyPortal.InspiniaTheme.csproj" />
+    <ProjectReference Include="..\MultiFamilyPortal.SideBarTheme\MultiFamilyPortal.SideBarTheme.csproj" />
     <ProjectReference Include="..\MultiFamilyPortal.Themes\MultiFamilyPortal.Themes.csproj" />
   </ItemGroup>
 

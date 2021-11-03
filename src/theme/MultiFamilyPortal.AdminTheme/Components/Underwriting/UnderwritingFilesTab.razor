@@ -1,0 +1,42 @@
+﻿<h3>UnderwritingFilesTab</h3>
+
+<TelerikWindow Visible=@false
+               Modal=@true
+               Width="600px"
+               Height="400px">
+  <WindowTitle>Upload</WindowTitle>
+  <WindowActions>
+    <WindowAction Name="Close" OnClick=@CloseUpload />
+  </WindowActions>
+  <WindowContent>
+    <TelerikUpload SaveUrl="@SaveUrl" RemoveUrl="@RemoveUrl"
+               SaveField="file" RemoveField="fileToRemove"
+               AllowedExtensions="@( new List<string>() { ".jpg", ".png", ".jpeg", ".pdf", ".doc", ".docx", ".xls", ".xlsx" } )"
+               MaxFileSize="2048000" MinFileSize="1024">
+</TelerikUpload>
+  </WindowContent>
+</TelerikWindow>
+
+@code {
+    [Parameter]
+    public UnderwritingAnalysis Property { get; set; }
+
+    [Inject]
+    private NavigationManager _navigationManager { get; set; }
+
+    [Inject]
+    private HttpClient _client { get; set; }
+
+    private void CloseUpload()
+    {
+        
+    }
+
+    public string SaveUrl => ToAbsoluteUrl($"api/admin/underwriting/upload/save/{Property.Id}");
+    public string RemoveUrl => ToAbsoluteUrl($"api/admin/underwriting/upload/remove/{Property.Id}");
+
+    public string ToAbsoluteUrl(string url)
+    {
+        return $"{_navigationManager.BaseUri}{url}";
+    }
+}

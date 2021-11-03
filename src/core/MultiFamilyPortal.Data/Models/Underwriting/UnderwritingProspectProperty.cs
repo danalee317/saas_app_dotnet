@@ -144,6 +144,10 @@ namespace MultiFamilyPortal.Data.Models
 
         public virtual ICollection<UnderwritingMortgage> Mortgages { get; set; }
 
+        public virtual ICollection<UnderwritingPropertyUnitModel> Models { get; set; }
+
+        public virtual ICollection<UnderwritingProspectFile> Files { get; set; }
+
         public void Update()
         {
             if (LineItems is null || PurchasePrice < 1)

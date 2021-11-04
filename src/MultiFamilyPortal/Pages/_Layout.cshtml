@@ -9,6 +9,11 @@
 
 @{
     var theme = ThemeFactory.GetCurrentTheme();
+    var bodyClass = string.Empty;
+    if(theme is IBodyClassProvider bcp)
+    {
+        bodyClass = bcp.Class;
+    }
 }
 
 <!DOCTYPE html>
@@ -39,7 +44,7 @@
   <link href="MultiFamilyPortal.styles.css" rel="stylesheet" />
   <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
-<body>
+<body class="@bodyClass">
     @RenderBody()
 
     <div id="blazor-error-ui">

@@ -3,10 +3,14 @@
 
 <SiteTitle Title="Login" />
 
+<div>
+  <h1><img src="/theme/branding/logo" alt="Logo" class="img img-fluid logo" /></h1>
+</div>
+
 <div class="container">
-  <h1>Login</h1>
+  <h3>Login</h3>
   <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-12">
       <section>
         <form method="post" action="/api/authentication/login?returnUrl=@_encodedUrl" @ref="submitForm">
           <input type="hidden" name="Email" @bind-value=@Input.Email />
@@ -18,17 +22,17 @@
                   OnValidSubmit=@SignInAsync>
           <DataAnnotationsValidator />
           <ValidationSummary />
-          <div class="form-floating">
+          <div class="form-floating my-2">
             <InputText @bind-Value=@Input.Email class="form-control" autocomplete="username" aria-required="true" />
             <label for="Email" class="form-label">Email</label>
             <ValidationMessage For="() => Input.Email" />
           </div>
-          <div class="form-floating">
+          <div class="form-floating my-2">
             <InputText type="password" @bind-Value=@Input.Password class="form-control" autocomplete="current-password" aira-required="true" />
             <label for="Password" class="form-label">Password</label>
             <ValidationMessage For="() => Input.Password" />
           </div>
-          <div>
+          <div class="my-2">
             <div class="checkbox">
               <label for="RememberMe" class="form-label">Remember Me
                 <TelerikCheckBox AriaLabelledBy="Remember Me"
@@ -37,7 +41,7 @@
               </label>
             </div>
           </div>
-          <div>
+          <div class="my-2">
             <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
           </div>
           <div>
@@ -48,7 +52,7 @@
         </EditForm>
       </section>
     </div>
-    <div class="col-md-6 col-md-offset-2">
+    <div class="col-md-12">
       <section>
           <h3>Use another service to log in.</h3>
           <hr />

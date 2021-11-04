@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components;
@@ -14,21 +15,38 @@ namespace MultiFamilyPortal.PortalTheme.Pages
     {
         [Inject]
         private SignInManager<SiteUser> _signinManager { get; set; } = default !;
-        [Inject]
-        private IJSRuntime JSRuntime { get; set; } = default !;
-        [Inject]
-        private NavigationManager _navigationManager { get; set; } = default !;
-        private ElementReference submitForm { get; set; }
 
+        [Inject]
+        private IJSRuntime _jSRuntime { get; set; } = default !;
+
+        [Inject]
+        private NavigationManager _navigationManager { get; set; }
+
+        [CascadingParameter]
+        private ClaimsPrincipal _user { get; set; }
+
+        private ElementReference submitForm { get; set; }
         private string _encodedUrl => HttpUtility.UrlEncode($"/account/login?username={Input.Email}&error=1");
         private LoginRequest Input { get; set; } = new LoginRequest();
         private IEnumerable<AuthenticationScheme> ExternalLogins { get; set; }
 
+        protected override async Task OnInitializedAsync()
+        {
+            ExternalLogins = await _signinManager.GetExternalAuthenticationSchemesAsync();
+        }
 
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if(firstRender && _user.Identity.IsAuthenticated && _user.IsInAnyRole(PortalRoles.Mentor, PortalRoles.BlogAuthor, PortalRoles.Underwriter, PortalRoles.PortalAdministrator))
+            {
+                _navigationManager.NavigateTo("/admin", true);
+                return;
+            }
+        }
 
         private async Task SignInAsync(EditContext editContext)
         {
-            await JSRuntime.InvokeVoidAsync("MFPortal.SubmitForm", submitForm);
+            await _jSRuntime.InvokeVoidAsync("MFPortal.SubmitForm", submitForm);
         }
     }
 }

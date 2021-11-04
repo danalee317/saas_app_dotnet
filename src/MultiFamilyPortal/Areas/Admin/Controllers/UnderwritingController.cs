@@ -400,12 +400,78 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             property.Vintage = analysis.Vintage;
             property.Zip = analysis.Zip;
 
-            property.Update();
             _dbContext.Update(property);
             await _dbContext.SaveChangesAsync();
 
             var updatedAnalysis = await GetUnderwritingAnalysis(propertyId);
             return Ok(updatedAnalysis);
+        }
+
+        [HttpPost("upload/save/{id:guid}")]
+        public async Task<IActionResult> Save(Guid id, IFormFile file) // must match SaveField which defaults to "files"
+        {
+            if (file != null)
+            {
+                try
+                {
+                    var fileContent = ContentDispositionHeaderValue.Parse(file.ContentDisposition);
+
+                    // Some browsers send file names with full path.
+                    // We are only interested in the file name.
+                    //var fileName = Path.GetFileName(fileContent.FileName.ToString().Trim('"'));
+                    //var physicalPath = Path.Combine(HostingEnvironment.WebRootPath, fileName);
+
+                    //// Implement security mechanisms here - prevent path traversals,
+                    //// check for allowed extensions, types, size, content, viruses, etc.
+                    //// This sample always saves the file to the root and is not sufficient for a real application.
+
+                    //using (var fileStream = new FileStream(physicalPath, FileMode.Create))
+                    //{
+                    //    await file.CopyToAsync(fileStream);
+                    //}
+                }
+                catch(Exception ex)
+                {
+                    // Implement error handling here, this example merely indicates an upload failure.
+                    Response.StatusCode = 500;
+                    await Response.WriteAsync(ex.Message); // custom error message
+                }
+            }
+
+            // Return an empty string message in this case
+            return new EmptyResult();
+        }
+
+
+        [HttpPost("upload/remove/{id:guid}")]
+        public ActionResult Remove(Guid id, string fileToRemove) // must match RemoveField which defaults to "files"
+        {
+            if (fileToRemove != null)
+            {
+                try
+                {
+                    //var fileName = Path.GetFileName(fileToRemove);
+                    //var physicalPath = Path.Combine(HostingEnvironment.WebRootPath, fileName);
+
+                    //if (System.IO.File.Exists(physicalPath))
+                    //{
+                    //    // Implement security mechanisms here - prevent path traversals,
+                    //    // check for allowed extensions, types, permissions, etc.
+                    //    // this sample always deletes the file from the root and is not sufficient for a real application.
+
+                    //    System.IO.File.Delete(physicalPath);
+                    //}
+                }
+                catch(Exception ex)
+                {
+                    // Implement error handling here, this example merely indicates an upload failure.
+                    Response.StatusCode = 500;
+                    Response.WriteAsync(ex.Message); // custom error message
+                }
+            }
+
+            // Return an empty string message in this case
+            return new EmptyResult();
         }
 
         private async Task<UnderwritingAnalysis> GetUnderwritingAnalysis(Guid propertyId)

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
+using SkiaSharp;
+using SysFile = System.IO.File;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
 {
@@ -82,6 +84,40 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         {
             // We'll want to update colors and set the logo
             throw new NotImplementedException();
+        }
+
+        [HttpPost("branding/{imageName}")]
+        public async Task<IActionResult> UpdateBrandingLogo(string imageName, IFormFile file, [FromServices]IWebHostEnvironment env)
+        {
+            var expectedPng = Path.Combine(env.WebRootPath, "branding", $"{imageName}.png");
+            var expectedSvg = Path.Combine(env.WebRootPath, "branding", $"{imageName}.svg");
+
+            if (SysFile.Exists(expectedPng))
+                SysFile.Delete(expectedPng);
+
+            if (SysFile.Exists(expectedSvg))
+                SysFile.Delete(expectedSvg);
+
+            switch(Path.GetExtension(file.FileName).ToLower())
+            {
+                case ".svg":
+                    using (var fileStream = SysFile.OpenRead(expectedSvg))
+                        await file.CopyToAsync(fileStream);
+                    break;
+                case ".png":
+                case ".jpg":
+                case ".jpeg":
+                    var image = SKImage.FromEncodedData(file.OpenReadStream());
+
+                    // TODO: Resize if the file is too large
+                    var data = image.Encode(SKEncodedImageFormat.Png, 100);
+                    data.SaveTo(SysFile.OpenRead(expectedPng));
+                    break;
+                default:
+                    return BadRequest();
+            }
+
+            return Ok();
         }
     }
 }

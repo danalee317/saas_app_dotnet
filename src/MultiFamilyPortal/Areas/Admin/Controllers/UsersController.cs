@@ -60,11 +60,10 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             };
 
             var userIds = await _dbContext.UserRoles.Where(x => x.RoleId == investorRole || x.RoleId == sponsorRole)
-                .GroupBy(x => x.UserId)
                 .ToArrayAsync();
-
+            var grouped = userIds.GroupBy(x => x.UserId);
             var users = new List<UserAccountResponse>();
-            foreach(var user in userIds)
+            foreach(var user in grouped)
             {
                 var userAccount = await _dbContext.Users
                     .Select(x => new UserAccountResponse

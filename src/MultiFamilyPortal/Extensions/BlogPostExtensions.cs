@@ -189,6 +189,19 @@ namespace MultiFamilyPortal.Extensions
 
             public static bool operator ==(CodeLanguage codeLanguage, string language) =>
                 codeLanguage.Name.Equals(language) || codeLanguage.Alias.Contains(language);
+
+            public override bool Equals(object obj)
+            {
+                if (obj is CodeLanguage codeLanguage)
+                    return Name.Equals(codeLanguage.Name);
+
+                if(obj is string language)
+                    return Name.Equals(language) || Alias.Equals(language);
+
+                return false;
+            }
+
+            public override int GetHashCode() => Name.GetHashCode();
         }
     }
 }

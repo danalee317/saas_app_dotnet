@@ -20,6 +20,7 @@ using Telerik.Blazor.Components.Editor;
 using MultiFamilyPortal.Collections;
 using System.Collections;
 using System.Net.Http.Json;
+using System.Web;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 {
@@ -51,7 +52,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
         private CreateUnderwritingPropertyRequest NewProspect;
         private ObservableRangeCollection<ProspectPropertyResponse> Prospects = new ObservableRangeCollection<ProspectPropertyResponse>();
-        
+        private PortalNotification notification { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -60,10 +61,25 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
         public async Task Update()
         {
-            var underwriterId = Profile.Id;
-            var properties = await _client.GetFromJsonAsync<IEnumerable<ProspectPropertyResponse>>($"/api/admin/underwriting?start={Start}&end={End}&underwriterId={underwriterId}");
+            if (Start == default)
+                Start = DateTimeOffset.Now.AddMonths(-1);
 
-            Prospects.ReplaceRange(properties);
+            if (End == default)
+                End = DateTimeOffset.Now;
+
+            try
+            {
+                var start = HttpUtility.UrlEncode(Start.ToString());
+                var end = HttpUtility.UrlEncode(End.ToString());
+                var underwriterId = Profile?.Id;
+                var properties = await _client.GetFromJsonAsync<IEnumerable<ProspectPropertyResponse>>($"/api/admin/underwriting?start={start}&end={end}&underwriterId={underwriterId}");
+
+                Prospects.ReplaceRange(properties);
+            }
+            catch 
+            {
+                notification.ShowError("An error occurred while attempting to load the properties.");
+            }
         }
 
         private void CreateProperty()

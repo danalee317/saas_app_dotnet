@@ -1,3 +1,101 @@
-﻿<h3>UnderwritingSummaryTab</h3>
+﻿<table>
+  <tr>
+    <th></th>
+    <th style="max-width:200px">Ours</th>
+    <th></th>
+    <th style="max-width:200px">Sellers</th>
+  </tr>
+  <tr>
+    <td><strong>Net Operating Income</strong></td>
+    <td>@Property.NOI.ToString("C")</td>
+    <td></td>
+    <td>@Property.SellerNOI.ToString("C")</td>
+  </tr>
 
+  <tr>
+    <td><strong>Capital Expenditures</strong></td>
+    <td>@Property.CapXTotal</td>
+    <td>
+      @*<div class="row">
+        <div class="col-9">
+          <TelerikNumericTextBox @bind-Value=@Property.CapX
+                                 Format="C"/>
+        </div>
+        <div class="col-3">
+          <TelerikDropDownList Data=@_costTypes
+                               @bind-Value=@Property.CapXType />
+        </div>
+      </div>*@
+      <div class="input-append btn-group">
+    <input class="span2" id="appendedInputButton" size="16" type="text">
+    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+        <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+        <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+        <li><a href="#"><i class="icon-ban-circle"></i> Ban</a></li>
+        <li class="divider"></li>
+        <li><a href="#"><i class="i"></i> Make admin</a></li>
+    </ul>
+</div>
+    </td>
+    <td>@Property.CapXTotal.ToString("C")</td>
+  </tr>
 
+  <tr>
+    <td><strong>NOI after CapX</strong></td>
+    <td>@(Property.NOI - Property.CapXTotal).ToString("C")</td>
+    <td></td>
+    <td>@(Property.SellerNOI - Property.CapXTotal).ToString("C")</td>
+  </tr>
+
+  <tr>
+    <td>Primary Debt Service</td>
+    <td>@debtService.ToString("C")</td>
+    <td></td>
+    <td>@debtService.ToString("C")</td>
+  </tr>
+
+  <tr>
+    <td>Secondary Debt Service</td>
+    <td>@secondaryDebtService.ToString("C")</td>
+    <td></td>
+    <td>@secondaryDebtService.ToString("C")</td>
+  </tr>
+
+  <tr>
+    <td><strong>Cash Flow Before Taxes</strong></td>
+    <td>@ourCashFlow.ToString("C")</td>
+    <td></td>
+    <td>@sellerCashFlow.ToString("C")</td>
+  </tr>
+
+  <tr>
+    <td><strong>Cash on Cash Return</strong></td>
+    <td>@Property.CashOnCash.ToString("P")</td>
+    <td></td>
+    <td>@Property.CashOnCash.ToString("P")</td>
+  </tr>
+
+  <tr>
+    <td><strong>Debt Coverage Ratio</strong></td>
+    <td>@Property.DebtCoverage.ToString("N2")</td>
+    <td></td>
+    <td>@Property.DebtCoverage.ToString("N2")</td>
+  </tr>
+
+  <tr>
+    <td><strong>Cap Rate</strong></td>
+    <td>@Property.CapRate.ToString("P")</td>
+    <td></td>
+    <td>@Property.SellerCapRate.ToString("P")</td>
+  </tr>
+
+  <tr>
+    <td><strong>Our Equity</strong></td>
+    <td>@((Property.OurEquityOfCF * Property.CashOnCash).ToString("P"))</td>
+    <td></td>
+    <td>@((Property.OurEquityOfCF * Property.CashOnCash).ToString("P"))</td>
+  </tr>
+</table>

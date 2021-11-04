@@ -2,10 +2,10 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
-using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.CoreUI;
 using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.Dtos.Underwrting;
 
 namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
 {

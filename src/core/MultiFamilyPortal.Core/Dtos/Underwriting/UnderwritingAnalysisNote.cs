@@ -1,4 +1,4 @@
-﻿namespace MultiFamilyPortal.AdminTheme.Models
+﻿namespace MultiFamilyPortal.Dtos.Underwrting
 {
     public class UnderwritingAnalysisNote
     {

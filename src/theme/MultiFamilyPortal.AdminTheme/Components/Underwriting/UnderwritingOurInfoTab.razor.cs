@@ -1,8 +1,8 @@
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
-using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.Dtos.Underwrting;
 using MultiFamilyPortal.Extensions;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
@@ -31,10 +31,9 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
             var grouped = Property.Sellers.GroupBy(x => x.Category);
 
-            Property.Ours.Clear();
-
             var allCategories = Enum.GetValues<UnderwritingCategory>();
             var guidanceList = await _client.GetFromJsonAsync<IEnumerable<UnderwritingGuidance>>($"/api/admin/underwriting/guidance?market={Property.Market}");
+            var updatedItems = new List<UnderwritingAnalysisLineItem>();
             foreach (var category in allCategories)
             {
                 if(category == UnderwritingCategory.PhysicalVacancy)
@@ -49,8 +48,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
                         Description = category.GetDisplayName(),
                         ExpenseType = ExpenseSheetType.T12
                     };
-                    Items.Add(vacancy);
-                    Property.Ours.Add(vacancy);
+                    updatedItems.Add(vacancy);
                     continue;
                 }
                 else if(category == UnderwritingCategory.Management)
@@ -61,8 +59,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
                         Description = category.GetDisplayName(),
                         ExpenseType = ExpenseSheetType.T12
                     };
-                    Items.Add(management);
-                    Property.Ours.Add(management);
+                    updatedItems.Add(management);
                     continue;
                 }
 
@@ -86,9 +83,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
                     item.UpdateFromGuidance(guidance, Property);
                 }
 
-                Items.Add(item);
-                Property.Ours.Add(item);
+                updatedItems.Add(item);
             }
+
+            Property.ReplaceOurItems(updatedItems);
+            Items.ReplaceRange(updatedItems);
 
             Refreshing = false;
         }

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
-using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.Dtos.Underwrting;
 
 namespace MultiFamilyPortal.AdminTheme.Components
 {

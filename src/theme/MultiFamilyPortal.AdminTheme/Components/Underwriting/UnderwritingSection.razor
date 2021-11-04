@@ -25,15 +25,24 @@
       </div>
     </AuthorizedPolicy>
   </GridToolBar>
+  @*<GridAggregates>
+    <GridAggregate Field=@nameof(UnderwritingAnalysisLineItem.Category)>
+
+    </GridAggregate>
+  </GridAggregates>*@
   <GridColumns>
     <GridColumn Field="@(nameof(UnderwritingAnalysisLineItem.Category))"
                 TextAlign="ColumnTextAlign.Center"
                 Width="220px"
+                Visible=@false
                 Title="Category">
-      <Template>
-        @{ var item = context as UnderwritingAnalysisLineItem; }
-        <span>@item.Category.GetDisplayName()</span>
-      </Template>
+@*      <Template>
+        
+      </Template>*@
+      <GroupHeaderTemplate>
+        @{ var category = (Data.Models.UnderwritingCategory)context.Value; }
+        <span>@category.GetDisplayName()</span>
+      </GroupHeaderTemplate>
     </GridColumn>
     <GridColumn Field="@(nameof(UnderwritingAnalysisLineItem.Description))" />
     <GridColumn Field="@(nameof(UnderwritingAnalysisLineItem.AnnualizedTotal))"

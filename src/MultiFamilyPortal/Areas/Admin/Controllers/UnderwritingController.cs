@@ -1,4 +1,5 @@
-﻿using System.Data;
+using System.Data;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.Dtos.Underwrting;
 using MultiFamilyPortal.Extensions;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
@@ -136,13 +138,14 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 GrossPotentialRent = 800 * property.Units
             };
 
-            prospect.Update();
-
             await _dbContext.UnderwritingPropertyProspects.AddAsync(prospect);
             await _dbContext.SaveChangesAsync();
             await _dbContext.UnderwritingMortgages.AddAsync(new UnderwritingMortgage {
                 LoanAmount = prospect.PurchasePrice * prospect.LTV,
-                PropertyId = prospect.Id
+                PropertyId = prospect.Id,
+                InterestRate = 0.04,
+                Points = 0.01,
+                TermInYears = 30
             });
             await _dbContext.SaveChangesAsync();
             var response = await _dbContext.UnderwritingPropertyProspects
@@ -369,17 +372,15 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             property.CapRate = analysis.CapRate;
             property.CapX = analysis.CapX;
             property.CapXType = analysis.CapXType;
-            //property.CashOnCash = analysis.CashOnCash;
+            property.CashOnCash = analysis.CashOnCash;
             property.City = analysis.City;
             property.ClosingCostMiscellaneous = analysis.ClosingCostMiscellaneous;
-            //property.ClosingCostOther = analysis.ClosingCostOther;
             property.ClosingCostPercent = analysis.ClosingCostPercent;
             property.DebtCoverage = analysis.DebtCoverage;
             property.DeferredMaintenance = analysis.DeferredMaintenance;
             property.Downpayment = analysis.Downpayment;
             property.GrossPotentialRent = analysis.GrossPotentialRent;
             property.LoanType = analysis.LoanType;
-            property.LossToLease = analysis.LossToLease;
             property.LTV = analysis.LTV;
             property.Management = analysis.Management;
             property.Market = analysis.Market;
@@ -409,40 +410,26 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
 
         private async Task<UnderwritingAnalysis> GetUnderwritingAnalysis(Guid propertyId)
         {
-            return await _dbContext.UnderwritingPropertyProspects
+            var property = await _dbContext.UnderwritingPropertyProspects
                 .Select(x => new UnderwritingAnalysis {
                     Address = x.Address,
                     AquisitionFeePercent = x.AquisitionFeePercent,
                     AskingPrice = x.AskingPrice,
-                    CapRate = x.CapRate,
                     CapX = x.CapX,
                     CapXType = x.CapXType,
-                    //CashOnCash = x.CashOnCash,
                     City = x.City,
                     ClosingCostMiscellaneous = x.ClosingCostMiscellaneous,
-                    //ClosingCostOther = x.ClosingCostOther,
                     ClosingCostPercent = x.ClosingCostPercent,
-                    DebtCoverage = x.DebtCoverage,
                     DeferredMaintenance = x.DeferredMaintenance,
                     Downpayment = x.Downpayment,
                     GrossPotentialRent = x.GrossPotentialRent,
                     Id = x.Id,
                     LoanType = x.LoanType,
-                    LossToLease = x.LossToLease,
                     LTV = x.LTV,
                     Management = x.Management,
                     Market = x.Market,
                     MarketVacancy = x.MarketVacancy,
-                    Mortgages = x.Mortgages.Select(m => new UnderwritingAnalysisMortgage {
-                        BalloonMonths = m.BalloonMonths,
-                        InterestOnly = m.InterestOnly,
-                        InterestRate = m.InterestRate,
-                        LoanAmount = m.LoanAmount,
-                        Points = m.Points,
-                        TermInYears = m.TermInYears
-                    }).ToList(),
                     Name = x.Name,
-                    NOI = x.NOI,
                     Notes = x.Notes.Select(n => new UnderwritingAnalysisNote {
                         Id = n.Id,
                         Note = n.Note,
@@ -453,24 +440,10 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     }).ToList(),
                     OfferPrice = x.OfferPrice,
                     OurEquityOfCF = x.OurEquityOfCF,
-                    Ours = x.LineItems.Where(l => l.Column == UnderwritingColumn.Ours)
-                        .Select(l => new UnderwritingAnalysisLineItem {
-                            Amount = l.Amount,
-                            Category = l.Category,
-                            Description = l.Description,
-                            ExpenseType = l.ExpenseType,
-                        }).ToList(),
                     PhysicalVacancy = x.PhysicalVacancy,
                     PurchasePrice = x.PurchasePrice,
                     RentableSqFt = x.RentableSqFt,
                     SECAttorney = x.SECAttorney,
-                    Sellers = x.LineItems.Where(l => l.Column == UnderwritingColumn.Sellers)
-                        .Select(l => new UnderwritingAnalysisLineItem {
-                            Amount = l.Amount,
-                            Category = l.Category,
-                            Description = l.Description,
-                            ExpenseType = l.ExpenseType,
-                        }).ToList(),
                     State = x.State,
                     Status = x.Status,
                     StrikePrice = x.StrikePrice,
@@ -482,6 +455,45 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     Zip = x.Zip,
                 })
                 .FirstOrDefaultAsync(x => x.Id == propertyId);
+
+            var mortgages = await _dbContext.UnderwritingMortgages.Where(x => x.PropertyId == property.Id)
+                .Select(m => new UnderwritingAnalysisMortgage
+                {
+                    Id = m.Id,
+                    BalloonMonths = m.BalloonMonths,
+                    InterestOnly = m.InterestOnly,
+                    InterestRate = m.InterestRate,
+                    LoanAmount = m.LoanAmount,
+                    Points = m.Points,
+                    TermInYears = m.TermInYears
+                })
+                .ToArrayAsync();
+            if(mortgages.Any())
+            {
+                property.AddMortgages(mortgages);
+            }
+
+            var lineItems = await _dbContext.UnderwritingLineItems.Where(x => x.PropertyId == property.Id).ToArrayAsync();
+            if(lineItems.Any())
+            {
+                foreach(var column in lineItems.GroupBy(x => x.Column))
+                {
+                    var items = column.Select(x => new UnderwritingAnalysisLineItem
+                    {
+                        Amount = x.Amount,
+                        Category = x.Category,
+                        Description = x.Description,
+                        ExpenseType = x.ExpenseType,
+                        Id = x.Id
+                    });
+                    if (column.Key == UnderwritingColumn.Sellers)
+                        property.AddSellerItems(items);
+                    else
+                        property.AddOurItems(items);
+                }
+            }
+
+            return property;
         }
     }
 }

@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Components;
-using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.CoreUI;
 using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.Dtos.Underwrting;
 using MultiFamilyPortal.Extensions;
 using Telerik.Blazor.Components;
 using Telerik.DataSource;
@@ -36,19 +36,10 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private readonly ObservableRangeCollection<UnderwritingAnalysisLineItem> Items = new ObservableRangeCollection<UnderwritingAnalysisLineItem>();
         private IEnumerable<ExpenseSheetType> ExpenseTypes = new[]{ExpenseSheetType.T12, ExpenseSheetType.T6, ExpenseSheetType.T4, ExpenseSheetType.T3, ExpenseSheetType.T1};
 
-        private IEnumerable<UnderwritingAnalysisLineItem> _allItems => Column == UnderwritingColumn.Sellers ? Property.Sellers : Property.Ours;
+        private IEnumerable<UnderwritingAnalysisLineItem> _allItems =>
+            Column == UnderwritingColumn.Sellers ? Property.Sellers : Property.Ours;
         protected override void OnInitialized()
         {
-            //var desiredState = new GridState<UnderwritingAnalysisLineItem> {
-            //    GroupDescriptors = new List<GroupDescriptor> {
-            //        new GroupDescriptor {
-            //            Member = nameof(UnderwritingAnalysisLineItem.Category),
-            //            MemberType = typeof(UnderwritingCategory)
-            //        }
-            //    }
-            //};
-            //grid.SetState(desiredState);
-
             if(Column == UnderwritingColumn.Sellers)
             {
                 Items.ReplaceRange(Property.Sellers.Where(x => x.Category.GetLineItemType() == Type).OrderBy(x => x.Category));
@@ -58,6 +49,24 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
                 Items.ReplaceRange(Property.Ours.Where(x => x.Category.GetLineItemType() == Type).OrderBy(x => x.Category));
             }
         }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if(firstRender)
+            {
+                var desiredState = new GridState<UnderwritingAnalysisLineItem>
+                {
+                    GroupDescriptors = new List<GroupDescriptor> {
+                        new GroupDescriptor {
+                            Member = nameof(UnderwritingAnalysisLineItem.Category),
+                            MemberType = typeof(UnderwritingCategory),
+                        }
+                    }
+                };
+                await grid.SetState(desiredState);
+            }
+        }
+
 
         private IEnumerable<UnderwritingCategory> AllowableCategories()
         {
@@ -91,11 +100,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             Items.Add(NewItem);
             if(Column == UnderwritingColumn.Sellers)
             {
-                Property.Sellers.Add(NewItem);
+                Property.AddSellerItem(NewItem);
             }
             else
             {
-                Property.Ours.Add(NewItem);
+                Property.AddOurItem(NewItem);
             }
 
             notification.ShowSuccess($"{Type} line item {NewItem.Category.GetDisplayName()}");
@@ -125,11 +134,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             Items.Remove(item);
             if(Column == UnderwritingColumn.Sellers)
             {
-                Property.Sellers.Remove(item);
+                Property.RemoveSellerItem(item);
             }
             else
             {
-                Property.Ours.Remove(item);
+                Property.RemoveOurItem(item);
             }
         }
 

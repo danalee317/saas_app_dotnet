@@ -1,9 +1,9 @@
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
-using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.CoreUI;
 using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.Dtos.Underwrting;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 {

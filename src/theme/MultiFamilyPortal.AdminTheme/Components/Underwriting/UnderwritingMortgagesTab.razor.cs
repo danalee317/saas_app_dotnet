@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
-using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Collections;
+using MultiFamilyPortal.Dtos.Underwrting;
 using Telerik.Blazor.Components;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
@@ -34,7 +34,8 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
         private void OnSaveNewMortage(UnderwritingAnalysisMortgage mortgage)
         {
-            Property.Mortgages.Add(mortgage);
+            Property.AddMortgage(mortgage);
+            //Property.Mortgages.Add(mortgage);
             //DbContext.UnderwritingMortgages.Add(mortgage);
             Mortgages.Add(mortgage);
             //await DbContext.SaveChangesAsync();
@@ -59,7 +60,8 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         {
             var item = args.Item as UnderwritingAnalysisMortgage;
 
-            Property.Mortgages.Remove(item);
+            Property.RemoveMortgage(item);
+            //Property.Mortgages.Remove(item);
             //DbContext.UnderwritingMortgages.Remove(item);
             Mortgages.Remove(item);
             //await DbContext.SaveChangesAsync();

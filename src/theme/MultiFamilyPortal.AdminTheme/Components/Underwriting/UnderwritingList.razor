@@ -30,14 +30,31 @@
             </div>
           </Template>
         </GridColumn>
-
-        <GridColumn Field="@(nameof(ProspectPropertyResponse.Name))" Title="Name" />
-        <GridColumn Field="@(nameof(ProspectPropertyResponse.City))" Title="City" />
-        <GridColumn Field="@(nameof(ProspectPropertyResponse.State))" Title="State" Width="120px" />
-        <GridColumn Field="@(nameof(ProspectPropertyResponse.Units))" Title="Units" Width="120px" />
-        <GridColumn Field="@(nameof(ProspectPropertyResponse.CapRate))" Title="Cap" Width="120px" />
-        <GridColumn Field="@(nameof(ProspectPropertyResponse.CoC))" Title="Cash on Cash" Width="120px" />
-        <GridColumn Field="@(nameof(ProspectPropertyResponse.Created))" Title="Date" Width="160px" />
+        <GridColumn Field="@(nameof(ProspectPropertyResponse.Name))"
+                    Title="Name" />
+        <GridColumn Field="@(nameof(ProspectPropertyResponse.FormattedLocation))"
+                    Title="Location" />
+        <GridColumn Field="@(nameof(ProspectPropertyResponse.Units))"
+                    Title="Units"
+                    Width="120px"
+                    TextAlign=@ColumnTextAlign.Center />
+        <GridColumn Field="@(nameof(ProspectPropertyResponse.CapRate))"
+                    Title="Cap"
+                    Width="120px"
+                    TextAlign=@ColumnTextAlign.Center />
+        <GridColumn Field="@(nameof(ProspectPropertyResponse.CoC))"
+                    Title="Cash on Cash"
+                    Width="120px"
+                    TextAlign=@ColumnTextAlign.Center />
+        <GridColumn Field="@(nameof(ProspectPropertyResponse.Status))"
+                    Width="120px"
+                    TextAlign=@ColumnTextAlign.Center>
+          <Template>
+            @{ var response = context as ProspectPropertyResponse; }
+            @response.Status.Humanize(LetterCasing.Title)
+          </Template>
+        </GridColumn>
+        <GridColumn Field="@(nameof(ProspectPropertyResponse.Created))" Title="Date" Width="160px" TextAlign=@ColumnTextAlign.Center />
         <GridCommandColumn Width="140px">
           <GridCommandButton Command="View" IconClass="fad fa-eye" Class="btn-secondary" OnClick="ViewProperty">View</GridCommandButton>
         </GridCommandColumn>

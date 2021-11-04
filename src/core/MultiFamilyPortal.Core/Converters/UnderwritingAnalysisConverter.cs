@@ -221,16 +221,4 @@ namespace MultiFamilyPortal.Converters
             writer.WriteEndObject();
         }
     }
-
-    internal static class JsonExtensions
-    {
-        public static JsonConverter<T> GetConverter<T>(this JsonSerializerOptions options) =>
-            (JsonConverter<T>)options.GetConverter(typeof(T));
-
-        public static T GetEnum<T>(this Utf8JsonReader reader)
-            where T : struct
-        {
-            return Enum.Parse<T>(reader.GetString());
-        }
-    }
 }

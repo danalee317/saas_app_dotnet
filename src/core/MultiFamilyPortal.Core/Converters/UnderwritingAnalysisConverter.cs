@@ -11,7 +11,7 @@ namespace MultiFamilyPortal.Converters
         {
             var value = new UnderwritingAnalysis();
 
-            var lineItemConverter = options.GetConverter<IEnumerable<UnderwritingAnalysisLineItem>>();
+            var lineItemConverter = options.GetConverter<List<UnderwritingAnalysisLineItem>>();
             while (reader.Read())
             {
                 var type = reader.TokenType;
@@ -78,8 +78,8 @@ namespace MultiFamilyPortal.Converters
                             value.MarketVacancy = reader.GetDouble();
                             break;
                         case nameof(UnderwritingAnalysis.Mortgages):
-                            var mortgageConverter = options.GetConverter<IEnumerable<UnderwritingAnalysisMortgage>>();
-                            var mortgages = mortgageConverter.Read(ref reader, typeof(IEnumerable<UnderwritingAnalysisMortgage>), options);
+                            var mortgageConverter = options.GetConverter<List<UnderwritingAnalysisMortgage>>();
+                            var mortgages = mortgageConverter.Read(ref reader, typeof(List<UnderwritingAnalysisMortgage>), options);
                             value.AddMortgages(mortgages);
                             break;
                         case nameof(UnderwritingAnalysis.Name):
@@ -96,7 +96,7 @@ namespace MultiFamilyPortal.Converters
                             value.OurEquityOfCF = reader.GetDouble();
                             break;
                         case nameof(UnderwritingAnalysis.Ours):
-                            var ourItems = lineItemConverter.Read(ref reader, typeof(IEnumerable<UnderwritingAnalysis>), options);
+                            var ourItems = lineItemConverter.Read(ref reader, typeof(List<UnderwritingAnalysis>), options);
                             value.AddOurItems(ourItems);
                             break;
                         case nameof(UnderwritingAnalysis.PhysicalVacancy):
@@ -112,7 +112,7 @@ namespace MultiFamilyPortal.Converters
                             value.SECAttorney = reader.GetDouble();
                             break;
                         case nameof(UnderwritingAnalysis.Sellers):
-                            var sellerItems = lineItemConverter.Read(ref reader, typeof(IEnumerable<UnderwritingAnalysisLineItem>), options);
+                            var sellerItems = lineItemConverter.Read(ref reader, typeof(List<UnderwritingAnalysisLineItem>), options);
                             value.AddSellerItems(sellerItems);
                             break;
                         case nameof(UnderwritingAnalysis.State):

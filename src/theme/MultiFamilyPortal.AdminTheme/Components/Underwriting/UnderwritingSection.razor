@@ -127,21 +127,9 @@
                                  Class="form-control"
                                  @bind-Value=@NewItem.Category>
               <ItemTemplate>
-                @{
-                  var category = Data.Models.UnderwritingCategory.GrossScheduledRent;
-                  if(context is Data.Models.UnderwritingCategory cat)
-                    category = cat;
-                }
+                @{ var category = (Data.Models.UnderwritingCategory)context; }
                 <span>@category.GetDisplayName()</span>
               </ItemTemplate>
-              <ValueTemplate>
-                @{
-                  var category = Data.Models.UnderwritingCategory.GrossScheduledRent;
-                  if(context is Data.Models.UnderwritingCategory cat)
-                    category = cat;
-                }
-                <span>@category.GetDisplayName()</span>
-              </ValueTemplate>
             </TelerikDropDownList>
           </div>
           <label for="Amount" class="col-sm-2 col-form-label">Amount</label>

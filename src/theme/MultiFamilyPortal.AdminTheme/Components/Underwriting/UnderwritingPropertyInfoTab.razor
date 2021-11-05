@@ -123,7 +123,12 @@
   <div class="col-sm-4">
     <TelerikDropDownList Data=@CostTypes
                          @bind-Value=@Property.CapXType
-                         Class="form-control"/>
+                         Class="form-control">
+      <ItemTemplate>
+        @{ var value = (Data.Models.CostType)context; }
+        @value.Humanize(LetterCasing.Title)
+      </ItemTemplate>
+    </TelerikDropDownList>
   </div>
 </div>
 
@@ -226,7 +231,12 @@
   <div class="col-sm-4">
     <TelerikDropDownList Data=@UnderwritingLoanTypes
                          @bind-Value=@Property.LoanType
-                         Class="form-control" />
+                         Class="form-control">
+      <ItemTemplate>
+        @{ var value = (Data.Models.UnderwritingLoanType)context; }
+        @value.Humanize(LetterCasing.Title)
+      </ItemTemplate>
+    </TelerikDropDownList>
   </div>
 
   @if(Property.LoanType == Data.Models.UnderwritingLoanType.Automatic)

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MultiFamilyPortal.CoreUI;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Themes;
@@ -23,6 +24,7 @@ namespace MultiFamilyPortal.Infrastructure
         }
         public async Task StartAsync()
         {
+            await SeedSiteContent();
             await SeedThemes();
             await SeedEmailTemplates();
             await SeedRoles();
@@ -33,6 +35,34 @@ namespace MultiFamilyPortal.Infrastructure
             else if(!await _userManager.Users.AnyAsync())
             {
                 await AddDefaultAccount();
+            }
+        }
+
+        private async Task SeedSiteContent()
+        {
+            var pages = new[]
+            {
+                new CustomContent
+                {
+                    Id = PortalPage.Privacy,
+                    Title = "Privacy Policy",
+                    HtmlContent = GetTemplate("privacy.html")
+                },
+                new CustomContent
+                {
+                    Id = PortalPage.Terms,
+                    Title = "Terms & Conditions",
+                    HtmlContent = GetTemplate("terms-conditions.html")
+                }
+            };
+
+            foreach(var page in pages)
+            {
+                if(!await _dbContext.CustomContent.AnyAsync(x => x.Title == page.Title))
+                {
+                    await _dbContext.CustomContent.AddAsync(page);
+                    await _dbContext.SaveChangesAsync();
+                }
             }
         }
 
@@ -56,7 +86,21 @@ namespace MultiFamilyPortal.Infrastructure
         private async Task EnsureDefaultAccountCanBeDeleted()
         {
             if (await _dbContext.UnderwritingPropertyProspects.AnyAsync(x => x.Underwriter.Email == "admin@website.com"))
-                return;
+            {
+                var adminRole = await _dbContext.Roles.FirstOrDefaultAsync(x => x.Name == PortalRoles.PortalAdministrator);
+                var userRoles = await _dbContext.UserRoles.ToArrayAsync();
+                var userRole = userRoles.FirstOrDefault(ur => ur.RoleId == adminRole.Id);
+
+                if(userRole is null)
+                    return;
+
+                var prospects = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Underwriter.Email == "admin@website.com").ToArrayAsync();
+                foreach (var prospect in prospects)
+                    prospect.UnderwriterId = userRole.UserId;
+
+                _dbContext.UnderwritingPropertyProspects.UpdateRange(prospects);
+                await _dbContext.SaveChangesAsync();
+            }
 
             var user = await _userManager.FindByEmailAsync("admin@website.com");
 

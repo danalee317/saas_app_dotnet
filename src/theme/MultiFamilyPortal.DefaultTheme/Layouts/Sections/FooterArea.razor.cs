@@ -39,7 +39,12 @@ namespace MultiFamilyPortal.DefaultTheme.Layouts.Sections
 
             using var response = await _client.PostAsJsonAsync("/api/forms/newsletter-subscriber", SignupModel);
 
-            notification.ShowSuccess("You have subscribed to our updates.");
+            if(response.IsSuccessStatusCode)
+            {
+                notification.ShowSuccess("You have subscribed to our updates.");
+                subscribed = true;
+                SignupModel = new ();
+            }
             //var subscriber = new Subscriber{IsActive = true, Email = SignupModel.Email, IpAddress = ContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString(), };
             //SiteContext.Subscribers.Add(subscriber);
             //await SiteContext.SaveChangesAsync();

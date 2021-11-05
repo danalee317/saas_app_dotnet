@@ -1,10 +1,22 @@
-﻿using System.Net;
+﻿using System.ComponentModel;
+using System.Net;
 using System.Text;
+using System.Text.Json.Serialization;
+using MultiFamilyPortal.Data.Converters;
 
 namespace MultiFamilyPortal.Data.Models
 {
     public class Subscriber
     {
+        public Subscriber() { }
+
+        [JsonConstructor, EditorBrowsable(EditorBrowsableState.Never)]
+        public Subscriber(DateTimeOffset timestamp, Guid confirmationCode)
+        {
+            _confirmationCode = confirmationCode;
+            _timestamp = timestamp;
+        }
+
         public int Id { get; set; }
 
         public string Email { get; set; }
@@ -30,6 +42,7 @@ namespace MultiFamilyPortal.Data.Models
 
         public bool UserAgentIsSpider { get; set; }
 
+        [JsonConverter(typeof(IPAddressConverter))]
         public IPAddress IpAddress { get; set; }
 
         public string Type { get; set; }
@@ -57,6 +70,7 @@ namespace MultiFamilyPortal.Data.Models
         private Guid _confirmationCode = Guid.NewGuid();
         public Guid ConfirmationCode => _confirmationCode;
 
+        [JsonIgnore]
         public List<Post> Notifications { get; set; }
 
         public string UnsubscribeCode() =>

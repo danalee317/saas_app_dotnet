@@ -5,6 +5,7 @@ using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos;
 using MultiFamilyPortal.Services;
+using SendGrid.Helpers.Mail;
 
 namespace MultiFamilyPortal.Controllers
 {
@@ -15,8 +16,25 @@ namespace MultiFamilyPortal.Controllers
     {
         private IEmailService _emailService { get; }
         private IEmailValidationService _emailValidator { get; }
+        private ITemplateProvider _templateProvider { get; }
         private IMFPContext _dbContext { get; }
         private IIpLookupService _ipLookup { get; }
+        private ISiteInfo _siteInfo { get; }
+
+        public FormsController(IMFPContext context,
+            IEmailService emailService,
+            IEmailValidationService emailValidationService,
+            IIpLookupService ipLookupService,
+            ISiteInfo siteInfo,
+            ITemplateProvider templateProvider)
+        {
+            _dbContext = context;
+            _emailService = emailService;
+            _emailValidator = emailValidationService;
+            _ipLookup = ipLookupService;
+            _siteInfo = siteInfo;
+            _templateProvider = templateProvider;
+        }
 
 
         [HttpPost("contact-us")]
@@ -27,7 +45,24 @@ namespace MultiFamilyPortal.Controllers
             if (validatorResponse.IsValid)
                 return BadRequest(validatorResponse.Message);
 
+            var url = $"{Request.Scheme}://{Request.Host}";
+            var notification = new ContactFormEmailNotification
+            {
+                DisplayName = form.Email,
+                Email = form.Email,
+                FirstName = form.Email,
+                LastName = form.Email,
+                Message = $"<p>Thank you for contacting us. One of our team members will be in touch shortly.</p>",
+                SiteTitle = _siteInfo.Title,
+                SiteUrl = url,
+                Subject = $"Investor Request {_siteInfo.Title}",
+                Year = DateTime.Now.Year
+            };
+            var message = await _templateProvider.ContactUs(notification);
+            var emailAddress = new EmailAddress(form.Email, $"{form.FirstName} {form.LastName}".Trim());
+            await _emailService.SendAsync(emailAddress, notification.Subject, message.PlainText, message.Html);
 
+            // TODO: Send email to site admins
 
             return Ok();
         }
@@ -40,6 +75,37 @@ namespace MultiFamilyPortal.Controllers
             if (validatorResponse.IsValid)
                 return BadRequest(validatorResponse.Message);
 
+            await _dbContext.InvestorProspects.AddAsync(new InvestorProspect
+            {
+                Email = form.Email,
+                FirstName = form.FirstName,
+                LastName = form.LastName,
+                LookingToInvest = form.LookingToInvest,
+                Phone = form.Phone,
+                Timezone = form.Timezone,
+            });
+
+            await _dbContext.SaveChangesAsync();
+
+            var url = $"{Request.Scheme}://{Request.Host}";
+            var notification = new ContactFormEmailNotification
+            {
+                DisplayName = form.Email,
+                Email = form.Email,
+                FirstName = form.Email,
+                LastName = form.Email,
+                Message = $"<p>Thank you for contacting us. One of our team members will be in touch shortly.</p>",
+                SiteTitle = _siteInfo.Title,
+                SiteUrl = url,
+                Subject = $"Investor Request {_siteInfo.Title}",
+                Year = DateTime.Now.Year
+            };
+            var message = await _templateProvider.ContactUs(notification);
+            var emailAddress = new EmailAddress(form.Email, $"{form.FirstName} {form.LastName}".Trim());
+            await _emailService.SendAsync(emailAddress, notification.Subject, message.PlainText, message.Html);
+
+            // TODO: Send email to site admins
+
             return Ok();
         }
 
@@ -48,7 +114,7 @@ namespace MultiFamilyPortal.Controllers
         {
             var validatorResponse = await _emailValidator.Validate(form.Email);
 
-            if (validatorResponse.IsValid)
+            if (!validatorResponse.IsValid)
                 return BadRequest(validatorResponse.Message);
 
             var blogContext = _dbContext as IBlogContext;
@@ -63,14 +129,29 @@ namespace MultiFamilyPortal.Controllers
                 Email = form.Email,
                 IpAddress = HttpContext.Connection.RemoteIpAddress,
                 Country = ipData.Country,
-                IsActive = true,
                 Region = ipData.Region,
             };
             blogContext.Subscribers.Add(subscriber);
             await blogContext.SaveChangesAsync();
 
-            // TODO: Send Notification
-            
+
+            var url = $"{Request.Scheme}://{Request.Host}";
+            var confirmationUrl = $"{url}/subscriber/confirmation/{subscriber.ConfirmationCode}";
+
+            var notification = new ContactFormEmailNotification
+            {
+                DisplayName = form.Email,
+                Email = form.Email,
+                FirstName = form.Email,
+                LastName = form.Email,
+                Message = $"<p>Thank you for signing up!<br />Before we start sending you messages, please confirm that this email address belongs to you and that you would like to recieve messages from us. Don't worry, if you didn't sign up, you won't get anything from us unless your confirm you email address.</p><div class=\"text-center\"><p><a href=\"{confirmationUrl}\">Confirm Email</a><br />Link not working? Copy and paste this url into your browser: {confirmationUrl}</p>",
+                SiteTitle = _siteInfo.Title,
+                SiteUrl = url,
+                Subject = $"Successfully subscribed to updates on {_siteInfo.Title}",
+                Year = DateTime.Now.Year
+            };
+            var message = await _templateProvider.ContactUs(notification);
+            await _emailService.SendAsync(form.Email, notification.Subject, message.PlainText, message.Html);
 
             return Ok();
         }

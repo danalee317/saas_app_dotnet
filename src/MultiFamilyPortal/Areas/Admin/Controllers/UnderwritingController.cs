@@ -18,11 +18,13 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
     [Route("/api/admin/underwriting")]
     public class UnderwritingController : ControllerBase
     {
-        private IMFPContext _dbContext { get; set; }
+        private IMFPContext _dbContext { get; }
+        private ILogger _logger { get; }
 
-        public UnderwritingController(IMFPContext dbContext)
+        public UnderwritingController(IMFPContext dbContext, ILogger<UnderwritingController> logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -34,29 +36,42 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             if (end == default)
                 end = DateTimeOffset.Now;
 
-            var query = _dbContext.UnderwritingPropertyProspects
-                .Include(x => x.Underwriter)
-                .Where(x => x.Timestamp > start && x.Timestamp < end);
-
-            if(!string.IsNullOrEmpty(underwriterId))
+            try
             {
-                query = query.Where(x => x.UnderwriterId == underwriterId);
-            }
+                if (!await _dbContext.UnderwritingPropertyProspects.Where(x => x.Timestamp > start && x.Timestamp < end).AnyAsync())
+                    return Ok(Array.Empty<ProspectPropertyResponse>());
 
-            var response = await query.Select(x => new ProspectPropertyResponse {
-                CapRate = x.CapRate,
-                City = x.City,
-                CoC = x.CashOnCash,
-                Created = x.Timestamp,
-                DebtCoverage = x.DebtCoverage,
-                Id = x.Id,
-                Name = x.Name,
-                State = x.State,
-                Underwriter = x.Underwriter.DisplayName,
-                UnderwriterEmail = x.Underwriter.Email,
-                Units = x.Units,
-            }).ToArrayAsync();
-            return Ok(response.OrderByDescending(x => x.Created));
+                var query = _dbContext.UnderwritingPropertyProspects
+                    .Include(x => x.Underwriter)
+                    .Where(x => x.Timestamp > start && x.Timestamp < end);
+
+                if (!string.IsNullOrEmpty(underwriterId))
+                {
+                    query = query.Where(x => x.UnderwriterId == underwriterId);
+                }
+
+                var response = await query.Select(x => new ProspectPropertyResponse
+                {
+                    CapRate = x.CapRate,
+                    City = x.City,
+                    CoC = x.CashOnCash,
+                    Created = x.Timestamp,
+                    DebtCoverage = x.DebtCoverage,
+                    Id = x.Id,
+                    Name = x.Name,
+                    State = x.State,
+                    Status = x.Status,
+                    Underwriter = x.Underwriter.DisplayName,
+                    UnderwriterEmail = x.Underwriter.Email,
+                    Units = x.Units,
+                }).ToArrayAsync();
+                return Ok(response.OrderByDescending(x => x.Created));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{ex.GetType().Name} encountered while fetching the Prospect Properties");
+                return BadRequest(ex);
+            }
         }
 
         [HttpGet("underwriters")]

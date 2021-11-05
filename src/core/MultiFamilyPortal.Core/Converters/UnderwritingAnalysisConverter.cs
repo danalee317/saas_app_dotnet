@@ -173,8 +173,8 @@ namespace MultiFamilyPortal.Converters
             if(value.Mortgages?.Any() ?? false)
             {
                 writer.WritePropertyName(nameof(UnderwritingAnalysis.Mortgages));
-                var converter = options.GetConverter<IEnumerable<UnderwritingAnalysisMortgage>>();
-                converter.Write(writer, value.Mortgages, options);
+                var converter = options.GetConverter<List<UnderwritingAnalysisMortgage>>();
+                converter.Write(writer, value.Mortgages.ToList(), options);
             }
 
             writer.WriteString(nameof(UnderwritingAnalysis.Name), value.Name);
@@ -182,7 +182,7 @@ namespace MultiFamilyPortal.Converters
             if(value.Notes?.Any() ?? false)
             {
                 writer.WritePropertyName(nameof(UnderwritingAnalysis.Notes));
-                var converter = options.GetConverter<IEnumerable<UnderwritingAnalysisNote>>();
+                var converter = options.GetConverter<List<UnderwritingAnalysisNote>>();
                 converter.Write(writer, value.Notes, options);
             }
 
@@ -192,8 +192,8 @@ namespace MultiFamilyPortal.Converters
             if(value.Ours?.Any() ?? false)
             {
                 writer.WritePropertyName(nameof(UnderwritingAnalysis.Ours));
-                var converter = options.GetConverter<IEnumerable<UnderwritingAnalysisLineItem>>();
-                converter.Write(writer, value.Ours, options);
+                var converter = options.GetConverter<List<UnderwritingAnalysisLineItem>>();
+                converter.Write(writer, value.Ours.ToList(), options);
             }
 
             writer.WriteNumber(nameof(UnderwritingAnalysis.PhysicalVacancy), value.PhysicalVacancy);
@@ -204,8 +204,8 @@ namespace MultiFamilyPortal.Converters
             if (value.Sellers?.Any() ?? false)
             {
                 writer.WritePropertyName(nameof(UnderwritingAnalysis.Sellers));
-                var converter = options.GetConverter<IEnumerable<UnderwritingAnalysisLineItem>>();
-                converter.Write(writer, value.Sellers, options);
+                var converter = options.GetConverter<List<UnderwritingAnalysisLineItem>>();
+                converter.Write(writer, value.Sellers.ToList(), options);
             }
 
             writer.WriteString(nameof(UnderwritingAnalysis.State), value.State);

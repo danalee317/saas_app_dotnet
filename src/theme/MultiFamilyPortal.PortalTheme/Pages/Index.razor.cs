@@ -28,11 +28,17 @@ namespace MultiFamilyPortal.PortalTheme.Pages
         private ElementReference submitForm { get; set; }
         private string _encodedUrl => HttpUtility.UrlEncode($"/account/login?username={Input.Email}&error=1");
         private LoginRequest Input { get; set; } = new LoginRequest();
-        private IEnumerable<AuthenticationScheme> ExternalLogins { get; set; }
+        private AuthenticationScheme _micrsoftScheme;
+        private AuthenticationScheme _googleScheme;
 
         protected override async Task OnInitializedAsync()
         {
-            ExternalLogins = await _signinManager.GetExternalAuthenticationSchemesAsync();
+            var externalSchemes = await _signinManager.GetExternalAuthenticationSchemesAsync();
+            if (externalSchemes?.Any() ?? false)
+            {
+                _micrsoftScheme = externalSchemes.FirstOrDefault(x => x.Name == "Microsoft");
+                _googleScheme = externalSchemes.FirstOrDefault(x => x.Name == "Google");
+            }
         }
 
         protected override void OnAfterRender(bool firstRender)

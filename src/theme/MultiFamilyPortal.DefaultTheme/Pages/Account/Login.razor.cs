@@ -28,28 +28,24 @@ namespace MultiFamilyPortal.DefaultTheme.Pages.Account
 
         private LoginRequest Input { get; set; } = new LoginRequest();
 
-        private IEnumerable<AuthenticationScheme> ExternalLogins { get; set; }
+        private AuthenticationScheme _micrsoftScheme;
+        private AuthenticationScheme _googleScheme;
 
         private ServerSideValidator serverSideValidator { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            ExternalLogins = await _signinManager.GetExternalAuthenticationSchemesAsync();
-            //var errors = new Dictionary<string, List<string>>
-            //    {
-            //        { string.Empty, new List<string>{ "Invalid Username or Password." } }
-            //    };
-            //serverSideValidator.DisplayErrors(errors);
+            var externalSchemes = await _signinManager.GetExternalAuthenticationSchemesAsync();
+            if (externalSchemes?.Any() ?? false)
+            {
+                _micrsoftScheme = externalSchemes.FirstOrDefault(x => x.Name == "Microsoft");
+                _googleScheme = externalSchemes.FirstOrDefault(x => x.Name == "Google");
+            }
         }
 
         private async Task SignInAsync(EditContext editContext)
         {
             await JSRuntime.InvokeVoidAsync("MFPortal.SubmitForm", submitForm);
-        }
-
-        private async Task ExternalLogin(AuthenticationScheme authScheme)
-        {
-            //await _signinManager.ExternalLoginSignInAsync(authScheme.)
         }
     }
 }

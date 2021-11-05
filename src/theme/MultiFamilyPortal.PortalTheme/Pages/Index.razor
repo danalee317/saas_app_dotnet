@@ -53,28 +53,24 @@
       </section>
     </div>
     <div class="col-md-12">
-      <section>
-          <h3>Use another service to log in.</h3>
-          <hr />
-          @{
-              if ((ExternalLogins?.Count() ?? 0) > 0)
+      @if(_micrsoftScheme != null || _googleScheme != null)
+      {
+        <section>
+          <h3>Or use an existing account.</h3>
+          <div>
+            <p>
+              @if(_micrsoftScheme != null)
               {
-                <div>
-                    <p>
-                      @foreach (var provider in ExternalLogins)
-                      {
-                        @if(provider.Name == "Google")
-                        {
-                          <GoogleLoginButton />
-                        }
-
-                        //<button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                      }
-                    </p>
-                  </div>
+                <OAuthLoginButton Scheme=@_micrsoftScheme />
               }
-          }
-      </section>
+              @if(_googleScheme != null)
+              {
+                <OAuthLoginButton Scheme=@_googleScheme />
+              }
+            </p>
+          </div>
+        </section>
+      }
     </div>
   </div>
 </div>

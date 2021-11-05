@@ -1,101 +1,104 @@
 ﻿<table>
   <tr>
+    <th width="300px"></th>
+    <th style="min-width:250px" class="py-2">Ours</th>
     <th></th>
-    <th style="max-width:200px">Ours</th>
-    <th></th>
-    <th style="max-width:200px">Sellers</th>
+    <th style="min-width:250px" class="py-2">Sellers</th>
   </tr>
   <tr>
-    <td><strong>Net Operating Income</strong></td>
-    <td>@Property.NOI.ToString("C")</td>
-    <td></td>
-    <td>@Property.SellerNOI.ToString("C")</td>
+    <td class="py-2"><strong>Net Operating Income</strong></td>
+    <td class="py-2">@Property.NOI.ToString("C")</td>
+    <td class="py-2"></td>
+    <td class="py-2">@Property.SellerNOI.ToString("C")</td>
   </tr>
 
   <tr>
-    <td><strong>Capital Expenditures</strong></td>
-    <td>@Property.CapXTotal</td>
-    <td>
-      @*<div class="row">
-        <div class="col-9">
-          <TelerikNumericTextBox @bind-Value=@Property.CapX
-                                 Format="C"/>
-        </div>
-        <div class="col-3">
-          <TelerikDropDownList Data=@_costTypes
-                               @bind-Value=@Property.CapXType />
-        </div>
-      </div>*@
-      <div class="input-append btn-group">
-    <input class="span2" id="appendedInputButton" size="16" type="text">
-    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-        <span class="caret"></span>
-    </a>
-    <ul class="dropdown-menu">
-        <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-        <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-        <li><a href="#"><i class="icon-ban-circle"></i> Ban</a></li>
-        <li class="divider"></li>
-        <li><a href="#"><i class="i"></i> Make admin</a></li>
-    </ul>
-</div>
+    <td class="py-2"><strong>Capital Expenditures</strong></td>
+    <td class="py-2">@Property.CapXTotal</td>
+    <td class="py-2">
+      <div class="input-group mb-3">
+        @*<TelerikNumericTextBox @bind-Value=@Property.CapX
+                               Format="C"
+                               Class="form-control" />
+        <TelerikDropDownList Data=@_costTypes
+                             @bind-Value=@Property.CapXType
+                             Class="input-group-append" />*@
+      </div>
+      
     </td>
-    <td>@Property.CapXTotal.ToString("C")</td>
+    <td class="py-2">@Property.CapXTotal.ToString("C")</td>
   </tr>
 
   <tr>
-    <td><strong>NOI after CapX</strong></td>
-    <td>@(Property.NOI - Property.CapXTotal).ToString("C")</td>
+    <td class="py-2"><strong>NOI after CapX</strong></td>
+    <td class="py-2">@ourNOIAfterCapX.ToString("C"))</td>
     <td></td>
-    <td>@(Property.SellerNOI - Property.CapXTotal).ToString("C")</td>
+    <td class="py-2">@sellerNOIAfterCapX.ToString("C"))</td>
   </tr>
 
   <tr>
-    <td>Primary Debt Service</td>
-    <td>@debtService.ToString("C")</td>
+    <td class="py-2">Primary Debt Service</td>
+    <td class="py-2">@debtService.ToString("C")</td>
     <td></td>
-    <td>@debtService.ToString("C")</td>
+    <td class="py-2">@debtService.ToString("C")</td>
   </tr>
 
   <tr>
-    <td>Secondary Debt Service</td>
-    <td>@secondaryDebtService.ToString("C")</td>
+    <td class="py-2">Secondary Debt Service</td>
+    <td class="py-2">@secondaryDebtService.ToString("C")</td>
     <td></td>
-    <td>@secondaryDebtService.ToString("C")</td>
+    <td class="py-2">@secondaryDebtService.ToString("C")</td>
   </tr>
 
   <tr>
-    <td><strong>Cash Flow Before Taxes</strong></td>
-    <td>@ourCashFlow.ToString("C")</td>
+    <td class="py-2"><strong>Cash Flow Before Taxes</strong></td>
+    <td class="py-2">@ourCashFlow.ToString("C")</td>
     <td></td>
-    <td>@sellerCashFlow.ToString("C")</td>
+    <td class="py-2">@sellerCashFlow.ToString("C")</td>
   </tr>
 
   <tr>
-    <td><strong>Cash on Cash Return</strong></td>
-    <td>@Property.CashOnCash.ToString("P")</td>
+    <td class="py-2"><strong>Cash on Cash Return</strong></td>
+    <td class="py-2">@Property.CashOnCash.ToString("P")</td>
     <td></td>
-    <td>@Property.CashOnCash.ToString("P")</td>
+    <td class="py-2">@Property.CashOnCash.ToString("P")</td>
   </tr>
 
   <tr>
-    <td><strong>Debt Coverage Ratio</strong></td>
-    <td>@Property.DebtCoverage.ToString("N2")</td>
+    <td class="py-2"><strong>Debt Coverage Ratio</strong></td>
+    <td class="py-2">@Property.DebtCoverage.ToString("N2")</td>
     <td></td>
-    <td>@Property.DebtCoverage.ToString("N2")</td>
+    <td class="py-2">@Property.DebtCoverage.ToString("N2")</td>
   </tr>
 
   <tr>
-    <td><strong>Cap Rate</strong></td>
-    <td>@Property.CapRate.ToString("P")</td>
+    <td class="py-2"><strong>Cap Rate</strong></td>
+    <td class="py-2">@Property.CapRate.ToString("P")</td>
     <td></td>
-    <td>@Property.SellerCapRate.ToString("P")</td>
+    <td class="py-2">@Property.SellerCapRate.ToString("P")</td>
   </tr>
 
   <tr>
-    <td><strong>Our Equity</strong></td>
-    <td>@((Property.OurEquityOfCF * Property.CashOnCash).ToString("P"))</td>
+    <td class="py-2"><strong>Our Equity of CF</strong></td>
+    <td class="py-2">@ourEquityCF.ToString("C")</td>
+    <td>
+      <TelerikNumericTextBox @bind-Value=@Property.OurEquityOfCF
+                             Format="P" />
+    </td>
+    <td class="py-2">@sellerCashFlow.ToString("C")</td>
+  </tr>
+
+  <tr>
+    <td class="py-2"><strong>Equity Partners Cash Flow</strong></td>
+    <td class="py-2">@ourEquityPartnerCF.ToString("C")</td>
     <td></td>
-    <td>@((Property.OurEquityOfCF * Property.CashOnCash).ToString("P"))</td>
+    <td class="py-2">@sellerEquityPartnerCF.ToString("C")</td>
+  </tr>
+
+  <tr>
+    <td class="py-2"><strong>COC Return Equity Partners</strong></td>
+    <td class="py-2">@ourEquityPartnerCoC.ToString("P")</td>
+    <td></td>
+    <td class="py-2">@sellerEquityPartnerCoC.ToString("P")</td>
   </tr>
 </table>

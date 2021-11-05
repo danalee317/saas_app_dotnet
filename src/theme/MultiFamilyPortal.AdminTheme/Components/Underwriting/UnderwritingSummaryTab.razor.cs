@@ -9,17 +9,25 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         [Parameter]
         public UnderwritingAnalysis Property { get; set; }
 
-        private double ourNOI;
-        private double sellerNOI;
+        // Note: Seller notation simply refers to using the numbers provided by the seller
+        // from the Sellers column in the Property. Our refers to the numbers from our underwriting
         private CostType[] _costTypes = new[] { CostType.PerDoor, CostType.Total };
-        private double ourNOIAfterCapX;
-        private double sellerNOIAfterCapX;
+        private double ourNOIAfterCapX => Property.NOI - Property.CapXTotal;
+        private double sellerNOIAfterCapX => Property.SellerNOI - Property.CapXTotal;
 
         private double debtService;
         private double secondaryDebtService;
 
-        private double ourCashFlow;
-        private double sellerCashFlow;
+        private double ourCashFlow => Property.NOI - Property.CapXTotal - debtService - secondaryDebtService;
+        private double sellerCashFlow => Property.SellerNOI - Property.CapXTotal - debtService - secondaryDebtService;
+        private double ourEquityCF => ourCashFlow * Property.OurEquityOfCF;
+        private double sellerEquityCF => sellerCashFlow * Property.OurEquityOfCF;
+
+        private double ourEquityPartnerCF => ourCashFlow - ourEquityCF;
+        private double sellerEquityPartnerCF => sellerCashFlow - sellerEquityCF;
+
+        private double ourEquityPartnerCoC => ourEquityPartnerCF / Property.Raise;
+        private double sellerEquityPartnerCoC => sellerEquityPartnerCF / Property.Raise;
 
         protected override void OnParametersSet()
         {
@@ -38,28 +46,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
                         .Sum();
                 }
             }
-
-            if (Property?.Ours.Any() ?? false)
-            {
-                var income = Property.Ours.Where(x => x.Category.GetLineItemType() == UnderwritingType.Income).Sum(x => x.AnnualizedTotal);
-                var expenses = Property.Ours.Where(x => x.Category.GetLineItemType() == UnderwritingType.Expense).Sum(x => x.AnnualizedTotal);
-
-                ourNOI = income - expenses;
-                ourNOIAfterCapX = ourNOI - Property.CapXTotal;
-            }
-
-            if (Property?.Sellers.Any() ?? false)
-            {
-                var income = Property.Sellers.Where(x => x.Category.GetLineItemType() == UnderwritingType.Income).Sum(x => x.AnnualizedTotal);
-                var expenses = Property.Sellers.Where(x => x.Category.GetLineItemType() == UnderwritingType.Expense).Sum(x => x.AnnualizedTotal);
-
-                sellerNOI = income - expenses;
-                sellerNOIAfterCapX = sellerNOI - Property.CapXTotal;
-            }
-
-            
-
-            
         }
     }
 }

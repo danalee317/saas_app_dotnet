@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using MultiFamilyPortal.Converters;
 using MultiFamilyPortal.Data.Models;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
 namespace MultiFamilyPortal.Dtos.Underwrting
 {
+    [JsonConverter(typeof(ReactiveObjectConverter<UnderwritingAnalysisLineItem>))]
     public class UnderwritingAnalysisLineItem : ReactiveObject
     {
         public UnderwritingAnalysisLineItem()

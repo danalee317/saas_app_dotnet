@@ -97,6 +97,8 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
                 return;
             if (string.IsNullOrEmpty(NewItem.Description))
                 NewItem.Description = NewItem.Category.GetDisplayName();
+
+            NewItem.Id = Guid.NewGuid();
             Items.Add(NewItem);
             if(Column == UnderwritingColumn.Sellers)
             {

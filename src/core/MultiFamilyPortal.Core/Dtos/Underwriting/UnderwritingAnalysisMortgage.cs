@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using MultiFamilyPortal.Converters;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
 namespace MultiFamilyPortal.Dtos.Underwrting
 {
+    [JsonConverter(typeof(ReactiveObjectConverter<UnderwritingAnalysisMortgage>))]
     public class UnderwritingAnalysisMortgage : ReactiveObject
     {
         public UnderwritingAnalysisMortgage()

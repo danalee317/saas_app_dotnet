@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reactive;
 using System.Reactive.Disposables;
@@ -368,7 +368,11 @@ namespace MultiFamilyPortal.Dtos.Underwrting
             _oursCache.Edit(x =>
             {
                 x.Clear();
-                x.AddOrUpdate(items);
+                x.AddOrUpdate(items.Select(x =>
+                {
+                    x.Id = Guid.NewGuid();
+                    return x;
+                }));
             });
         }
 

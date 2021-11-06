@@ -12,8 +12,10 @@
           <p>To find out more about how to partner with us or if you have any questions about how passive income and multi-family investing might make sense for your investment portfolio, please contact us using the form on this page.</p>
           <p>We look forward to connecting with you!</p>
           <EditForm Model=@form
-                    id="contact-form">
+                    id="contact-form"
+                    OnValidSubmit=@SubmitForm>
             <DataAnnotationsValidator />
+            <ServerSideValidator @ref="serverSideValidator" />
             <ValidationSummary />
             <div class="row">
               <div class="col-md-6">
@@ -90,6 +92,4 @@
 </div>
 <!-- CONTACT ADDRESS AREA END -->*@
 
-
-
-
+<PortalNotification @ref="notification" />

@@ -1,13 +1,18 @@
-﻿namespace MultiFamilyPortal.Dtos
-{
-    public class SubscriberNotification
-    {
-        public string Title { get; set; }
+﻿using MultiFamilyPortal.ComponentModel;
 
+namespace MultiFamilyPortal.Dtos
+{
+
+    [PartialTemplate("tag")]
+    [PartialTemplate("category")]
+    public class SubscriberNotification : HtmlTemplateBase
+    {
         public Uri Url { get; set; }
 
         public string Email { get; set; }
 
+        [PlainText]
+        [RawOutput]
         public string Summary { get; set; }
 
         public string SocialImage { get; set; }

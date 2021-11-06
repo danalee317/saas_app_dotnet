@@ -1,5 +1,4 @@
-﻿using HandlebarsDotNet;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
@@ -48,7 +47,7 @@ namespace MultiFamilyPortal.Services
                 Summary = post.Summary,
                 Tags = tags,
                 Categories = categories,
-                Title = post.Title,
+                Subject = post.Title,
                 UnsubscribeLink = new Uri(baseUri, $"unsubscribe/{post.Author.Email}?code=author"),
                 Url = postUri,
                 Year = DateTime.Now.Year
@@ -61,9 +60,9 @@ namespace MultiFamilyPortal.Services
 
             try
             {
-                var templateResult = await _templateProvider.GetSubscriberNotification(author);
+                var templateResult = await _templateProvider.GetTemplate(PortalTemplate.BlogSubscriberNotification, author);
                 var to = new EmailAddress(author.Email, author.AuthorName);
-                await _emailService.SendAsync(to, subject, templateResult.PlainText, templateResult.Html);
+                await _emailService.SendAsync(to, templateResult);
             }
             catch (Exception ex)
             {
@@ -84,17 +83,16 @@ namespace MultiFamilyPortal.Services
                         Summary = post.Summary,
                         Tags = tags,
                         Categories = categories,
-                        Title = post.Title,
-                        UnsubscribeLink = new Uri(baseUri, $"unsubscribe/{subscriber.Email}?code={subscriber.UnsubscribeCode()}"),
+                        Subject = post.Title,
+                        UnsubscribeLink = new Uri(baseUri, $"subscribers/unsubscribe/{subscriber.Email}?code={subscriber.UnsubscribeCode()}"),
                         Url = postUri,
                         Year = DateTime.Now.Year
                     };
 
-                    var templateResult = await _templateProvider.GetSubscriberNotification(notification);
+                    var templateResult = await _templateProvider.GetTemplate(PortalTemplate.BlogSubscriberNotification, notification);
                     var to = new EmailAddress(notification.Email);
-                    await _emailService.SendAsync(to, subject, templateResult.PlainText, templateResult.Html);
 
-                    if (await _emailService.SendAsync(to, subject, templateResult.PlainText, templateResult.Html))
+                    if (await _emailService.SendAsync(to, templateResult))
                     {
                         throw new Exception($"Email Service was not successful sending email");
                     }
@@ -157,16 +155,75 @@ Time: {commentNotification.CommentedOn}
 </div>
 </body>
 </html>";
-            var success = await _emailService.SendAsync(to, "Comment Notification", text, html);
+            var templateResult = new TemplateResult
+            {
+                Subject = "Comment Notification",
+                PlainText = text,
+                Html = html
+            };
+            var success = await _emailService.SendAsync(to, templateResult);
             return new SubscriberResult {
                 Success = success,
                 StatusCode = (int)200
             };
         }
 
-        private void RawOutput(EncodedTextWriter output, Context context, Arguments arguments)
+        public async Task<string> SubscriberConfirmation(Guid confirmationCode)
         {
-            output.WriteSafeString($"{context["Summary"]}");
+            var subscriber = await _context.Subscribers.FirstOrDefaultAsync(x => x.ConfirmationCode == confirmationCode);
+
+            if(subscriber != null)
+            {
+                subscriber.IsActive = true;
+                _context.Subscribers.Update(subscriber);
+                await _context.SaveChangesAsync();
+                var model = new ContactFormEmailNotification
+{
+                    DisplayName = subscriber.Email,
+                    Email = subscriber.Email,
+                    FirstName = subscriber.Email,
+                    LastName = subscriber.Email,
+                    Message = "<p>We're sorry to see you go. Your email has been successfully unsubscribed. You will no longer get emails from us.</p>",
+                    Subject = "You have successfully unsubscribed",
+                    Year = DateTime.Now.Year
+                };
+                var template = await _templateProvider.GetTemplate(PortalTemplate.ContactForm, model);
+                await _emailService.SendAsync(subscriber.Email, template);
+            }
+
+            return subscriber?.Email;
+        }
+
+        public async Task<bool> Unsubscribe(string email, string confirmationCode)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(confirmationCode))
+                return false;
+
+            var subscriber = await _context.Subscribers.FirstOrDefaultAsync(x => x.Email.ToLower() == email.ToLower());
+
+            if(subscriber is not null && confirmationCode == subscriber.UnsubscribeCode())
+            {
+                subscriber.IsActive = false;
+                subscriber.Unsubscribed = DateTimeOffset.Now;
+                _context.Subscribers.Update(subscriber);
+                await _context.SaveChangesAsync();
+
+                var model = new ContactFormEmailNotification
+                {
+                    DisplayName = email,
+                    Email = email,
+                    FirstName = email,
+                    LastName = email,
+                    Message = "<p>We're sorry to see you go. Your email has been successfully unsubscribed. You will no longer get emails from us.</p>",
+                    Subject = "You have successfully unsubscribed",
+                    Year = DateTime.Now.Year
+                };
+                var template = await _templateProvider.GetTemplate(PortalTemplate.ContactForm, model);
+                await _emailService.SendAsync(email, template);
+                return true;
+            }
+
+            return false;
         }
     }
 }

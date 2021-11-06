@@ -25,6 +25,7 @@ namespace MultiFamilyPortal.Extensions
                 .AddScoped<IIpLookupService, IpLookupService>()
                 .AddScoped<IEmailService, EmailService>()
                 .AddScoped<IEmailValidationService, EmailValidationService>()
+                .AddScoped<IFormService, FormService>()
                 .AddScoped<ISiteInfo, SiteInfo>();
 
             var config = new SiteConfiguration();

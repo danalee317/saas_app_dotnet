@@ -4,7 +4,7 @@ namespace MultiFamilyPortal.Services
 {
     public interface ITemplateProvider
     {
-        Task<TemplateResult> GetSubscriberNotification(SubscriberNotification notification);
-        Task<TemplateResult> ContactUs(ContactFormEmailNotification notification);
+        Task<TemplateResult> GetTemplate<T>(string templateName, T model)
+            where T : HtmlTemplateBase;
     }
 }

@@ -1,87 +1,60 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>{{SiteTitle}} - {{Title}}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+﻿<div class="invoice">
+  <div class="logo">
+    <a href="https://avantipoint.com">
+      <img src="https://ap-corp-site.azurewebsites.net/images/logo.png" class="mr-2 mb-1 img-fluid" />
+    </a>
+  </div>
 
-    <link rel="shortcut icon" href="{{SiteUrl}}/favicon.ico" type="image/x-icon" />
-    <link rel="icon" type="image/png" sizes="32x32" href="{{SiteUrl}}/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="{{SiteUrl}}/favicon-16x16.png" />
-    <link rel="manifest" href="{{SiteUrl}}/manifest.json" />
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="invoice-wrapper">
+          <div class="intro">
+            Hi <strong>{{Email}}</strong>,
+            <br />
+            Check out our latest post: <a href="{{Url}}" target="_blank">{{Title}}</a>
+          </div>
 
-    <!-- stylesheets -->
-    <link rel="stylesheet" type="text/css" href="https://ap-corp-site.azurewebsites.net/css/bootstrap.css" />
-    <link rel="stylesheet" type="text/css" href="https://ap-corp-site.azurewebsites.net/css/theme.min.css" />
-
-    <!-- javascript -->
-    <script src="https://ap-corp-site.azurewebsites.net/js/theme.min.js"></script>
-
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-</head>
-<body>
-  <div class="invoice">
-    <div class="logo">
-      <a href="https://avantipoint.com">
-        <img src="https://ap-corp-site.azurewebsites.net/images/logo.png" class="mr-2 mb-1 img-fluid" />
-      </a>
-    </div>
-
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="invoice-wrapper">
-            <div class="intro">
-              Hi <strong>{{Email}}</strong>,
-              <br />
-              Check out our latest post: <a href="{{Url}}" target="_blank">{{Title}}</a>
-            </div>
-
-            <div class="payment-details">
-              <div class="row">
-                <div class="col-md-8">
-                  <img src="{{SocialImage}}" onerror="this.src='https://cdn.avantipoint.com/images/default-social.png'" class="img-fluid text-center" style="max-height: 300px;margin-bottom:20px" />
-                  {{Summary}}
-                  <p>
-                    <a href="{{Url}}" class="continue-reading" target="_blank">Continue reading this post</a>
-                  </p>
+          <div class="payment-details">
+            <div class="row">
+              <div class="col-md-8">
+                <img src="{{SocialImage}}" onerror="this.src='https://cdn.avantipoint.com/images/default-social.png'" class="img-fluid text-center" style="max-height: 300px;margin-bottom:20px" />
+                {{Summary}}
+                <p>
+                  <a href="{{Url}}" class="continue-reading" target="_blank">Continue reading this post</a>
+                </p>
+              </div>
+              <div class="col-md-4">
+                <div class="text-center">
+                  <img src="{{AuthorProfilePic}}" class="avatar" />
+                  <br />
+                  <strong>{{AuthorName}}</strong>
                 </div>
-                <div class="col-md-4">
-                  <div class="text-center">
-                    <img src="{{AuthorProfilePic}}" class="avatar" />
-                    <br />
-                    <strong>{{AuthorName}}</strong>
-                  </div>
-                  <ul style="list-style: none;padding-left: 0;font-size: smaller;margin-top: 20px;">
-                    <li style="display:inline-block"><strong>Categories:</strong></li>
-                    {{#Categories}}
-                      {{> category}}
-                    {{/Categories}}
-                  </ul>
-                  <ul style="list-style: none;padding-left: 0;font-size: smaller;margin-top: 20px;">
-                    <li style="display:inline-block"><strong>Tags:</strong></li>
-                    {{#Tags}}
-                      {{> tag}}
-                    {{/Tags}}
-                  </ul>
-                </div>
+                <ul style="list-style: none;padding-left: 0;font-size: smaller;margin-top: 20px;">
+                  <li style="display:inline-block"><strong>Categories:</strong></li>
+                  {{#Categories}}
+                    {{> category}}
+                  {{/Categories}}
+                </ul>
+                <ul style="list-style: none;padding-left: 0;font-size: smaller;margin-top: 20px;">
+                  <li style="display:inline-block"><strong>Tags:</strong></li>
+                  {{#Tags}}
+                    {{> tag}}
+                  {{/Tags}}
+                </ul>
               </div>
             </div>
-
           </div>
 
-          <div class="invoice-footer">
-            Copyright © {{Year}} {{SithTitle}}
-            <p style="margin-top:20px">
-              <small>You subscribed on: {{SubscribedDate}}. <a href="{{UnsubscribeLink}}" target="_blank">Unsubscribe</a></small>
-            </p>
-          </div>
+        </div>
+
+        <div class="invoice-footer">
+          Copyright © {{Year}} {{SiteTitle}}
+          <p style="margin-top:20px">
+            <small>You subscribed on: {{SubscribedDate}}. <a href="{{UnsubscribeLink}}" target="_blank">Unsubscribe</a></small>
+          </p>
         </div>
       </div>
     </div>
   </div>
-</body>
-</html>
+</div>

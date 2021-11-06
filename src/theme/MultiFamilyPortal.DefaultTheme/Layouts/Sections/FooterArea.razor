@@ -110,9 +110,9 @@
                 <EditForm Model=@SignupModel
                           OnValidSubmit=@OnValidSignupRequest>
                   <DataAnnotationsValidator />
+                  <ValidationSummary />
                   <ServerSideValidator @ref="serverSideValidator" />
                   <InputText @bind-Value=@SignupModel.Email placeholder="Email" type="email" />
-                  @*<input type="email" name="email" placeholder="Email*">*@
                   <div class="btn-wrapper">
                     <button class="theme-btn-1 btn" type="submit"><i class="fas fa-location-arrow"></i></button>
                   </div>
@@ -135,8 +135,8 @@
         <div class="col-md-6 col-12 align-self-center">
           <div class="ltn__copyright-menu text-end">
             <ul>
-              <li><a href="/terms-conditions">Terms & Conditions</a></li>
-              <li><a href="/privacy-policy">Privacy & Policy</a></li>
+              <li><a href="/terms-conditions">Terms &amp; Conditions</a></li>
+              <li><a href="/privacy-policy">Privacy Policy</a></li>
             </ul>
           </div>
         </div>

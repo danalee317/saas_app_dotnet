@@ -1,14 +1,16 @@
-﻿namespace MultiFamilyPortal.Dtos
+﻿using MultiFamilyPortal.ComponentModel;
+
+namespace MultiFamilyPortal.Dtos
 {
-    public class ContactFormEmailNotification
+    public class ContactFormEmailNotification : HtmlTemplateBase
     {
-        public string SiteTitle { get; set; }
-        public string Subject { get; set; }
-        public string SiteUrl { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string DisplayName { get; set; }
         public string Email { get; set; }
+
+        [PlainText]
+        [RawOutput]
         public string Message { get; set; }
         public int Year { get; set; }
     }

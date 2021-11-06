@@ -58,9 +58,9 @@ namespace MultiFamilyPortal.Controllers
                 Subject = $"Investor Request {_siteInfo.Title}",
                 Year = DateTime.Now.Year
             };
-            var message = await _templateProvider.ContactUs(notification);
+            var message = await _templateProvider.GetTemplate(PortalTemplate.ContactForm, notification);
             var emailAddress = new EmailAddress(form.Email, $"{form.FirstName} {form.LastName}".Trim());
-            await _emailService.SendAsync(emailAddress, notification.Subject, message.PlainText, message.Html);
+            await _emailService.SendAsync(emailAddress, message);
 
             // TODO: Send email to site admins
 
@@ -100,9 +100,9 @@ namespace MultiFamilyPortal.Controllers
                 Subject = $"Investor Request {_siteInfo.Title}",
                 Year = DateTime.Now.Year
             };
-            var message = await _templateProvider.ContactUs(notification);
+            var message = await _templateProvider.GetTemplate(PortalTemplate.ContactForm, notification);
             var emailAddress = new EmailAddress(form.Email, $"{form.FirstName} {form.LastName}".Trim());
-            await _emailService.SendAsync(emailAddress, notification.Subject, message.PlainText, message.Html);
+            await _emailService.SendAsync(emailAddress, message);
 
             // TODO: Send email to site admins
 
@@ -134,7 +134,6 @@ namespace MultiFamilyPortal.Controllers
             blogContext.Subscribers.Add(subscriber);
             await blogContext.SaveChangesAsync();
 
-
             var url = $"{Request.Scheme}://{Request.Host}";
             var confirmationUrl = $"{url}/subscriber/confirmation/{subscriber.ConfirmationCode}";
 
@@ -150,8 +149,8 @@ namespace MultiFamilyPortal.Controllers
                 Subject = $"Successfully subscribed to updates on {_siteInfo.Title}",
                 Year = DateTime.Now.Year
             };
-            var message = await _templateProvider.ContactUs(notification);
-            await _emailService.SendAsync(form.Email, notification.Subject, message.PlainText, message.Html);
+            var message = await _templateProvider.GetTemplate(PortalTemplate.ContactForm, notification);
+            await _emailService.SendAsync(form.Email, message);
 
             return Ok();
         }

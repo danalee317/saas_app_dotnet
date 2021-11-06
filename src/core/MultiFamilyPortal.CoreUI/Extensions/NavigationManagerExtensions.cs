@@ -1,50 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace MultiFamilyPortal.CoreUI.Extensions
 {
     public static class NavigationManagerExtensions
     {
-#nullable disable
-        public static bool TryGetQueryString<T>(this NavigationManager navManager, string key, out T value)
+        public static bool TryGetQueryString(this NavigationManager navManager, string key, out string value)
         {
             var uri = navManager.ToAbsoluteUri(navManager.Uri);
-
             if (QueryHelpers.ParseQuery(uri.Query).TryGetValue(key, out var valueFromQueryString))
             {
-                if (typeof(T) == typeof(int) && int.TryParse(valueFromQueryString, out var valueAsInt))
+                value = valueFromQueryString;
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
+
+        public static bool TryGetQueryString<T>(this NavigationManager navManager, string key, out T value)
+        {
+            if(navManager.TryGetQueryString(key, out string valueAsString))
+            {
+                try
                 {
-                    value = (T)(object)valueAsInt;
+                    value = (T)Convert.ChangeType(valueAsString, typeof(T));
                     return true;
                 }
-
-                if (typeof(T) == typeof(string))
+                catch (Exception)
                 {
-                    value = (T)(object)valueFromQueryString.ToString();
-                    return true;
-                }
-
-                if (typeof(T) == typeof(decimal) && decimal.TryParse(valueFromQueryString, out var valueAsDecimal))
-                {
-                    value = (T)(object)valueAsDecimal;
-                    return true;
-                }
-
-                if (typeof(T) == typeof(Guid) && Guid.TryParse(valueFromQueryString, out var valueAsGuid))
-                {
-                    value = (T)(object)valueAsGuid;
-                    return true;
                 }
             }
 
             value = default;
             return false;
         }
-#nullable restore
     }
 }

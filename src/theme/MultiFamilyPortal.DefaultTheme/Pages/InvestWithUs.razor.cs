@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Components;
+using MultiFamilyPortal.CoreUI;
 using MultiFamilyPortal.Dtos;
+using MultiFamilyPortal.Services;
 
 namespace MultiFamilyPortal.DefaultTheme.Pages
 {
@@ -8,6 +10,25 @@ namespace MultiFamilyPortal.DefaultTheme.Pages
         [CascadingParameter]
         private ISiteInfo SiteInfo { get; set; }
 
-        private InvestorInquiryRequest form = new();
+        [Inject]
+        private IFormService _formService { get; set; }
+
+        private InvestorInquiryRequest _form => _formService?.InvestorInquiry;
+        private PortalNotification notification { get; set; } = default!;
+        private ServerSideValidator serverSideValidator { get; set; } = default!;
+        private bool submitted;
+
+        private async Task SubmitForm()
+        {
+            var response = await _formService.SubmitSubscriberSignup();
+            if (response?.Errors?.Any() ?? false)
+            {
+                serverSideValidator.DisplayErrors(response.Errors);
+                return;
+            }
+
+            notification.Show(response);
+            submitted = true;
+        }
     }
 }

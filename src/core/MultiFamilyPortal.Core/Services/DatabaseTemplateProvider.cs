@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using HandlebarsDotNet;
@@ -173,6 +174,7 @@ namespace MultiFamilyPortal.Services
         private static string ReplaceTokens<T>(in string text, T model)
         {
             var props = typeof(T).GetRuntimeProperties()
+                .Where(x => !typeof(IEnumerable).IsAssignableFrom(x.PropertyType))
                 .ToDictionary(x => x.Name, x => GetFormattedValue(x, model));
 
             var output = text;

@@ -102,7 +102,9 @@ namespace MultiFamilyPortal.Infrastructure
                 await _dbContext.SaveChangesAsync();
             }
 
-            var user = await _userManager.FindByEmailAsync("admin@website.com");
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == "admin@website.com");
+            if (user is null)
+                return;
 
             var highlightedUser = await _dbContext.HighlightedUsers.FirstOrDefaultAsync(x => x.UserId == user.Id);
             var goals = await _dbContext.UnderwriterGoals.FirstOrDefaultAsync(x => x.UnderwriterId == user.Id);
@@ -129,6 +131,7 @@ namespace MultiFamilyPortal.Infrastructure
                 LastName = "User",
                 Email = "admin@website.com" ,
                 EmailConfirmed = true,
+                PhoneNumber = "6195554545",
                 Title = "Demo User",
                 Bio = "This is a demo user. Be sure to set up an account and delete this user when you are done."
             };
@@ -190,14 +193,14 @@ namespace MultiFamilyPortal.Infrastructure
             var defaultTemplates = new[] {
                 new EmailTemplate {
                     Key = "subscribernotification",
-                    Model = typeof(Dtos.SubscriberNotification).FullName,
+                    Model = typeof(Dtos.SubscriberNotification).AssemblyQualifiedName,
                     Html = GetTemplate("subscribernotification.html"),
                     PlainText = GetTemplate("subscribernotification.txt"),
                     LastUpdated = DateTimeOffset.Now
                 },
                 new EmailTemplate {
                     Key = "contact-form",
-                    Model = typeof(Dtos.ContactFormEmailNotification).FullName,
+                    Model = typeof(Dtos.ContactFormEmailNotification).AssemblyQualifiedName,
                     Html = GetTemplate("contact-form.html"),
                     PlainText = GetTemplate("contact-form.txt"),
                     LastUpdated = DateTimeOffset.Now

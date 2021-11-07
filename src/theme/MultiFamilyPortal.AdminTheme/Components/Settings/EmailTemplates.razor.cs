@@ -1,28 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using System.Net.Http;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.JSInterop;
-using MultiFamilyPortal.AdminTheme.Components;
-using MultiFamilyPortal.AdminTheme.Models;
-using MultiFamilyPortal.Authentication;
-using MultiFamilyPortal.CoreUI;
-using MultiFamilyPortal.Extensions;
-using Telerik.Blazor;
-using Telerik.Blazor.Components;
-using Telerik.Blazor.Components.Editor;
-using MultiFamilyPortal.Collections;
-using MultiFamilyPortal.Data.Models;
+using System.Collections;
 using System.Net.Http.Json;
+using System.Reflection;
+using Microsoft.AspNetCore.Components;
+using MultiFamilyPortal.Collections;
+using MultiFamilyPortal.CoreUI;
+using MultiFamilyPortal.Data.Models;
+using Telerik.Blazor.Components;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Settings
 {
@@ -35,6 +18,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
 
         private EmailTemplate _selected;
         private PortalNotification notification;
+        private IEnumerable<TemplateVariableDefinition> _definitions;
 
         protected override async Task OnInitializedAsync()
         {
@@ -43,7 +27,24 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
 
         private void OnEditItem(GridCommandEventArgs args)
         {
+            _definitions = Array.Empty<TemplateVariableDefinition>();
             _selected = args.Item as EmailTemplate;
+            var type = Type.GetType(_selected.Model);
+            if (type is null)
+                return;
+
+            _definitions = type.GetRuntimeProperties()
+                .Select(x => new TemplateVariableDefinition
+                {
+                    Name = x.Name,
+                    PartialTemplate = x.PropertyType != typeof(string) && typeof(IEnumerable).IsAssignableFrom(x.PropertyType)
+                });
+        }
+
+        private record TemplateVariableDefinition
+        {
+            public string Name { get; init; }
+            public bool PartialTemplate { get; init; }
         }
 
         private async Task OnUpdateTemplate()

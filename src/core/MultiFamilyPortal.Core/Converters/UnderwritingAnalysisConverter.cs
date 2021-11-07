@@ -13,7 +13,7 @@ namespace MultiFamilyPortal.Converters
             var value = new UnderwritingAnalysis();
 
             var lineItemConverter = options.GetConverter<List<UnderwritingAnalysisLineItem>>();
-            while (reader.Read())
+            while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
             {
                 var type = reader.TokenType;
                 if(reader.TokenType == JsonTokenType.PropertyName)

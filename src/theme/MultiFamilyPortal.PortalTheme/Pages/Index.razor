@@ -21,6 +21,7 @@
         <EditForm Model=@Input
                   OnValidSubmit=@SignInAsync>
           <DataAnnotationsValidator />
+          <ServerSideValidator @ref="serverSideValidator" />
           <ValidationSummary />
           <div class="form-floating my-2">
             <InputText @bind-Value=@Input.Email class="form-control" autocomplete="username" aria-required="true" />

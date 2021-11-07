@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.JSInterop;
 using MultiFamilyPortal.CoreUI;
+using MultiFamilyPortal.CoreUI.Extensions;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos;
 
@@ -31,8 +32,13 @@ namespace MultiFamilyPortal.PortalTheme.Pages
         private AuthenticationScheme _micrsoftScheme;
         private AuthenticationScheme _googleScheme;
 
+        private ServerSideValidator serverSideValidator { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
+            if (_navigationManager.TryGetQueryString("username", out var email))
+                Input.Email = email;
+
             var externalSchemes = await _signinManager.GetExternalAuthenticationSchemesAsync();
             if (externalSchemes?.Any() ?? false)
             {
@@ -43,11 +49,22 @@ namespace MultiFamilyPortal.PortalTheme.Pages
 
         protected override void OnAfterRender(bool firstRender)
         {
-            if(firstRender && _user.Identity.IsAuthenticated && _user.IsInAnyRole(PortalRoles.Mentor, PortalRoles.BlogAuthor, PortalRoles.Underwriter, PortalRoles.PortalAdministrator))
+            if(firstRender)
             {
-                _navigationManager.NavigateTo("/admin", true);
-                return;
+                if(_user.Identity.IsAuthenticated && _user.IsInAnyRole(PortalRoles.Mentor, PortalRoles.BlogAuthor, PortalRoles.Underwriter, PortalRoles.PortalAdministrator))
+                {
+                    _navigationManager.NavigateTo("/admin", true);
+                    return;
+                }
+                else if (_navigationManager.TryGetQueryString("error", out var error) &&
+                    (error.Equals("1") || error.Equals(bool.TrueString, StringComparison.OrdinalIgnoreCase)))
+                    serverSideValidator.DisplayErrors(new Dictionary<string, List<string>>
+                {
+                    { string.Empty, new List<string> { "Invalid username or password." } }
+                });
             }
+
+            
         }
 
         private async Task SignInAsync(EditContext editContext)

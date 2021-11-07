@@ -34,7 +34,7 @@
 
 @if(Scheme != null)
 {
-  <form method="post" action="/api/authentication/externallogin?callbackUrl=@_navigationManager.Uri" @ref="form">
+  <form method="post" action="/api/authentication/external?callbackUrl=@_navigationManager.Uri" @ref="form">
     <input type="hidden" name="Name" value="@Scheme.Name" />
   </form>
 }

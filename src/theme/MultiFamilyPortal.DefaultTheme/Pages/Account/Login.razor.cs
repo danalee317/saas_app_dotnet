@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using MultiFamilyPortal.CoreUI;
+using MultiFamilyPortal.CoreUI.Extensions;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos;
 using Microsoft.JSInterop;
@@ -35,12 +36,25 @@ namespace MultiFamilyPortal.DefaultTheme.Pages.Account
 
         protected override async Task OnInitializedAsync()
         {
+            if (_navigationManager.TryGetQueryString("username", out var email))
+                Input.Email = email;
+
             var externalSchemes = await _signinManager.GetExternalAuthenticationSchemesAsync();
             if (externalSchemes?.Any() ?? false)
             {
                 _micrsoftScheme = externalSchemes.FirstOrDefault(x => x.Name == "Microsoft");
                 _googleScheme = externalSchemes.FirstOrDefault(x => x.Name == "Google");
             }
+        }
+
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if (firstRender && _navigationManager.TryGetQueryString("error", out var error) &&
+                    (error.Equals("1") || error.Equals(bool.TrueString, StringComparison.OrdinalIgnoreCase)))
+                serverSideValidator.DisplayErrors(new Dictionary<string, List<string>>
+                {
+                    { string.Empty, new List<string> { "Invalid username or password." } }
+                });
         }
 
         private async Task SignInAsync(EditContext editContext)

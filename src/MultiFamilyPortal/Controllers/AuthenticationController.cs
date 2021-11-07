@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos;
 
@@ -28,7 +29,7 @@ namespace MultiFamilyPortal.Controllers
             if (string.IsNullOrEmpty(returnUrl))
                 returnUrl = "/";
 
-            if(!ModelState.IsValid || string.IsNullOrEmpty(loginRequest?.Email))
+            if (!ModelState.IsValid || string.IsNullOrEmpty(loginRequest?.Email))
             {
                 return Redirect(returnUrl);
             }
@@ -76,13 +77,13 @@ namespace MultiFamilyPortal.Controllers
 
         [AllowAnonymous]
         [HttpPost("external")]
-        public async Task<IActionResult> ExternalLogin([FromForm]AuthenticationScheme requestedScheme, string callbackUrl)
+        public async Task<IActionResult> ExternalLogin([FromForm] ExternalLoginProvider loginProvider, string callbackUrl)
         {
             var externalSchemes = await _signInManager.GetExternalAuthenticationSchemesAsync();
             if (string.IsNullOrEmpty(callbackUrl))
                 callbackUrl = "/";
 
-            var scheme = externalSchemes.FirstOrDefault(x => x.Name == requestedScheme.Name);
+            var scheme = externalSchemes.FirstOrDefault(x => x.Name == loginProvider.Name);
             if (scheme == null)
                 return Redirect(callbackUrl);
 
@@ -99,16 +100,36 @@ namespace MultiFamilyPortal.Controllers
             if (info is null)
                 return Redirect("/");
 
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrEmpty(email))
+                return Redirect("/");
+
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == email);
+            if (user is null)
+                return Redirect("/");
+
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+
+            if(!result.Succeeded)
+            {
+                var identityResult = await _userManager.AddLoginAsync(user, info);
+                if(identityResult.Succeeded)
+                    result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
+            }
+
             if (result.IsLockedOut)
                 return Redirect("/account/lockout");
 
             if (!result.Succeeded)
                 return Redirect("/");
 
-            if (info.Principal.IsInAnyRole(PortalRoles.Underwriter, PortalRoles.Mentor, PortalRoles.BlogAuthor, PortalRoles.PortalAdministrator))
+            if (await _userManager.IsInRoleAsync(user, PortalRoles.PortalAdministrator) ||
+                await _userManager.IsInRoleAsync(user, PortalRoles.Underwriter) ||
+                await _userManager.IsInRoleAsync(user, PortalRoles.BlogAuthor) ||
+                await _userManager.IsInRoleAsync(user, PortalRoles.Mentor))
                 return Redirect("/admin");
-            else if (info.Principal.IsInAnyRole(PortalRoles.Investor, PortalRoles.Sponsor))
+            else if (await _userManager.IsInRoleAsync(user, PortalRoles.Investor) ||
+                await _userManager.IsInRoleAsync(user, PortalRoles.Sponsor))
                 return Redirect("/investor-portal");
 
             return Redirect("/");

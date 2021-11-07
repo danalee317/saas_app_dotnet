@@ -1,6 +1,6 @@
 ﻿@if(!string.IsNullOrEmpty(Link))
 {
-    <li><a href="@Link" title="@Title"><i class="@Icon"></i></a></li>
+    <li><a href="@ValidatedLink()" title="@Title"><i class="@Icon"></i></a></li>
 }
 
 @code {
@@ -12,4 +12,26 @@
 
     [Parameter]
     public string Icon { get; set; }
+
+    private string ValidatedLink()
+    {
+        if (Link.StartsWith("http://") || Link.StartsWith("https://"))
+            return Link;
+
+        switch(Title)
+        {
+            case "Facebook":
+                return $"https://facebook.com/{Link}";
+            case "Twitter":
+                return $"https://twitter.com/{Link}";
+            case "LinkedIn":
+                return $"https://linkedin.com/in/{Link}";
+            case "Instagram":
+                return $"https://instagram.com/{Link}";
+            case "YouTube":
+                return $"https://youtube.com/{Link}";
+            default:
+                return "#";
+        }
+    }
 }

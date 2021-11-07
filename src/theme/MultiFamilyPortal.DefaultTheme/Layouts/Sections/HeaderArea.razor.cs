@@ -7,6 +7,7 @@ namespace MultiFamilyPortal.DefaultTheme.Layouts.Sections
     {
         [CascadingParameter]
         private ISiteInfo SiteInfo { get; set; } = default !;
+
         [CascadingParameter]
         public ClaimsPrincipal User { get; set; } = default !;
     }

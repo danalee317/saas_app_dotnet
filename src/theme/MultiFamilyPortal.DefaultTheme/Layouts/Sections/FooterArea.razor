@@ -1,4 +1,6 @@
-﻿<footer class="ltn__footer-area  ">
+﻿@using MultiFamilyPortal.Authentication
+
+<footer class="ltn__footer-area  ">
   <div class="footer-top-area  section-bg-2 plr--5">
     <div class="container-fluid">
       <div class="row">
@@ -80,18 +82,18 @@
             <h4 class="footer-title">Investors</h4>
             <div class="footer-menu">
               <ul>
-                <li><a href="/investor-portal">Investor Portal</a></li>
-                <AuthorizeView>
-                  <Authorized>
-                    <li>
-                      <a href="/logout" class="nav-link btn btn-link">Log out</a>
-                    </li>
-                  </Authorized>
-                  @*<NotAuthorized>
-                    <a href="Identity/Account/Register">Register</a>
-                    <a href="Identity/Account/Login">Log in</a>
-                  </NotAuthorized>*@
-                </AuthorizeView>
+                @if(!User.Identity.IsAuthenticated)
+                {
+                  <li><a href="/account/login">Log in</a></li>
+                }
+                <AuthorizedPolicy Policy=@PortalPolicy.AdminPortalViewer>
+                  <li><a href="/admin">Admin Portal</a></li>
+                  <li><a href="/logout">Sign out</a></li>
+                </AuthorizedPolicy>
+                <AuthorizedPolicy Policy=@PortalPolicy.InvestorPortalViewer>
+                  <li><a href="/investor-portal">Investor Portal</a></li>
+                  <li><a href="/logout">Sign out</a></li>
+                </AuthorizedPolicy>
               </ul>
             </div>
           </div>

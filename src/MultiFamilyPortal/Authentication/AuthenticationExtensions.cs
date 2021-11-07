@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
@@ -26,6 +26,8 @@ namespace MultiFamilyPortal.Authentication
                     builder.RequireRole(PortalRoles.PortalAdministrator, PortalRoles.Underwriter));
                 options.AddPolicy(PortalPolicy.UnderwritingViewer, builder =>
                     builder.RequireRole(PortalRoles.PortalAdministrator, PortalRoles.Underwriter, PortalRoles.Mentor, PortalRoles.BlogAuthor));
+                options.AddPolicy(PortalPolicy.InvestorPortalViewer, builder =>
+                    builder.RequireRole(PortalRoles.Investor, PortalRoles.Sponsor));
             });
 
             services.AddIdentity<SiteUser, IdentityRole>(options =>
@@ -63,7 +65,7 @@ namespace MultiFamilyPortal.Authentication
             //    //.AddRoles<IdentityRole>()
             //    .AddEntityFrameworkStores<MFPContext>();
             var authBuilder = services.AddAuthentication();
-            if(!string.IsNullOrEmpty(options.Google?.ClientId) && !string.IsNullOrEmpty(options.Google?.ClientSecret))
+            if (!string.IsNullOrEmpty(options.Google?.ClientId) && !string.IsNullOrEmpty(options.Google?.ClientSecret))
             {
                 authBuilder.AddGoogle(google =>
                 {

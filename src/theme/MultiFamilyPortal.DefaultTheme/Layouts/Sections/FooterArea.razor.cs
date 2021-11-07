@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MultiFamilyPortal.CoreUI;
@@ -10,6 +11,9 @@ namespace MultiFamilyPortal.DefaultTheme.Layouts.Sections
     {
         [CascadingParameter]
         private ISiteInfo SiteInfo { get; set; } = default!;
+
+        [CascadingParameter]
+        public ClaimsPrincipal User { get; set; } = default!;
 
         [Inject]
         private IFormService _formService { get; set; } = default!;

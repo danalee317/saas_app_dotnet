@@ -33,22 +33,29 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
         private UnderwritingAnalysisLineItem NewItem;
         private UnderwritingAnalysisLineItem EditItem;
-        private readonly ObservableRangeCollection<UnderwritingAnalysisLineItem> Items = new ObservableRangeCollection<UnderwritingAnalysisLineItem>();
-        private IEnumerable<ExpenseSheetType> ExpenseTypes = new[]{ExpenseSheetType.T12, ExpenseSheetType.T6, ExpenseSheetType.T4, ExpenseSheetType.T3, ExpenseSheetType.T1};
-
-        private IEnumerable<UnderwritingAnalysisLineItem> _allItems =>
-            Column == UnderwritingColumn.Sellers ? Property.Sellers : Property.Ours;
-        protected override void OnInitialized()
+        private IEnumerable<UnderwritingAnalysisLineItem> Items
         {
-            if(Column == UnderwritingColumn.Sellers)
+            get
             {
-                Items.ReplaceRange(Property.Sellers.Where(x => x.Category.GetLineItemType() == Type).OrderBy(x => x.Category));
-            }
-            else
-            {
-                Items.ReplaceRange(Property.Ours.Where(x => x.Category.GetLineItemType() == Type).OrderBy(x => x.Category));
+                if (Property is null)
+                    return Array.Empty<UnderwritingAnalysisLineItem>();
+
+                if(Column == UnderwritingColumn.Sellers)
+                {
+                    if (Type == UnderwritingType.Income)
+                        return Property.SellerIncome;
+
+                    return Property.SellerExpense;
+                }
+
+                if (Type == UnderwritingType.Income)
+                    return Property.OurIncome;
+
+                return Property.OurExpense;
             }
         }
+
+        private IEnumerable<ExpenseSheetType> ExpenseTypes => Enum.GetValues<ExpenseSheetType>();
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -66,7 +73,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
                 await grid.SetState(desiredState);
             }
         }
-
 
         private IEnumerable<UnderwritingCategory> AllowableCategories()
         {
@@ -87,6 +93,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         {
             NewItem = new UnderwritingAnalysisLineItem()
             {
+                Category = Type == UnderwritingType.Income ? UnderwritingCategory.GrossScheduledRent : UnderwritingCategory.Taxes,
                 ExpenseType = ExpenseSheetType.T12
             };
         }
@@ -99,7 +106,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
                 NewItem.Description = NewItem.Category.GetDisplayName();
 
             NewItem.Id = Guid.NewGuid();
-            Items.Add(NewItem);
+
             if(Column == UnderwritingColumn.Sellers)
             {
                 Property.AddSellerItem(NewItem);
@@ -133,7 +140,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private void OnDelete(GridCommandEventArgs args)
         {
             var item = args.Item as UnderwritingAnalysisLineItem;
-            Items.Remove(item);
+
             if(Column == UnderwritingColumn.Sellers)
             {
                 Property.RemoveSellerItem(item);
@@ -142,6 +149,17 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             {
                 Property.RemoveOurItem(item);
             }
+        }
+
+        private double CalculatePercent(UnderwritingAnalysisLineItem item)
+        {
+            var allItems = Column == UnderwritingColumn.Sellers ? Property.Sellers : Property.Ours;
+            var gsr = allItems.FirstOrDefault(x => x.Category == UnderwritingCategory.GrossScheduledRent);
+            if (gsr is null)
+                return 0;
+
+            var percent = item.AnnualizedTotal / gsr.AnnualizedTotal;
+            return percent;
         }
 
         private static readonly IEnumerable<UnderwritingCategory> IncomeCategories =

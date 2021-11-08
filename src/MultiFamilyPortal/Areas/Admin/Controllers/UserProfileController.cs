@@ -28,6 +28,9 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
+            var roles = await _dbContext.Roles.ToArrayAsync();
+            var userRoles = await _dbContext.UserRoles.ToArrayAsync();
+
             var email = User.FindFirstValue(ClaimTypes.Email);
             var user = await _dbContext.Users
                 .Include(x => x.Goals)
@@ -42,10 +45,24 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                Goals = user.Goals,
                 PhoneNumber = user.PhoneNumber,
                 SocialLinks = user.SocialLinks,
             };
+
+            if(userRoles.Any(ur => ur.UserId == user.Id && roles.Any(r => r.Id == ur.RoleId && (r.Name == PortalRoles.PortalAdministrator || r.Name == PortalRoles.Underwriter))))
+            {
+                response.Goals = user.Goals;
+                if(response.Goals is null)
+                {
+                    var goals = new UnderwriterGoal
+                    {
+                        UnderwriterId = user.Id
+                    };
+                    await _dbContext.AddAsync(goals);
+                    await _dbContext.SaveChangesAsync();
+                    response.Goals = goals;
+                }
+            }
 
             return Ok(response);
         }

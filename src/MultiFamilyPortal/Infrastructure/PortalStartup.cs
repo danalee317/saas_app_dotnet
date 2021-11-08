@@ -178,12 +178,15 @@ namespace MultiFamilyPortal.Infrastructure
 
         private async Task SeedEmailTemplates()
         {
-            var defaultPartials = new[] {
-                new EmailPartialTemplate {
+            var defaultPartials = new[]
+            {
+                new EmailPartialTemplate
+                {
                     Key = "category",
                     Content = GetTemplate("category.html")
                 },
-                new EmailPartialTemplate {
+                new EmailPartialTemplate
+                {
                     Key = "tag",
                     Content = GetTemplate("tag.html")
                 }
@@ -197,21 +200,44 @@ namespace MultiFamilyPortal.Infrastructure
                 }
             }
 
-            var defaultTemplates = new[] {
-                new EmailTemplate {
-                    Key = "subscribernotification",
+            var defaultTemplates = new[]
+            {
+                new EmailTemplate
+                {
+                    Key = PortalTemplate.BlogSubscriberNotification,
+                    Description = "Sent to subscribers when a Blog Post or Newsletter is published",
                     Model = typeof(Dtos.SubscriberNotification).AssemblyQualifiedName,
                     Html = GetTemplate("subscribernotification.html"),
                     PlainText = GetTemplate("subscribernotification.txt"),
                     LastUpdated = DateTimeOffset.Now
                 },
-                new EmailTemplate {
-                    Key = "contact-form",
+                new EmailTemplate
+                {
+                    Key = PortalTemplate.ContactMessage,
+                    Description = "This may be used when sending messages to users such as password resets, or confirmation messages",
                     Model = typeof(Dtos.ContactFormEmailNotification).AssemblyQualifiedName,
-                    Html = GetTemplate("contact-form.html"),
-                    PlainText = GetTemplate("contact-form.txt"),
+                    Html = GetTemplate("contact-message.html"),
+                    PlainText = GetTemplate("contact-message.txt"),
                     LastUpdated = DateTimeOffset.Now
-                }
+                },
+                new EmailTemplate
+                {
+                    Key = PortalTemplate.ContactNotification,
+                    Description = "This is sent to the public Email address for the website. This will contain the contents of the contact form",
+                    Model = typeof(Dtos.ContactNotificationTemplate).AssemblyQualifiedName,
+                    Html = GetTemplate("contact-notification.html"),
+                    PlainText = GetTemplate("contact-notification.txt"),
+                    LastUpdated = DateTimeOffset.Now
+                },
+                new EmailTemplate
+                {
+                    Key = PortalTemplate.InvestorNotification,
+                    Description = "This is sent to the public Email address for the website. This will contain the contents of the investor contact form",
+                    Model = typeof(Dtos.InvestorInquiryNotificationTemplate).AssemblyQualifiedName,
+                    Html = GetTemplate("investor-notification.html"),
+                    PlainText = GetTemplate("investor-notification.txt"),
+                    LastUpdated = DateTimeOffset.Now
+                },
             };
 
             foreach (var template in defaultTemplates)

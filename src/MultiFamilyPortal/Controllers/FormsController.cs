@@ -46,7 +46,19 @@ namespace MultiFamilyPortal.Controllers
                 return BadRequest(validatorResponse.Message);
 
             var url = $"{Request.Scheme}://{Request.Host}";
-            var notification = new ContactFormEmailNotification
+            var notification = new ContactNotificationTemplate
+            {
+                Comments = form.Comments,
+                Email = form.Email,
+                FirstName = form.FirstName,
+                LastName = form.LastName,
+                Phone = form.Phone,
+                Subject = "Contact Form Request"
+            };
+            var notificationMessage = await _templateProvider.GetTemplate(PortalTemplate.ContactNotification, notification);
+            await _emailService.SendAsync(notificationMessage);
+
+            var userNotification = new ContactFormEmailNotification
             {
                 DisplayName = form.Email,
                 Email = form.Email,
@@ -58,11 +70,9 @@ namespace MultiFamilyPortal.Controllers
                 Subject = $"Investor Request {_siteInfo.Title}",
                 Year = DateTime.Now.Year
             };
-            var message = await _templateProvider.GetTemplate(PortalTemplate.ContactForm, notification);
+            var userMessage = await _templateProvider.GetTemplate(PortalTemplate.ContactMessage, userNotification);
             var emailAddress = new EmailAddress(form.Email, $"{form.FirstName} {form.LastName}".Trim());
-            await _emailService.SendAsync(emailAddress, message);
-
-            // TODO: Send email to site admins
+            await _emailService.SendAsync(emailAddress, userMessage);
 
             return Ok();
         }
@@ -88,7 +98,21 @@ namespace MultiFamilyPortal.Controllers
             await _dbContext.SaveChangesAsync();
 
             var url = $"{Request.Scheme}://{Request.Host}";
-            var notification = new ContactFormEmailNotification
+            var notification = new InvestorInquiryNotificationTemplate
+            {
+                Comments = form.Comments,
+                Email = form.Email,
+                FirstName = form.FirstName,
+                LastName = form.LastName,
+                Phone = form.Phone,
+                LookingToInvest = form.LookingToInvest.ToString("C"),
+                Timezone = form.Timezone,
+                Subject = $"Investor Inquiry - {form.FirstName} {form.LastName}"
+            };
+            var notificationMessage = await _templateProvider.GetTemplate(PortalTemplate.InvestorNotification, notification);
+            await _emailService.SendAsync(notificationMessage);
+
+            var investorInquiryNotification = new ContactFormEmailNotification
             {
                 DisplayName = form.Email,
                 Email = form.Email,
@@ -100,11 +124,9 @@ namespace MultiFamilyPortal.Controllers
                 Subject = $"Investor Request {_siteInfo.Title}",
                 Year = DateTime.Now.Year
             };
-            var message = await _templateProvider.GetTemplate(PortalTemplate.ContactForm, notification);
+            var investorMessage = await _templateProvider.GetTemplate(PortalTemplate.ContactMessage, investorInquiryNotification);
             var emailAddress = new EmailAddress(form.Email, $"{form.FirstName} {form.LastName}".Trim());
-            await _emailService.SendAsync(emailAddress, message);
-
-            // TODO: Send email to site admins
+            await _emailService.SendAsync(emailAddress, investorMessage);
 
             return Ok();
         }
@@ -149,7 +171,7 @@ namespace MultiFamilyPortal.Controllers
                 Subject = $"Successfully subscribed to updates on {_siteInfo.Title}",
                 Year = DateTime.Now.Year
             };
-            var message = await _templateProvider.GetTemplate(PortalTemplate.ContactForm, notification);
+            var message = await _templateProvider.GetTemplate(PortalTemplate.ContactMessage, notification);
             await _emailService.SendAsync(form.Email, message);
 
             return Ok();

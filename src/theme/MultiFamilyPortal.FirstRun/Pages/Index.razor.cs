@@ -204,7 +204,7 @@ namespace MultiFamilyPortal.FirstRun.Pages
                     Message = "<p>Congratulations your website has been configured and is now ready to use.</p>",
                     Subject = "Portal Configured"
                 };
-                var template = await _templateProvider.GetTemplate(PortalTemplate.ContactForm, model);
+                var template = await _templateProvider.GetTemplate(PortalTemplate.ContactMessage, model);
                 var emailAddress = new EmailAddress(user.Email, user.DisplayName);
                 await _emailService.SendAsync(emailAddress, template);
 

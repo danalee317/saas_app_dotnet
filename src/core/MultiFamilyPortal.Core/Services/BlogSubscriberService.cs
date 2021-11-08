@@ -187,7 +187,7 @@ Time: {commentNotification.CommentedOn}
                     Subject = "You have successfully unsubscribed",
                     Year = DateTime.Now.Year
                 };
-                var template = await _templateProvider.GetTemplate(PortalTemplate.ContactForm, model);
+                var template = await _templateProvider.GetTemplate(PortalTemplate.ContactMessage, model);
                 await _emailService.SendAsync(subscriber.Email, template);
             }
 
@@ -218,7 +218,7 @@ Time: {commentNotification.CommentedOn}
                     Subject = "You have successfully unsubscribed",
                     Year = DateTime.Now.Year
                 };
-                var template = await _templateProvider.GetTemplate(PortalTemplate.ContactForm, model);
+                var template = await _templateProvider.GetTemplate(PortalTemplate.ContactMessage, model);
                 await _emailService.SendAsync(email, template);
                 return true;
             }

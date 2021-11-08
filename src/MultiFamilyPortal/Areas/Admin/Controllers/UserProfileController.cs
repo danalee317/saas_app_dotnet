@@ -182,7 +182,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 Subject = $"{siteTitle} - Password Reset",
                 Year = DateTime.Now.Year,
             };
-            var templateResult = await templateProvider.GetTemplate(PortalTemplate.ContactForm, notification);
+            var templateResult = await templateProvider.GetTemplate(PortalTemplate.ContactMessage, notification);
 
             var emailAddress = new EmailAddress(user.Email, user.DisplayName);
             await emailService.SendAsync(emailAddress, templateResult);

@@ -1,4 +1,4 @@
-﻿using HandlebarsDotNet;
+using HandlebarsDotNet;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.Data;
@@ -20,6 +20,15 @@ namespace MultiFamilyPortal.Services
             _logger = loggerFactory.CreateLogger<EmailService>();
             _client = client;
             _context = context;
+        }
+
+        public async Task<bool> SendAsync(TemplateResult template)
+        {
+            var fromEmail = await _context.GetSettingAsync<string>(PortalSetting.NotificationEmail);
+            var fromEmailName = await _context.GetSettingAsync<string>(PortalSetting.NotificationEmailFrom);
+            var toEmail = await _context.GetSettingAsync<string>(PortalSetting.ContactEmail);
+
+            return await SendAsync(new EmailAddress(fromEmail, fromEmailName), new EmailAddress(toEmail, fromEmailName), template);
         }
 
         public async Task<bool> SendAsync(string to, TemplateResult template)

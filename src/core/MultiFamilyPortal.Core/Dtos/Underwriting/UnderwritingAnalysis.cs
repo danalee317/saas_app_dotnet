@@ -1,4 +1,5 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reactive;
 using System.Reactive.Disposables;
@@ -18,7 +19,11 @@ namespace MultiFamilyPortal.Dtos.Underwrting
     {
         private readonly CompositeDisposable _disposable;
         private ReadOnlyObservableCollection<UnderwritingAnalysisLineItem> _sellersLineItems;
+        private ReadOnlyObservableCollection<UnderwritingAnalysisLineItem> _sellersIncomeItems;
+        private ReadOnlyObservableCollection<UnderwritingAnalysisLineItem> _sellersExpenseItems;
         private ReadOnlyObservableCollection<UnderwritingAnalysisLineItem> _ourLineItems;
+        private ReadOnlyObservableCollection<UnderwritingAnalysisLineItem> _ourIncomeItems;
+        private ReadOnlyObservableCollection<UnderwritingAnalysisLineItem> _ourExpenseItems;
         private ReadOnlyObservableCollection<UnderwritingAnalysisMortgage> _mortgages;
         private readonly SourceCache<UnderwritingAnalysisLineItem, Guid> _sellersCache;
         private readonly SourceCache<UnderwritingAnalysisLineItem, Guid> _oursCache;
@@ -29,12 +34,20 @@ namespace MultiFamilyPortal.Dtos.Underwrting
         private ObservableAsPropertyHelper<double> _closingCostOther;
         private ObservableAsPropertyHelper<double> _closingCosts;
         private ObservableAsPropertyHelper<double> _aquisitionFee;
+
+        // Seller
+        private ObservableAsPropertyHelper<double> _sellerIncome;
+        private ObservableAsPropertyHelper<double> _sellerExpenses;
         private ObservableAsPropertyHelper<double> _sellerCashOnCash;
-        private ObservableAsPropertyHelper<double> _cashOnCash;
         private ObservableAsPropertyHelper<double> _sellerCapRate;
-        private ObservableAsPropertyHelper<double> _capRate;
-        private ObservableAsPropertyHelper<double> _lossToLease;
         private ObservableAsPropertyHelper<double> _sellerNOI;
+
+        // Buyer
+        private ObservableAsPropertyHelper<double> _ourIncome;
+        private ObservableAsPropertyHelper<double> _ourExpenses;
+        private ObservableAsPropertyHelper<double> _capRate;
+        private ObservableAsPropertyHelper<double> _cashOnCash;
+        private ObservableAsPropertyHelper<double> _lossToLease;
         private ObservableAsPropertyHelper<double> _noi;
         private ObservableAsPropertyHelper<double> _capXTotal;
         private ObservableAsPropertyHelper<double> _pricePerUnit;
@@ -42,8 +55,76 @@ namespace MultiFamilyPortal.Dtos.Underwrting
 
         public UnderwritingAnalysis()
         {
+            var throttle = TimeSpan.FromMilliseconds(150);
             _disposable = new();
             Notes = new List<UnderwritingAnalysisNote>();
+
+            _sellersCache = new SourceCache<UnderwritingAnalysisLineItem, Guid>(x => x.Id);
+            var sellersRefCount = _sellersCache.Connect()
+                .RefCount()
+                .AutoRefresh(x => x.AnnualizedTotal)
+                .AutoRefresh(x => x.Category);
+            sellersRefCount
+                .SortBy(x => x.Category)
+                .Bind(out _sellersLineItems)
+                .DisposeMany()
+                .Subscribe()
+                .DisposeWith(_disposable);
+
+            sellersRefCount
+                .Filter(x => x.Category.GetLineItemType() == UnderwritingType.Income)
+                .SortBy(x => x.Category)
+                .Bind(out _sellersIncomeItems)
+                .DisposeMany()
+                .Subscribe()
+                .DisposeWith(_disposable);
+
+            sellersRefCount
+                .Filter(x => x.Category.GetLineItemType() == UnderwritingType.Expense)
+                .SortBy(x => x.Category)
+                .Bind(out _sellersExpenseItems)
+                .DisposeMany()
+                .Subscribe()
+                .DisposeWith(_disposable);
+
+            _oursCache = new SourceCache<UnderwritingAnalysisLineItem, Guid>(x => x.Id);
+            var ourRefCount = _oursCache.Connect()
+                .RefCount()
+                .AutoRefresh(x => x.AnnualizedTotal)
+                .AutoRefresh(x => x.Category);
+            ourRefCount
+                .SortBy(x => x.Category)
+                .Bind(out _ourLineItems)
+                .DisposeMany()
+                .Subscribe()
+                .DisposeWith(_disposable);
+
+            ourRefCount
+                .Filter(x => x.Category.GetLineItemType() == UnderwritingType.Income)
+                .SortBy(x => x.Category)
+                .Bind(out _ourIncomeItems)
+                .DisposeMany()
+                .Subscribe()
+                .DisposeWith(_disposable);
+
+            ourRefCount
+                .Filter(x => x.Category.GetLineItemType() == UnderwritingType.Expense)
+                .SortBy(x => x.Category)
+                .Bind(out _ourExpenseItems)
+                .DisposeMany()
+                .Subscribe()
+                .DisposeWith(_disposable);
+
+            _mortgageCache = new SourceCache<UnderwritingAnalysisMortgage, Guid>(x => x.Id);
+            var mortgageRefCount = _mortgageCache.Connect()
+                .RefCount()
+                .AutoRefresh(x => x.AnnualDebtService);
+
+            mortgageRefCount
+                .Bind(out _mortgages)
+                .DisposeMany()
+                .Subscribe()
+                .DisposeWith(_disposable);
 
             this.WhenAnyValue(x => x.Units, x => x.PurchasePrice, CalculatePricePerUnit)
                 .ToProperty(this, nameof(PricePerUnit), out _pricePerUnit)
@@ -73,7 +154,13 @@ namespace MultiFamilyPortal.Dtos.Underwrting
                 .ToProperty(this, nameof(Raise), out _raise)
                 .DisposeWith(_disposable);
 
-            this.WhenAnyValue(x => x.Ours, x => x.DeferredMaintenance, x => x.CapXTotal, x => x.SECAttorney, x => x.ClosingCostMiscellaneous, CalculateClosingCostOther)
+            ourRefCount
+                .AutoRefreshOnObservable(_ =>
+                    this.WhenAnyValue(x => x.DeferredMaintenance, x => x.CapXTotal, x => x.SECAttorney, x => x.ClosingCostMiscellaneous))
+                .Batch(throttle)
+                .ToCollection()
+                .WithLatestFrom(this.WhenAnyValue(x => x.DeferredMaintenance, x => x.CapXTotal, x => x.SECAttorney, x => x.ClosingCostMiscellaneous, (deferredMaintenance, capX, secAttorney, closingMisc) => (deferredMaintenance, capX, secAttorney, closingMisc)), (collection, value) => (collection, value))
+                .Select(x => CalculateClosingCostOther(x.collection, x.value.deferredMaintenance, x.value.capX, x.value.secAttorney, x.value.closingMisc))
                 .ToProperty(this, nameof(ClosingCostOther), out _closingCostOther)
                 .DisposeWith(_disposable);
 
@@ -81,15 +168,26 @@ namespace MultiFamilyPortal.Dtos.Underwrting
                 .ToProperty(this, nameof(ClosingCosts), out _closingCosts)
                 .DisposeWith(_disposable);
 
-            this.WhenAnyValue(x => x.Sellers, CalculateNOI)
+            sellersRefCount
+                .Batch(throttle)
+                .ToCollection()
+                .Select(CalculateNOI)
                 .ToProperty(this, nameof(SellerNOI), out _sellerNOI)
                 .DisposeWith(_disposable);
 
-            this.WhenAnyValue(x => x.Ours, CalculateNOI)
+            ourRefCount
+                .Batch(throttle)
+                .ToCollection()
+                .Select(CalculateNOI)
                 .ToProperty(this, nameof(NOI), out _noi)
                 .DisposeWith(_disposable);
 
-            this.WhenAnyValue(x => x.NOI, x=> x.Mortgages, CalculateDebtCoverage)
+            mortgageRefCount
+                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.NOI))
+                .Batch(throttle)
+                .ToCollection()
+                .WithLatestFrom(this.WhenAnyValue(x => x.NOI), (mortgages, noi) => (mortgages, noi))
+                .Select(x => CalculateDebtCoverage(x.noi, x.mortgages))
                 .ToProperty(this, nameof(DebtCoverage), out _debtCoverage)
                 .DisposeWith(_disposable);
 
@@ -101,19 +199,30 @@ namespace MultiFamilyPortal.Dtos.Underwrting
                 .ToProperty(this, nameof(SellerCapRate), out _sellerCapRate)
                 .DisposeWith(_disposable);
 
-            this.WhenAnyValue(x => x.GrossPotentialRent, x => x.Ours, CalculateLossToLease)
+            ourRefCount
+                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.GrossPotentialRent))
+                .Batch(throttle)
+                .ToCollection()
+                .WithLatestFrom(this.WhenAnyValue(x => x.GrossPotentialRent), (ours, gpr) => (ours, gpr))
+                .Select(x => CalculateLossToLease(x.gpr, x.ours))
                 .ToProperty(this, nameof(LossToLease), out _lossToLease)
                 .DisposeWith(_disposable);
 
             _calculateVacancyAndManagement = ReactiveCommand.Create(OnCalculateGSRAndManagement);
-            this.WhenAnyValue(x => x.Management, x => x.MarketVacancy, x => x.PhysicalVacancy, x => x.Ours, (m, mv, pv, o) => Unit.Default)
-                .Throttle(TimeSpan.FromSeconds(1))
+            ourRefCount
+                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.Management, x => x.MarketVacancy, x=> x.PhysicalVacancy))
+                .Batch(TimeSpan.FromSeconds(0.5))
+                .ToCollection()
+                .Select(_ => Unit.Default)
                 .InvokeCommand(_calculateVacancyAndManagement)
                 .DisposeWith(_disposable);
 
             _downpaymentCommand = ReactiveCommand.Create(OnDownpaymentCommandExecuted);
-            this.WhenAnyValue(x => x.PurchasePrice, x => x.LoanType, x => x.Mortgages, x => x.LTV, (p, l, m, ltv) => Unit.Default)
-                .Throttle(TimeSpan.FromSeconds(1))
+            mortgageRefCount
+                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.PurchasePrice, x => x.LoanType, x => x.LTV))
+                .Batch(TimeSpan.FromSeconds(1))
+                .ToCollection()
+                .Select(_ => Unit.Default)
                 .InvokeCommand(_downpaymentCommand)
                 .DisposeWith(_disposable);
 
@@ -121,30 +230,6 @@ namespace MultiFamilyPortal.Dtos.Underwrting
             this.WhenAnyValue(x => x.LoanType, x => x.LTV, x => x.PurchasePrice, (lt, ltv, pp) => Unit.Default)
                 .Throttle(TimeSpan.FromSeconds(1))
                 .InvokeCommand(_calculateLoanAmount)
-                .DisposeWith(_disposable);
-
-            _sellersCache = new SourceCache<UnderwritingAnalysisLineItem, Guid>(x => x.Id);
-            _sellersCache.Connect()
-                .RefCount()
-                .Bind(out _sellersLineItems)
-                .DisposeMany()
-                .Subscribe()
-                .DisposeWith(_disposable);
-
-            _oursCache = new SourceCache<UnderwritingAnalysisLineItem, Guid>(x => x.Id);
-            _oursCache.Connect()
-                .RefCount()
-                .Bind(out _ourLineItems)
-                .DisposeMany()
-                .Subscribe()
-                .DisposeWith(_disposable);
-
-            _mortgageCache = new SourceCache<UnderwritingAnalysisMortgage, Guid>(x => x.Id);
-            _mortgageCache.Connect()
-                .RefCount()
-                .Bind(out _mortgages)
-                .DisposeMany()
-                .Subscribe()
                 .DisposeWith(_disposable);
         }
 
@@ -314,7 +399,11 @@ namespace MultiFamilyPortal.Dtos.Underwrting
         public double Raise => _raise?.Value ?? 0;
 
         public IEnumerable<UnderwritingAnalysisLineItem> Sellers => _sellersLineItems;
+        public IEnumerable<UnderwritingAnalysisLineItem> SellerIncome => _sellersIncomeItems;
+        public IEnumerable<UnderwritingAnalysisLineItem> SellerExpense => _sellersExpenseItems;
         public IEnumerable<UnderwritingAnalysisLineItem> Ours => _ourLineItems;
+        public IEnumerable<UnderwritingAnalysisLineItem> OurIncome => _ourIncomeItems;
+        public IEnumerable<UnderwritingAnalysisLineItem> OurExpense => _ourExpenseItems;
         public IEnumerable<UnderwritingAnalysisMortgage> Mortgages => _mortgages;
         public List<UnderwritingAnalysisNote> Notes { get; set; }
 
@@ -483,7 +572,7 @@ namespace MultiFamilyPortal.Dtos.Underwrting
             return 0;
         }
 
-        private static double CalculateNOI(IEnumerable<UnderwritingAnalysisLineItem> items)
+        private double CalculateNOI(IEnumerable<UnderwritingAnalysisLineItem> items)
         {
             if (items is null)
                 return 0;

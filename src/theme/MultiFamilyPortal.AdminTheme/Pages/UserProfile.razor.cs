@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.CoreUI;
 using MultiFamilyPortal.Data.Models;
@@ -22,14 +23,14 @@ namespace MultiFamilyPortal.AdminTheme.Pages
 
         private bool _siteUser => _user.IsInAnyRole(PortalRoles.BlogAuthor, PortalRoles.PortalAdministrator, PortalRoles.Underwriter);
 
-        private SiteUser SiteUser;
+        private SerializableUser SiteUser;
         private UnderwriterGoal Goals;
         private IEnumerable<EditableLink> Links;
         private PortalNotification notification;
         private ChangePasswordRequest ChangePassword = new();
         protected override async Task OnInitializedAsync()
         {
-            SiteUser = await _client.GetFromJsonAsync<SiteUser>("/api/admin/userprofile");
+            SiteUser = await _client.GetFromJsonAsync<SerializableUser>("/api/admin/userprofile");
             Goals = SiteUser.Goals;
 
             var providers = await _client.GetFromJsonAsync<IEnumerable<SocialProvider>>("/api/admin/userprofile/social-providers");

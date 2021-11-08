@@ -27,6 +27,7 @@
   <ItemGroup>
     <ProjectReference Include="..\core\MultiFamilyPortal.Caching\MultiFamilyPortal.Caching.csproj" />
     <ProjectReference Include="..\core\MultiFamilyPortal.Core\MultiFamilyPortal.Core.csproj" />
+    <ProjectReference Include="..\theme\MultiFamilyPortal.FirstRun\MultiFamilyPortal.FirstRun.csproj" />
     <ProjectReference Include="..\theme\MultiFamilyPortal.AdminTheme\MultiFamilyPortal.AdminTheme.csproj" />
     <ProjectReference Include="..\theme\MultiFamilyPortal.DefaultTheme\MultiFamilyPortal.DefaultTheme.csproj" />
     <ProjectReference Include="..\theme\MultiFamilyPortal.PortalTheme\MultiFamilyPortal.PortalTheme.csproj" />

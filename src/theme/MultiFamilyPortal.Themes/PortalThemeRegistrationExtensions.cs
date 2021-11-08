@@ -12,7 +12,8 @@ namespace MultiFamilyPortal.Themes
                 throw new InvalidOperationException($"Cannot assign {type.FullName} as an IPortalTheme");
 
             if (!_registered)            {                services.AddScoped<IThemeFactory, ThemeFactory>()
-                    .AddScoped<IStartupTask, ThemeStartupTask>();                _registered = true;            }
+                    .AddScoped<IStartupTask, ThemeStartupTask>()
+                    .AddSingleton<ISiteConfigurationValidator, SiteConfigurationValidator>();                _registered = true;            }
 
             // Avoid Registering twice
             if (services.Any(x => x.ServiceType == typeof(IPortalTheme) && x.ImplementationType == type))

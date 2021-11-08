@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MultiFamilyPortal.FirstRun;
 using MultiFamilyPortal.CoreUI;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
@@ -14,9 +15,11 @@ namespace MultiFamilyPortal.Infrastructure
         private RoleManager<IdentityRole> _roleManager { get; }
         private IEnumerable<IPortalFrontendTheme> _themes { get; }
         private IMFPContext _dbContext { get; }
+        private ISiteConfigurationValidator _configurationValidator { get; }
 
-        public PortalStartup(UserManager<SiteUser> userManager, RoleManager<IdentityRole> roleManager, IEnumerable<IPortalFrontendTheme> themes, IMFPContext dbContext)
+        public PortalStartup(UserManager<SiteUser> userManager, RoleManager<IdentityRole> roleManager, IEnumerable<IPortalFrontendTheme> themes, IMFPContext dbContext, ISiteConfigurationValidator configurationValidator)
         {
+            _configurationValidator = configurationValidator;
             _userManager = userManager;
             _roleManager = roleManager;
             _dbContext = dbContext;
@@ -28,14 +31,18 @@ namespace MultiFamilyPortal.Infrastructure
             await SeedThemes();
             await SeedEmailTemplates();
             await SeedRoles();
-            if(await _userManager.Users.AnyAsync(x => x.Email != "admin@website.com"))
+            if(!await _userManager.Users.AnyAsync())
             {
-                await EnsureDefaultAccountCanBeDeleted();
+                _configurationValidator.SetFirstRunTheme(new FirstRunTheme());
             }
-            else if(!await _userManager.Users.AnyAsync())
-            {
-                await AddDefaultAccount();
-            }
+            //if(await _userManager.Users.AnyAsync(x => x.Email != "admin@website.com"))
+            //{
+            //    await EnsureDefaultAccountCanBeDeleted();
+            //}
+            //else if(!await _userManager.Users.AnyAsync())
+            //{
+            //    await AddDefaultAccount();
+            //}
         }
 
         private async Task SeedSiteContent()

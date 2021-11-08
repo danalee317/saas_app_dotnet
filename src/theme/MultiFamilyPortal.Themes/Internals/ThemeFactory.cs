@@ -4,9 +4,11 @@ using MultiFamilyPortal.Data;
 
 namespace MultiFamilyPortal.Themes.Internals{    internal class ThemeFactory : IThemeFactory    {        private IEnumerable<IPortalTheme> _themes { get; }        private IMFPContext _dbContext { get; }
         private NavigationManager _navigationManager { get; }
-        private IHttpContextAccessor _contextAccessor { get; }        public ThemeFactory(IEnumerable<IPortalTheme> themes, IMFPContext dbContext, NavigationManager navigationManager, IHttpContextAccessor contextAccessor)        {            _themes = themes;            _dbContext = dbContext;
+        private IHttpContextAccessor _contextAccessor { get; }
+        private ISiteConfigurationValidator _configurationValidator { get; }        public ThemeFactory(IEnumerable<IPortalTheme> themes, IMFPContext dbContext, NavigationManager navigationManager, IHttpContextAccessor contextAccessor, ISiteConfigurationValidator configurationValidator)        {            _themes = themes;            _dbContext = dbContext;
             _navigationManager = navigationManager;
-            _contextAccessor = contextAccessor;        }
+            _contextAccessor = contextAccessor;
+            _configurationValidator = configurationValidator;        }
 
         private IPortalFrontendTheme GetFrontendTheme()
         {
@@ -19,8 +21,10 @@ namespace MultiFamilyPortal.Themes.Internals{    internal class ThemeFactory :
             return _themes.OfType<IPortalAdminTheme>().FirstOrDefault();
         }        public IPortalTheme GetCurrentTheme()
         {
-            var uri = new Uri(_navigationManager.Uri);
+            if (_configurationValidator.Theme is not null)
+                return _configurationValidator.Theme;
 
+            var uri = new Uri(_navigationManager.Uri);
 
 #if DEBUG
             if (uri.AbsolutePath.StartsWith("/admin"))

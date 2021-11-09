@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Net;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -17,7 +18,8 @@ namespace MultiFamilyPortal.Data.Models
             _timestamp = timestamp;
         }
 
-        public int Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid Id { get; set; }
 
         public string Email { get; set; }
 
@@ -70,8 +72,8 @@ namespace MultiFamilyPortal.Data.Models
         private Guid _confirmationCode = Guid.NewGuid();
         public Guid ConfirmationCode => _confirmationCode;
 
-        [JsonIgnore]
-        public List<Post> Notifications { get; set; }
+        //[JsonIgnore]
+        public virtual ICollection<Post> Notifications { get; set; }
 
         public string UnsubscribeCode() =>
             Convert.ToBase64String(Encoding.Default.GetBytes($"{Email}:{ConfirmationCode}"));

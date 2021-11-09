@@ -39,14 +39,14 @@ namespace MultiFamilyPortal.Data.Models
 
         public SiteUser Author { get; set; }
 
-        public List<Category> Categories { get; set; }
+        public virtual ICollection<Category> Categories { get; set; }
 
-        public List<Tag> Tags { get; set; }
+        public virtual ICollection<Tag> Tags { get; set; }
 
-        public List<Comment> Comments { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
 
-        public List<PostView> Views { get; set; }
+        public virtual ICollection<PostView> Views { get; set; }
 
-        public List<Subscriber> Notifications { get; set; }
+        public virtual ICollection<Subscriber> Subscribers { get; set; }
     }
 }

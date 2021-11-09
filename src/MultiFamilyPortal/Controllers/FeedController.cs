@@ -77,7 +77,7 @@ namespace MultiFamilyPortal.Controllers
                 };
 
                 if (post.Categories is null)
-                    post.Categories = new();
+                    post.Categories = new List<Category>();
 
                 foreach (var category in post.Categories)
                 {

@@ -40,7 +40,5 @@ namespace MultiFamilyPortal.Data.Models
         public virtual ICollection<UnderwritingProspectProperty> ProspectProperties { get; set; }
 
         public virtual ICollection<SocialLink> SocialLinks { get; set; }
-
-        public virtual ICollection<SiteUserRole> Roles { get; set; }
     }
 }

@@ -22,7 +22,7 @@ namespace MultiFamilyPortal.Data.ModelConfiguration
                 .ToTable("UserLogins");
             modelBuilder.Entity<IdentityRoleClaim<string>>()
                 .ToTable("IdentityRoleClaims");
-            modelBuilder.Entity<SiteUserRole>()
+            modelBuilder.Entity<IdentityUserRole<string>>()
                 .ToTable("UserRoles");
 
             //modelBuilder.Entity<SiteUser>()
@@ -73,7 +73,7 @@ namespace MultiFamilyPortal.Data.ModelConfiguration
                 b.HasMany<IdentityUserLogin<string>>().WithOne().HasForeignKey(ul => ul.UserId).IsRequired();
                 b.HasMany<IdentityUserToken<string>>().WithOne().HasForeignKey(ut => ut.UserId).IsRequired();
 
-                b.HasMany<SiteUserRole>().WithOne().HasForeignKey(ur => ur.UserId).IsRequired();
+                b.HasMany<IdentityUserRole<string>>().WithOne().HasForeignKey(ur => ur.UserId).IsRequired();
             });
 
             builder.Entity<IdentityUserClaim<string>>(b =>
@@ -141,7 +141,7 @@ namespace MultiFamilyPortal.Data.ModelConfiguration
                 b.Property(u => u.Name).HasMaxLength(256);
                 b.Property(u => u.NormalizedName).HasMaxLength(256);
 
-                b.HasMany<SiteUserRole>().WithOne().HasForeignKey(ur => ur.RoleId).IsRequired();
+                b.HasMany<IdentityUserRole<string>>().WithOne().HasForeignKey(ur => ur.RoleId).IsRequired();
                 b.HasMany<IdentityRoleClaim<string>>().WithOne().HasForeignKey(rc => rc.RoleId).IsRequired();
             });
 
@@ -151,7 +151,7 @@ namespace MultiFamilyPortal.Data.ModelConfiguration
                 b.ToTable("RoleClaims");
             });
 
-            builder.Entity<SiteUserRole>(b =>
+            builder.Entity<IdentityUserRole<string>>(b =>
             {
                 b.HasKey(r => new { r.UserId, r.RoleId });
                 b.ToTable("UserRoles");

@@ -8,7 +8,7 @@ namespace MultiFamilyPortal.Data.Internals
     public interface IBaseContext : IDisposable
     {
         DbSet<SiteUser> Users { get; }
-        DbSet<SiteUserRole> UserRoles { get; }
+        DbSet<IdentityUserRole<string>> UserRoles { get; }
         DbSet<IdentityRole> Roles { get; }
         DbSet<Setting> Settings { get; }
 

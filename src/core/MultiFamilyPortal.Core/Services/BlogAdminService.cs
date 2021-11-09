@@ -102,7 +102,7 @@ namespace MultiFamilyPortal.Services
             };
 
             
-            if (await _context.Posts.Where(x => x.Id == post.Id).SumAsync(x => x.Notifications.Count) < 1)
+            if (await _context.Posts.Where(x => x.Id == post.Id).SumAsync(x => x.Subscribers.Count) < 1)
             {
                 var frontEnd = new Uri($"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}");
                 response.Success = await _subscriberService.PostPublished(post, frontEnd);

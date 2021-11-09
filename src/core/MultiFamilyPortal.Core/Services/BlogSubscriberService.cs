@@ -29,7 +29,7 @@ namespace MultiFamilyPortal.Services
         public async Task<SubscriberResult> PostPublished(Post post, Uri baseUri)
         {
             bool hasErrors = false;
-            if (await _context.Posts.Where(x => x.Id == post.Id).SumAsync(x => x.Notifications.Count) > 0)
+            if (await _context.Posts.Where(x => x.Id == post.Id).SumAsync(x => x.Subscribers.Count) > 0)
                 return new SubscriberResult {
                     Success = false,
                     Message = "Notifications have already been sent for this post"

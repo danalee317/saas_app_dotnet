@@ -15,7 +15,7 @@ using MultiFamilyPortal.Data.Models;
 
 namespace MultiFamilyPortal.Data
 {
-    public class MFPContext : IdentityDbContext<SiteUser, IdentityRole, string, IdentityUserClaim<string>, SiteUserRole, IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>, IMFPContext, IBlogContext, IPersistedGrantDbContext
+    public class MFPContext : IdentityDbContext<SiteUser, IdentityRole, string, IdentityUserClaim<string>, IdentityUserRole<string>, IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>, IMFPContext, IBlogContext, IPersistedGrantDbContext
     {
         private readonly IOptions<OperationalStoreOptions> _operationalStoreOptions;
 

@@ -20,8 +20,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
         {
             var response = await _client.GetFromJsonAsync<IEnumerable<HighlightableUser>>("/api/admin/settings/highlightable-users");
 
-            //_users.ReplaceRange(response.Where(x => x.Order > 0).OrderBy(x => x.Order));
-            _users.ReplaceRange(response);
+            _users.ReplaceRange(response.Where(x => x.Order > 0).OrderBy(x => x.Order));
             _selectable.ReplaceRange(response.Where(x => x.Order == 0).OrderBy(x => x.DisplayName));
         }
 

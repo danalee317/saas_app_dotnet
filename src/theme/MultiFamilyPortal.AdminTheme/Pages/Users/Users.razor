@@ -20,7 +20,12 @@
     <GridColumn Field=@(nameof(UserAccountResponse.FirstName)) Title="First" />
     <GridColumn Field=@(nameof(UserAccountResponse.LastName)) Title="Last" />
     <GridColumn Field=@(nameof(UserAccountResponse.Email)) />
-    <GridColumn Field=@(nameof(UserAccountResponse.Phone)) />
+    <GridColumn Field=@(nameof(UserAccountResponse.Phone))>
+      <Template>
+        @{ var user = context as UserAccountResponse; }
+        @user.Phone.ToPhoneNumberMask()
+      </Template>
+    </GridColumn>
     <GridColumn Field=@(nameof(UserAccountResponse.Roles))>
       <Template>
         @{ var user = context as UserAccountResponse; }
@@ -77,7 +82,9 @@
     </div>
     <div class="row px-3 py-1">
       <div class="col-12 form-floating">
-        <TelerikTextBox @bind-Value=@_createUser.Phone Class="form-control" />
+        <TelerikMaskedTextBox @bind-Value=@_createUser.Phone
+                              Mask="(000) 000-0000"
+                              Class="form-control" />
         <label for="Phone" class="form-label">Phone</label>
       </div>
     </div>

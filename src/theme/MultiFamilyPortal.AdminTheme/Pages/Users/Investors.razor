@@ -15,7 +15,12 @@
     <GridColumn Field=@(nameof(UserAccountResponse.FirstName)) Title="First" />
     <GridColumn Field=@(nameof(UserAccountResponse.LastName)) Title="Last" />
     <GridColumn Field=@(nameof(UserAccountResponse.Email)) />
-    <GridColumn Field=@(nameof(UserAccountResponse.Phone)) />
+    <GridColumn Field=@(nameof(UserAccountResponse.Phone))>
+      <Template>
+        @{ var user = context as UserAccountResponse; }
+        @user.Phone.ToPhoneNumberMask()
+      </Template>
+    </GridColumn>
     <GridColumn Field=@(nameof(UserAccountResponse.Roles))>
       <Template>
         @{ var user = context as UserAccountResponse; }

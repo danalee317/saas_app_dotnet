@@ -155,56 +155,59 @@
           </TabStripTab>
         </AuthorizedPolicy>
 
-        <TabStripTab>
-          <HeaderTemplate>
-            <i class="fad fa-unlock-alt"></i>&nbsp; Account
-          </HeaderTemplate>
-          <Content>
-            <EditForm Model=@ChangePassword
-                      OnValidSubmit=@OnChangePassword>
-              <DataAnnotationsValidator />
-              <ServerSideValidator />
-              <ValidationSummary />
-              <div class="row gt-3 p-2">
-                <div class="col-md-6 col-sm-12">
-                  <h3>Change Password</h3>
-                </div>
-              </div>
-              <div class="row gt-3 p-2">
-                <div class="col-md-6 col-sm-12">
-                  <div class="form-floating">
-                    <TelerikTextBox Class="form-control" Password="true" @bind-Value=@ChangePassword.CurrentPassword />
-                    <label for="CurrentPassword" class="form-label">Current Password</label>
+        @if(SiteUser.LocalAccount)
+        {
+          <TabStripTab>
+            <HeaderTemplate>
+              <i class="fad fa-unlock-alt"></i>&nbsp; Account
+            </HeaderTemplate>
+            <Content>
+              <EditForm Model=@ChangePassword
+                        OnValidSubmit=@OnChangePassword>
+                <DataAnnotationsValidator />
+                <ServerSideValidator />
+                <ValidationSummary />
+                <div class="row gt-3 p-2">
+                  <div class="col-md-6 col-sm-12">
+                    <h3>Change Password</h3>
                   </div>
                 </div>
-              </div>
-              <div class="row gt-3 p-2">
-                <div class="col-md-6 col-sm-12">
-                  <div class="form-floating">
-                    <TelerikTextBox Class="form-control" Password="true" @bind-Value=@ChangePassword.Password />
-                    <label for="Password" class="form-label">New Password</label>
+                <div class="row gt-3 p-2">
+                  <div class="col-md-6 col-sm-12">
+                    <div class="form-floating">
+                      <TelerikTextBox Class="form-control" Password="true" @bind-Value=@ChangePassword.CurrentPassword />
+                      <label for="CurrentPassword" class="form-label">Current Password</label>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="row gt-3 p-2">
-                <div class="col-md-6 col-sm-12">
-                  <div class="form-floating">
-                    <TelerikTextBox Class="form-control" Password="true" @bind-Value=@ChangePassword.ConfirmPassword />
-                    <label for="ConfirmPassword" class="form-label">Confirm Password</label>
+                <div class="row gt-3 p-2">
+                  <div class="col-md-6 col-sm-12">
+                    <div class="form-floating">
+                      <TelerikTextBox Class="form-control" Password="true" @bind-Value=@ChangePassword.Password />
+                      <label for="Password" class="form-label">New Password</label>
+                    </div>
                   </div>
                 </div>
-              </div><div class="row gt-3 p-2">
-                <div class="col-md-6 col-sm-12 text-center">
-                  <TelerikButton ButtonType=@ButtonType.Submit
-                                 Class="btn-secondary"
-                                 Title="ChangePassword">
-                    Change Password
-                  </TelerikButton>
+                <div class="row gt-3 p-2">
+                  <div class="col-md-6 col-sm-12">
+                    <div class="form-floating">
+                      <TelerikTextBox Class="form-control" Password="true" @bind-Value=@ChangePassword.ConfirmPassword />
+                      <label for="ConfirmPassword" class="form-label">Confirm Password</label>
+                    </div>
+                  </div>
+                </div><div class="row gt-3 p-2">
+                  <div class="col-md-6 col-sm-12 text-center">
+                    <TelerikButton ButtonType=@ButtonType.Submit
+                                   Class="btn-secondary"
+                                   Title="ChangePassword">
+                      Change Password
+                    </TelerikButton>
+                  </div>
                 </div>
-              </div>
-            </EditForm>
-          </Content>
-        </TabStripTab>
+              </EditForm>
+            </Content>
+          </TabStripTab>
+        }
       </TelerikTabStrip>
 
       <hr />

@@ -39,12 +39,14 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Email == email);
 
-            var response = new SerializableUser {
+            var response = new SerializableUser
+            {
                 Title = user.Title,
                 Bio = user.Bio,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
+                LocalAccount = !string.IsNullOrEmpty(user.PasswordHash),
                 PhoneNumber = user.PhoneNumber,
                 SocialLinks = user.SocialLinks,
             };

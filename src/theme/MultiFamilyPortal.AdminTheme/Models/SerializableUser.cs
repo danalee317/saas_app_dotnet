@@ -30,6 +30,8 @@ namespace MultiFamilyPortal.AdminTheme.Models
 
         public string Bio { get; set; }
 
+        public bool LocalAccount { get; set; }
+
         public UnderwriterGoal Goals { get; set; }
 
         public IEnumerable<SocialLink> SocialLinks { get; set; }

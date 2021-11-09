@@ -8,5 +8,6 @@
         public string Email { get; set; }
         public string Phone { get; set; }
         public string[] Roles { get; set; }
+        public bool LocalAccount { get; set; }
     }
 }

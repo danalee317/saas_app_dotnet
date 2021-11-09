@@ -37,7 +37,10 @@
       @if(user.Email != User.FindFirstValue(ClaimTypes.Email))
       {
         <GridCommandButton Command="EditRoles" Title="Edit Roles">Edit Roles</GridCommandButton>
-        <GridCommandButton Command="ResetPassword" Title="Reset Password">Reset Password</GridCommandButton>
+        @if(user.LocalAccount)
+        {
+          <GridCommandButton Command="ResetPassword" Title="Reset Password">Reset Password</GridCommandButton>
+        }
         <GridCommandButton Command="Delete" Icon="delete" Title="Delete">Delete</GridCommandButton>
       }
     </GridCommandColumn>

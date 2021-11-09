@@ -30,12 +30,14 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             var userRoles = await _dbContext.UserRoles.AsNoTracking().ToArrayAsync();
 
             var users = await _dbContext.Users
-                .Select(x => new UserAccountResponse {
+                .Select(x => new UserAccountResponse
+                {
                     Email = x.Email,
                     FirstName = x.FirstName,
                     LastName = x.LastName,
                     Id = x.Id,
-                    Phone = x.PhoneNumber
+                    Phone = x.PhoneNumber,
+                    LocalAccount = string.IsNullOrEmpty(x.PasswordHash) == false
                 })
                 .ToArrayAsync();
 
@@ -73,6 +75,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                         LastName = x.LastName,
                         Id = x.Id,
                         Phone = x.PhoneNumber,
+                        LocalAccount = string.IsNullOrEmpty(x.PasswordHash) == false,
                     })
                     .FirstAsync(x => x.Id == user.Key);
 

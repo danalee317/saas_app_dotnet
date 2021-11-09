@@ -62,11 +62,11 @@
         @if(showUsersMenu)
         {
           <ul>
-            <li><NavLink class="dropdown-item" href="/admin/users/investors">Investors</NavLink></li>
-            <li><NavLink class="dropdown-item" href="/admin/investors-prospects">Prospects</NavLink></li>
+            <li><NavLink class="dropdown-item" href="/admin/investors" Match="NavLinkMatch.All">Investors</NavLink></li>
+            <li><NavLink class="dropdown-item" href="/admin/investors-prospects" Match="NavLinkMatch.All">Prospects</NavLink></li>
             <AuthorizedRole Role=@PortalRoles.PortalAdministrator>
-              <li><NavLink class="dropdown-item" href="/admin/users">Website Users</NavLink></li>
-              <li><NavLink class="dropdown-item" href="/admin/subscribers">Subscribers</NavLink></li>
+              <li><NavLink class="dropdown-item" href="/admin/users" Match="NavLinkMatch.All">Website Users</NavLink></li>
+              <li><NavLink class="dropdown-item" href="/admin/subscribers" Match="NavLinkMatch.All">Subscribers</NavLink></li>
             </AuthorizedRole>
           </ul>
         }

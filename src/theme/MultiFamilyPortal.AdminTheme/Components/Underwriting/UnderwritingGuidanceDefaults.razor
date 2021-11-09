@@ -5,11 +5,13 @@
              ShowColumnMenu="false"
              @ref="grid">
   <GridToolBar>
-    <TelerikButton ButtonType=@ButtonType.Button
-                   Primary=@true
-                   IconClass="fad fa-copy"
-                   OnClick=@OnAddMarket
-                   Title="Add Market">Add Market</TelerikButton>
+    <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
+      <TelerikButton ButtonType=@ButtonType.Button
+                     Primary=@true
+                     IconClass="fad fa-copy"
+                     OnClick=@OnAddMarket
+                     Title="Add Market">Add Market</TelerikButton>
+    </AuthorizedPolicy>
   </GridToolBar>
   <GridColumns>
     <GridColumn Field="Market" Groupable="true">

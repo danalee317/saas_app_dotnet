@@ -5,16 +5,17 @@
                   PageSize="25"
                   Height="800px">
       <GridToolBar>
-
-        <div class="flex" style="margin-left: auto;">
-          <GridCommandButton Command="NewProperty"
-                              Icon="add"
-                              Primary="true"
-                              Class="float-right"
-                              OnClick=@CreateProperty>
-            Add Property
-          </GridCommandButton>
-        </div>
+        <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
+          <div class="flex" style="margin-left: auto;">
+            <GridCommandButton Command="NewProperty"
+                                Icon="add"
+                                Primary="true"
+                                Class="float-right"
+                                OnClick=@CreateProperty>
+              Add Property
+            </GridCommandButton>
+          </div>
+        </AuthorizedPolicy>
       </GridToolBar>
 
       <GridColumns>

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -105,7 +105,8 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 return BadRequest();
             }
 
-            var user = new SiteUser(request.Email) {
+            var user = new SiteUser(request.Email)
+            {
                 Email = request.Email,
                 EmailConfirmed = true,
                 FirstName = request.FirstName,
@@ -114,7 +115,16 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 PhoneNumberConfirmed = true,
             };
 
-            var result = await _userManager.CreateAsync(user, "helloW0rld!");
+            IdentityResult result = null;
+            if(request.UseLocalAccount)
+            {
+                result = await _userManager.CreateAsync(user, "helloW0rld!");
+            }
+            else
+            {
+                result = await _userManager.CreateAsync(user);
+            }
+
             if (!result.Succeeded)
                 return NoContent();
 
@@ -128,6 +138,8 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 await _dbContext.UnderwriterGoals.AddAsync(goals);
                 await _dbContext.SaveChangesAsync();
             }
+
+            // TODO: Email User confirmation & their password
 
             return Ok();
         }

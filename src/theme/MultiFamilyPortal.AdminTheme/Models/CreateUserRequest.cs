@@ -18,5 +18,7 @@ namespace MultiFamilyPortal.AdminTheme.Models
 
         [Required]
         public List<string> Roles { get; set; }
+
+        public bool UseLocalAccount { get; set; }
     }
 }

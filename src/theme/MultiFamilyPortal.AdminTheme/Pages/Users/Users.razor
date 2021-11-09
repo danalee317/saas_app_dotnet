@@ -83,6 +83,24 @@
         <TelerikMultiSelect Data=@_roles @bind-Value=@_createUser.Roles Class="form-control" Placeholder="Roles" />
       </div>
     </div>
+    <div class="row px-3 py-1">
+      <div class="col-12 form-group">
+        <TelerikSwitch @bind-Value=@_createUser.UseLocalAccount
+                       OffLabel="Use Google / Microsoft Account"
+                       OnLabel="Use Local Account" />
+        <label for="UseLocalAccount" class="form-label">
+          &nbsp;&nbsp;
+          @if(_createUser.UseLocalAccount)
+          {
+            <span>Use Local Account</span>
+          }
+          else
+          {
+            <span>Use Google / Microsoft Account</span>
+          }
+        </label>
+      </div>
+    </div>
     <div class="row text-center p-3">
       <TelerikButton Title="Create User" Primary="true" IconClass="fad fa-plus" OnClick=@OnCreateNewUser>Create User</TelerikButton>
     </div>

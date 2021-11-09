@@ -34,6 +34,54 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             return Ok();
         }
 
+        [HttpGet("highlightable-users")]
+        public async Task<IActionResult> GetHighlightableUsers()
+        {
+            var response = (await (from role in _dbContext.Roles
+                         where role.Name == PortalRoles.PortalAdministrator ||
+                         role.Name == PortalRoles.BlogAuthor || role.Name == PortalRoles.Underwriter
+                         join userRole in _dbContext.UserRoles
+                         on role.Id equals userRole.RoleId
+                         join user in _dbContext.Users
+                         on userRole.UserId equals user.Id
+                         select new AdminTheme.Models.HighlightableUser
+                         {
+                             DisplayName = user.FirstName + " " + user.LastName,
+                             Title = user.Title,
+                             Email = user.Email,
+                             UserId = user.Id
+                         }).ToArrayAsync())
+                         .DistinctBy(x => x.UserId);
+
+            var existing = await _dbContext.HighlightedUsers.ToArrayAsync();
+            foreach(var current in existing)
+            {
+                var user = response.FirstOrDefault(x => x.UserId == current.UserId);
+                if(user is not null)
+                    user.Order = current.Order;
+            }
+
+            return Ok(response);
+        }
+
+        [HttpPost("highlightable-users/update")]
+        public async Task<IActionResult> UpdateHighlightableUsers([FromBody]IEnumerable<AdminTheme.Models.HighlightableUser> users)
+        {
+            var existing = await _dbContext.HighlightedUsers.ToArrayAsync();
+            _dbContext.HighlightedUsers.RemoveRange(existing);
+            await _dbContext.SaveChangesAsync();
+
+            var updated = users.Select(x => new HighlightedUser
+            {
+                Order = x.Order,
+                UserId = x.UserId,
+            });
+            await _dbContext.HighlightedUsers.AddRangeAsync(updated);
+            await _dbContext.SaveChangesAsync();
+
+            return await GetHighlightableUsers();
+        }
+
         [HttpGet("themes")]
         public async Task<IActionResult> GetThemes()
         {

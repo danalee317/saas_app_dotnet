@@ -13,6 +13,10 @@ namespace MultiFamilyPortal.Data.Models
 
         public string Icon { get; set; }
 
+        public string Description { get; set; }
+
+        public UnderwritingProspectFileType Type { get; set; }
+
         private DateTimeOffset _timestamp = DateTimeOffset.Now;
         public DateTimeOffset Timestamp => _timestamp;
 

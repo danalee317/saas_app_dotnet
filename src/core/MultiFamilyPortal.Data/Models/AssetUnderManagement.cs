@@ -25,7 +25,13 @@ namespace MultiFamilyPortal.Data.Models
 
         public double PurchasePrice { get; set; }
 
+        public double? SalesPrice { get; set; }
+
         public int Units { get; set; }
+
+        public bool Highlighted { get; set; }
+
+        public AssetState Status { get; set; }
 
         private DateTimeOffset _timestamp = DateTimeOffset.Now;
         public DateTimeOffset Timestamp => _timestamp;

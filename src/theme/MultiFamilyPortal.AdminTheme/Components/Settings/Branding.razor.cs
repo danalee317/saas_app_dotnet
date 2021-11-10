@@ -12,6 +12,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
 
         private readonly IEnumerable<Logo> _logos = new[]
         {
+            new Logo { DisplayName = "Browser Icon", Href = "/apple-touch-icon.png", Name = "favicon" },
             new Logo { DisplayName = "Default Logo", Href = "/theme/branding/logo", Name = "logo" },
             new Logo { DisplayName = "Dark Theme Logo", Href = "/theme/branding/logo-dark", Name = "logo-dark" },
             new Logo { DisplayName = "Default Logo - Horizontal", Href = "/theme/branding/logo-side", Name = "logo-side" },

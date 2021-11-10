@@ -40,9 +40,9 @@ namespace MultiFamilyPortal.Controllers
         public IActionResult AndroidChrome512() =>
             GetImage("android-chrome-512x512.png", 512);
 
-        [HttpGet("/apple-touch.png")]
+        [HttpGet("/apple-touch-icon.png")]
         public IActionResult GetAppleTouch() =>
-            GetImage("apple-touch.png", 180);
+            GetImage("apple-touch-icon.png", 180);
 
         [HttpGet("/site.webmanifest")]
         public async Task<IActionResult> SiteWebManifest([FromServices]IMFPContext db)

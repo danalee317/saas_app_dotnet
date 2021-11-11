@@ -35,14 +35,6 @@ namespace MultiFamilyPortal.Infrastructure
             {
                 _configurationValidator.SetFirstRunTheme(new FirstRunTheme());
             }
-            //if(await _userManager.Users.AnyAsync(x => x.Email != "admin@website.com"))
-            //{
-            //    await EnsureDefaultAccountCanBeDeleted();
-            //}
-            //else if(!await _userManager.Users.AnyAsync())
-            //{
-            //    await AddDefaultAccount();
-            //}
         }
 
         private async Task SeedSiteContent()
@@ -60,7 +52,13 @@ namespace MultiFamilyPortal.Infrastructure
                     Id = PortalPage.Terms,
                     Title = "Terms & Conditions",
                     HtmlContent = GetTemplate("terms-conditions.html")
-                }
+                },
+                new CustomContent
+                {
+                    Id = PortalPage.Strategy,
+                    Title = "Strategy",
+                    HtmlContent = GetTemplate("strategy.html")
+                },
             };
 
             foreach(var page in pages)
@@ -75,91 +73,29 @@ namespace MultiFamilyPortal.Infrastructure
 
         private async Task SeedThemes()
         {
-            foreach(var theme in _themes)
+            var defaultThemeName = nameof(PortalTheme.PortalTheme);
+            foreach (var theme in _themes)
             {
-                if(!await _dbContext.SiteThemes.AnyAsync(x => x.Id == theme.Name))
+                if (!await _dbContext.SiteThemes.AnyAsync(x => x.Id == theme.Name))
                 {
                     var siteTheme = new SiteTheme
                     {
                         Id = theme.Name,
-                        IsDefault = theme.GetType().Name.Contains("DefaultTheme")
+                        IsDefault = theme.GetType().Name.Contains(defaultThemeName)
                     };
                     _dbContext.SiteThemes.Add(siteTheme);
                     await _dbContext.SaveChangesAsync();
                 }
             }
-        }
 
-        private async Task EnsureDefaultAccountCanBeDeleted()
-        {
-            if (await _dbContext.UnderwritingPropertyProspects.AnyAsync(x => x.Underwriter.Email == "admin@website.com"))
+            if(!await _dbContext.SiteThemes.AnyAsync(x => x.IsDefault == true))
             {
-                var adminRole = await _dbContext.Roles.FirstOrDefaultAsync(x => x.Name == PortalRoles.PortalAdministrator);
-                var userRoles = await _dbContext.UserRoles.ToArrayAsync();
-                var userRole = userRoles.FirstOrDefault(ur => ur.RoleId == adminRole.Id);
-
-                if(userRole is null)
-                    return;
-
-                var prospects = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Underwriter.Email == "admin@website.com").ToArrayAsync();
-                foreach (var prospect in prospects)
-                    prospect.UnderwriterId = userRole.UserId;
-
-                _dbContext.UnderwritingPropertyProspects.UpdateRange(prospects);
+                var theme = await _dbContext.SiteThemes
+                    .FirstOrDefaultAsync(x => x.Id == defaultThemeName);
+                theme.IsDefault = true;
+                _dbContext.SiteThemes.Update(theme);
                 await _dbContext.SaveChangesAsync();
             }
-
-            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == "admin@website.com");
-            if (user is null)
-                return;
-
-            var highlightedUser = await _dbContext.HighlightedUsers.FirstOrDefaultAsync(x => x.UserId == user.Id);
-            var goals = await _dbContext.UnderwriterGoals.FirstOrDefaultAsync(x => x.UnderwriterId == user.Id);
-
-            if(highlightedUser != null)
-            {
-                _dbContext.HighlightedUsers.Remove(highlightedUser);
-                await _dbContext.SaveChangesAsync();
-            }
-
-            if(goals != null)
-            {
-                _dbContext.UnderwriterGoals.Remove(goals);
-                await _dbContext.SaveChangesAsync();
-            }
-
-            await _userManager.DeleteAsync(user);
-        }
-
-        private async Task AddDefaultAccount()
-        {
-            var user = new SiteUser("admin@website.com") {
-                FirstName = "Admin",
-                LastName = "User",
-                Email = "admin@website.com" ,
-                EmailConfirmed = true,
-                PhoneNumber = "6195554545",
-                Title = "Demo User",
-                Bio = "This is a demo user. Be sure to set up an account and delete this user when you are done."
-            };
-
-            var result = await _userManager.CreateAsync(user, "mfportal123!");
-
-            await _userManager.AddToRolesAsync(user, new[]
-            {
-                PortalRoles.PortalAdministrator,
-                PortalRoles.Underwriter,
-                PortalRoles.BlogAuthor
-            });
-
-            user = await _dbContext.Users.FirstAsync(x => x.Email == user.Email);
-            _dbContext.HighlightedUsers.Add(new HighlightedUser
-            {
-                Order = 1,
-                UserId = user.Id,
-            });
-            _dbContext.UnderwriterGoals.Add(new UnderwriterGoal { UnderwriterId = user.Id });
-            await _dbContext.SaveChangesAsync();
         }
 
         private async Task SeedRoles()

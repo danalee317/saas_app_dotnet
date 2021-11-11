@@ -25,7 +25,7 @@ namespace MultiFamilyPortal
             services.RegisterThemes(env);
 
             // These have to be manually registered to avoid being linked out
-            services.RegisterTheme<DefaultTheme.DefaultTheme>();
+            services.RegisterTheme<QuarterRealEstateTheme.QuarterRealEstateTheme>();
             services.RegisterTheme<AdminTheme.AdminTheme>();
             services.RegisterTheme<PortalTheme.PortalTheme>();
             services.RegisterTheme<InvestorPortal.InvestorTheme>();

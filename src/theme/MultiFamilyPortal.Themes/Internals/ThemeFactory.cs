@@ -1,7 +1,7 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Components;using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Http;
 using MultiFamilyPortal.Data;
-
 namespace MultiFamilyPortal.Themes.Internals{    internal class ThemeFactory : IThemeFactory    {        private IEnumerable<IPortalTheme> _themes { get; }        private IMFPContext _dbContext { get; }
         private NavigationManager _navigationManager { get; }
         private IHttpContextAccessor _contextAccessor { get; }

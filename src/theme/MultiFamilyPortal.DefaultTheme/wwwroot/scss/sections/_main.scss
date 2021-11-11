@@ -4262,7 +4262,7 @@ input.cart-plus-minus-box {
             &::before {
                 position: absolute;
                 content: "\f00c";
-                font-family: 'Font Awesome 5 Pro';
+                font-family: $fontawesome;
                 font-weight: 900;
                 left: 0;
                 top: -5px;
@@ -5118,7 +5118,7 @@ input.cart-plus-minus-box {
             -webkit-transform: translateY(-50%);
             -ms-transform: translateY(-50%);
             transform: translateY(-50%);
-            font-family: 'Font Awesome 5 Pro';
+            font-family: $fontawesome;
             font-weight: 900;
             color: var(--ltn__secondary-color);
         }
@@ -5189,7 +5189,7 @@ input.cart-plus-minus-box {
         .nice-select {
             &::before {
                 content: "\f063";
-                font-family: 'Font Awesome 5 Pro';
+                font-family: $fontawesome;
                 font-weight: 900;
                 margin-right: 10px;
                 color: var(--ltn__secondary-color);

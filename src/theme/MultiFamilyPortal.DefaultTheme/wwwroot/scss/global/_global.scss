@@ -173,9 +173,6 @@ font-family: 'Poppins', sans-serif;
             }
         }
     }
-
-
-
 }
 
 @media(max-width:991px) {  /* Modify this based on column def */
@@ -209,7 +206,6 @@ font-family: 'Poppins', sans-serif;
         padding-right: 8px;
         padding-left: 8px;
     }
-
 }
 
 
@@ -328,8 +324,6 @@ font-family: 'Poppins', sans-serif;
     --wechat: #7bb32e;
     --youtube: #CB2027;
     --email: #F89A1E;
-
-
 }
 
 /* -------------------------------------
@@ -483,6 +477,7 @@ ol li {
 }
 .section-bg-3 {
     position: relative;
+
     &:before {
         position: absolute;
         content: "";
@@ -494,6 +489,7 @@ ol li {
         background: var(--gradient-color-1);
         opacity: 0.9;
     }
+
     h1,
     h2,
     h3,
@@ -508,33 +504,43 @@ ol li {
     td {
         color: var(--white);
     }
+
     .slick-arrow-1 .slick-arrow {
         background-color: transparent;
     }
+
     input[type="text"],
     input[type="email"],
     input[type="password"],
-    input[type="submit"] {
+    input[type="submit"],
+    .k-maskedtextbox > .k-textbox {
         border-color: var(--white);
         color: var(--white);
     }
+
     .btn-wrapper button {
         color: var(--white);
     }
+
     input::-webkit-input-placeholder {
         color: var(--white);
     }
+
     input::-moz-placeholder {
         color: var(--white);
     }
+
     input:-ms-input-placeholder {
         color: var(--white);
     }
+
     input:-moz-placeholder {
         color: var(--white);
     }
+
     .ltn__separate-line .separate-icon {
         background: var(--gradient-color-1);
+
         i {
             color: var(--white);
         }
@@ -734,7 +740,7 @@ ol li {
     position: relative;
     &::before {
         content: "\f063";
-        font-family: 'Font Awesome 6 Pro';
+        font-family: $fontawesome;
         font-weight: 900;
     }
 }
@@ -845,6 +851,7 @@ textarea:focus,
 input[type="button"]:focus,
 input[type="reset"]:focus,
 input[type="submit"]:focus,
+.k-maskedtextbox > .k-textbox:focus,
 select:focus {
     outline: none;
     -webkit-box-shadow: none;
@@ -863,6 +870,7 @@ input[type="text"],
 input[type="email"],
 input[type="password"],
 input[type="submit"],
+.k-maskedtextbox > .k-textbox,
 textarea {
     background-color: var(--white);
     border: 2px solid;
@@ -881,6 +889,7 @@ input[type="text"]::-webkit-input-placeholder,
 input[type="email"]::-webkit-input-placeholder,
 input[type="password"]::-webkit-input-placeholder,
 input[type="submit"]::-webkit-input-placeholder,
+.k-maskedtextbox > .k-textbox,
 textarea::-webkit-input-placeholder { /* Chrome/Opera/Safari */
     color: var(--ltn__paragraph-color);
     font-size: 14px;
@@ -888,6 +897,7 @@ textarea::-webkit-input-placeholder { /* Chrome/Opera/Safari */
 input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus,
+.k-maskedtextbox > .k-textbox,
 textarea:focus {
     border-color: var(--ltn__secondary-color);
 }
@@ -911,7 +921,8 @@ button:focus {
 .form-input-box {
     position: relative;
 }
-.form-input-box input[type="text"] {
+.form-input-box input[type="text"],
+.k-maskedtextbox > .k-textbox {
     width: 100%;
     height: 50px;
     padding: 0 70px 0 15px;

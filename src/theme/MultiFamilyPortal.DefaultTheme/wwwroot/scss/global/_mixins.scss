@@ -204,7 +204,7 @@
 
 @mixin fontawesomeIcon($content) {
     content: $content;
-    font-family: "Font Awesome 5 Free";
+    font-family: $fontawesome;
     font-weight: 900;
 }
 

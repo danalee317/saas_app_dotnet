@@ -40,7 +40,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiFamilyPortal.InspiniaT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiFamilyPortal.FirstRun", "src\theme\MultiFamilyPortal.FirstRun\MultiFamilyPortal.FirstRun.csproj", "{A34AC682-FB16-4EE9-AB67-FC843655622B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiFamilyPortal.InvestorPortal", "src\theme\MultiFamilyPortal.InvestorPortal\MultiFamilyPortal.InvestorPortal.csproj", "{1525D239-3CF7-46C0-B432-501FD4A8F0F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiFamilyPortal.InvestorPortal", "src\theme\MultiFamilyPortal.InvestorPortal\MultiFamilyPortal.InvestorPortal.csproj", "{1525D239-3CF7-46C0-B432-501FD4A8F0F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

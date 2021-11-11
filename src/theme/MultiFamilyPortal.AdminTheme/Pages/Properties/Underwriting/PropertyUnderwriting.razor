@@ -1,4 +1,4 @@
-@page "/admin/underwriting/property/{propertyId:guid}"
+﻿@page "/admin/underwriting/property/{propertyId:guid}"
 @using MultiFamilyPortal.AdminTheme.Components.Underwriting
 
 @if(Property is null)
@@ -60,6 +60,9 @@ else
       </TabStripTab>
       <TabStripTab Title="Notes">
         <UnderwritingNotesTab Property=@Property />
+      </TabStripTab>
+      <TabStripTab Title="Files">
+        <UnderwritingFilesTab Property=@Property />
       </TabStripTab>
     </TelerikTabStrip>
   </div>

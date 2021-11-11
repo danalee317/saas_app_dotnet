@@ -21,21 +21,23 @@
         </NavLink>
       </li>
     </AuthorizedPolicy>
-    @*<AuthorizedPolicy Policy=@PortalPolicy.Blogger>
+    <AuthorizedPolicy Policy=@PortalPolicy.Blogger>
       <li class="nav-item px-3">
         <a class="nav-link px-3" role="button" @onclick=@ToggleContentMenu>
-          <i class="fad fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;Content
+          <i class="fa-duotone fa-pen-to-square"></i>&nbsp;&nbsp;Content
         </a>
         @if(showContentMenu)
         {
           <ul>
-            <li><NavLink class="dropdown-item" href="/pages">Pages</NavLink></li>
-            <li><NavLink class="dropdown-item" href="/posts">Blogs</NavLink></li>
-            <li><NavLink class="dropdown-item" href="/create-post">New Post</NavLink></li>
+            <AuthorizedRole Role=@PortalRoles.PortalAdministrator>
+              <li><NavLink class="dropdown-item" href="/admin/pages">Pages</NavLink></li>
+            </AuthorizedRole>
+            <li><NavLink class="dropdown-item" href="/admin/posts">Blogs</NavLink></li>
+            <li><NavLink class="dropdown-item" href="/admin/create-post">New Post</NavLink></li>
           </ul>
         }
       </li>
-    </AuthorizedPolicy>*@
+    </AuthorizedPolicy>
     <AuthorizedPolicy Policy=@PortalPolicy.UnderwritingViewer>
       <li class="nav-item px-3">
         <NavLink class="nav-link" href="/admin/activity-log">

@@ -22,6 +22,8 @@ namespace MultiFamilyPortal.AdminTheme.Layouts
             showContentMenu = !showContentMenu;
             if (showContentMenu)
                 showPropertyMenu = showUsersMenu = false;
+
+            collapseNavMenu = false;
         }
 
         private void TogglePropertyMenu()
@@ -29,6 +31,8 @@ namespace MultiFamilyPortal.AdminTheme.Layouts
             showPropertyMenu = !showPropertyMenu;
             if (showPropertyMenu)
                 showContentMenu = showUsersMenu = false;
+
+            collapseNavMenu = false;
         }
 
         private void ToggleUsersMenu()
@@ -36,6 +40,8 @@ namespace MultiFamilyPortal.AdminTheme.Layouts
             showUsersMenu = !showUsersMenu;
             if (showUsersMenu)
                 showContentMenu = showPropertyMenu = false;
+
+            collapseNavMenu = false;
         }
     }
 }

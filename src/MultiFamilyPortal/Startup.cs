@@ -28,6 +28,7 @@ namespace MultiFamilyPortal
             services.RegisterTheme<DefaultTheme.DefaultTheme>();
             services.RegisterTheme<AdminTheme.AdminTheme>();
             services.RegisterTheme<PortalTheme.PortalTheme>();
+            services.RegisterTheme<InvestorPortal.InvestorTheme>();
         }
 
         public static void ConfigureApp(IApplicationBuilder app, IWebHostEnvironment env)

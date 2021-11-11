@@ -19,6 +19,11 @@ namespace MultiFamilyPortal.Themes.Internals{    internal class ThemeFactory :
         private IPortalAdminTheme GetAdminTheme()
         {
             return _themes.OfType<IPortalAdminTheme>().FirstOrDefault();
+        }
+
+        private IPortalInvestorTheme GetInvestorTheme()
+        {
+            return _themes.OfType<IPortalInvestorTheme>().FirstOrDefault();
         }        public IPortalTheme GetCurrentTheme()
         {
             if (_configurationValidator.Theme is not null)
@@ -31,5 +36,16 @@ namespace MultiFamilyPortal.Themes.Internals{    internal class ThemeFactory :
 #else
             var user = _contextAccessor.HttpContext.User;            if (uri.AbsolutePath.StartsWith("/admin") &&
                 user.IsInAnyRole(PortalRoles.Mentor, PortalRoles.Underwriter, PortalRoles.BlogAuthor, PortalRoles.PortalAdministrator))
-#endif            {                return GetAdminTheme();            }            return GetFrontendTheme();
+#endif            {                return GetAdminTheme();            }
+#if DEBUG
+            else if(uri.AbsolutePath.StartsWith("/investor-portal"))
+#else
+            else if (uri.AbsolutePath.StartsWith("/investor-theme") &&
+                user.IsInAnyRole(PortalRoles.Investor, PortalRoles.Sponsor))
+#endif
+            {
+                return GetInvestorTheme();
+            }
+
+            return GetFrontendTheme();
         }    }}

@@ -32,6 +32,7 @@
     <ProjectReference Include="..\theme\MultiFamilyPortal.FirstRun\MultiFamilyPortal.FirstRun.csproj" />
     <ProjectReference Include="..\theme\MultiFamilyPortal.AdminTheme\MultiFamilyPortal.AdminTheme.csproj" />
     <ProjectReference Include="..\theme\MultiFamilyPortal.DefaultTheme\MultiFamilyPortal.DefaultTheme.csproj" />
+    <ProjectReference Include="..\theme\MultiFamilyPortal.InvestorPortal\MultiFamilyPortal.InvestorPortal.csproj" />
     <ProjectReference Include="..\theme\MultiFamilyPortal.PortalTheme\MultiFamilyPortal.PortalTheme.csproj" />
     <ProjectReference Include="..\theme\MultiFamilyPortal.SideBarTheme\MultiFamilyPortal.SideBarTheme.csproj" />
   </ItemGroup>

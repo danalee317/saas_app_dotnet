@@ -9,6 +9,7 @@ using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.CoreUI;
 using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.Services;
 using Telerik.Blazor.Components;
 
 namespace MultiFamilyPortal.AdminTheme.Pages
@@ -18,6 +19,9 @@ namespace MultiFamilyPortal.AdminTheme.Pages
     {
         [Inject]
         private HttpClient _client { get; set; }
+
+        [Inject]
+        private ITimeZoneService _timezone { get; set; }
 
         [CascadingParameter]
         private ClaimsPrincipal _user { get; set; }
@@ -38,10 +42,14 @@ namespace MultiFamilyPortal.AdminTheme.Pages
         protected override async Task OnInitializedAsync()
         {
             _profileId = _underwriters.First().Id;
+
+            _start = await _timezone.GetLocalDateTime(_start);
+            _end = await _timezone.GetLocalDateTime(_end);
+
             try
             {
-                var foo = await _client.GetFromJsonAsync<IEnumerable<UnderwriterResponse>>("/api/admin/underwriting/underwriters");
-                _underwriters.AddRange(foo);
+                var underwriters = await _client.GetFromJsonAsync<IEnumerable<UnderwriterResponse>>("/api/admin/underwriting/underwriters");
+                _underwriters.AddRange(underwriters);
             }
             catch (Exception ex)
             {

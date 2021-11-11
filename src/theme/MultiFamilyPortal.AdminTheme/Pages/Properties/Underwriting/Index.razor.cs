@@ -6,7 +6,7 @@ using MultiFamilyPortal.AdminTheme.Components.Underwriting;
 using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Collections;
-using Telerik.Blazor.Components;
+using MultiFamilyPortal.Services;
 
 namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
 {
@@ -19,6 +19,9 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
         [Inject]
         private ILoggerFactory _loggerFactory { get; set; }
 
+        [Inject]
+        private ITimeZoneService _timezone { get; set; }
+
         private UnderwritingList underwritingList { get; set; }
         private UnderwriterResponse Profile;
         private string ProfileId;
@@ -30,6 +33,10 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
         {
             Profile = Underwriters.First();
             ProfileId = Profile.Id;
+
+            Start = await _timezone.GetLocalDateTime(Start);
+            End = await _timezone.GetLocalDateTime(End);
+
             try
             {
                 var underwriters = await _client.GetFromJsonAsync<IEnumerable<UnderwriterResponse>>("/api/admin/underwriting/underwriters");

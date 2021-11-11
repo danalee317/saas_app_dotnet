@@ -24,11 +24,10 @@ namespace MultiFamilyPortal.DefaultTheme.Pages
             if (response?.Errors?.Any() ?? false)
             {
                 serverSideValidator.DisplayErrors(response.Errors);
-                return;
             }
 
             notification.Show(response);
-            submitted = true;
+            submitted = response.State == ResultState.Success;
         }
     }
 }

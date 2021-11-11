@@ -24,12 +24,11 @@ namespace MultiFamilyPortal.DefaultTheme.Pages
             var response = await _formService.SubmitContactForm();
             if (response?.Errors?.Any() ?? false)
             {
-                            serverSideValidator.DisplayErrors(response.Errors);
-                return;
+                serverSideValidator.DisplayErrors(response.Errors);
             }
 
             notification.Show(response);
-            submitted = true;
+            submitted = response.State == ResultState.Success;
         }
     }
 }

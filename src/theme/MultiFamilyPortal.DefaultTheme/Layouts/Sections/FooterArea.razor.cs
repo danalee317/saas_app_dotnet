@@ -30,11 +30,10 @@ namespace MultiFamilyPortal.DefaultTheme.Layouts.Sections
             if(response?.Errors?.Any() ?? false)
             {
                 serverSideValidator.DisplayErrors(response.Errors);
-                return;
             }
 
             notification.Show(response);
-            subscribed = true;
+            subscribed = response.State == ResultState.Success;
         }
     }
 }

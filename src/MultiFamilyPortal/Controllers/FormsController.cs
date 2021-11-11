@@ -42,8 +42,18 @@ namespace MultiFamilyPortal.Controllers
         {
             var validatorResponse = await _emailValidator.Validate(form.Email);
 
-            if (validatorResponse.IsValid)
-                return BadRequest(validatorResponse.Message);
+            if (!validatorResponse.IsValid)
+            {
+                return BadRequest(new FormResult
+                {
+                    Errors = new Dictionary<string, List<string>>
+                    {
+                        { nameof(ContactFormRequest.Email), new List<string> { validatorResponse.Message } }
+                    },
+                    Message = validatorResponse.Message,
+                    State = ResultState.Error
+                });
+            }
 
             var url = $"{Request.Scheme}://{Request.Host}";
             var notification = new ContactNotificationTemplate
@@ -60,10 +70,10 @@ namespace MultiFamilyPortal.Controllers
 
             var userNotification = new ContactFormEmailNotification
             {
-                DisplayName = form.Email,
+                DisplayName = $"{form.FirstName} {form.LastName}".Trim(),
                 Email = form.Email,
-                FirstName = form.Email,
-                LastName = form.Email,
+                FirstName = form.FirstName,
+                LastName = form.LastName,
                 Message = $"<p>Thank you for contacting us. One of our team members will be in touch shortly.</p>",
                 SiteTitle = _siteInfo.Title,
                 SiteUrl = url,
@@ -74,7 +84,11 @@ namespace MultiFamilyPortal.Controllers
             var emailAddress = new EmailAddress(form.Email, $"{form.FirstName} {form.LastName}".Trim());
             await _emailService.SendAsync(emailAddress, userMessage);
 
-            return Ok();
+            return Ok(new FormResult
+            {
+                Message = "Success! Contact Request was successfully sent.",
+                State = ResultState.Success
+            });
         }
 
         [HttpPost("investor-inquiry")]
@@ -82,8 +96,18 @@ namespace MultiFamilyPortal.Controllers
         {
             var validatorResponse = await _emailValidator.Validate(form.Email);
 
-            if (validatorResponse.IsValid)
-                return BadRequest(validatorResponse.Message);
+            if (!validatorResponse.IsValid)
+            {
+                return BadRequest(new FormResult
+                {
+                    Errors = new Dictionary<string, List<string>>
+                    {
+                        { nameof(ContactFormRequest.Email), new List<string> { validatorResponse.Message } }
+                    },
+                    Message = validatorResponse.Message,
+                    State = ResultState.Error
+                });
+            }
 
             await _dbContext.InvestorProspects.AddAsync(new InvestorProspect
             {
@@ -114,10 +138,10 @@ namespace MultiFamilyPortal.Controllers
 
             var investorInquiryNotification = new ContactFormEmailNotification
             {
-                DisplayName = form.Email,
+                DisplayName = $"{form.FirstName} {form.LastName}".Trim(),
                 Email = form.Email,
-                FirstName = form.Email,
-                LastName = form.Email,
+                FirstName = form.FirstName,
+                LastName = form.LastName,
                 Message = $"<p>Thank you for contacting us. One of our team members will be in touch shortly.</p>",
                 SiteTitle = _siteInfo.Title,
                 SiteUrl = url,
@@ -128,7 +152,11 @@ namespace MultiFamilyPortal.Controllers
             var emailAddress = new EmailAddress(form.Email, $"{form.FirstName} {form.LastName}".Trim());
             await _emailService.SendAsync(emailAddress, investorMessage);
 
-            return Ok();
+            return Ok(new FormResult
+            {
+                Message = "Success! Investor Inquiry was successfully sent. A member of our team will be in touch shortly!",
+                State = ResultState.Success
+            });
         }
 
         [HttpPost("newsletter-subscriber")]
@@ -137,11 +165,27 @@ namespace MultiFamilyPortal.Controllers
             var validatorResponse = await _emailValidator.Validate(form.Email);
 
             if (!validatorResponse.IsValid)
-                return BadRequest(validatorResponse.Message);
+            {
+                return BadRequest(new FormResult
+                {
+                    Errors = new Dictionary<string, List<string>>
+                    {
+                        { nameof(ContactFormRequest.Email), new List<string> { validatorResponse.Message } }
+                    },
+                    Message = validatorResponse.Message,
+                    State = ResultState.Error
+                });
+            }
 
             var blogContext = _dbContext as IBlogContext;
             if (await blogContext.Subscribers.AnyAsync(x => x.Email == form.Email))
-                return Ok();
+            {
+                return Ok(new FormResult
+                {
+                    Message = "You have already subscribed.",
+                    State = ResultState.Success
+                });
+            }
 
             var ipData = await _ipLookup.LookupAsync(HttpContext.Connection.RemoteIpAddress, Request.Host.Value);
 
@@ -174,7 +218,11 @@ namespace MultiFamilyPortal.Controllers
             var message = await _templateProvider.GetTemplate(PortalTemplate.ContactMessage, notification);
             await _emailService.SendAsync(form.Email, message);
 
-            return Ok();
+            return Ok(new FormResult
+            {
+                Message = "Success! You have succesfully subscribed to our updates.",
+                State = ResultState.Success
+            });
         }
     }
 }

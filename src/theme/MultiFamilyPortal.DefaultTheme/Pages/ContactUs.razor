@@ -8,45 +8,55 @@
     <div class="row">
       <div class="col-lg-12">
         <div class="ltn__form-box contact-form-box box-shadow white-bg">
-          <h4 class="title-2">How can we help?</h4>
-          <p>To find out more about how to partner with us or if you have any questions about how passive income and multi-family investing might make sense for your investment portfolio, please contact us using the form on this page.</p>
-          <p>We look forward to connecting with you!</p>
-          <EditForm Model=@form
-                    id="contact-form"
-                    OnValidSubmit=@SubmitForm>
-            <DataAnnotationsValidator />
-            <ServerSideValidator @ref="serverSideValidator" />
-            <ValidationSummary />
-            <div class="row">
-              <div class="col-md-6">
-                <div class="input-item input-item-name ltn__custom-icon">
-                  <InputText type="text" placeholder="Enter your first name" @bind-Value=@form.FirstName />
+          @if(submitted)
+          {
+            <h4 class="title-2">Success</h4>
+            <p>Your contact request has been successfully submitted. A member of our team will reach out shortly.</p>
+          }
+          else
+          {
+            <h4 class="title-2">How can we help?</h4>
+            <p>To find out more about how to partner with us or if you have any questions about how passive income and multi-family investing might make sense for your investment portfolio, please contact us using the form on this page.</p>
+            <p>We look forward to connecting with you!</p>
+            <EditForm Model=@form
+                      id="contact-form"
+                      OnValidSubmit=@SubmitForm>
+              <DataAnnotationsValidator />
+              <ServerSideValidator @ref="serverSideValidator" />
+              <ValidationSummary />
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="input-item input-item-name ltn__custom-icon">
+                    <InputText type="text" placeholder="Enter your first name" @bind-Value=@form.FirstName />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="input-item input-item-name ltn__custom-icon">
+                    <InputText type="text" placeholder="Enter your last name" @bind-Value=@form.LastName />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="input-item input-item-phone ltn__custom-icon">
+                    <TelerikMaskedTextBox PlaceHolder="Enter phone number"
+                                          @bind-Value=@form.Phone
+                                          Mask="(000) 000-0000" />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="input-item input-item-email ltn__custom-icon">
+                    <InputText type="email" name="email" placeholder="Enter email address" @bind-Value=@form.Email />
+                  </div>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="input-item input-item-name ltn__custom-icon">
-                  <InputText type="text" placeholder="Enter your last name" @bind-Value=@form.LastName />
-                </div>
+              <div class="input-item input-item-textarea ltn__custom-icon">
+                <InputTextArea @bind-Value=@form.Comments placeholder="Enter message" />
               </div>
-              <div class="col-md-6">
-                <div class="input-item input-item-phone ltn__custom-icon">
-                  <InputText type="text" placeholder="Enter phone number" @bind-Value=@form.Phone />
-                </div>
+              <div class="btn-wrapper mt-0">
+                <button class="btn theme-btn-1 btn-effect-1 text-uppercase" type="submit">Submit</button>
               </div>
-              <div class="col-md-6">
-                <div class="input-item input-item-email ltn__custom-icon">
-                  <InputText type="email" name="email" placeholder="Enter email address" @bind-Value=@form.Email />
-                </div>
-              </div>
-            </div>
-            <div class="input-item input-item-textarea ltn__custom-icon">
-              <InputTextArea @bind-Value=@form.Comments placeholder="Enter message" />
-            </div>
-            <div class="btn-wrapper mt-0">
-              <button class="btn theme-btn-1 btn-effect-1 text-uppercase" type="submit">Submit</button>
-            </div>
-            <p class="form-messege mb-0 mt-20"></p>
-          </EditForm>
+              <p class="form-messege mb-0 mt-20"></p>
+            </EditForm>
+          }
         </div>
       </div>
     </div>

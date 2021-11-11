@@ -1,0 +1,143 @@
+﻿<table data-role="grid" role="grid" class="k-grid-table">
+  <colgroup>
+    <col style="width: 42%" />
+    <col style="width: 16%" />
+    <col style="width: 42%" />
+  </colgroup>
+  <tbody role="rowgroup">
+    
+    <tr role="row" class="k-master-row">
+      <td role="gridcell" class="px-2">
+        Closing Costs
+      </td>
+      <td role="gridcell" class="px-2">
+        <TelerikNumericTextBox @bind-Value=@Property.ClosingCostPercent
+                                Min="0"
+                                Max="1"
+                                Step="0.01"
+                                Decimals="4"
+                                Format="P"
+                                Class="form-control" />
+      </td>
+      <td role="gridcell" class="px-2 text-center">
+        @Property.ClosingCosts.ToString("C")
+      </td>
+    </tr>
+    <tr role="row" class="k-master-row k-alt">
+      <td role="gridcell" class="px-2">
+        Loan Points
+      </td>
+      <td role="gridcell" class="px-2">
+
+      </td>
+      <td role="gridcell" class="px-2 text-center">
+        @Property.Mortgages.Sum(x => x.PointCost).ToString("C")
+      </td>
+    </tr>
+    <tr role="row" class="k-master-row">
+      <td role="gridcell" class="px-2">
+        Aquisition Fee
+      </td>
+      <td role="gridcell" class="px-2">
+        <TelerikNumericTextBox @bind-Value=@Property.AquisitionFeePercent
+                               Min="0"
+                               Max="1"
+                               Step="0.01"
+                               Decimals="4"
+                               Format="P"
+                               Class="form-control"/>
+      </td>
+      <td role="gridcell" class="px-2 text-center">
+        @Property.AquisitionFee.ToString("C")
+      </td>
+    </tr>
+    <tr role="row" class="k-master-row k-alt">
+      <td role="gridcell" class="px-2">
+        Deferred Maintenance
+      </td>
+      <td role="gridcell" class="px-2">
+
+      </td>
+      <td role="gridcell" class="px-2 text-center">
+        <TelerikNumericTextBox @bind-Value=@Property.DeferredMaintenance
+                               Min="0"
+                               Step="1000"
+                               Format="C" />
+      </td>
+    </tr>
+    <tr role="row" class="k-master-row">
+      <td role="gridcell" class="px-2">
+        SEC Attorney
+      </td>
+      <td role="gridcell" class="px-2">
+
+      </td>
+      <td role="gridcell" class="px-2 text-center">
+        <TelerikNumericTextBox @bind-Value=@Property.SECAttorney
+                               Min="0"
+                               Step="1000"
+                               Format="C" />
+      </td>
+    </tr>
+    <tr role="row" class="k-master-row k-alt">
+      <td role="gridcell" class="px-2">
+        Closing Cost Misc.
+      </td>
+      <td role="gridcell" class="px-2">
+
+      </td>
+      <td role="gridcell" class="px-2 text-center">
+        <TelerikNumericTextBox @bind-Value=@Property.ClosingCostMiscellaneous
+                               Min="0"
+                               Step="1000"
+                               Format="C" />
+      </td>
+    </tr>
+    <tr role="row" class="k-master-row">
+      <td role="gridcell" class="px-2">
+        Closing Cost Other
+      </td>
+      <td role="gridcell" class="px-2">
+
+      </td>
+      <td role="gridcell" class="px-2 text-center">
+        @Property.ClosingCostOther.ToString("C")
+      </td>
+    </tr>
+    <tr role="row" class="k-master-row k-alt">
+      <td role="gridcell" class="px-2">
+
+      </td>
+      <td role="gridcell" class="px-2">
+
+      </td>
+      <td role="gridcell" class="px-2 text-center">
+
+      </td>
+    </tr>
+    <tr role="row" class="k-master-row">
+      <td role="gridcell" class="px-2">
+
+      </td>
+      <td role="gridcell" class="px-2">
+
+      </td>
+      <td role="gridcell" class="px-2 text-center">
+
+      </td>
+    </tr>
+    <tr role="row" class="k-master-row k-alt">
+      <td role="gridcell" class="px-2">
+
+      </td>
+      <td role="gridcell" class="px-2">
+
+      </td>
+      <td role="gridcell" class="px-2 text-center">
+
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+

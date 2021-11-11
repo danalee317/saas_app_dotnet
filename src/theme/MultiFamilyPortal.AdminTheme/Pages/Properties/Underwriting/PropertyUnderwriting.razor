@@ -1,4 +1,4 @@
-﻿@page "/admin/underwriting/property/{propertyId:guid}"
+@page "/admin/underwriting/property/{propertyId:guid}"
 @using MultiFamilyPortal.AdminTheme.Components.Underwriting
 
 @if(Property is null)
@@ -52,6 +52,9 @@ else
       </TabStripTab>
       <TabStripTab Title="Mortgage">
         <UnderwritingMortgagesTab Property=@Property />
+      </TabStripTab>
+      <TabStripTab Title="Closing Costs">
+        <UnderwritingClosingCostsTab Property=@Property />
       </TabStripTab>
       <TabStripTab Title="Summary">
         <UnderwritingSummaryTab Property=@Property />

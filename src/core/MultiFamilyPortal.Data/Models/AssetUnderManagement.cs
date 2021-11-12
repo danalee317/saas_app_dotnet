@@ -33,6 +33,8 @@ namespace MultiFamilyPortal.Data.Models
 
         public AssetState Status { get; set; }
 
+        public AssetInvestorState InvestorState { get; set; }
+
         private DateTimeOffset _timestamp = DateTimeOffset.Now;
         public DateTimeOffset Timestamp => _timestamp;
 

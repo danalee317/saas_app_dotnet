@@ -18,6 +18,8 @@ namespace MultiFamilyPortal.Data.Models
 
         public string Description { get; set; }
 
+        public string Notes { get; set; }
+
         public ActivityType Type { get; set; }
 
         public SiteUser User { get; set; }

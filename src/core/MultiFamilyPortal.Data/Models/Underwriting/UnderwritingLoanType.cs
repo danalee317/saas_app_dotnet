@@ -3,6 +3,7 @@
     public enum UnderwritingLoanType
     {
         Automatic,
+        Assumption,
         Custom
     }
 }

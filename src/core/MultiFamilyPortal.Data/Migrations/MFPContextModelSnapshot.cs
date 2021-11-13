@@ -988,7 +988,7 @@ namespace MultiFamilyPortal.Data.Migrations
                         new
                         {
                             Id = 9,
-                            Icon = "fad fa-globe",
+                            Icon = "fa-duotone fa-globe",
                             Name = "Website",
                             Placeholder = "https://amazingwebsite.com",
                             UriTemplate = "{0}"

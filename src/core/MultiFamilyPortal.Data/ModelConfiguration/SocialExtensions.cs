@@ -70,7 +70,7 @@ namespace MultiFamilyPortal.Data.ModelConfiguration
             {
                 Id = 9,
                 Name = "Website",
-                Icon = "fad fa-globe",
+                Icon = "fa-duotone fa-globe",
                 UriTemplate = "{0}",
                 Placeholder = "https://amazingwebsite.com"
             }

@@ -926,7 +926,7 @@ namespace MultiFamilyPortal.Data.Migrations
                     { 5, "fab fa-twitch", "Twitch", "Your username", "https://twitch.tv/{0}" },
                     { 6, "fab fa-youtube", "YouTube", "Your channel name", "https://youtube.com/{0}" },
                     { 8, "fab fa-linkedin", "LinkedIn", "Your username", "https://linkedin.com/in/{0}" },
-                    { 9, "fad fa-globe", "Website", "https://amazingwebsite.com", "{0}" }
+                    { 9, "fa-duotone fa-globe", "Website", "https://amazingwebsite.com", "{0}" }
                 });
 
             migrationBuilder.CreateIndex(

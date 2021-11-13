@@ -13,7 +13,7 @@
       <TelerikTabStrip TabPosition="TabPosition.Top">
         <TabStripTab>
           <HeaderTemplate>
-            <i class="fad fa-user-circle"></i>&nbsp; My Profile
+            <i class="fa-duotone fa-user-circle"></i>&nbsp; My Profile
           </HeaderTemplate>
           <Content>
             <div class="row">
@@ -32,7 +32,7 @@
                                   PlaceHolder="Enter your last name"
                                   @bind-Value="@SiteUser.LastName"
                                   Width="100%"/>
-                                  
+
                   <label for="LastName" class="form-label">Last Name</label>
                 </div>
               </div>
@@ -44,7 +44,7 @@
                                   PlaceHolder="Real Estate Guru"
                                   @bind-Value="@SiteUser.Title"
                                   Width="100%"/>
-                                  
+
                   <label for="Title" class="form-label">Title</label>
                 </div>
               </div>
@@ -76,7 +76,7 @@
         {
         <TabStripTab>
           <HeaderTemplate>
-            <i class="fad fa-hashtag"></i>&nbsp; Social Media
+            <i class="fa-duotone fa-hashtag"></i>&nbsp; Social Media
           </HeaderTemplate>
           <Content>
             <div class="row">
@@ -109,7 +109,7 @@
         <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
           <TabStripTab>
             <HeaderTemplate>
-              <i class="fad fa-bullseye-arrow"></i>&nbsp; Goals
+              <i class="fa-duotone fa-bullseye-arrow"></i>&nbsp; Goals
             </HeaderTemplate>
             <Content>
               <h4>Weekly Goals</h4>
@@ -159,7 +159,7 @@
         {
           <TabStripTab>
             <HeaderTemplate>
-              <i class="fad fa-unlock-alt"></i>&nbsp; Account
+              <i class="fa-duotone fa-unlock-alt"></i>&nbsp; Account
             </HeaderTemplate>
             <Content>
               <EditForm Model=@ChangePassword

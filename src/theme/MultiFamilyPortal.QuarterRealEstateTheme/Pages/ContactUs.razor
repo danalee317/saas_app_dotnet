@@ -39,6 +39,8 @@
                   <div class="input-item input-item-phone ltn__custom-icon">
                     <TelerikMaskedTextBox PlaceHolder="Enter phone number"
                                           @bind-Value=@form.Phone
+                                          Class="w-100 mb-4"
+                                          Id="phone-number"
                                           Mask="(000) 000-0000" />
                   </div>
                 </div>
@@ -106,3 +108,13 @@
 <!-- CONTACT ADDRESS AREA END -->*@
 
 <PortalNotification @ref="notification" />
+
+// TODO : move to a separate file : _main.scss , nbundle doesn't support Apple Silicon yet
+<style>
+#phone-number {
+    border-radius: 0px;
+    height: 65px;
+    border: 2px solid var(--ltn__primary-color);
+    border-color: #E4ECF2 !important;
+}
+</style>

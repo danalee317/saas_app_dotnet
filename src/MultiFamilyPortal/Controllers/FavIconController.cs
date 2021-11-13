@@ -22,7 +22,7 @@ namespace MultiFamilyPortal.Controllers
 
         [HttpGet("/favicon.ico")]
         public IActionResult GetFavIcon() =>
-            GetImage("favicon.ico", 16, true);
+            GetImage("favicon.ico", 16);
 
         [HttpGet("/favicon-16x16.png")]
         public IActionResult GetFavIcon16() =>
@@ -80,7 +80,7 @@ namespace MultiFamilyPortal.Controllers
             return File(bytes, "application/json", "site.webmanifest");
         }
 
-        private IActionResult GetImage(string name, int defaultSize, bool iconFile = false)
+        private IActionResult GetImage(string name, int defaultSize)
         {
             var filePath = Path.Combine(_hostEnvironment.ContentRootPath, "App_Data", name);
             var fileInfo = new FileInfo(filePath);
@@ -98,14 +98,14 @@ namespace MultiFamilyPortal.Controllers
 
                 using (var stream = System.IO.File.Create(filePath))
                 {
-                    var type = iconFile ? SKEncodedImageFormat.Ico : SKEncodedImageFormat.Png;
+                    var type = Path.GetExtension(name).ToLower() == ".ico" ? SKEncodedImageFormat.Ico : SKEncodedImageFormat.Png;
                     using var bitmap = SKBitmap.FromImage(output);
                     bitmap.Encode(stream, type, 100);
                 }
             }
 
-            var contentType = iconFile ? "image/x-icon" : "image/png";
-            return File(System.IO.File.ReadAllBytes(filePath), contentType, name);
+            var typeInfo = FileTypeLookup.GetFileTypeInfo(name);
+            return File(System.IO.File.ReadAllBytes(filePath), typeInfo.MimeType, name);
         }
 
         private record WebManifest

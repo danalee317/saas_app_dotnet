@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultiFamilyPortal.AdminTheme.Models;
+using MultiFamilyPortal.AdminTheme.Services;
 using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
@@ -180,6 +181,17 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 .FirstOrDefaultAsync(x => x.Id == prospect.Id);
 
             return Ok(response);
+        }
+
+        [HttpGet("property/exportUnderwriting/{propertyId:guid}")]
+        public async Task<IActionResult> ExportUnderwriting(Guid propertyId)
+        {
+            var property = await GetUnderwritingAnalysis(propertyId);
+            var data = UnderwritingService.GenerateUnderwritingSpreadsheet(property);
+
+            var fileName = $"{property.Name}.xlsx";
+            var info = FileTypeLookup.GetFileTypeInfo(fileName);
+            return File(data, info.MimeType, fileName);
         }
 
         [HttpGet("property/{propertyId:guid}")]

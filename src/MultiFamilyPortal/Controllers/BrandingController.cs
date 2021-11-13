@@ -36,17 +36,19 @@ namespace MultiFamilyPortal.Controllers
 
             var defaultSvg = Path.Combine(_env.WebRootPath, "default-resources", "logo", $"{name}.svg");
 
-            if(SysFile.Exists(expectedPng))
+            var info = FileTypeLookup.GetFileTypeInfo(expectedPng);
+            var svgInfo = FileTypeLookup.GetFileTypeInfo(expectedSvg);
+            if (SysFile.Exists(expectedPng))
             {
-                return PhysicalFile(expectedPng, "image/png");
+                return PhysicalFile(expectedPng, info.MimeType);
             }
             else if(SysFile.Exists(expectedSvg))
             {
-                return PhysicalFile(expectedSvg, "image/svg+xml");
+                return PhysicalFile(expectedSvg, svgInfo.MimeType);
             }
             else if(SysFile.Exists(defaultSvg))
             {
-                return PhysicalFile(defaultSvg, "image/svg+xml");
+                return PhysicalFile(defaultSvg, svgInfo.MimeType);
             }
             else
             {

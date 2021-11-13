@@ -4,6 +4,8 @@
     {
         public string SendGridKey { get; set; }
 
+        public GoogleCaptchaOptions Captcha { get; set; }
+
         public StorageConfiguration Storage { get; set; }
     }
 }

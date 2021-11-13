@@ -31,6 +31,9 @@ namespace MultiFamilyPortal.Extensions
 
             var config = new SiteConfiguration();
             configuration.Bind(config);
+
+            services.AddSingleton(config.Captcha);
+
             services.AddTransient<ISendGridClient>(sp =>
             {
                 return new SendGridClient(config.SendGridKey);

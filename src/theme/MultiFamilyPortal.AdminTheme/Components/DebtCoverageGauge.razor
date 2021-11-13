@@ -6,42 +6,9 @@
     </Template>
   </ArcGaugeCenterLabel>
   <ArcGaugeScales>
-    <ArcGaugeScale Min="0" Max=@Max() />
+    <ArcGaugeScale Min="0" Max=@Max />
   </ArcGaugeScales>
   <ArcGaugePointers>
-    <ArcGaugePointer Size="10" Value="@DebtCoverageRatio" Color=@Color() />
+    <ArcGaugePointer Size="10" Value="@DebtCoverageRatio" Color=@Color />
   </ArcGaugePointers>
 </TelerikArcGauge>
-
-@code {
-    [Parameter]
-    public double DebtCoverageRatio { get; set; }
-
-    private string Color()
-    {
-        if (DebtCoverageRatio < 1.2)
-            return "red";
-
-        if (DebtCoverageRatio < 1.5)
-            return "yellow";
-
-        return "green";
-    }
-
-    private double Max()
-    {
-        if (DebtCoverageRatio < 2)
-            return 2;
-
-        if (DebtCoverageRatio < 4)
-            return 4;
-
-        if (DebtCoverageRatio < 6)
-            return 6;
-
-        if (DebtCoverageRatio < 10)
-            return 10;
-
-        return DebtCoverageRatio;
-    }
-}

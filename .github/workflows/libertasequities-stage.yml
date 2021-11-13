@@ -22,7 +22,7 @@ jobs:
         dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
     - name: NuGet Restore
       run: |
-        dotnet nuget add source InHouse --source ${{ secrets.IN_HOUSE_NUGET_FEED }}  --username ${{ secrets.IN_HOUSE_NUGET_USER }} --password ${{ secrets.IN_HOUSE_API_KEY }}
+        dotnet nuget add source ${{ secrets.IN_HOUSE_NUGET_FEED }} --name InHouse --username ${{ secrets.IN_HOUSE_NUGET_USER }} --password ${{ secrets.IN_HOUSE_API_KEY }}
         dotnet restore "${{ env.WORKING_DIRECTORY }}"
     - name: Build
       run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore

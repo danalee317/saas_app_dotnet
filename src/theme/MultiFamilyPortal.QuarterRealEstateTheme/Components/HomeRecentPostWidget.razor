@@ -8,14 +8,14 @@
       <div class="ltn__blog-meta">
         <ul>
           <li class="ltn__blog-author">
-            <a href="#"><i class="far fa-user"></i>by: @Post.Name</a>
+            <a href="#"><i class="fa-regular fa-user"></i>by: @Post.Name</a>
           </li>
           <li class="ltn__blog-tags">
             @foreach(var tag in Post.Tags)
             {
-              <a href="#"><i class="fas fa-tags"></i>@tag</a>
+              <a href="#"><i class="fa-solid fa-tags"></i>@tag</a>
             }
-            
+
           </li>
         </ul>
       </div>
@@ -26,7 +26,7 @@
         <div class="ltn__blog-meta">
           <ul>
             <li class="ltn__blog-date">
-              <i class="far fa-calendar-alt"></i>@Post.Published.ToString("/d")
+              <i class="fa-regular fa-calendar-alt"></i>@Post.Published.ToString("/d")
             </li>
           </ul>
         </div>

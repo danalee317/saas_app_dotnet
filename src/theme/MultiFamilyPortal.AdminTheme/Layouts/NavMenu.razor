@@ -17,7 +17,7 @@
     <AuthorizedPolicy Policy=@PortalPolicy.AdminPortalViewer>
       <li class="nav-item px-3">
         <NavLink class="nav-link" href="/admin" Match="NavLinkMatch.All">
-          <i class="fad fa-tachometer-alt-fastest" aria-hidden="true"></i>&nbsp;&nbsp;Dashboard
+          <i class="fa-duotone fa-tachometer-alt-fastest" aria-hidden="true"></i>&nbsp;&nbsp;Dashboard
         </NavLink>
       </li>
     </AuthorizedPolicy>
@@ -41,12 +41,12 @@
     <AuthorizedPolicy Policy=@PortalPolicy.UnderwritingViewer>
       <li class="nav-item px-3">
         <NavLink class="nav-link" href="/admin/activity-log">
-          <span class="fad fa-mobile" aria-hidden="true"></span>&nbsp;&nbsp;Activity Log
+          <span class="fa-duotone fa-mobile" aria-hidden="true"></span>&nbsp;&nbsp;Activity Log
         </NavLink>
       </li>
       <li class="nav-item px-3">
         <a class="nav-link px-3" role="button" @onclick=@TogglePropertyMenu>
-          <i class="fad fa-city" aria-hidden="true"></i>&nbsp;&nbsp;Properties
+          <i class="fa-duotone fa-city" aria-hidden="true"></i>&nbsp;&nbsp;Properties
         </a>
         @if(showPropertyMenu)
         {
@@ -63,7 +63,7 @@
     <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
       <li class="nav-item px-3">
         <a class="nav-link px-3" role="button" @onclick=@ToggleUsersMenu>
-          <i class="fad fa-users" aria-hidden="true"></i>&nbsp;&nbsp;Users
+          <i class="fa-duotone fa-users" aria-hidden="true"></i>&nbsp;&nbsp;Users
         </a>
         @if(showUsersMenu)
         {
@@ -81,20 +81,20 @@
     <AuthorizedPolicy Policy=@PortalPolicy.AdminPortalViewer>
       <li class="nav-item px-3">
         <NavLink class="nav-link" href="/admin/user-profile">
-          <span class="fad fa-user" aria-hidden="true"></span>&nbsp;&nbsp;Profile
+          <span class="fa-duotone fa-user" aria-hidden="true"></span>&nbsp;&nbsp;Profile
         </NavLink>
       </li>
     </AuthorizedPolicy>
     <AuthorizedRole Role=@PortalRoles.PortalAdministrator>
       <li class="nav-item px-3">
         <NavLink class="nav-link" href="/admin/settings">
-          <span class="fad fa-cogs" aria-hidden="true"></span>&nbsp;&nbsp;Settings
+          <span class="fa-duotone fa-cogs" aria-hidden="true"></span>&nbsp;&nbsp;Settings
         </NavLink>
       </li>
     </AuthorizedRole>
     <li class="nav-item px-3">
       <NavLink class="nav-link" href="/logout">
-        <i class="fad fa-sign-out-alt" aria-hidden="true"></i>&nbsp;&nbsp;Logout
+        <i class="fa-duotone fa-sign-out-alt" aria-hidden="true"></i>&nbsp;&nbsp;Logout
       </NavLink>
     </li>
   </ul>

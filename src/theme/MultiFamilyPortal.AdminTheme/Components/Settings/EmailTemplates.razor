@@ -49,7 +49,12 @@ else
     </TabStripTab>
   </TelerikTabStrip>
   <div class="row text-center mt-3">
-    <div class="col-12">
+    <div class="col-md-2 offset-md-3">
+      <TelerikButton Title="Back"
+                     ButtonType=@ButtonType.Button
+                     OnClick=@(() => _selected = null)>Back</TelerikButton>
+    </div>
+    <div class="col-md-2">
       <TelerikButton Title="Save"
                      ButtonType=@ButtonType.Button
                      Primary=@true

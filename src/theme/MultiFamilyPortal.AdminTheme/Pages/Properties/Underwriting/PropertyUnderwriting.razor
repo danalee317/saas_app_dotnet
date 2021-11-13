@@ -70,13 +70,16 @@ else
 
 <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
   <div class="row text-center my-4">
-    <div class="col">
+    <div class="col-md-2 offset-md-3 text-center">
       <TelerikButton Title="Update"
                      Primary="true"
                      ButtonType=@ButtonType.Button
                      OnClick=@OnUpdateProperty>
         Update
       </TelerikButton>
+    </div>
+    <div class="col-md-2 text-center">
+      <a class="btn btn-secondary" href="/api/admin/underwriting/property/exportUnderwriting/@propertyId" target="_blank">Download Underwriting</a>
     </div>
   </div>
 </AuthorizedPolicy>

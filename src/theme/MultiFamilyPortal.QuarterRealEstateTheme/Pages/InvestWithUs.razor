@@ -50,6 +50,8 @@
                                            @bind-Value=@_form.LookingToInvest
                                            Min="25000"
                                            Step="5000"
+                                           Class="w-100 mb-4"
+                                           Id="home-size"
                                            Format="C" />
                   </div>
                 </div>
@@ -79,3 +81,14 @@
 <!-- CONTACT MESSAGE AREA END -->
 
 <PortalNotification @ref="notification" />
+
+
+@* TODO : Remove this as it is not needed, after we have a proper addition to SASS *@
+<style>
+#home-size {
+    border-radius: 0px;
+    height: 65px;
+    border: 2px solid var(--ltn__primary-color);
+    border-color: #E4ECF2 !important;
+}
+</style>

@@ -40,7 +40,7 @@
                     <TelerikMaskedTextBox PlaceHolder="Enter phone number"
                                           @bind-Value=@form.Phone
                                           Class="w-100 mb-4"
-                                          Id="phone-number"
+                                          Id="home-size"
                                           Mask="(000) 000-0000" />
                   </div>
                 </div>
@@ -109,9 +109,9 @@
 
 <PortalNotification @ref="notification" />
 
-// TODO : move to a separate file : _main.scss , nbundle doesn't support Apple Silicon yet
+@* TODO : move to a separate file : _main.scss , nbundle doesn't support Apple Silicon yet*@
 <style>
-#phone-number {
+#home-size {
     border-radius: 0px;
     height: 65px;
     border: 2px solid var(--ltn__primary-color);

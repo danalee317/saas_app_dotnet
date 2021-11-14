@@ -15,6 +15,7 @@ namespace MultiFamilyPortal.FirstRun.Pages
     public partial class Index
     {
         private FirstRunSetup Model = new();
+        private bool isBusy;
 
         [Inject]
         private IMFPContext _dbContext { get; set; }
@@ -68,7 +69,7 @@ namespace MultiFamilyPortal.FirstRun.Pages
             {
                 _ = new MailAddress(email);
                 var parts = email.Split('@');
-                if(parts.Length == 2 && parts[1].Split('.').Length > 1)
+                if (parts.Length == 2 && parts[1].Split('.').Length > 1)
                     return true;
             }
             catch
@@ -80,65 +81,67 @@ namespace MultiFamilyPortal.FirstRun.Pages
 
         private async Task OnFinish()
         {
-            if (!AdminAccountIsValid())
-                return;
-
-            var settings = new[]
-            {
-                new Setting
-                {
-                    Key = PortalSetting.SiteTitle,
-                    Value = Model.SiteTitle
-                },
-                new Setting
-                {
-                    Key = PortalSetting.NotificationEmailFrom,
-                    Value = Model.SenderEmailName
-                },
-                new Setting
-                {
-                    Key = PortalSetting.NotificationEmail,
-                    Value = Model.SenderEmail
-                },
-                new Setting
-                {
-                    Key = PortalSetting.ContactStreetAddress,
-                    Value = Model.Address
-                },
-                new Setting
-                {
-                    Key = PortalSetting.ContactCity,
-                    Value = Model.City
-                },
-                new Setting
-                {
-                    Key = PortalSetting.ContactState,
-                    Value = Model.State
-                },
-                new Setting
-                {
-                    Key = PortalSetting.ContactZip,
-                    Value = Model.PostalCode
-                },
-                new Setting
-                {
-                    Key = PortalSetting.ContactStreetAddress,
-                    Value = Model.Address
-                },
-                new Setting
-                {
-                    Key = PortalSetting.ContactEmail,
-                    Value = Model.PublicEmail
-                },
-                new Setting
-                {
-                    Key = PortalSetting.ContactPhone,
-                    Value = Model.Phone
-                }
-            }.Where(x => !string.IsNullOrEmpty(x.Value));
-
             try
             {
+                isBusy = true;
+
+                if (!AdminAccountIsValid())
+                    return;
+
+                var settings = new[]
+                {
+                    new Setting
+                    {
+                        Key = PortalSetting.SiteTitle,
+                        Value = Model.SiteTitle
+                    },
+                    new Setting
+                    {
+                        Key = PortalSetting.NotificationEmailFrom,
+                        Value = Model.SenderEmailName
+                    },
+                    new Setting
+                    {
+                        Key = PortalSetting.NotificationEmail,
+                        Value = Model.SenderEmail
+                    },
+                    new Setting
+                    {
+                        Key = PortalSetting.ContactStreetAddress,
+                        Value = Model.Address
+                    },
+                    new Setting
+                    {
+                        Key = PortalSetting.ContactCity,
+                        Value = Model.City
+                    },
+                    new Setting
+                    {
+                        Key = PortalSetting.ContactState,
+                        Value = Model.State
+                    },
+                    new Setting
+                    {
+                        Key = PortalSetting.ContactZip,
+                        Value = Model.PostalCode
+                    },
+                    new Setting
+                    {
+                        Key = PortalSetting.ContactStreetAddress,
+                        Value = Model.Address
+                    },
+                    new Setting
+                    {
+                        Key = PortalSetting.ContactEmail,
+                        Value = Model.PublicEmail
+                    },
+                    new Setting
+                    {
+                        Key = PortalSetting.ContactPhone,
+                        Value = Model.Phone
+                    }
+                }.Where(x => !string.IsNullOrEmpty(x.Value));
+
                 if (settings.Any())
                 {
                     foreach (var setting in settings)
@@ -158,6 +161,7 @@ namespace MultiFamilyPortal.FirstRun.Pages
                     PhoneNumber = Model.AdminPhone,
                     EmailConfirmed = true,
                     PhoneNumberConfirmed = true,
+                    Title = "Site Owner",
                     Bio = "<p>Your account is all set up. Be sure to update your Bio in the Admin Portal.</p>"
                 };
 
@@ -202,7 +206,8 @@ namespace MultiFamilyPortal.FirstRun.Pages
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Message = "<p>Congratulations your website has been configured and is now ready to use.</p>",
-                    Subject = "Portal Configured"
+                    Subject = "Portal Configured",
+                    Year = DateTime.Now.Year
                 };
                 var template = await _templateProvider.GetTemplate(PortalTemplate.ContactMessage, model);
                 var emailAddress = new EmailAddress(user.Email, user.DisplayName);
@@ -214,6 +219,10 @@ namespace MultiFamilyPortal.FirstRun.Pages
             catch (Exception ex)
             {
                 notification.ShowError(ex.Message);
+            }
+            finally
+            {
+                isBusy = false;
             }
         }
     }

@@ -31,18 +31,10 @@ namespace MultiFamilyPortal.Themes.Internals{    internal class ThemeFactory :
 
             var uri = new Uri(_navigationManager.Uri);
 
-#if DEBUG
-            if (uri.AbsolutePath.StartsWith("/admin"))
-#else
-            var user = _contextAccessor.HttpContext.User;            if (uri.AbsolutePath.StartsWith("/admin") &&
-                user.IsInAnyRole(PortalRoles.Mentor, PortalRoles.Underwriter, PortalRoles.BlogAuthor, PortalRoles.PortalAdministrator))
-#endif            {                return GetAdminTheme();            }
-#if DEBUG
-            else if(uri.AbsolutePath.StartsWith("/investor-portal"))
-#else
+            var user = _contextAccessor?.HttpContext?.User;            if (uri.AbsolutePath.StartsWith("/admin") &&
+                (user?.IsInAnyRole(PortalRoles.Mentor, PortalRoles.Underwriter, PortalRoles.BlogAuthor, PortalRoles.PortalAdministrator) ?? false))            {                return GetAdminTheme();            }
             else if (uri.AbsolutePath.StartsWith("/investor-theme") &&
-                user.IsInAnyRole(PortalRoles.Investor, PortalRoles.Sponsor))
-#endif
+                (user?.IsInAnyRole(PortalRoles.Investor, PortalRoles.Sponsor) ?? false))
             {
                 return GetInvestorTheme();
             }

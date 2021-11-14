@@ -59,11 +59,7 @@ namespace MultiFamilyPortal.Authentication
                     return Task.FromResult(0);
                 };
             });
-            //services.AddDefaultIdentity<SiteUser>(options => options.SignIn.RequireConfirmedAccount = true)
-            //    .AddUserManager<UserManager<SiteUser>>()
-            //    //.AddRoleManager<RoleManager<IdentityRole>>()
-            //    //.AddRoles<IdentityRole>()
-            //    .AddEntityFrameworkStores<MFPContext>();
+
             var authBuilder = services.AddAuthentication();
             if (!string.IsNullOrEmpty(options.Google?.ClientId) && !string.IsNullOrEmpty(options.Google?.ClientSecret))
             {
@@ -82,25 +78,6 @@ namespace MultiFamilyPortal.Authentication
                     microsoft.ClientSecret = options.Microsoft.ClientSecret;
                 });
             }
-
-            services.AddIdentityServer()
-                .AddApiAuthorization<SiteUser, MFPContext>();
-
-            services.AddAuthentication()
-                .AddIdentityServerJwt();
-
-            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //    .AddJwtBearer();
-               //.AddJwtBearer(options =>
-               //{
-               //    options.TokenValidationParameters = new TokenValidationParameters {
-               //        ValidateIssuerSigningKey = true,
-               //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
-               //              .GetBytes(configuration.GetSection("AppSettings:Key").Value)),
-               //        ValidateIssuer = false,
-               //        ValidateAudience = false
-               //    };
-               //});
 
             return services;
         }

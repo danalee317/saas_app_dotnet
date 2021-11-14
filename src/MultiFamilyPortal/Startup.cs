@@ -29,6 +29,12 @@ namespace MultiFamilyPortal
             services.RegisterTheme<AdminTheme.AdminTheme>();
             services.RegisterTheme<PortalTheme.PortalTheme>();
             services.RegisterTheme<InvestorPortal.InvestorTheme>();
+
+            services.AddHsts(options =>
+            {
+                options.Preload = true;
+                options.MaxAge = TimeSpan.FromDays(7);
+            });
         }
 
         public static void ConfigureApp(IApplicationBuilder app, IWebHostEnvironment env)
@@ -47,7 +53,6 @@ namespace MultiFamilyPortal
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseIdentityServer();
 
             app.UseRouting();
 

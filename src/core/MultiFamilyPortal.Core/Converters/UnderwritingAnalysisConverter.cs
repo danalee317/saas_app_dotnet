@@ -226,9 +226,7 @@ namespace MultiFamilyPortal.Converters
             writer.WriteStartArray();
             foreach (var item in collection)
             {
-                writer.WriteStartObject();
                 converter.Write(writer, item, options);
-                writer.WriteEndObject();
             }
             writer.WriteEndArray();
 
@@ -240,12 +238,7 @@ namespace MultiFamilyPortal.Converters
             if (typeof(ReactiveObject).IsAssignableFrom(typeof(T)))
             {
                 writer.WritePropertyName(propertyName);
-                if (value is null)
-                {
-                    writer.WriteStartObject();
-                    writer.WriteEndObject();
-                }
-                else if (options is null)
+                if (options is null)
                 {
                     throw new Exception($"JsonSerializationOptions not provided to serialize: {name}");
                 }
@@ -260,7 +253,6 @@ namespace MultiFamilyPortal.Converters
             if (value is null)
                 return;
 
-            
             writer.WriteString(propertyName, value.ToString());
         }
 

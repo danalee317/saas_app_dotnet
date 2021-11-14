@@ -200,3 +200,14 @@
 </div>
 
 <PortalNotification @ref="notification" />
+
+<TelerikWindow @bind-Visible=@isBusy
+               Modal=@true
+               Width="300px"
+               Height="300px">
+  <WindowContent>
+    <div class="text-center">
+      <TelerikLoader Type=@LoaderType.ConvergingSpinner />
+    </div>
+  </WindowContent>
+</TelerikWindow>

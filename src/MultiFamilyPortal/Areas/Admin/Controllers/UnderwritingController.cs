@@ -1,4 +1,5 @@
 using System.Data;
+using System.IO.Compression;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
@@ -187,11 +188,22 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         public async Task<IActionResult> ExportUnderwriting(Guid propertyId)
         {
             var property = await GetUnderwritingAnalysis(propertyId);
-            var data = UnderwritingService.GenerateUnderwritingSpreadsheet(property);
 
-            var fileName = $"{property.Name}.xlsx";
+            var fileName = $"{property.Name}.zip";
+            byte[] zipData = Array.Empty<byte>();
+            using (var fileStream = new MemoryStream())
+            using (var archive = new ZipArchive(fileStream, ZipArchiveMode.Create))
+            {
+                var v1Data = UnderwritingService.GenerateUnderwritingSpreadsheet(property);
+                archive.AddFile($"{property.Name}.xlsx", v1Data);
+
+                var v2Data = UnderwritingV2Service.GenerateUnderwritingSpreadsheet(property);
+                archive.AddFile($"{property.Name}-v2.xlsx", v2Data);
+                zipData = fileStream.ToArray();
+            }
+
             var info = FileTypeLookup.GetFileTypeInfo(fileName);
-            return File(data, info.MimeType, fileName);
+            return File(zipData, info.MimeType, fileName);
         }
 
         [HttpGet("property/{propertyId:guid}")]

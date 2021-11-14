@@ -6,7 +6,7 @@ using Telerik.Windows.Documents.Spreadsheet.Model;
 
 namespace MultiFamilyPortal.AdminTheme.Services
 {
-    public class UnderwritingService
+    public static class UnderwritingV2Service
     {
         private const string Aquisition = "Acqusition-NF";
         private const string AquisitionFirstYear = "Year 1 Projection - NF";
@@ -18,13 +18,13 @@ namespace MultiFamilyPortal.AdminTheme.Services
         public static byte[] GenerateUnderwritingSpreadsheet(UnderwritingAnalysis analysis)
         {
             var formatProvider = new XlsxFormatProvider();
-            var workbook = formatProvider.LoadWorkbook("underwriting.xlsx");
+            var workbook = formatProvider.LoadWorkbook("underwriting-v2.xlsx");
             var financials = workbook.GetWorksheet(analysis.LoanType != UnderwritingLoanType.Assumption ? Aquisition : Assumption);
             var projections = workbook.GetWorksheet(analysis.LoanType != UnderwritingLoanType.Assumption ? AquisitionFirstYear : AssumptionFirstYear);
             UpdateAcquisition(financials, analysis);
             UpdateFirstYear(projections, analysis);
 
-            if(analysis.LoanType == UnderwritingLoanType.Assumption)
+            if (analysis.LoanType == UnderwritingLoanType.Assumption)
             {
                 var aquisitions = workbook.GetWorksheet(Aquisition);
                 workbook.Sheets.Remove(aquisitions);
@@ -77,11 +77,11 @@ namespace MultiFamilyPortal.AdminTheme.Services
             var sheet = workbook.GetWorksheet(UnderwritingNotes);
 
             var row = 2;
-            foreach(var note in analysis.Notes)
+            foreach (var note in analysis.Notes)
             {
                 sheet.Cells[new CellIndex(2, 0)].SetValue(note.Underwriter);
                 sheet.Cells[new CellIndex(2, 1)].SetValue(note.Timestamp.Date);
-                sheet.Cells[new CellIndex(2,2)].SetValue(note.Note.ConvertToPlainText());
+                sheet.Cells[new CellIndex(2, 2)].SetValue(note.Note.ConvertToPlainText());
                 row++;
             }
         }
@@ -107,15 +107,15 @@ namespace MultiFamilyPortal.AdminTheme.Services
 
         private static void UpdateAcquisition(Worksheet sheet, UnderwritingAnalysis analysis)
         {
-            sheet.SetValue("F4", analysis.Timestamp)
-                .SetValue("C5", analysis.Name)
-                .SetValue("D6", analysis.Units)
-                .SetValue("D7", analysis.PurchasePrice)
-                .SetValue("D9", analysis.RentableSqFt)
-                .SetValue("G8", analysis.OfferPrice)
-                .SetValue("G9", analysis.StrikePrice)
-                .SetValue("G10", analysis.AskingPrice)
-                .SetValue("M6", analysis.GrossPotentialRent);
+            sheet.SetValue("F49", analysis.Timestamp)
+                .SetValue("C50", analysis.Name)
+                .SetValue("D51", analysis.Units)
+                .SetValue("D52", analysis.PurchasePrice)
+                .SetValue("D54", analysis.RentableSqFt)
+                .SetValue("G53", analysis.OfferPrice)
+                .SetValue("G54", analysis.StrikePrice)
+                .SetValue("G55", analysis.AskingPrice)
+                .SetValue("M51", analysis.GrossPotentialRent);
 
             var vacancy = 0.05;
             if (analysis.PhysicalVacancy >= 0.05)
@@ -123,63 +123,77 @@ namespace MultiFamilyPortal.AdminTheme.Services
             else if (analysis.MarketVacancy > 0.05)
                 vacancy = analysis.MarketVacancy;
 
-            sheet.SetValue("D13", analysis.Ours.Sum(UnderwritingCategory.GrossScheduledRent))
-                .SetValue("C14", vacancy)
-                .SetValue("D15", analysis.Ours.Sum(UnderwritingCategory.ConsessionsNonPayment))
-                .SetValue("D17", analysis.Ours.Sum(UnderwritingCategory.UtilityReimbursement))
-                .SetValue("D18", analysis.Ours.Sum(UnderwritingCategory.OtherIncome));
+            sheet.SetValue("D58", analysis.Ours.Sum(UnderwritingCategory.GrossScheduledRent))
+                .SetValue("C59", vacancy)
+                .SetValue("D60", analysis.Ours.Sum(UnderwritingCategory.ConsessionsNonPayment))
+                .SetValue("D62", analysis.Ours.Sum(UnderwritingCategory.UtilityReimbursement))
+                .SetValue("D63", analysis.Ours.Sum(UnderwritingCategory.OtherIncome));
 
-            sheet.SetValue("F13", analysis.Sellers.Sum(UnderwritingCategory.GrossScheduledRent))
-                .SetValue("F14", analysis.Sellers.Sum(UnderwritingCategory.PhysicalVacancy))
-                .SetValue("F15", analysis.Sellers.Sum(UnderwritingCategory.ConsessionsNonPayment))
-                .SetValue("F17", analysis.Sellers.Sum(UnderwritingCategory.UtilityReimbursement))
-                .SetValue("F18", analysis.Sellers.Sum(UnderwritingCategory.OtherIncome));
+            sheet.SetValue("F58", analysis.Sellers.Sum(UnderwritingCategory.GrossScheduledRent))
+                .SetValue("F59", analysis.Sellers.Sum(UnderwritingCategory.PhysicalVacancy))
+                .SetValue("F60", analysis.Sellers.Sum(UnderwritingCategory.ConsessionsNonPayment))
+                .SetValue("F62", analysis.Sellers.Sum(UnderwritingCategory.UtilityReimbursement))
+                .SetValue("F63", analysis.Sellers.Sum(UnderwritingCategory.OtherIncome));
 
-            sheet.SetValue("D22", analysis.Ours.Sum(UnderwritingCategory.Taxes))
-                .SetValue("D23", analysis.Ours.Sum(UnderwritingCategory.Insurance))
-                .SetValue("D24", analysis.Ours.Sum(UnderwritingCategory.RepairsMaintenance))
-                .SetValue("D25", analysis.Ours.Sum(UnderwritingCategory.GeneralAdmin))
-                .SetValue("C26", analysis.Management)
-                .SetValue("D27", analysis.Ours.Sum(UnderwritingCategory.Marketing))
-                .SetValue("D28", analysis.Ours.Sum(UnderwritingCategory.Utility))
-                .SetValue("D29", analysis.Ours.Sum(UnderwritingCategory.ContractServices))
-                .SetValue("D30", analysis.Ours.Sum(UnderwritingCategory.Payroll));
+            sheet.SetValue("D67", analysis.Ours.Sum(UnderwritingCategory.Taxes))
+                .SetValue("D68", analysis.Ours.Sum(UnderwritingCategory.Insurance))
+                .SetValue("D69", analysis.Ours.Sum(UnderwritingCategory.RepairsMaintenance))
+                .SetValue("D70", analysis.Ours.Sum(UnderwritingCategory.GeneralAdmin))
+                .SetValue("C71", analysis.Management)
+                .SetValue("D72", analysis.Ours.Sum(UnderwritingCategory.Marketing))
+                .SetValue("D73", analysis.Ours.Sum(UnderwritingCategory.Utility))
+                .SetValue("D74", analysis.Ours.Sum(UnderwritingCategory.ContractServices))
+                .SetValue("D75", analysis.Ours.Sum(UnderwritingCategory.Payroll));
 
-            sheet.SetValue("F22", analysis.Sellers.Sum(UnderwritingCategory.Taxes))
-                .SetValue("F23", analysis.Sellers.Sum(UnderwritingCategory.Insurance))
-                .SetValue("F24", analysis.Sellers.Sum(UnderwritingCategory.RepairsMaintenance))
-                .SetValue("F25", analysis.Sellers.Sum(UnderwritingCategory.GeneralAdmin))
-                .SetValue("F26", analysis.Sellers.Sum(UnderwritingCategory.Management))
-                .SetValue("F27", analysis.Sellers.Sum(UnderwritingCategory.Marketing))
-                .SetValue("F28", analysis.Sellers.Sum(UnderwritingCategory.Utility))
-                .SetValue("F29", analysis.Sellers.Sum(UnderwritingCategory.ContractServices))
-                .SetValue("F30", analysis.Sellers.Sum(UnderwritingCategory.Payroll));
+            sheet.SetValue("F67", analysis.Sellers.Sum(UnderwritingCategory.Taxes))
+                .SetValue("F68", analysis.Sellers.Sum(UnderwritingCategory.Insurance))
+                .SetValue("F69", analysis.Sellers.Sum(UnderwritingCategory.RepairsMaintenance))
+                .SetValue("F70", analysis.Sellers.Sum(UnderwritingCategory.GeneralAdmin))
+                .SetValue("F71", analysis.Sellers.Sum(UnderwritingCategory.Management))
+                .SetValue("F72", analysis.Sellers.Sum(UnderwritingCategory.Marketing))
+                .SetValue("F73", analysis.Sellers.Sum(UnderwritingCategory.Utility))
+                .SetValue("F74", analysis.Sellers.Sum(UnderwritingCategory.ContractServices))
+                .SetValue("F75", analysis.Sellers.Sum(UnderwritingCategory.Payroll));
 
-            sheet.SetValue("E34", analysis.CapXTotal / analysis.Units)
-                .SetValue("E42", analysis.OurEquityOfCF);
+            sheet.SetValue("E79", analysis.CapXTotal / analysis.Units)
+                .SetValue("E87", analysis.OurEquityOfCF);
 
-            sheet.SetValue("L22", analysis.ClosingCostPercent)
-                .SetValue("L25", analysis.AquisitionFeePercent)
-                .SetValue("M26", analysis.ClosingCostOther);
+            sheet.SetValue("L67", analysis.ClosingCostPercent)
+                .SetValue("L70", analysis.AquisitionFeePercent);
+                //.SetValue("M26", analysis.ClosingCostOther);
 
             var mortgage = analysis.Mortgages.First();
             if (analysis.LoanType != UnderwritingLoanType.Assumption)
             {
-                sheet.SetValue("M23", mortgage.Points);
-                sheet.SetValue("M14", 1 - (mortgage.LoanAmount / analysis.PurchasePrice));
-                sheet.SetValue("M17", mortgage.InterestRate);
-                sheet.SetValue("M18", mortgage.TermInYears);
+                sheet.SetValue("M68", mortgage.Points);
+                sheet.SetValue("M59", 1 - (mortgage.LoanAmount / analysis.PurchasePrice));
+                sheet.SetValue("M62", mortgage.InterestRate);
+                sheet.SetValue("M63", mortgage.TermInYears);
             }
             else
             {
-                sheet.SetValue("M14", mortgage.LoanAmount)
-                    .SetValue("M17", mortgage.AnnualDebtService);
+                sheet.SetValue("M59", mortgage.LoanAmount)
+                    .SetValue("M62", mortgage.AnnualDebtService);
             }
 
             var secondMortgage = analysis.Mortgages.Skip(1).FirstOrDefault() ?? new UnderwritingAnalysisMortgage();
-            sheet.SetValue("M32", secondMortgage.LoanAmount)
-                .SetValue("M33", secondMortgage.InterestRate)
-                .SetValue("M34", secondMortgage.TermInYears);
+            sheet.SetValue("M77", secondMortgage.LoanAmount)
+                .SetValue("M78", secondMortgage.InterestRate)
+                .SetValue("M79", secondMortgage.TermInYears);
+
+            var taxes = analysis.Ours.Sum(UnderwritingCategory.Taxes);
+            var insurance = analysis.Ours.Sum(UnderwritingCategory.Insurance);
+
+            var operatingExpenses = analysis.Ours
+                .Where(x => x.Category.GetLineItemType() == UnderwritingType.Expense && x.Category != UnderwritingCategory.Insurance)
+                .Sum(x => x.AnnualizedTotal);
+
+            sheet.SetValue("M83", operatingExpenses / 6)
+                .SetValue("M84", analysis.CapXTotal)
+                .SetValue("M85", analysis.DeferredMaintenance)
+                .SetValue("M86", insurance)
+                .SetValue("M87", taxes)
+                .SetValue("M88", analysis.SECAttorney);
         }
     }
 }

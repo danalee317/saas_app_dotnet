@@ -152,7 +152,10 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 StrikePrice = 40000 * property.Units,
                 OfferPrice = 36000 * property.Units,
                 PurchasePrice = 37000 * property.Units,
-                GrossPotentialRent = 800 * property.Units
+                GrossPotentialRent = 800 * property.Units,
+                PropertyClass = PropertyClass.ClassB,
+                NeighborhoodClass = PropertyClass.ClassB,
+                BucketList = new UnderwritingProspectPropertyBucketList()
             };
 
             await _dbContext.UnderwritingPropertyProspects.AddAsync(prospect);
@@ -261,6 +264,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             //var underwritiers = await _dbContext.Users.Where(x => x.Roles.Any(r => r.Role.Name == PortalRoles.PortalAdministrator || r.Role.Name == PortalRoles.Underwriter))
             //    .ToDictionaryAsync(x => x.Email, x => x.Id);
             var property = await _dbContext.UnderwritingPropertyProspects
+                .Include(x => x.BucketList)
                 .Include(x => x.Notes)
                 .FirstOrDefaultAsync(x => x.Id == propertyId);
 
@@ -293,9 +297,40 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     PropertyId = propertyId,
                     UnderwriterId = userId
                 });
+
             if (newNotes.Any())
             {
                 await _dbContext.UnderwritingNotes.AddRangeAsync(newNotes);
+                await _dbContext.SaveChangesAsync();
+            }
+
+            if(property.BucketList is null)
+            {
+                var bucketList = new UnderwritingProspectPropertyBucketList
+                {
+                    CompetitionNotes = analysis.BucketList.CompetitionNotes,
+                    ConstructionType = analysis.BucketList.ConstructionType,
+                    HowUnderwritingWasDetermined = analysis.BucketList.HowUnderwritingWasDetermined,
+                    PropertyId = property.Id,
+                    Summary = analysis.BucketList.Summary,
+                    UtilityNotes = analysis.BucketList.UtilityNotes,
+                    ValuePlays = analysis.BucketList.ValuePlays
+                };
+
+                await _dbContext.UnderwritingProspectPropertyBucketLists.AddAsync(bucketList);
+                await _dbContext.SaveChangesAsync();
+                property.BucketListId = bucketList.Id;
+            }
+            else
+            {
+                var bucketList = property.BucketList;
+                bucketList.CompetitionNotes = analysis.BucketList.CompetitionNotes;
+                bucketList.ConstructionType = analysis.BucketList.ConstructionType;
+                bucketList.HowUnderwritingWasDetermined = analysis.BucketList.HowUnderwritingWasDetermined;
+                bucketList.Summary = analysis.BucketList.Summary;
+                bucketList.UtilityNotes = analysis.BucketList.UtilityNotes;
+                bucketList.ValuePlays = analysis.BucketList.ValuePlays;
+                _dbContext.UnderwritingProspectPropertyBucketLists.Update(bucketList);
                 await _dbContext.SaveChangesAsync();
             }
 
@@ -425,10 +460,12 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             property.Market = analysis.Market;
             property.MarketVacancy = analysis.MarketVacancy;
             property.Name = analysis.Name;
+            property.NeighborhoodClass = analysis.NeighborhoodClass;
             property.NOI = analysis.NOI;
             property.OfferPrice = analysis.OfferPrice;
             property.OurEquityOfCF = analysis.OurEquityOfCF;
             property.PhysicalVacancy = analysis.PhysicalVacancy;
+            property.PropertyClass = analysis.PropertyClass;
             property.PurchasePrice = analysis.PurchasePrice;
             property.RentableSqFt = analysis.RentableSqFt;
             property.SECAttorney = analysis.SECAttorney;
@@ -516,10 +553,20 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         private async Task<UnderwritingAnalysis> GetUnderwritingAnalysis(Guid propertyId)
         {
             var property = await _dbContext.UnderwritingPropertyProspects
-                .Select(x => new UnderwritingAnalysis {
+                .Select(x => new UnderwritingAnalysis
+                {
                     Address = x.Address,
                     AquisitionFeePercent = x.AquisitionFeePercent,
                     AskingPrice = x.AskingPrice,
+                    BucketList = new UnderwritingAnalysisBucketList
+                    {
+                        CompetitionNotes = x.BucketList.CompetitionNotes,
+                        ConstructionType = x.BucketList.ConstructionType,
+                        HowUnderwritingWasDetermined = x.BucketList.HowUnderwritingWasDetermined,
+                        Summary = x.BucketList.Summary,
+                        UtilityNotes = x.BucketList.UtilityNotes,
+                        ValuePlays = x.BucketList.ValuePlays,
+                    },
                     CapX = x.CapX,
                     CapXType = x.CapXType,
                     City = x.City,
@@ -535,7 +582,9 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     Market = x.Market,
                     MarketVacancy = x.MarketVacancy,
                     Name = x.Name,
-                    Notes = x.Notes.Select(n => new UnderwritingAnalysisNote {
+                    NeighborhoodClass = x.NeighborhoodClass,
+                    Notes = x.Notes.Select(n => new UnderwritingAnalysisNote
+                    {
                         Id = n.Id,
                         Note = n.Note,
                         Timestamp = n.Timestamp,
@@ -546,6 +595,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     OfferPrice = x.OfferPrice,
                     OurEquityOfCF = x.OurEquityOfCF,
                     PhysicalVacancy = x.PhysicalVacancy,
+                    PropertyClass = x.PropertyClass,
                     PurchasePrice = x.PurchasePrice,
                     RentableSqFt = x.RentableSqFt,
                     SECAttorney = x.SECAttorney,

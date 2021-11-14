@@ -338,6 +338,10 @@ namespace MultiFamilyPortal.Dtos.Underwrting
 
         public UnderwritingStatus Status { get; set; }
 
+        public PropertyClass PropertyClass { get; set; }
+
+        public PropertyClass NeighborhoodClass { get; set; }
+
         [JsonIgnore]
         [DisplayFormat(DataFormatString = "{0:C}")]
         public double CapXTotal => _capXTotal?.Value ?? 0;
@@ -397,6 +401,8 @@ namespace MultiFamilyPortal.Dtos.Underwrting
         [JsonIgnore]
         [DisplayFormat(DataFormatString = "{0:C}")]
         public double Raise => _raise?.Value ?? 0;
+
+        public UnderwritingAnalysisBucketList BucketList { get; set; }
 
         public IEnumerable<UnderwritingAnalysisLineItem> Sellers => _sellersLineItems;
         public IEnumerable<UnderwritingAnalysisLineItem> SellerIncome => _sellersIncomeItems;

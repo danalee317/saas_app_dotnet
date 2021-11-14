@@ -3,6 +3,8 @@ using System.Text.Json.Serialization;
 using Humanizer;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwrting;
+using Newtonsoft.Json.Linq;
+using ReactiveUI;
 
 namespace MultiFamilyPortal.Converters
 {
@@ -35,6 +37,10 @@ namespace MultiFamilyPortal.Converters
                             break;
                         case nameof(UnderwritingAnalysis.AskingPrice):
                             value.AskingPrice = reader.GetDouble();
+                            break;
+                        case nameof(UnderwritingAnalysis.BucketList):
+                            var bucketListConverter = options.GetConverter<UnderwritingAnalysisBucketList>();
+                            value.BucketList = bucketListConverter.Read(ref reader, typeToConvert, options);
                             break;
                         case nameof(UnderwritingAnalysis.CapX):
                             value.CapX = reader.GetDouble();
@@ -86,6 +92,9 @@ namespace MultiFamilyPortal.Converters
                         case nameof(UnderwritingAnalysis.Name):
                             value.Name = reader.GetString();
                             break;
+                        case nameof(UnderwritingAnalysis.NeighborhoodClass):
+                            value.NeighborhoodClass = Enum.Parse<PropertyClass>(reader.GetString());
+                            break;
                         case nameof(UnderwritingAnalysis.Notes):
                             var notesConverter = options.GetConverter<List<UnderwritingAnalysisNote>>();
                             value.Notes = notesConverter.Read(ref reader, typeof(List<UnderwritingAnalysisNote>), options);
@@ -102,6 +111,9 @@ namespace MultiFamilyPortal.Converters
                             break;
                         case nameof(UnderwritingAnalysis.PhysicalVacancy):
                             value.PhysicalVacancy = reader.GetDouble();
+                            break;
+                        case nameof(UnderwritingAnalysis.PropertyClass):
+                            value.PropertyClass = Enum.Parse<PropertyClass>(reader.GetString());
                             break;
                         case nameof(UnderwritingAnalysis.PurchasePrice):
                             value.PurchasePrice = reader.GetDouble();
@@ -152,12 +164,19 @@ namespace MultiFamilyPortal.Converters
 
         public override void Write(Utf8JsonWriter writer, UnderwritingAnalysis value, JsonSerializerOptions options)
         {
+            if(value is null)
+            {
+                writer.WriteNullValue();
+                return;
+            }
+
             writer.WriteStartObject();
             Write(writer, nameof(UnderwritingAnalysis.Address), value.Address);
             WriteNumber(writer, nameof(UnderwritingAnalysis.AquisitionFeePercent), value.AquisitionFeePercent);
             WriteNumber(writer, nameof(UnderwritingAnalysis.AskingPrice), value.AskingPrice);
+            Write(writer, nameof(UnderwritingAnalysis.BucketList), value.BucketList, options);
             WriteNumber(writer, nameof(UnderwritingAnalysis.CapX), value.CapX);
-            Write(writer, nameof(UnderwritingAnalysis.CapXType), value.CapXType.ToString());
+            Write(writer, nameof(UnderwritingAnalysis.CapXType), value.CapXType);
             Write(writer, nameof(UnderwritingAnalysis.City), value.City);
             WriteNumber(writer, nameof(UnderwritingAnalysis.ClosingCostMiscellaneous), value.ClosingCostMiscellaneous);
             WriteNumber(writer, nameof(UnderwritingAnalysis.ClosingCostPercent), value.ClosingCostPercent);
@@ -165,82 +184,26 @@ namespace MultiFamilyPortal.Converters
             WriteNumber(writer, nameof(UnderwritingAnalysis.Downpayment), value.Downpayment);
             WriteNumber(writer, nameof(UnderwritingAnalysis.GrossPotentialRent), value.GrossPotentialRent);
             Write(writer, nameof(UnderwritingAnalysis.Id), value.Id);
-            Write(writer, nameof(UnderwritingAnalysis.LoanType), value.LoanType.ToString());
+            Write(writer, nameof(UnderwritingAnalysis.LoanType), value.LoanType);
             WriteNumber(writer, nameof(UnderwritingAnalysis.LTV), value.LTV);
             WriteNumber(writer, nameof(UnderwritingAnalysis.Management), value.Management);
             Write(writer, nameof(UnderwritingAnalysis.Market), value.Market);
             WriteNumber(writer, nameof(UnderwritingAnalysis.MarketVacancy), value.MarketVacancy);
-
-            if(value.Mortgages?.Any() ?? false)
-            {
-                writer.WritePropertyName(nameof(UnderwritingAnalysis.Mortgages).Pascalize());
-                writer.WriteStartArray();
-                var converter = options.GetConverter<UnderwritingAnalysisMortgage>();
-                foreach(var mortgage in value.Mortgages)
-                {
-                    writer.WriteStartObject();
-                    converter.Write(writer, mortgage, options);
-                    writer.WriteEndObject();
-                }
-                writer.WriteEndArray();
-            }
-
-            writer.WriteString(nameof(UnderwritingAnalysis.Name), value.Name);
-
-            if(value.Notes?.Any() ?? false)
-            {
-                writer.WritePropertyName(nameof(UnderwritingAnalysis.Notes).Pascalize());
-                var converter = options.GetConverter<UnderwritingAnalysisNote>();
-                writer.WriteStartArray();
-                foreach(var note in value.Notes)
-                {
-                    writer.WriteStartObject();
-                    converter.Write(writer, note, options);
-                    writer.WriteEndObject();
-                }
-                writer.WriteEndArray();
-            }
-
+            WriteArray(writer, nameof(UnderwritingAnalysis.Mortgages), value.Mortgages, options);
+            Write(writer, nameof(UnderwritingAnalysis.Name), value.Name);
+            Write(writer, nameof(UnderwritingAnalysis.NeighborhoodClass), value.NeighborhoodClass);
+            WriteArray(writer, nameof(UnderwritingAnalysis.Notes), value.Notes, options);
             WriteNumber(writer, nameof(UnderwritingAnalysis.OfferPrice), value.OfferPrice);
             WriteNumber(writer, nameof(UnderwritingAnalysis.OurEquityOfCF), value.OurEquityOfCF);
-
-            if(value.Ours?.Any() ?? false)
-            {
-                writer.WritePropertyName(nameof(UnderwritingAnalysis.Ours).Pascalize());
-                var converter = options.GetConverter<UnderwritingAnalysisLineItem>();
-
-                writer.WriteStartArray();
-                foreach(var line in value.Ours)
-                {
-                    writer.WriteStartObject();
-                    converter.Write(writer, line, options);
-                    writer.WriteEndObject();
-                }
-                writer.WriteEndArray();
-            }
-
+            WriteArray(writer, nameof(UnderwritingAnalysis.Ours), value.Ours, options);
             WriteNumber(writer, nameof(UnderwritingAnalysis.PhysicalVacancy), value.PhysicalVacancy);
+            Write(writer, nameof(UnderwritingAnalysis.PropertyClass), value.PropertyClass);
             WriteNumber(writer, nameof(UnderwritingAnalysis.PurchasePrice), value.PurchasePrice);
             WriteNumber(writer, nameof(UnderwritingAnalysis.RentableSqFt), value.RentableSqFt);
             WriteNumber(writer, nameof(UnderwritingAnalysis.SECAttorney), value.SECAttorney);
-
-            if (value.Sellers?.Any() ?? false)
-            {
-                writer.WritePropertyName(nameof(UnderwritingAnalysis.Sellers).Pascalize());
-                var converter = options.GetConverter<UnderwritingAnalysisLineItem>();
-
-                writer.WriteStartArray();
-                foreach (var line in value.Sellers)
-                {
-                    writer.WriteStartObject();
-                    converter.Write(writer, line, options);
-                    writer.WriteEndObject();
-                }
-                writer.WriteEndArray();
-            }
-
+            WriteArray(writer, nameof(UnderwritingAnalysis.Sellers), value.Sellers, options);
             Write(writer, nameof(UnderwritingAnalysis.State), value.State);
-            Write(writer, nameof(UnderwritingAnalysis.Status), value.Status.ToString());
+            Write(writer, nameof(UnderwritingAnalysis.Status), value.Status);
             WriteNumber(writer, nameof(UnderwritingAnalysis.StrikePrice), value.StrikePrice);
             Write(writer, nameof(UnderwritingAnalysis.Timestamp), value.Timestamp);
             Write(writer, nameof(UnderwritingAnalysis.Underwriter), value.Underwriter);
@@ -252,49 +215,63 @@ namespace MultiFamilyPortal.Converters
             writer.WriteEndObject();
         }
 
-        private void Write(Utf8JsonWriter writer, string name, object value)
+        private void WriteArray<T>(Utf8JsonWriter writer, string name, IEnumerable<T> collection, JsonSerializerOptions options)
         {
+            if (collection is null || !collection.Any())
+                return;
+
+            var propertyName = name.Camelize();
+            writer.WritePropertyName(propertyName);
+            var converter = options.GetConverter<T>();
+            writer.WriteStartArray();
+            foreach (var item in collection)
+            {
+                writer.WriteStartObject();
+                converter.Write(writer, item, options);
+                writer.WriteEndObject();
+            }
+            writer.WriteEndArray();
+
+        }
+
+        private void Write<T>(Utf8JsonWriter writer, string name, T value, JsonSerializerOptions options = null)
+        {
+            var propertyName = name.Camelize();
+            if (typeof(ReactiveObject).IsAssignableFrom(typeof(T)))
+            {
+                writer.WritePropertyName(propertyName);
+                if (value is null)
+                {
+                    writer.WriteStartObject();
+                    writer.WriteEndObject();
+                }
+                else if (options is null)
+                {
+                    throw new Exception($"JsonSerializationOptions not provided to serialize: {name}");
+                }
+                else
+                {
+                    var converter = options.GetConverter<T>();
+                    converter.Write(writer, value, options);
+                }
+                return;
+            }
+
             if (value is null)
                 return;
 
-            var propertyName = name.Pascalize();
+            
             writer.WriteString(propertyName, value.ToString());
         }
 
         private void WriteNumber(Utf8JsonWriter writer, string name, int value)
         {
-            writer.WriteNumber(name.Pascalize(), value);
+            writer.WriteNumber(name.Camelize(), value);
         }
 
         private void WriteNumber(Utf8JsonWriter writer, string name, double value)
         {
-            writer.WriteNumber(name.Pascalize(), value);
-        }
-
-        private IEnumerable<UnderwritingAnalysisLineItem> ReadLineItems(ref Utf8JsonReader reader)
-        {
-            var items = new List<UnderwritingAnalysisLineItem>();
-            UnderwritingAnalysisLineItem item = null;
-            while(reader.Read() && reader.TokenType != JsonTokenType.EndArray)
-            {
-                if (reader.TokenType == JsonTokenType.EndObject)
-                    items.Add(item);
-                else if (reader.TokenType == JsonTokenType.StartObject)
-                    item = new();
-                else if(reader.TokenType == JsonTokenType.PropertyName)
-                {
-                    var name = reader.GetString();
-                    reader.Read();
-                    if (reader.TokenType == JsonTokenType.Null)
-                    {
-                        continue;
-                    }
-
-
-                }
-            }
-
-            return items;
+            writer.WriteNumber(name.Camelize(), value);
         }
     }
 }

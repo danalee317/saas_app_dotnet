@@ -31,5 +31,6 @@ namespace MultiFamilyPortal.Data
         DbSet<UnderwritingPropertyUnit> UnderwritingPropertyUnits { get; }
         DbSet<UnderwritingProspectFile> UnderwritingProspectFiles { get; }
         DbSet<UnderwritingGuidance> UnderwritingGuidance { get; }
+        DbSet<UnderwritingProspectPropertyBucketList> UnderwritingProspectPropertyBucketLists { get; }
     }
 }

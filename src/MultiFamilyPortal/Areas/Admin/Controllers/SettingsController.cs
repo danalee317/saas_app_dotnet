@@ -140,16 +140,28 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             throw new NotImplementedException();
         }
 
-        [HttpPost("branding/{imageName}")]
-        public async Task<IActionResult> UpdateBrandingLogo(string imageName,[FromForm] IFormFile file)
+        [HttpPost("branding/{imageName}")]   
+        public async Task<IActionResult> UpdateBrandingLogo(string imageName, [FromForm] IFormFile file)
         {
-           if (file.Length > 0)
+            if (file.Length > 0)
             {
                 try
                 {
-                    var physicalPath = Path.Combine(_hostEnvironment.ContentRootPath, "App_Data", "Brands");
+                    var physicalPath = Path.Combine(_hostEnvironment.ContentRootPath, "App_Data", imageName == "favicon" ? "Icons" : "Brands");
+                    var fileName = "favicon" + Path.GetExtension(file.FileName);
+                    var filePath = Path.Combine(physicalPath, fileName);
                     Directory.CreateDirectory(physicalPath);
-                    await _brand.CreateImage(file, imageName, physicalPath);
+
+                    if (imageName == "favicon")
+                    {
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                            await file.CopyToAsync(stream);
+                        await _brand.CreateIcons(filePath);
+                    }
+                    else
+                    {
+                        await _brand.CreateImage(file, imageName, physicalPath);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -160,38 +172,6 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             else
             {
                 _logger.LogWarning("No file uploaded");
-                return BadRequest("No file was uploaded.");
-            }
-
-            return Ok();
-        }
-
-        [HttpPost("favicon")]
-        public async Task<IActionResult> Save([FromForm] IFormFile file)
-        {
-            if (file.Length > 0)
-            {
-                try
-                {
-                    var fileName = "favicon" + Path.GetExtension(file.FileName);
-                    var physicalPath = Path.Combine(_hostEnvironment.ContentRootPath, "App_Data", "Icons");
-                    var filePath = Path.Combine(physicalPath, fileName);
-                    Directory.CreateDirectory(physicalPath);
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                        await file.CopyToAsync(stream);
-                
-                    await _brand.CreateIcons(filePath);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error uploading favicon");
-                    return BadRequest(ex.Message);
-                }
-            }
-            else
-            {
-                _logger.LogError("No file was uploaded.");
                 return BadRequest("No file was uploaded.");
             }
 

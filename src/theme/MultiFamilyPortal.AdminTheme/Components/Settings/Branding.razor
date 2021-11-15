@@ -29,24 +29,12 @@
     <WindowAction Name="Close" OnClick=@(() => showWindow = false) />
   </WindowActions>
   <WindowContent>
-    @if (_selected.Name == "favicon")
-    {
-      <TelerikUpload AllowedExtensions="@AllowedFileTypes" 
-                     MaxFileSize="2048000" 
-                     SaveField="file" 
-                     Multiple="false"
-                     OnSuccess="@OnSuccessHandler" 
-                     SaveUrl="@FaviUrl" />
-    }
-    else
-    {
       <TelerikUpload AllowedExtensions="@AllowedFileTypes" 
                      MaxFileSize="2048000" 
                      SaveField="file" 
                      Multiple="false"
                      OnSuccess="@OnSuccessHandler" 
                      SaveUrl=@LogoUrl(_selected.Name) />
-    }
   </WindowContent>
 
 </TelerikWindow>

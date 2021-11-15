@@ -15,7 +15,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
 
         private Logo _selected;
         private readonly List<string> AllowedFileTypes = new() { ".png", ".svg", ".ico" };
-        public string FaviUrl => ToAbsoluteUrl("favicon");
         public string LogoUrl(string name) => ToAbsoluteUrl($"branding/{name}");
         private bool showWindow = false;
         private IEnumerable<Logo> _logos = Array.Empty<Logo>();
@@ -49,7 +48,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
                 showWindow = false;
                 var logi = _logos.ToList();
                 _logos = Array.Empty<Logo>();
-                await Task.Delay(500);
+                await Task.Delay(100);
                 _logos = logi;
                 await InvokeAsync((StateHasChanged));
             }

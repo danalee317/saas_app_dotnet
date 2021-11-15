@@ -27,7 +27,8 @@ namespace MultiFamilyPortal.Extensions
                 .AddScoped<IEmailValidationService, EmailValidationService>()
                 .AddScoped<IFormService, FormService>()
                 .AddScoped<ITimeZoneService, TimeZoneService>()
-                .AddScoped<ISiteInfo, SiteInfo>();
+                .AddScoped<ISiteInfo, SiteInfo>()
+                .AddScoped<IBrandService, BrandService>();
 
             var config = new SiteConfiguration();
             configuration.Bind(config);

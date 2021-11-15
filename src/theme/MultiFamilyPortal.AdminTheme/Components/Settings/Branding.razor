@@ -1,28 +1,50 @@
-﻿<TelerikGrid Data=@_logos>
+﻿@if (_logos.Count() != 0)
+{
+  <TelerikGrid Data=@_logos>
   <GridColumns>
     <GridColumn Field="Name" />
     <GridColumn Title="Logo" TextAlign=@ColumnTextAlign.Center>
       <Template>
-        @{ var logo = context as Logo; }
-        <img src="@logo.Href" alt="@logo.DisplayName" class="img img-fluid my-3" style="max-width:250px;" />
-      </Template>
-    </GridColumn>
-    <GridCommandColumn>
-      <div class="text-center">
-        <GridCommandButton Command="ReplaceLogo"
-                           Title="Update Logo"
-                           Primary="true"
-                           IconClass="fa-duotone fa-upload"
-                           OnClick=@UpdateLogo>Update Logo</GridCommandButton>
-      </div>
-    </GridCommandColumn>
-  </GridColumns>
-</TelerikGrid>
+        @{
+                var logo = context as Logo; 
+              }
+              <img src="@logo.Href" alt="@logo.DisplayName" class="img img-fluid my-3" style="max-width:250px;" />
+            </Template>
+          </GridColumn>
+          <GridCommandColumn>
+            <div class="text-center">
+              <GridCommandButton Command="ReplaceLogo" Title="Update Logo" Primary="true" IconClass="fa-duotone fa-upload"
+          OnClick=@UpdateLogo>Update Logo</GridCommandButton>
+            </div>
+          </GridCommandColumn>
+        </GridColumns>
+      </TelerikGrid>
+}
 
-<TelerikWindow Visible=@(_selected != null)
-               Modal=@true>
+<TelerikWindow Visible=@showWindow Modal=@true>
   <WindowTitle>Update Logo</WindowTitle>
   <WindowActions>
-    <WindowAction Name="Close" OnClick=@(() => _selected = null) />
+    <WindowAction Name="Close" OnClick=@(() => showWindow = false) />
   </WindowActions>
+  <WindowContent>
+    @if (_selected.Name == "favicon")
+    {
+      <TelerikUpload AllowedExtensions="@AllowedFileTypes" 
+                     MaxFileSize="2048000" 
+                     SaveField="file" 
+                     Multiple="false"
+                     OnSuccess="@OnSuccessHandler" 
+                     SaveUrl="@FaviUrl" />
+    }
+    else
+    {
+      <TelerikUpload AllowedExtensions="@AllowedFileTypes" 
+                     MaxFileSize="2048000" 
+                     SaveField="file" 
+                     Multiple="false"
+                     OnSuccess="@OnSuccessHandler" 
+                     SaveUrl=@LogoUrl(_selected.Name) />
+    }
+  </WindowContent>
+
 </TelerikWindow>

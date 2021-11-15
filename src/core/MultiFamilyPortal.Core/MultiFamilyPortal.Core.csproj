@@ -21,6 +21,10 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.38" />
     <PackageReference Include="SendGrid" Version="9.24.4" />
     <PackageReference Include="ARSoft.Tools.Net.Core" Version="2.3.0" />
+    <PackageReference Include="SkiaSharp" Version="2.88.0-preview.145" />
+    <PackageReference Include="SkiaSharp.QrCode" Version="0.4.1" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.0-preview.145" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.0-preview.145" />
   </ItemGroup>
 
   <ItemGroup>

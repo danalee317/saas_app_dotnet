@@ -1,0 +1,93 @@
+﻿<div class="row g-3 mt-1">
+  <label for="Summary" class="col-sm-2 col-form-label">Summary</label>
+  <div class="col-sm-10">
+    <TelerikTextArea @bind-Value=@Property.BucketList.Summary
+                    Class="form-control"
+                    PlaceHolder="Summary" />
+  </div>
+</div>
+<div class="row g-3 mt-1">
+  <label for="ValuePlays" class="col-sm-2 col-form-label">Value Plays</label>
+  <div class="col-sm-10">
+    <TelerikTextArea @bind-Value=@Property.BucketList.ValuePlays
+                    Class="form-control"
+                    PlaceHolder="Value Plays" />
+  </div>
+</div>
+<div class="row g-3 mt-1">
+  <label for="ConstructionType" class="col-sm-2 col-form-label">Construction Type</label>
+  <div class="col-sm-10">
+    <TelerikTextArea @bind-Value=@Property.BucketList.ConstructionType
+                    Class="form-control"
+                    PlaceHolder="Construction Type (Siding, Roof, Heating System, etc)" />
+  </div>
+</div>
+<div class="row g-3 mt-1">
+  <label for="Utilities" class="col-sm-2 col-form-label">Utilities</label>
+  <div class="col-sm-10">
+    <TelerikTextArea @bind-Value=@Property.BucketList.UtilityNotes
+                    Class="form-control"
+                    PlaceHolder="Utilities (All Bills Paid, Rub System, or Bill Back)" />
+  </div>
+</div>
+<div class="row g-3 mt-1">
+  <label for="PropertyClass" class="col-sm-2 col-form-label">Property Type</label>
+  <div class="col-sm-10">
+    <TelerikDropDownList Data=@Classes
+                         @bind-Value=@Property.PropertyClass
+                         Class="form-control">
+      <ItemTemplate>
+        @{ var value = (Data.Models.PropertyClass)context; }
+        @value.Humanize(LetterCasing.Title)
+      </ItemTemplate>
+      <ValueTemplate>
+        @{ var value = (Data.Models.PropertyClass)context; }
+        @value.Humanize(LetterCasing.Title)
+      </ValueTemplate>
+    </TelerikDropDownList>
+  </div>
+</div>
+<div class="row g-3 mt-1">
+  <label for="NeighborhoodClass" class="col-sm-2 col-form-label">Neighborhood Type</label>
+  <div class="col-sm-10">
+    <TelerikDropDownList Data=@Classes
+                         @bind-Value=@Property.NeighborhoodClass
+                         Class="form-control">
+      <ItemTemplate>
+        @{ var value = (Data.Models.PropertyClass)context; }
+        @value.Humanize(LetterCasing.Title)
+      </ItemTemplate>
+      <ValueTemplate>
+        @{ var value = (Data.Models.PropertyClass)context; }
+        @value.Humanize(LetterCasing.Title)
+      </ValueTemplate>
+    </TelerikDropDownList>
+  </div>
+</div>
+
+<div class="row g-3 mt-1">
+  <label for="CompetitionRents" class="col-sm-2 col-form-label">Competition Rents</label>
+  <div class="col-sm-10">
+    <TelerikTextArea @bind-Value=@Property.BucketList.CompetitionNotes
+                    Class="form-control"
+                    PlaceHolder="Competition Rents (3 Closest Competitors): You can ask broker for nearest Competition" />
+  </div>
+</div>
+<div class="row g-3 mt-1">
+  <label for="HowUnderwritingWasDetermined" class="col-sm-2 col-form-label">Where did you get the numbers that you used</label>
+  <div class="col-sm-10">
+    <TelerikTextArea @bind-Value=@Property.BucketList.HowUnderwritingWasDetermined
+                    Class="form-control"
+                    PlaceHolder=@HowUnderwritingWasDeterminedPlaceholder />
+  </div>
+</div>
+
+@code {
+    [Parameter]
+    public UnderwritingAnalysis Property { get; set; }
+
+    private IEnumerable<Data.Models.PropertyClass> Classes = Enum.GetValues<Data.Models.PropertyClass>();
+
+    private string HowUnderwritingWasDeterminedPlaceholder = @"Where did you get the numbers that you used?
+(P&L last 12 months trailing, 201X YTD, 201X annualized, 201X Actual, or Proforma??)";
+}

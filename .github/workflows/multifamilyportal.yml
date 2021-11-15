@@ -49,7 +49,6 @@ jobs:
         app-name: multifamilyportal
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         publish-profile: ${{ secrets.multifamilyportal_5677 }}
-        slot-name: ${{ matrix.AZURE_WEBAPP_SLOT_NAME }}
 
     - name: Deploy to libertasequities stage
       uses: azure/webapps-deploy@v2

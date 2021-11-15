@@ -8,6 +8,8 @@ env:
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x
   WORKING_DIRECTORY: src\MultiFamilyPortal
+  MultiFamilyPortalProfile: ${{ secrets.multifamilyportal_5677 }}
+  StageLibertasEquitiesProfile: ${{ secrets.libertasequities_stage_1cb4 }}
 
 jobs:
   build-and-deploy:
@@ -16,9 +18,9 @@ jobs:
       matrix:
         include:
           - AZURE_WEBAPP_NAME: multifamilyportal
-            AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.multifamilyportal_5677 }}
+            AZURE_WEBAPP_PUBLISH_PROFILE: ${{ env.MultiFamilyPortalProfile }}
           - AZURE_WEBAPP_NAME: libertasequities
-            AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.libertasequities_stage_1cb4 }}
+            AZURE_WEBAPP_PUBLISH_PROFILE: ${{ env.StageLibertasEquitiesProfile }}
             AZURE_WEBAPP_SLOT_NAME: stage
     steps:
     - uses: actions/checkout@v2

@@ -35,6 +35,7 @@ jobs:
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
   deploy:
+    needs: build
     runs-on: windows-latest
     steps:
     - uses: actions/download-artifact@v2

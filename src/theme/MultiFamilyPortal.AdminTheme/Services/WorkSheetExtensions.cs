@@ -41,6 +41,9 @@ namespace MultiFamilyPortal.AdminTheme.Services
 
         public static Worksheet SetValue(this Worksheet sheet, string cellName, string value)
         {
+            if (value is null)
+                return sheet;
+
             var index = GetCellIndex(cellName);
             var cell = sheet.Cells[index];
             cell.SetValueAsText(value);
@@ -104,6 +107,9 @@ namespace MultiFamilyPortal.AdminTheme.Services
             var row = 2;
             foreach (var note in analysis.Notes)
             {
+                if (string.IsNullOrEmpty(note.Note?.ConvertToPlainText()))
+                    continue;
+
                 sheet.Cells[new CellIndex(2, 0)].SetValue(note.Underwriter);
                 sheet.Cells[new CellIndex(2, 1)].SetValue(note.Timestamp.Date);
                 sheet.Cells[new CellIndex(2, 2)].SetValue(note.Note.ConvertToPlainText());

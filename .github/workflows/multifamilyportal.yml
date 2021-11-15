@@ -4,12 +4,20 @@ on:
     branches:
     - master
 env:
-  AZURE_WEBAPP_NAME: multifamilyportal
   AZURE_WEBAPP_PACKAGE_PATH: src\MultiFamilyPortal/publish
-  AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.multifamilyportal_5677 }}
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x
   WORKING_DIRECTORY: src\MultiFamilyPortal
+
+strategy:
+  matrix:
+    include:
+      - AZURE_WEBAPP_NAME: multifamilyportal
+        AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.multifamilyportal_5677 }}
+      - AZURE_WEBAPP_NAME: libertasequities
+        AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.libertasequities_stage_1cb4 }}
+        AZURE_WEBAPP_SLOT_NAME: stage
+
 jobs:
   build-and-deploy:
     runs-on: windows-latest
@@ -32,9 +40,10 @@ jobs:
     - name: Deploy to Azure WebApp
       uses: azure/webapps-deploy@v2
       with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        app-name: ${{ matrix.AZURE_WEBAPP_NAME }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-        publish-profile: ${{ env.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        publish-profile: ${{ matrix.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        slot-name: ${{ matrix.AZURE_WEBAPP_SLOT_NAME }}
     - name: Publish Artifacts
       uses: actions/upload-artifact@v1.0.0
       with:

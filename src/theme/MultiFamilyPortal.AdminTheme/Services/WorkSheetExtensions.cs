@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
 using System.Text.RegularExpressions;
+using Humanizer;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwrting;
+using MultiFamilyPortal.Extensions;
 using Telerik.Windows.Documents.Spreadsheet.FormatProviders.OpenXml.Xlsx;
 using Telerik.Windows.Documents.Spreadsheet.Model;
 
@@ -10,6 +12,8 @@ namespace MultiFamilyPortal.AdminTheme.Services
     internal static class WorkSheetExtensions
     {
         private static Assembly Assembly = typeof(WorkSheetExtensions).Assembly;
+        private const string CoachingForm = "Coaching Form";
+        private const string UnderwritingNotes = "Underwriting Notes";
 
         public static Workbook LoadWorkbook(this XlsxFormatProvider formatProvider, string name)
         {
@@ -66,6 +70,47 @@ namespace MultiFamilyPortal.AdminTheme.Services
             cell.SetValue(value.Date);
             return sheet;
         }
+
+        public static void UpdateCoachingForm(this Workbook workbook, UnderwritingAnalysis analysis)
+        {
+            var sheet = workbook.GetWorksheet(CoachingForm);
+
+            sheet.SetValue("A4", analysis.BucketList.Summary)
+                .SetValue("A6", analysis.BucketList.ValuePlays)
+                .SetValue("C7", analysis.Vintage)
+                .SetValue("A9", analysis.BucketList.ConstructionType)
+                .SetValue("G10", analysis.BucketList.UtilityNotes)
+                .SetValue("D11", analysis.DeferredMaintenance)
+                .SetValue("D12", analysis.PropertyClass.Humanize(LetterCasing.Title))
+                .SetValue("D13", analysis.NeighborhoodClass.Humanize(LetterCasing.Title))
+                .SetValue("D24", analysis.PhysicalVacancy)
+                .SetValue("D25", analysis.PricePerUnit)
+                .SetValue("D26", analysis.CapRate)
+                .SetValue("D27", analysis.CashOnCash)
+                .SetValue("D28", analysis.AskingPrice)
+                .SetValue("D29", analysis.OfferPrice)
+                .SetValue("D30", analysis.StrikePrice)
+                .SetValue("D32", analysis.MarketVacancy)
+                .SetValue("D33", analysis.BucketList.MarketPricePerUnit)
+                .SetValue("D34", analysis.BucketList.MarketCapRate)
+                .SetValue("A36", analysis.BucketList.CompetitionNotes)
+                .SetValue("A40", analysis.BucketList.HowUnderwritingWasDetermined);
+        }
+
+        public static void AddNotes(this Workbook workbook, UnderwritingAnalysis analysis)
+        {
+            var sheet = workbook.GetWorksheet(UnderwritingNotes);
+
+            var row = 2;
+            foreach (var note in analysis.Notes)
+            {
+                sheet.Cells[new CellIndex(2, 0)].SetValue(note.Underwriter);
+                sheet.Cells[new CellIndex(2, 1)].SetValue(note.Timestamp.Date);
+                sheet.Cells[new CellIndex(2, 2)].SetValue(note.Note.ConvertToPlainText());
+                row++;
+            }
+        }
+
 
         private static CellIndex GetCellIndex(string cell)
         {

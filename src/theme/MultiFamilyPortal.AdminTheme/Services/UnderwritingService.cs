@@ -12,8 +12,6 @@ namespace MultiFamilyPortal.AdminTheme.Services
         private const string AquisitionFirstYear = "Year 1 Projection - NF";
         private const string Assumption = "Assumption";
         private const string AssumptionFirstYear = "Year 1 Project - Assume";
-        private const string UnderwritingNotes = "Underwriting Notes";
-        private const string CoachingForm = "Coaching Form";
 
         public static byte[] GenerateUnderwritingSpreadsheet(UnderwritingAnalysis analysis)
         {
@@ -39,53 +37,12 @@ namespace MultiFamilyPortal.AdminTheme.Services
                 workbook.Sheets.Remove(assumptionProjections);
             }
 
-            AddNotes(workbook, analysis);
-            UpdateCoachingForm(workbook, analysis);
+            workbook.AddNotes(analysis);
+            workbook.UpdateCoachingForm(analysis);
 
             workbook.ActiveSheet = financials;
             return formatProvider.ExportAsByteArray(workbook);
         }
-
-        private static void UpdateCoachingForm(Workbook workbook, UnderwritingAnalysis analysis)
-        {
-            var sheet = workbook.GetWorksheet(CoachingForm);
-
-            sheet.SetValue("A4", "TODO: Add Summary from the web portal")
-                .SetValue("A6", "TODO: Add Value Plays from the web portal")
-                .SetValue("C7", analysis.Vintage)
-                .SetValue("A9", "TODO: Add Construction Type from the web portal")
-                .SetValue("G10", "TODO: Add Utility Info from web portal")
-                .SetValue("D11", analysis.DeferredMaintenance)
-                .SetValue("D12", "TODO: Add Property Class from web portal")
-                .SetValue("D13", "TODO: Add Neighborhood Class from web portal")
-                .SetValue("D24", analysis.PhysicalVacancy)
-                .SetValue("D25", analysis.PricePerUnit)
-                .SetValue("D26", analysis.CapRate)
-                .SetValue("D27", analysis.CashOnCash)
-                .SetValue("D28", analysis.AskingPrice)
-                .SetValue("D29", analysis.OfferPrice)
-                .SetValue("D30", analysis.StrikePrice)
-                .SetValue("D32", analysis.MarketVacancy)
-                .SetValue("D33", 0)
-                .SetValue("D34", 0)
-                .SetValue("A36", "TODO: Add Closest Competitor information from the web portal")
-                .SetValue("A40", "TODO: Add Where you got underwriting info from web portal");
-        }
-
-        private static void AddNotes(Workbook workbook, UnderwritingAnalysis analysis)
-        {
-            var sheet = workbook.GetWorksheet(UnderwritingNotes);
-
-            var row = 2;
-            foreach(var note in analysis.Notes)
-            {
-                sheet.Cells[new CellIndex(2, 0)].SetValue(note.Underwriter);
-                sheet.Cells[new CellIndex(2, 1)].SetValue(note.Timestamp.Date);
-                sheet.Cells[new CellIndex(2,2)].SetValue(note.Note.ConvertToPlainText());
-                row++;
-            }
-        }
-
         private static void UpdateFirstYear(Worksheet sheet, UnderwritingAnalysis analysis)
         {
             var factor = 1.03;

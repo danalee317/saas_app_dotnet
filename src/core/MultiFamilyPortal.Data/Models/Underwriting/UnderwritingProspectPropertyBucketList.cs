@@ -21,6 +21,10 @@ namespace MultiFamilyPortal.Data.Models
 
         public string HowUnderwritingWasDetermined { get; set; }
 
+        public double MarketPricePerUnit { get; set; }
+
+        public double MarketCapRate { get; set; }
+
         public UnderwritingProspectProperty Property { get; set; }
     }
 }

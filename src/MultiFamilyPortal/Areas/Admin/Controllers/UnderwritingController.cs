@@ -311,6 +311,8 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     CompetitionNotes = analysis.BucketList.CompetitionNotes,
                     ConstructionType = analysis.BucketList.ConstructionType,
                     HowUnderwritingWasDetermined = analysis.BucketList.HowUnderwritingWasDetermined,
+                    MarketCapRate = analysis.BucketList.MarketCapRate,
+                    MarketPricePerUnit = analysis.BucketList.MarketPricePerUnit,
                     PropertyId = property.Id,
                     Summary = analysis.BucketList.Summary,
                     UtilityNotes = analysis.BucketList.UtilityNotes,
@@ -327,6 +329,8 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 bucketList.CompetitionNotes = analysis.BucketList.CompetitionNotes;
                 bucketList.ConstructionType = analysis.BucketList.ConstructionType;
                 bucketList.HowUnderwritingWasDetermined = analysis.BucketList.HowUnderwritingWasDetermined;
+                bucketList.MarketCapRate = analysis.BucketList.MarketCapRate;
+                bucketList.MarketPricePerUnit = analysis.BucketList.MarketPricePerUnit;
                 bucketList.Summary = analysis.BucketList.Summary;
                 bucketList.UtilityNotes = analysis.BucketList.UtilityNotes;
                 bucketList.ValuePlays = analysis.BucketList.ValuePlays;
@@ -563,6 +567,8 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                         CompetitionNotes = x.BucketList.CompetitionNotes,
                         ConstructionType = x.BucketList.ConstructionType,
                         HowUnderwritingWasDetermined = x.BucketList.HowUnderwritingWasDetermined,
+                        MarketCapRate = x.BucketList.MarketCapRate,
+                        MarketPricePerUnit = x.BucketList.MarketPricePerUnit,
                         Summary = x.BucketList.Summary,
                         UtilityNotes = x.BucketList.UtilityNotes,
                         ValuePlays = x.BucketList.ValuePlays,

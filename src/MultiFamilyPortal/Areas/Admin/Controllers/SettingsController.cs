@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
-using SkiaSharp;
-using SysFile = System.IO.File;
+using MultiFamilyPortal.Services;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
 {
@@ -14,10 +13,17 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
     public class SettingsController : ControllerBase
     {
         private IMFPContext _dbContext { get; }
+        private IBrandService _brand { get; }
+        private IWebHostEnvironment _hostEnvironment { get; }
 
-        public SettingsController(IMFPContext dbContext)
+        private ILogger<SettingsController> _logger { get; }
+
+        public SettingsController(IMFPContext dbContext, IBrandService brand, IWebHostEnvironment hostEnvironment, ILoggerFactory loggerFactory)
         {
             _dbContext = dbContext;
+            _brand = brand;
+            _hostEnvironment = hostEnvironment;
+            _logger = loggerFactory.CreateLogger<SettingsController>();
         }
 
         [HttpGet]
@@ -135,34 +141,58 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         }
 
         [HttpPost("branding/{imageName}")]
-        public async Task<IActionResult> UpdateBrandingLogo(string imageName, IFormFile file, [FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> UpdateBrandingLogo(string imageName,[FromForm] IFormFile file)
         {
-            var expectedPng = Path.Combine(env.WebRootPath, "branding", $"{imageName}.png");
-            var expectedSvg = Path.Combine(env.WebRootPath, "branding", $"{imageName}.svg");
-
-            if (SysFile.Exists(expectedPng))
-                SysFile.Delete(expectedPng);
-
-            if (SysFile.Exists(expectedSvg))
-                SysFile.Delete(expectedSvg);
-
-            switch(Path.GetExtension(file.FileName).ToLower())
+           if (file.Length > 0)
             {
-                case ".svg":
-                    using (var fileStream = SysFile.OpenRead(expectedSvg))
-                        await file.CopyToAsync(fileStream);
-                    break;
-                case ".png":
-                case ".jpg":
-                case ".jpeg":
-                    var image = SKImage.FromEncodedData(file.OpenReadStream());
+                try
+                {
+                    var physicalPath = Path.Combine(_hostEnvironment.ContentRootPath, "App_Data", "Brands");
+                    Directory.CreateDirectory(physicalPath);
+                    await _brand.CreateImage(file, imageName, physicalPath);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error uploading logo");
+                    return BadRequest(ex.Message);
+                }
+            }
+            else
+            {
+                _logger.LogWarning("No file uploaded");
+                return BadRequest("No file was uploaded.");
+            }
 
-                    // TODO: Resize if the file is too large
-                    var data = image.Encode(SKEncodedImageFormat.Png, 100);
-                    data.SaveTo(SysFile.OpenRead(expectedPng));
-                    break;
-                default:
-                    return BadRequest();
+            return Ok();
+        }
+
+        [HttpPost("favicon")]
+        public async Task<IActionResult> Save([FromForm] IFormFile file)
+        {
+            if (file.Length > 0)
+            {
+                try
+                {
+                    var fileName = "favicon" + Path.GetExtension(file.FileName);
+                    var physicalPath = Path.Combine(_hostEnvironment.ContentRootPath, "App_Data", "Icons");
+                    var filePath = Path.Combine(physicalPath, fileName);
+                    Directory.CreateDirectory(physicalPath);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                        await file.CopyToAsync(stream);
+                
+                    await _brand.CreateIcons(filePath);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error uploading favicon");
+                    return BadRequest(ex.Message);
+                }
+            }
+            else
+            {
+                _logger.LogError("No file was uploaded.");
+                return BadRequest("No file was uploaded.");
             }
 
             return Ok();

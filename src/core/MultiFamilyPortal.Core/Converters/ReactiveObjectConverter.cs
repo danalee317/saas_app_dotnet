@@ -61,6 +61,14 @@ namespace MultiFamilyPortal.Converters
         }
         public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
         {
+            if (value is null)
+            {
+                writer.WriteNullValue();
+                return;
+            }
+
+            writer.WriteStartObject();
+
             var type = typeof(T);
             var props = type.GetRuntimeProperties();
 
@@ -100,6 +108,8 @@ namespace MultiFamilyPortal.Converters
                     writer.WriteString(name, propertyValue);
                 }
             }
+
+            writer.WriteEndObject();
         }
     }
 }

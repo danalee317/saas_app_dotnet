@@ -15,6 +15,20 @@
         {
             new FileTypeInfo
             {
+                Extension = ".rar",
+                Name = "Rar",
+                Icon = "fa-regular fa-file-zipper",
+                MimeType = "application/x-rar-compressed"
+            },
+            new FileTypeInfo
+            {
+                Extension = ".zip",
+                Name = "Zip",
+                Icon = "fa-regular fa-file-zipper",
+                MimeType = "application/zip"
+            },
+            new FileTypeInfo
+            {
                 Extension = ".pdf",
                 Name = "PDF",
                 Icon = "fa-regular fa-file-pdf",

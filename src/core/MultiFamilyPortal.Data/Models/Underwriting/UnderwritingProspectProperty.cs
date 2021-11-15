@@ -7,6 +7,8 @@ namespace MultiFamilyPortal.Data.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
+        public Guid BucketListId { get; set; }
+
         private DateTimeOffset _timestamp = DateTimeOffset.Now;
         public DateTimeOffset Timestamp => _timestamp;
 
@@ -78,7 +80,13 @@ namespace MultiFamilyPortal.Data.Models
 
         public double LTV { get; set; } = 0.8;
 
+        public PropertyClass PropertyClass { get; set; } = PropertyClass.ClassB;
+
+        public PropertyClass NeighborhoodClass { get; set; } = PropertyClass.ClassB;
+
         public SiteUser Underwriter { get; set; }
+
+        public UnderwritingProspectPropertyBucketList BucketList { get; set; }
 
         public virtual ICollection<UnderwritingLineItem> LineItems { get; set; }
 

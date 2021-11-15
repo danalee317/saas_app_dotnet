@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MultiFamilyPortal.Data.Models;
 
 namespace MultiFamilyPortal.Data.ModelConfiguration
@@ -12,6 +7,12 @@ namespace MultiFamilyPortal.Data.ModelConfiguration
     {
         public static void ConfigureUnderwriting(this ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<UnderwritingProspectProperty>(builder =>
+            {
+                builder.HasOne(x => x.BucketList)
+                    .WithOne(x => x.Property)
+                    .HasForeignKey<UnderwritingProspectPropertyBucketList>(x => x.PropertyId);
+            });
             modelBuilder.HasField<UnderwritingProspectProperty, DateTimeOffset>(x => x.Timestamp);
             modelBuilder.HasField<UnderwritingNote, DateTimeOffset>(x => x.Timestamp);
         }

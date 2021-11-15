@@ -25,6 +25,7 @@ namespace MultiFamilyPortal.InspiniaTheme
         };
         public string[] Scripts { get; } = new[]
         {
+            "https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js",
             "https://avantipoint.blob.core.windows.net/theme/inspinia/2.9.4/js/plugins/metisMenu/jquery.metisMenu.js",
             //"https://cdn.avantipoint.com/themes/inspinia/2.9.4/js/plugins/metisMenu/jquery.metisMenu.js",
             "https://avantipoint.blob.core.windows.net/theme/inspinia/2.9.4/js/plugins/slimscroll/jquery.slimscroll.min.js",

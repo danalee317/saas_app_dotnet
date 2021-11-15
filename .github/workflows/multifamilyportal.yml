@@ -1,4 +1,4 @@
-name: Build & Deploy ${{ matrix.AZURE_WEBAPP_NAME }}
+name: Build & Deploy
 on:
   push:
     branches:

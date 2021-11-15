@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
-using MultiFamilyPortal.Services;
+using SkiaSharp;
+using SysFile = System.IO.File;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
 {
@@ -13,17 +14,10 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
     public class SettingsController : ControllerBase
     {
         private IMFPContext _dbContext { get; }
-        private IBrandService _brand { get; }
-        private IWebHostEnvironment _hostEnvironment { get; }
 
-        private ILogger<SettingsController> _logger { get; }
-
-        public SettingsController(IMFPContext dbContext, IBrandService brand, IWebHostEnvironment hostEnvironment, ILoggerFactory loggerFactory)
+        public SettingsController(IMFPContext dbContext)
         {
             _dbContext = dbContext;
-            _brand = brand;
-            _hostEnvironment = hostEnvironment;
-            _logger = loggerFactory.CreateLogger<SettingsController>();
         }
 
         [HttpGet]
@@ -44,26 +38,26 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         public async Task<IActionResult> GetHighlightableUsers()
         {
             var response = (await (from role in _dbContext.Roles
-                                   where role.Name == PortalRoles.PortalAdministrator ||
-                                   role.Name == PortalRoles.BlogAuthor || role.Name == PortalRoles.Underwriter
-                                   join userRole in _dbContext.UserRoles
-                                   on role.Id equals userRole.RoleId
-                                   join user in _dbContext.Users
-                                   on userRole.UserId equals user.Id
-                                   select new AdminTheme.Models.HighlightableUser
-                                   {
-                                       DisplayName = user.FirstName + " " + user.LastName,
-                                       Title = user.Title,
-                                       Email = user.Email,
-                                       UserId = user.Id
-                                   }).ToArrayAsync())
+                         where role.Name == PortalRoles.PortalAdministrator ||
+                         role.Name == PortalRoles.BlogAuthor || role.Name == PortalRoles.Underwriter
+                         join userRole in _dbContext.UserRoles
+                         on role.Id equals userRole.RoleId
+                         join user in _dbContext.Users
+                         on userRole.UserId equals user.Id
+                         select new AdminTheme.Models.HighlightableUser
+                         {
+                             DisplayName = user.FirstName + " " + user.LastName,
+                             Title = user.Title,
+                             Email = user.Email,
+                             UserId = user.Id
+                         }).ToArrayAsync())
                          .DistinctBy(x => x.UserId);
 
             var existing = await _dbContext.HighlightedUsers.ToArrayAsync();
-            foreach (var current in existing)
+            foreach(var current in existing)
             {
                 var user = response.FirstOrDefault(x => x.UserId == current.UserId);
-                if (user is not null)
+                if(user is not null)
                     user.Order = current.Order;
             }
 
@@ -71,7 +65,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         }
 
         [HttpPost("highlightable-users/update")]
-        public async Task<IActionResult> UpdateHighlightableUsers([FromBody] IEnumerable<AdminTheme.Models.HighlightableUser> users)
+        public async Task<IActionResult> UpdateHighlightableUsers([FromBody]IEnumerable<AdminTheme.Models.HighlightableUser> users)
         {
             var existing = await _dbContext.HighlightedUsers.ToArrayAsync();
             _dbContext.HighlightedUsers.RemoveRange(existing);
@@ -96,11 +90,11 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         }
 
         [HttpPost("themes/default")]
-        public async Task<IActionResult> SetDefaultTheme([Bind(nameof(SiteTheme.Id))] SiteTheme defaultTheme)
+        public async Task<IActionResult> SetDefaultTheme([Bind(nameof(SiteTheme.Id))]SiteTheme defaultTheme)
         {
             var themes = await _dbContext.SiteThemes.ToArrayAsync();
 
-            foreach (var theme in themes)
+            foreach(var theme in themes)
                 theme.IsDefault = theme.Id == defaultTheme.Id;
 
             _dbContext.SiteThemes.UpdateRange(themes);
@@ -117,7 +111,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         }
 
         [HttpPost("email-templates/update")]
-        public async Task<IActionResult> UpdateEmailTemplate([Bind(nameof(EmailTemplate.Key), nameof(EmailTemplate.Html), nameof(EmailTemplate.PlainText))] EmailTemplate request)
+        public async Task<IActionResult> UpdateEmailTemplate([Bind(nameof(EmailTemplate.Key), nameof(EmailTemplate.Html), nameof(EmailTemplate.PlainText))]EmailTemplate request)
         {
             var template = await _dbContext.EmailTemplates.FirstOrDefaultAsync(x => x.Key == request.Key);
             if (template is null)
@@ -141,58 +135,34 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         }
 
         [HttpPost("branding/{imageName}")]
-        public async Task<IActionResult> UpdateBrandingLogo(string imageName,[FromForm] IFormFile file)
+        public async Task<IActionResult> UpdateBrandingLogo(string imageName, IFormFile file, [FromServices]IWebHostEnvironment env)
         {
-           if (file.Length > 0)
-            {
-                try
-                {
-                    var physicalPath = Path.Combine(_hostEnvironment.ContentRootPath, "App_Data", "Brands");
-                    Directory.CreateDirectory(physicalPath);
-                    await _brand.CreateImage(file, imageName, physicalPath);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error uploading logo");
-                    return BadRequest(ex.Message);
-                }
-            }
-            else
-            {
-                _logger.LogWarning("No file uploaded");
-                return BadRequest("No file was uploaded.");
-            }
+            var expectedPng = Path.Combine(env.WebRootPath, "branding", $"{imageName}.png");
+            var expectedSvg = Path.Combine(env.WebRootPath, "branding", $"{imageName}.svg");
 
-            return Ok();
-        }
+            if (SysFile.Exists(expectedPng))
+                SysFile.Delete(expectedPng);
 
-        [HttpPost("favicon")]
-        public async Task<IActionResult> Save([FromForm] IFormFile file)
-        {
-            if (file.Length > 0)
-            {
-                try
-                {
-                    var fileName = "favicon" + Path.GetExtension(file.FileName);
-                    var physicalPath = Path.Combine(_hostEnvironment.ContentRootPath, "App_Data", "Icons");
-                    var filePath = Path.Combine(physicalPath, fileName);
-                    Directory.CreateDirectory(physicalPath);
+            if (SysFile.Exists(expectedSvg))
+                SysFile.Delete(expectedSvg);
 
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                        await file.CopyToAsync(stream);
-                
-                    await _brand.CreateIcons(filePath);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error uploading favicon");
-                    return BadRequest(ex.Message);
-                }
-            }
-            else
+            switch(Path.GetExtension(file.FileName).ToLower())
             {
-                _logger.LogError("No file was uploaded.");
-                return BadRequest("No file was uploaded.");
+                case ".svg":
+                    using (var fileStream = SysFile.OpenRead(expectedSvg))
+                        await file.CopyToAsync(fileStream);
+                    break;
+                case ".png":
+                case ".jpg":
+                case ".jpeg":
+                    var image = SKImage.FromEncodedData(file.OpenReadStream());
+
+                    // TODO: Resize if the file is too large
+                    var data = image.Encode(SKEncodedImageFormat.Png, 100);
+                    data.SaveTo(SysFile.OpenRead(expectedPng));
+                    break;
+                default:
+                    return BadRequest();
             }
 
             return Ok();

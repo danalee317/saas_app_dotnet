@@ -28,9 +28,9 @@ namespace MultiFamilyPortal.AdminTheme.Pages
 
         private DateTimeOffset _start = DateTimeOffset.Now.AddMonths(-1);
         private DateTimeOffset _end = DateTimeOffset.Now;
-        private ObservableRangeCollection<ActivityResponse> _activities = new ObservableRangeCollection<ActivityResponse>();
+        private ObservableRangeCollection<ActivityResponse> _activities = new ();
         private string _profileId;
-        private ObservableRangeCollection<UnderwriterResponse> _underwriters = new ObservableRangeCollection<UnderwriterResponse> { new UnderwriterResponse { DisplayName = "All" } };
+        private ObservableRangeCollection<UnderwriterResponse> _underwriters = new () { new UnderwriterResponse { DisplayName = "All" } };
 
         private ActivityResponse _newActivity;
         private ActivityResponse _updateActivity;
@@ -43,9 +43,6 @@ namespace MultiFamilyPortal.AdminTheme.Pages
         {
             _profileId = _underwriters.First().Id;
 
-            _start = await _timezone.GetLocalDateTime(_start);
-            _end = await _timezone.GetLocalDateTime(_end);
-
             try
             {
                 var underwriters = await _client.GetFromJsonAsync<IEnumerable<UnderwriterResponse>>("/api/admin/underwriting/underwriters");
@@ -55,20 +52,32 @@ namespace MultiFamilyPortal.AdminTheme.Pages
             {
                 _logger.LogError(ex, "Error fetching underwriters");
             }
-            await Update();
+        }
+
+        protected override async void OnAfterRender(bool firstRender)
+        {
+            if(firstRender)
+            {
+                _start = await _timezone.GetLocalDateTime(_start);
+                _end = await _timezone.GetLocalDateTime(_end);
+                await Update();
+            }
         }
 
         private async Task Update()
         {
             try
             {
-                var activities = await _client.GetFromJsonAsync<IEnumerable<ActivityResponse>>($"/api/admin/activity/list?start={_start}&end={_end}&profileId={_profileId}");
+                var start = WebUtility.UrlEncode(_start.ToString());
+                var end = WebUtility.UrlEncode(_end.ToString());
+                var activities = await _client.GetFromJsonAsync<IEnumerable<ActivityResponse>>($"/api/admin/activity/list?profileId={_profileId}&start={start}&end={end}");
                 _activities.ReplaceRange(activities.OrderByDescending(x => x.Date));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating activity list");
             }
+            await InvokeAsync(StateHasChanged);
         }
 
         private void CreateActivity()

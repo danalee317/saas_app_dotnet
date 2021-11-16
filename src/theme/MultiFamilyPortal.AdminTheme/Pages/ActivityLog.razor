@@ -69,8 +69,13 @@
     </GridColumn>
     <GridColumn Field="Type" />
     <GridColumn Field="Description" />
-    <GridColumn Field="Date" />
-    <GridColumn Field="Total" />
+    <GridColumn Field="Date" TextAlign=@ColumnTextAlign.Center>
+      <Template>
+        @{ var activity = context as ActivityResponse; }
+        <PortalLocalizedTime Date=@activity.Timestamp />
+      </Template>
+    </GridColumn>
+    <GridColumn Field="Total" TextAlign=@ColumnTextAlign.Center />
     <GridCommandColumn>
       @{ var activity = context as ActivityResponse; }
       @if(_user.FindFirstValue(ClaimTypes.Email) == activity.UserEmail)

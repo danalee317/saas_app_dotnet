@@ -26,19 +26,19 @@ namespace MultiFamilyPortal.Services
             _logger = loggerFactory.CreateLogger<BrandService>();
         }
 
-        public Task CreateIcons(string defaultIcon)
+        public Task CreateIcons(string inputPath, string outputPath)
         {
-            var fileInfo = new FileInfo(defaultIcon);
+            var fileInfo = new FileInfo(inputPath);
 
             if (!fileInfo.Exists)
             {
-                throw new System.IO.FileNotFoundException("Default icon not found", defaultIcon);
+                throw new System.IO.FileNotFoundException("Default icon not found", inputPath);
             }
 
             try
             {
                 foreach (var icon in _favicons)
-                    CreateFavicon(fileInfo, icon.Value, icon.Key);
+                    CreateFavicon(fileInfo, icon.Value, icon.Key, outputPath);
             }
             catch (System.Exception ex)
             {
@@ -48,7 +48,7 @@ namespace MultiFamilyPortal.Services
             return Task.CompletedTask;
         }
 
-        private void CreateFavicon(FileInfo file, int size, string name)
+        private void CreateFavicon(FileInfo file, int size, string name, string outputPath)
         {
             using var src = SKImage.FromEncodedData(System.IO.File.ReadAllBytes(file.FullName));
             var canvasMax = Math.Max(src.Width, src.Height);
@@ -56,7 +56,7 @@ namespace MultiFamilyPortal.Services
             var info = new SKImageInfo(size, size, SKColorType.Rgba8888);
             using var output = SKImage.Create(info);
             src.ScalePixels(output.PeekPixels(), SKFilterQuality.High);
-            var filePath = Path.Combine(file.DirectoryName, name);
+            var filePath = Path.Combine(outputPath, name);
             if (File.Exists(filePath)) File.Delete(filePath);
             
             using (var stream = System.IO.File.Create(filePath))

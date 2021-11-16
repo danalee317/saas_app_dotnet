@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MultiFamilyPortal.Data;
+using MultiFamilyPortal.Services;
 
 namespace MultiFamilyPortal.Controllers
 {
@@ -13,35 +14,37 @@ namespace MultiFamilyPortal.Controllers
     public class FavIconController : ControllerBase
     {
         private IWebHostEnvironment _hostEnvironment { get; }
+        private IBrandService _brand { get; }
 
-        public FavIconController(IWebHostEnvironment hostEnvironment)
+        public FavIconController(IWebHostEnvironment hostEnvironment, IBrandService brand)
         {
             _hostEnvironment = hostEnvironment;
+            _brand = brand;
         }
 
         [HttpGet("/favicon.ico")]
-        public IActionResult GetFavIcon() =>
-            GetImage("favicon.ico");
+        public async Task<IActionResult> GetFavIconAsync() =>
+            await GetImageAsync("favicon.ico");
 
         [HttpGet("/favicon-16x16.png")]
-        public IActionResult GetFavIcon16() =>
-            GetImage("favicon-16x16.png");
+        public async Task<IActionResult> GetFavIcon16Async() =>
+            await GetImageAsync("favicon-16x16.png");
 
         [HttpGet("/favicon-32x32.png")]
-        public IActionResult GetFavIcon32() =>
-            GetImage("favicon-32x32.png");
+        public async Task<IActionResult> GetFavIcon32Async() =>
+            await GetImageAsync("favicon-32x32.png");
 
         [HttpGet("/android-chrome-192x192.png")]
-        public IActionResult AndroidChrome192() =>
-            GetImage("android-chrome-192x192.png");
+        public async Task<IActionResult> AndroidChrome192Async() =>
+            await GetImageAsync("android-chrome-192x192.png");
 
         [HttpGet("/android-chrome-512x512.png")]
-        public IActionResult AndroidChrome512() =>
-            GetImage("android-chrome-512x512.png");
+        public async Task<IActionResult> AndroidChrome512Async() =>
+            await GetImageAsync("android-chrome-512x512.png");
 
         [HttpGet("/apple-touch-icon.png")]
-        public IActionResult GetAppleTouch() =>
-            GetImage("apple-touch-icon.png");
+        public async Task<IActionResult> GetAppleTouchAsync() =>
+            await GetImageAsync("apple-touch-icon.png");
 
         [HttpGet("/site.webmanifest")]
         public async Task<IActionResult> SiteWebManifest([FromServices] IMFPContext db)
@@ -79,19 +82,23 @@ namespace MultiFamilyPortal.Controllers
             return File(bytes, "application/json", "site.webmanifest");
         }
 
-        private IActionResult GetImage(string name)
+        private async Task<IActionResult> GetImageAsync(string name)
         {
             var typeInfo = FileTypeLookup.GetFileTypeInfo(name);
+            var savedPath = Path.Combine(_hostEnvironment.ContentRootPath, "App_Data", "Icons");
+
             try
             {
-                var savedPath = Path.Combine(_hostEnvironment.ContentRootPath, "App_Data", "Icons");
                 return File(System.IO.File.ReadAllBytes(Path.Combine(savedPath, name)), typeInfo.MimeType, name);
             }
             catch
             {
-                var defaultFile = Path.Combine(_hostEnvironment.WebRootPath, "default-resources", "favicon");
-                return File(System.IO.File.ReadAllBytes(Path.Combine(defaultFile, "default.png")), typeInfo.MimeType, name);
+                Directory.CreateDirectory(savedPath);
+                var defaultFile = Path.Combine(_hostEnvironment.WebRootPath, "default-resources", "favicon", "default.png");
+                await _brand.CreateIcons(defaultFile,savedPath);
             }
+
+             return File(System.IO.File.ReadAllBytes(Path.Combine(savedPath, name)), typeInfo.MimeType, name);
         }
 
         private record WebManifest

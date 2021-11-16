@@ -149,7 +149,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     {
                         using (var stream = new FileStream(filePath, FileMode.Create))
                             await file.CopyToAsync(stream);
-                        await brand.CreateIcons(filePath);
+                        await brand.CreateIcons(filePath,physicalPath);
                     }
                     else
                     {

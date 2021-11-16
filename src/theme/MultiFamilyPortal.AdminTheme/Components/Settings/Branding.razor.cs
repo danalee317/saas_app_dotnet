@@ -14,7 +14,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
         private ILogger<Branding> Logger { get; set; }
 
         private Logo _selected;
-        private readonly List<string> AllowedFileTypes = new() { ".png", ".svg", ".ico" };
+        private readonly List<string> AllowedFileTypes = new() { ".png", ".svg", ".jpeg",".jpg" };
         public string LogoUrl(string name) => ToAbsoluteUrl($"branding/{name}");
         private bool showWindow = false;
         private  readonly IEnumerable<Logo> _logos = new[]

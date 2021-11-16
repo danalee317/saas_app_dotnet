@@ -10,7 +10,7 @@ using MultiFamilyPortal.AdminTheme.Services;
 using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
-using MultiFamilyPortal.Dtos.Underwrting;
+using MultiFamilyPortal.Dtos.Underwriting;
 using MultiFamilyPortal.Extensions;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers

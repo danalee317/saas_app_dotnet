@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components.Routing;
 using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.CoreUI;
 using MultiFamilyPortal.Data.Models;
-using MultiFamilyPortal.Dtos.Underwrting;
+using MultiFamilyPortal.Dtos.Underwriting;
 
 namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
 {

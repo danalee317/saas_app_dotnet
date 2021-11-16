@@ -5,7 +5,7 @@ using MultiFamilyPortal.Data.Models;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
-namespace MultiFamilyPortal.Dtos.Underwrting
+namespace MultiFamilyPortal.Dtos.Underwriting
 {
     [JsonConverter(typeof(ReactiveObjectConverter<UnderwritingAnalysisLineItem>))]
     public class UnderwritingAnalysisLineItem : ReactiveObject

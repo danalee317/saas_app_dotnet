@@ -2,7 +2,7 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
 using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.Data.Models;
-using MultiFamilyPortal.Dtos.Underwrting;
+using MultiFamilyPortal.Dtos.Underwriting;
 using MultiFamilyPortal.Extensions;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting

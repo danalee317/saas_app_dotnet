@@ -12,6 +12,7 @@ using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
 using MultiFamilyPortal.Extensions;
+using MultiFamilyPortal.Services;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
 {
@@ -487,28 +488,71 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             return Ok(updatedAnalysis);
         }
 
+        [HttpGet("files/{propertyId:guid}")]
+        public async Task<IActionResult> GetFiles(Guid propertyId)
+        {
+            var host = $"{Request.Scheme}://{Request.Host}";
+            var files = await _dbContext.UnderwritingProspectFiles
+                .Where(x => x.PropertyId == propertyId)
+                .Select(x => new UnderwritingAnalysisFile
+                {
+                    Description = x.Description,
+                    DownloadLink = host,
+                    Icon = x.Icon,
+                    Name = x.Name,
+                    Timestamp = x.Timestamp,
+                })
+                .ToArrayAsync();
+
+            return Ok(files);
+        }
+
         [HttpPost("upload/save/{id:guid}")]
-        public async Task<IActionResult> Save(Guid id, IFormFile file) // must match SaveField which defaults to "files"
+        public async Task<IActionResult> SaveFile(
+            [FromQuery]UnderwritingProspectFileType fileType,
+            [FromQuery]string description,
+            Guid id,
+            IFormFile file,
+            [FromServices]IWebHostEnvironment hostEnvironment,
+            [FromServices]IStorageService storage)
+            // must match SaveField which defaults to "files"
         {
             if (file != null)
             {
                 try
                 {
+                    var property = await _dbContext.UnderwritingPropertyProspects.FirstOrDefaultAsync(x => x.Id == id);
+                    if (property is null)
+                        return NotFound();
+
                     var fileContent = ContentDispositionHeaderValue.Parse(file.ContentDisposition);
+                    var fileName = Path.GetFileName(fileContent.FileName.ToString().Trim('"'));
+                    var physicalPath = Path.Combine(hostEnvironment.WebRootPath, fileName);
 
-                    // Some browsers send file names with full path.
-                    // We are only interested in the file name.
-                    //var fileName = Path.GetFileName(fileContent.FileName.ToString().Trim('"'));
-                    //var physicalPath = Path.Combine(HostingEnvironment.WebRootPath, fileName);
+                    var prospectFile = new UnderwritingProspectFile
+                    {
+                        Description = description,
+                        Icon = FileTypeLookup.GetFileTypeInfo(fileName).Icon,
+                        Name = fileName,
+                        PropertyId = property.Id,
+                        Type = fileType,
+                        UnderwriterEmail = User.FindFirstValue(ClaimTypes.Email)
+                    };
 
-                    //// Implement security mechanisms here - prevent path traversals,
-                    //// check for allowed extensions, types, size, content, viruses, etc.
-                    //// This sample always saves the file to the root and is not sufficient for a real application.
+                    await _dbContext.UnderwritingProspectFiles.AddAsync(prospectFile);
+                    await _dbContext.SaveChangesAsync();
 
-                    //using (var fileStream = new FileStream(physicalPath, FileMode.Create))
-                    //{
-                    //    await file.CopyToAsync(fileStream);
-                    //}
+                    var path = Path.Combine("underwriting", $"{property.Id}-{property.Name}", $"{prospectFile.Id}{Path.GetExtension(fileName)}");
+                    var result = await storage.PutAsync(path, file.OpenReadStream(), FileTypeLookup.GetFileTypeInfo(fileName).MimeType);
+
+                    if(result != StoragePutResult.Success)
+                    {
+                        _dbContext.UnderwritingProspectFiles.Remove(prospectFile);
+                        await _dbContext.SaveChangesAsync();
+                        return Conflict();
+                    }
+
+                    return Ok();
                 }
                 catch(Exception ex)
                 {

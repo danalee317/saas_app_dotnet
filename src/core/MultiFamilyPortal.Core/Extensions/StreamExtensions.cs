@@ -1,4 +1,6 @@
-﻿namespace MultiFamilyPortal.Extensions
+﻿using System.Security.Cryptography;
+
+namespace MultiFamilyPortal.Extensions
 {
     public static class StreamExtensions
     {

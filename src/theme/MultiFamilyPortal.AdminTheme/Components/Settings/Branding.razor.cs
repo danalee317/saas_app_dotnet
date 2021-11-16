@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
+using Telerik.Blazor;
 using Telerik.Blazor.Components;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Settings
@@ -8,9 +10,14 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
         [Inject]
         private HttpClient _client { get; set; }
 
-        private Logo _selected;
+        [Inject]
+        private ILogger<Branding> Logger { get; set; }
 
-        private readonly IEnumerable<Logo> _logos = new[]
+        private Logo _selected;
+        private readonly List<string> AllowedFileTypes = new() { ".png", ".svg", ".jpeg",".jpg" };
+        public string LogoUrl(string name) => ToAbsoluteUrl($"branding/{name}");
+        private bool showWindow = false;
+        private  readonly IEnumerable<Logo> _logos = new[]
         {
             new Logo { DisplayName = "Browser Icon", Href = "/apple-touch-icon.png", Name = "favicon" },
             new Logo { DisplayName = "Default Logo", Href = "/theme/branding/logo", Name = "logo" },
@@ -19,9 +26,22 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
             new Logo { DisplayName = "Dark Theme Logo - Horizontal", Href = "/theme/branding/logo-dark-side", Name = "logo-dark-side" },
         };
 
+        private string ToAbsoluteUrl(string url) => $"{_client.BaseAddress}api/admin/settings/{url}";
+
         private void UpdateLogo(GridCommandEventArgs args)
         {
             _selected = args.Item as Logo;
+            showWindow = true;
+        }
+
+        private async Task OnSuccessHandler(UploadSuccessEventArgs e)
+        {
+            if (e.Operation == UploadOperationType.Upload)
+            {
+                showWindow = false;
+                await InvokeAsync(StateHasChanged);
+            }
+            else Logger.LogWarning("Upload failure");
         }
 
         private record Logo

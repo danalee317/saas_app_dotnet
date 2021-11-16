@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
-using SkiaSharp;
-using SysFile = System.IO.File;
+using MultiFamilyPortal.Services;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
 {
@@ -14,7 +13,6 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
     public class SettingsController : ControllerBase
     {
         private IMFPContext _dbContext { get; }
-
         public SettingsController(IMFPContext dbContext)
         {
             _dbContext = dbContext;
@@ -134,35 +132,40 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             throw new NotImplementedException();
         }
 
-        [HttpPost("branding/{imageName}")]
-        public async Task<IActionResult> UpdateBrandingLogo(string imageName, IFormFile file, [FromServices]IWebHostEnvironment env)
+        [HttpPost("branding/{imageName}")]   
+        public async Task<IActionResult> UpdateBrandingLogo(string imageName, [FromForm] IFormFile file, [FromServices] IWebHostEnvironment env, [FromServices] IBrandService brand, [FromServices] ILoggerFactory loggerFactory)
         {
-            var expectedPng = Path.Combine(env.WebRootPath, "branding", $"{imageName}.png");
-            var expectedSvg = Path.Combine(env.WebRootPath, "branding", $"{imageName}.svg");
-
-            if (SysFile.Exists(expectedPng))
-                SysFile.Delete(expectedPng);
-
-            if (SysFile.Exists(expectedSvg))
-                SysFile.Delete(expectedSvg);
-
-            switch(Path.GetExtension(file.FileName).ToLower())
+            var logger = loggerFactory.CreateLogger<SettingsController>();
+            if (file.Length > 0)
             {
-                case ".svg":
-                    using (var fileStream = SysFile.OpenRead(expectedSvg))
-                        await file.CopyToAsync(fileStream);
-                    break;
-                case ".png":
-                case ".jpg":
-                case ".jpeg":
-                    var image = SKImage.FromEncodedData(file.OpenReadStream());
+                try
+                {
+                    var physicalPath = Path.Combine(env.ContentRootPath, "App_Data", imageName == "favicon" ? "Icons" : "Brands");
+                    var fileName = imageName + Path.GetExtension(file.FileName);
+                    var filePath = Path.Combine(physicalPath, fileName);
+                    Directory.CreateDirectory(physicalPath);
 
-                    // TODO: Resize if the file is too large
-                    var data = image.Encode(SKEncodedImageFormat.Png, 100);
-                    data.SaveTo(SysFile.OpenRead(expectedPng));
-                    break;
-                default:
-                    return BadRequest();
+                    if (imageName == "favicon")
+                    {
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                            await file.CopyToAsync(stream);
+                        await brand.CreateIcons(filePath,physicalPath);
+                    }
+                    else
+                    {
+                        await brand.CreateImage(file, imageName, physicalPath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error uploading logo");
+                    return BadRequest(ex.Message);
+                }
+            }
+            else
+            {
+                logger.LogWarning("No file uploaded");
+                return BadRequest("No file was uploaded.");
             }
 
             return Ok();

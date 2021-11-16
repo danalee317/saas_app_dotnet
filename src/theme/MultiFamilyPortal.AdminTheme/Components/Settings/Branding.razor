@@ -8,21 +8,28 @@
       </Template>
     </GridColumn>
     <GridCommandColumn>
-      <div class="text-center">
-        <GridCommandButton Command="ReplaceLogo"
-                           Title="Update Logo"
-                           Primary="true"
-                           IconClass="fa-duotone fa-upload"
-                           OnClick=@UpdateLogo>Update Logo</GridCommandButton>
-      </div>
-    </GridCommandColumn>
-  </GridColumns>
+       <div class="text-center">
+          <GridCommandButton Command="ReplaceLogo" 
+                              Title="Update Logo" 
+                              Primary="true" 
+                              IconClass="fa-duotone fa-upload"
+                              OnClick=@UpdateLogo>Update Logo
+               </GridCommandButton>
+         </div>
+     </GridCommandColumn>
+   </GridColumns>
 </TelerikGrid>
-
-<TelerikWindow Visible=@(_selected != null)
-               Modal=@true>
+<TelerikWindow Visible=@showWindow Modal=@true>
   <WindowTitle>Update Logo</WindowTitle>
   <WindowActions>
-    <WindowAction Name="Close" OnClick=@(() => _selected = null) />
+    <WindowAction Name="Close" OnClick=@(() => showWindow = false) />
   </WindowActions>
+  <WindowContent>
+      <TelerikUpload AllowedExtensions="@AllowedFileTypes" 
+                     MaxFileSize="2048000" 
+                     SaveField="file" 
+                     Multiple="false"
+                     OnSuccess="@OnSuccessHandler" 
+                     SaveUrl=@LogoUrl(_selected.Name) />
+  </WindowContent>
 </TelerikWindow>

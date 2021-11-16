@@ -542,7 +542,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     await _dbContext.UnderwritingProspectFiles.AddAsync(prospectFile);
                     await _dbContext.SaveChangesAsync();
 
-                    var path = Path.Combine("underwriting", $"{property.Id}-{property.Name}", $"{prospectFile.Id}{Path.GetExtension(fileName)}");
+                    var path = Path.Combine("underwriting", $"{property.Id}", $"{prospectFile.Id}{Path.GetExtension(fileName)}");
                     var result = await storage.PutAsync(path, file.OpenReadStream(), FileTypeLookup.GetFileTypeInfo(fileName).MimeType);
 
                     if(result != StoragePutResult.Success)

@@ -1,11 +1,11 @@
 ﻿<TelerikGrid Data=@_logos>
-   <GridColumns>
+  <GridColumns>
     <GridColumn Field="Name" />
     <GridColumn Title="Logo" TextAlign=@ColumnTextAlign.Center>
       <Template>
-        @{var logo = context as Logo;}
+        @{ var logo = context as Logo; }
         <img src="@logo.Href" alt="@logo.DisplayName" class="img img-fluid my-3" style="max-width:250px;" />
-       </Template>
+      </Template>
     </GridColumn>
     <GridCommandColumn>
        <div class="text-center">

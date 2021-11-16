@@ -39,7 +39,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
             if (e.Operation == UploadOperationType.Upload)
             {
                 showWindow = false;
-                await InvokeAsync(() => StateHasChanged());
+                await InvokeAsync(StateHasChanged);
             }
             else Logger.LogWarning("Upload failure");
         }

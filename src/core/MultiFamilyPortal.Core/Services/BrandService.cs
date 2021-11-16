@@ -6,10 +6,18 @@ namespace MultiFamilyPortal.Services
 {
     public class BrandService : IBrandService
     {
-        readonly string Icons = "favicon,android,apple";
-        readonly int[] FaviSize = { 16, 32, 96 };
-        readonly int[] DroidSize = { 192, 288, 512 };
-        readonly int AppleSize = 180;
+        private readonly Dictionary<string, int> _favicons = new ()
+        {
+             { "favicon.ico", 16 },
+             { "favicon-16x16.png", 16 },
+             { "favicon-32x32.png", 32 },
+             { "favicon-96x96.png", 96 },
+             { "android-chrome-192x192.png", 128 },
+             { "android-chrome-288x288.png", 288 },
+             { "android-chrome-512x512.png", 512 },
+             { "apple-touch-icon.png", 180 },
+        };
+   
 
         private ILogger<BrandService> _logger { get; }
 
@@ -29,35 +37,8 @@ namespace MultiFamilyPortal.Services
 
             try
             {
-                var current = fileInfo.Directory.GetFiles();
-                var iconNames = Icons.Split(',');
-                var currentType = fileInfo.Extension.ToLower();
-
-                foreach (var iconName in iconNames)
-                {
-                    switch (iconName)
-                    {
-                        case "favicon":
-                            foreach (var size in FaviSize)
-                            {
-                                var target = $"favicon-{size}x{size}";
-                                if (size == FaviSize.FirstOrDefault() && currentType != ".ico")
-                                    CreateFavicon(fileInfo, size, $"{target}.ico");
-
-                                CreateFavicon(fileInfo, size, $"{target}.png");
-                            }
-                            break;
-
-                        case "android":
-                            foreach (var size in DroidSize)
-                                CreateFavicon(fileInfo, size, $"android-chrome-{size}x{size}.png");
-                            break;
-
-                        case "apple":
-                            CreateFavicon(fileInfo, AppleSize, $"apple-touch-icon.png");
-                            break;
-                    }
-                }
+                foreach (var icon in _favicons)
+                    CreateFavicon(fileInfo, icon.Value, icon.Key);
             }
             catch (System.Exception ex)
             {

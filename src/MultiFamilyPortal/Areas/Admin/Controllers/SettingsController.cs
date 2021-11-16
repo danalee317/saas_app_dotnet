@@ -13,15 +13,9 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
     public class SettingsController : ControllerBase
     {
         private IMFPContext _dbContext { get; }
-        private IBrandService _brand { get; }
-
-        private ILogger<SettingsController> _logger { get; }
-
-        public SettingsController(IMFPContext dbContext, IBrandService brand, ILoggerFactory loggerFactory)
+        public SettingsController(IMFPContext dbContext)
         {
             _dbContext = dbContext;
-            _brand = brand;
-            _logger = loggerFactory.CreateLogger<SettingsController>();
         }
 
         [HttpGet]
@@ -139,14 +133,15 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         }
 
         [HttpPost("branding/{imageName}")]   
-        public async Task<IActionResult> UpdateBrandingLogo(string imageName, [FromForm] IFormFile file, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> UpdateBrandingLogo(string imageName, [FromForm] IFormFile file, [FromServices] IWebHostEnvironment env, [FromServices] IBrandService brand, [FromServices] ILoggerFactory loggerFactory)
         {
+            var logger = loggerFactory.CreateLogger<SettingsController>();
             if (file.Length > 0)
             {
                 try
                 {
                     var physicalPath = Path.Combine(env.ContentRootPath, "App_Data", imageName == "favicon" ? "Icons" : "Brands");
-                    var fileName = "favicon" + Path.GetExtension(file.FileName);
+                    var fileName = imageName + Path.GetExtension(file.FileName);
                     var filePath = Path.Combine(physicalPath, fileName);
                     Directory.CreateDirectory(physicalPath);
 
@@ -154,22 +149,22 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     {
                         using (var stream = new FileStream(filePath, FileMode.Create))
                             await file.CopyToAsync(stream);
-                        await _brand.CreateIcons(filePath);
+                        await brand.CreateIcons(filePath);
                     }
                     else
                     {
-                        await _brand.CreateImage(file, imageName, physicalPath);
+                        await brand.CreateImage(file, imageName, physicalPath);
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error uploading logo");
+                    logger.LogError(ex, "Error uploading logo");
                     return BadRequest(ex.Message);
                 }
             }
             else
             {
-                _logger.LogWarning("No file uploaded");
+                logger.LogWarning("No file uploaded");
                 return BadRequest("No file was uploaded.");
             }
 

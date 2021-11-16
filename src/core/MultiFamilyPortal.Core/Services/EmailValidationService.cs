@@ -39,7 +39,7 @@ namespace MultiFamilyPortal.Services
 
                 //if(apiResponse.)
 
-
+                await Task.CompletedTask;
                 return new EmailValidationResponse { IsValid = true };
             }
             catch

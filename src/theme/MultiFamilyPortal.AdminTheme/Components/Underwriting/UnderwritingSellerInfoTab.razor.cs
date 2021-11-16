@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Components;
-using MultiFamilyPortal.Dtos.Underwrting;
+using MultiFamilyPortal.Dtos.Underwriting;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 {

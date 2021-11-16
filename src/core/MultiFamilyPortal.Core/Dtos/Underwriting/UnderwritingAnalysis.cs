@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reactive;
 using System.Reactive.Disposables;
@@ -12,7 +11,7 @@ using MultiFamilyPortal.Extensions;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
-namespace MultiFamilyPortal.Dtos.Underwrting
+namespace MultiFamilyPortal.Dtos.Underwriting
 {
     [JsonConverter(typeof(UnderwritingAnalysisConverter))]
     public class UnderwritingAnalysis : ReactiveObject, IDisposable

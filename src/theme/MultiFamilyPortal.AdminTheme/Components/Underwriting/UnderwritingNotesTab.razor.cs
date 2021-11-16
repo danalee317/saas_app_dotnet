@@ -3,7 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
 using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.CoreUI;
-using MultiFamilyPortal.Dtos.Underwrting;
+using MultiFamilyPortal.Dtos.Underwriting;
 using Telerik.Blazor.Components;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting

@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using MultiFamilyPortal.Converters;
 using ReactiveUI;
 
-namespace MultiFamilyPortal.Dtos.Underwrting
+namespace MultiFamilyPortal.Dtos.Underwriting
 {
     [JsonConverter(typeof(ReactiveObjectConverter<UnderwritingAnalysisBucketList>))]
     public class UnderwritingAnalysisBucketList : ReactiveObject

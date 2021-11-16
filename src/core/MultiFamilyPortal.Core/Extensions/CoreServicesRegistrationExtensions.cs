@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,14 +40,21 @@ namespace MultiFamilyPortal.Extensions
                 return new SendGridClient(config.SendGridKey);
             });
 
-            services.AddScoped(p =>
+            if (string.IsNullOrEmpty(config?.Storage?.ConnectionString))
             {
-                var container = config.Storage.Container;
-                if (string.IsNullOrEmpty(container))
-                    container = "images";
+                services.AddScoped<IStorageService, LocalStorageService>();
+            }
+            else
+            {
+                services.AddScoped(p =>
+                {
+                    var context = p.GetRequiredService<IHttpContextAccessor>();
+                    var container = context.HttpContext.Request.Host.Host;
 
-                return new BlobContainerClient(config.Storage.ConnectionString, container);
-            });
+                    return new BlobContainerClient(config.Storage.ConnectionString, container);
+                })
+                    .AddScoped<IStorageService, AzureStorageService>();
+            }
 
             services.AddLocalization();
             services.Configure<RequestLocalizationOptions>(options =>

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.CoreUI;
 using MultiFamilyPortal.Data.Models;
-using MultiFamilyPortal.Dtos.Underwrting;
+using MultiFamilyPortal.Dtos.Underwriting;
 using MultiFamilyPortal.Extensions;
 using Telerik.Blazor.Components;
 using Telerik.DataSource;

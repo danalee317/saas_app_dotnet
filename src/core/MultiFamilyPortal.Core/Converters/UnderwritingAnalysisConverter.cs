@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using Humanizer;
 using MultiFamilyPortal.Data.Models;
-using MultiFamilyPortal.Dtos.Underwrting;
+using MultiFamilyPortal.Dtos.Underwriting;
 using Newtonsoft.Json.Linq;
 using ReactiveUI;
 

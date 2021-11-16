@@ -1,6 +1,34 @@
-﻿<h3>UnderwritingFilesTab</h3>
+﻿<TelerikGrid Data=@_files>
+  <GridToolBar>
+    <div class="float-right">
+      <TelerikButton ButtonType=@ButtonType.Button
+                     Primary=@true
+                     IconClass="fa-duotone fa-plus"
+                     OnClick=@(() => showUploadFile = true)>Upload File</TelerikButton>
+    </div>
+  </GridToolBar>
+  <GridColumns>
+    <GridColumn Field=@nameof(UnderwritingAnalysisFile.Icon)
+                Title=" "
+                TextAlign=@ColumnTextAlign.Center
+                Width="60px">
+      <Template>
+        @{ var file = context as UnderwritingAnalysisFile; }
+        <i class="@file.Icon" aria-hidden="true"></i>
+      </Template>
+    </GridColumn>
+    <GridColumn Field=@nameof(UnderwritingAnalysisFile.Name) />
+    <GridColumn Field=@nameof(UnderwritingAnalysisFile.Description) />
+    <GridCommandColumn>
+      @{ var file = context as UnderwritingAnalysisFile; }
+      <a href="@file.DownloadLink" target="_blank" class="btn btn-secondary text-center">
+        <i class="fa-duotone fa-download"></i> Download
+      </a>
+    </GridCommandColumn>
+  </GridColumns>
+</TelerikGrid>
 
-<TelerikWindow Visible=@false
+<TelerikWindow Visible=@showUploadFile
                Modal=@true
                Width="600px"
                Height="400px">
@@ -9,10 +37,30 @@
     <WindowAction Name="Close" OnClick=@CloseUpload />
   </WindowActions>
   <WindowContent>
-    <TelerikUpload SaveUrl="@SaveUrl" RemoveUrl="@RemoveUrl"
-               SaveField="file" RemoveField="fileToRemove"
-               AllowedExtensions="@( new List<string>() { ".jpg", ".png", ".jpeg", ".pdf", ".doc", ".docx", ".xls", ".xlsx" } )"
-               MaxFileSize="2048000" MinFileSize="1024">
+    <div class="row">
+      <div class="col-3">
+        File Type
+      </div>
+      <div class="col-9">
+        <TelerikDropDownList Data=@fileTypes
+                             @bind-Value=@selectedFileType />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-3">
+        Description
+      </div>
+      <div class="col-9">
+        <TelerikTextBox Class="form-control"
+                        @bind-Value=@description />
+      </div>
+    </div>
+    <TelerikUpload SaveUrl="@SaveUrl"
+               SaveField="file"
+               Enabled=@(!string.IsNullOrEmpty(description))
+               AllowedExtensions="@( new List<string>() { ".jpg", ".png", ".jpeg", ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".zip", ".rar" } )"
+               MaxFileSize="64000000" MinFileSize="1024"
+               OnSuccess=@OnFileUploaded>
 </TelerikUpload>
   </WindowContent>
 </TelerikWindow>

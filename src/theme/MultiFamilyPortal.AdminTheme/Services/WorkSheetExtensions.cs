@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using Humanizer;
 using MultiFamilyPortal.Data.Models;
-using MultiFamilyPortal.Dtos.Underwrting;
+using MultiFamilyPortal.Dtos.Underwriting;
 using MultiFamilyPortal.Extensions;
 using Telerik.Windows.Documents.Spreadsheet.FormatProviders.OpenXml.Xlsx;
 using Telerik.Windows.Documents.Spreadsheet.Model;
@@ -116,7 +116,6 @@ namespace MultiFamilyPortal.AdminTheme.Services
                 row++;
             }
         }
-
 
         private static CellIndex GetCellIndex(string cell)
         {

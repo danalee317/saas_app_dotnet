@@ -23,8 +23,8 @@
     <PackageReference Include="ARSoft.Tools.Net.Core" Version="2.3.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.0-preview.145" />
     <PackageReference Include="SkiaSharp.QrCode" Version="0.4.1" />
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.0-preview.145" />
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.0-preview.145" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.0-preview.145" Condition="$([MSBuild]::IsOsPlatform('OSX'))" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.0-preview.145" Condition="$([MSBuild]::IsOsPlatform('OSX'))" />
   </ItemGroup>
 
   <ItemGroup>

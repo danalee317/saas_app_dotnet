@@ -9,7 +9,6 @@ namespace MultiFamilyPortal.AdminTheme.Components
 {
     public partial class CapRateGauge : IDisposable
     {
-        private bool _disposedValue;
         private CompositeDisposable _disposables = new CompositeDisposable();
 
         [Parameter]
@@ -63,23 +62,11 @@ namespace MultiFamilyPortal.AdminTheme.Components
             return CapRate;
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    _disposables.Dispose();
-                }
-
-                _disposedValue = true;
-            }
-        }
-
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
+            if (!_disposables.IsDisposed)
+                _disposables.Dispose();
+
             GC.SuppressFinalize(this);
         }
     }

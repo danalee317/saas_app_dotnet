@@ -114,9 +114,16 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         public async Task<IActionResult> GetGuidance([FromQuery]string market)
         {
             var guidance = await _dbContext.UnderwritingGuidance
-                .Where(x => x.Market == market)
                 .ToArrayAsync();
-            return Ok(guidance);
+
+            if (market == null)
+                market = string.Empty;
+
+            var marketGuidance = guidance.Where(x => IsMarket(x.Market, market));
+            if (marketGuidance is null || !marketGuidance.Any())
+                marketGuidance = guidance.Where(x => string.IsNullOrEmpty(x.Market));
+
+            return Ok(marketGuidance);
         }
 
         [HttpGet("markets")]
@@ -699,6 +706,17 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             }
 
             return property;
+        }
+
+        private static bool IsMarket(string guidanceMarket, string subjectMarket)
+        {
+            if (string.IsNullOrEmpty(guidanceMarket) && string.IsNullOrEmpty(subjectMarket))
+                return true;
+
+            if (!string.IsNullOrEmpty(subjectMarket) && !string.IsNullOrEmpty(guidanceMarket))
+                return guidanceMarket.Equals(subjectMarket, StringComparison.InvariantCultureIgnoreCase);
+
+            return false;
         }
     }
 }

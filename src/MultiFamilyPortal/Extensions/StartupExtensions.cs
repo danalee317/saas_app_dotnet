@@ -1,4 +1,5 @@
-﻿using MultiFamilyPortal.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using MultiFamilyPortal.Data;
 
 namespace MultiFamilyPortal.Extensions
 {
@@ -23,19 +24,32 @@ namespace MultiFamilyPortal.Extensions
             using(var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<MFPContext>();
-                //await db.Database.EnsureDeletedAsync();
                 try
                 {
-                    await db.Database.EnsureCreatedAsync();
+                    var migrations = await db.Database.GetPendingMigrationsAsync();
+                    if (migrations.Any())
+                        await db.Database.MigrateAsync();
                 }
-                finally
+                catch(Exception ex)
                 {
+                    var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
+                    var logger = loggerFactory.CreateLogger(nameof(StartupExtensions));
+                    logger.LogError(ex, "Unable to apply database migrations");
                 }
 
                 var startupTasks = scope.ServiceProvider.GetServices<IStartupTask>();
                 foreach (var task in startupTasks)
                 {
-                    await task.StartAsync();
+                    try
+                    {
+                        await task.StartAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
+                        var logger = loggerFactory.CreateLogger(nameof(StartupExtensions));
+                        logger.LogError(ex, $"Error occurred while attempting to run Startup Task: {task.GetType().FullName}");
+                    }
                 }
             }
 

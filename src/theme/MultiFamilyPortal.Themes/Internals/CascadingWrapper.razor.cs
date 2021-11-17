@@ -7,17 +7,10 @@ namespace MultiFamilyPortal.Themes.Internals
         [Parameter]
         public RenderFragment ChildContent { get; set; } = default!;
 
+        [Parameter]
+        public IPortalTheme Theme { get; set; } = default!;
+
         [Inject]
         private ISiteInfo SiteInfo { get; set; } = default!;
-
-        [Inject]
-        private IThemeFactory ThemeFactory { get; set; } = default!;
-        private IPortalTheme _theme;
-        private IPortalTheme Theme => _theme ??= ThemeFactory.GetCurrentTheme();
-
-        //protected override void OnInitialized()
-        //{
-        //    _theme = ThemeFactory.GetCurrentTheme();
-        //}
     }
 }

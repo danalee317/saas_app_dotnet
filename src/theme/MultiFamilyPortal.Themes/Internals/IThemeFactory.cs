@@ -1,3 +1,4 @@
-﻿namespace MultiFamilyPortal.Themes.Internals{    public interface IThemeFactory    {        //IPortalFrontendTheme GetFrontendTheme();
-        //IPortalAdminTheme GetAdminTheme();
-        IPortalTheme GetCurrentTheme();    }}
+﻿using System.Reflection;
+
+namespace MultiFamilyPortal.Themes.Internals{    public interface IThemeFactory    {        IPortalTheme GetCurrentTheme();
+        IEnumerable<Assembly> GetAdditionalAssemblies(IPortalTheme theme);    }}

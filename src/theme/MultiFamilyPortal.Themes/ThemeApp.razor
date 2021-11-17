@@ -1,5 +1,5 @@
-﻿<CascadingWrapper>
-  <Router AppAssembly="@Assembly" AdditionalAssemblies=@AdditionalAssemblies()>
+﻿<CascadingWrapper Theme=@Theme>
+  <Router AppAssembly="@Assembly" AdditionalAssemblies=@_themeFactory.GetAdditionalAssemblies(Theme)>
     <Found Context="routeData">
       <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@Theme.Layout" />
       <FocusOnNavigate RouteData="@routeData" Selector="themecontent" />

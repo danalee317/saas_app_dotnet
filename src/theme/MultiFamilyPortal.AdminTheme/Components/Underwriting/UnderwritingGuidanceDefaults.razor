@@ -27,8 +27,12 @@
         }
       </Template>
     </GridColumn>
-    <GridColumn Field="Category" Groupable="false" />
-    @*<GridColumn Field="Type" Groupable="false" />*@
+    <GridColumn Field="Category" Groupable="false">
+      <Template>
+        @{ var guidance = context as Data.Models.UnderwritingGuidance; }
+          <span>@guidance.Category.Humanize(LetterCasing.Title)</span>
+      </Template>
+    </GridColumn>
     <GridColumn Title="Amount">
       <Template>
         @{ var guidance = context as Data.Models.UnderwritingGuidance; }
@@ -46,8 +50,5 @@
         }
       </Template>
     </GridColumn>
-    @*<GridColumn Field="Min" Groupable="false" />
-    <GridColumn Field="Max" Groupable="false" />*@
   </GridColumns>
 </TelerikGrid>
-

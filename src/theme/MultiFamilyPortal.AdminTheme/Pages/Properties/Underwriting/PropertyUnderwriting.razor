@@ -40,7 +40,7 @@ else
   <div class="col-12">
     <TelerikWizard>
       <WizardSettings >
-        <WizardStepperSettings StepType=@StepperStepType.Labels Linear=@false />
+        <WizardStepperSettings Linear=@false />
       </WizardSettings>
       <WizardSteps>
         <WizardStep Label="Property Info">
@@ -56,6 +56,9 @@ else
               </TabStripTab>
               <TabStripTab Title="Our Info">
                 <UnderwritingOurInfoTab Property=@Property />
+              </TabStripTab>
+              <TabStripTab Title="Rule of Thumb">
+                <UnderwritingMarketRuleOfThumb Property=@Property />
               </TabStripTab>
             </TelerikTabStrip>
           </Content>

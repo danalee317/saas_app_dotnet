@@ -28,10 +28,20 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             return Ok(content);
         }
 
-        [HttpPost("update/{id:guid}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody]CustomContent updated)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPageContent(string id)
         {
-            var existing = await _dbContext.CustomContent.FirstOrDefaultAsync(x => x.Id == updated.Id);
+            var content = await _dbContext.CustomContent.FirstOrDefaultAsync(x => x.Id == id);
+            if (content is null)
+                return NotFound();
+
+            return Ok(content);
+        }
+
+        [HttpPost("update/{id}")]
+        public async Task<IActionResult> Update(string id, [FromBody]CustomContent updated)
+        {
+            var existing = await _dbContext.CustomContent.FirstOrDefaultAsync(x => x.Id == id);
             if (existing is null)
                 return NotFound();
 

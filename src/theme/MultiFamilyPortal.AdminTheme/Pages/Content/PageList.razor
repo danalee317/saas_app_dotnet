@@ -1,6 +1,8 @@
 ﻿@page "/admin/pages"
 @using MultiFamilyPortal.Data.Models
 
+<SiteTitle Title="Pages" />
+
 <TelerikGrid Data=@_content>
   <GridColumns>
     <GridColumn Field=@nameof(CustomContent.Id) Width="150px" />

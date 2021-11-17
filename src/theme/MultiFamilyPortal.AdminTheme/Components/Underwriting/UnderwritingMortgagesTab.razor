@@ -1,7 +1,40 @@
-﻿<div class="row gt-3 mt-3 mb-2">
-  <div class="col-md-12">
-    <h3>Loan To Value: @Property.LTV.ToString("P")</h3>
+﻿<div class="row g-3">
+  <label for="PurchasePrice" class="col-sm-2 col-form col-form-label">Purchase Price</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.PurchasePrice
+                    Min="0"
+                    Step="1000"
+                    Format="C"
+                    Class="form-control" />
   </div>
+</div>
+
+<div class="row gt-3 mt-3 mb-2">
+  <label for="LoanType" class="col-sm-2 col-form col-form-label">Loan Type</label>
+  <div class="col-sm-4">
+    <TelerikDropDownList Data=@(Enum.GetValues<Data.Models.UnderwritingLoanType>())
+                         @bind-Value=@Property.LoanType
+                         Class="form-control">
+      <ItemTemplate>
+        @{ var value = (Data.Models.UnderwritingLoanType)context; }
+        @value.Humanize(LetterCasing.Title)
+      </ItemTemplate>
+    </TelerikDropDownList>
+  </div>
+
+  @if(Property.LoanType == Data.Models.UnderwritingLoanType.Automatic)
+  {
+    <label for="LTV" class="col-sm-2 col-form col-form-label">Loan to Value</label>
+    <div class="col-sm-4">
+      <TelerikNumericTextBox @bind-Value=@Property.LTV
+                      Min="0"
+                      Max="1"
+                      Step="0.01"
+                      Decimals="4"
+                      Format="P"
+                      Class="form-control" />
+    </div>
+  }
 </div>
 
 <div class="row gt-3 mt-3 mb-2">
@@ -10,7 +43,7 @@
                  ConfirmDelete="true"
                  OnDelete=@OnDelete>
       <GridToolBar>
-        @if(Property.LoanType == MultiFamilyPortal.Data.Models.UnderwritingLoanType.Custom)
+        @if(Property.LoanType != MultiFamilyPortal.Data.Models.UnderwritingLoanType.Automatic)
         {
           <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
             <div class="flex" style="margin-left: auto;">
@@ -92,7 +125,7 @@
           <GridCommandColumn Width="220px">
             <div class="text-center">
               <GridCommandButton Command="CustomEdit" Icon="edit" Title="Edit" OnClick=@OnEdit>Edit</GridCommandButton>
-              @if(Property.LoanType == Data.Models.UnderwritingLoanType.Custom)
+              @if(Property.LoanType != Data.Models.UnderwritingLoanType.Automatic)
               {
                 <GridCommandButton Command="Delete" Icon="delete" Title="Delete">Delete</GridCommandButton>
               }

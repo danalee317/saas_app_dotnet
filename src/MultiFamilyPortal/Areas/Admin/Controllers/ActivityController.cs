@@ -14,9 +14,10 @@ using MultiFamilyPortal.Data.Models;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     [Authorize(Policy = PortalPolicy.UnderwritingViewer)]
     [ApiController]
-    [Route("/api/admin/[controller]")]
+    [Route("/api/[area]/[controller]")]
     public class ActivityController : ControllerBase
     {
         private IMFPContext _dbContext { get; }

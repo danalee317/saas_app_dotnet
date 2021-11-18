@@ -13,12 +13,9 @@
                          OnChange=@UpdateAsync />
   </div>
   <div class="col-md-2 col-sm-12 mb-3 mb-md-1">
-    <TelerikDropDownList @bind-Value=@PropertyId
-                         Data=@Prospects.OrderBy(p => p.Name)
-                         TextField=@(nameof(ProspectPropertyResponse.Name))
-                         ValueField=@(nameof(ProspectPropertyResponse.Id))
+    <TelerikDropDownList @bind-Value=@Status
+                         Data=@AvailableStatus
                          Width="100%"
-                         DefaultText="Underwriting"
                          OnChange=@UpdateAsync />
   </div>
 </div>

@@ -2,6 +2,7 @@ using System.Data;
 using System.IO.Compression;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -31,8 +32,11 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery]DateTimeOffset start, [FromQuery]DateTimeOffset end, [FromQuery]string underwriterId = null)
+        public async Task<IActionResult> Get([FromQuery]String Start, [FromQuery]string End, [FromQuery]string underwriterId = null)
         {
+            var start = DateTimeOffset.Parse(HttpUtility.UrlDecode(Start).Split(' ')[0]);
+            var end = DateTimeOffset.Parse(HttpUtility.UrlDecode(End).Split(' ')[0]);
+
             if (start == default)
                 start = DateTimeOffset.Now.AddMonths(-1);
 
@@ -41,12 +45,12 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
 
             try
             {
-                if (!await _dbContext.UnderwritingPropertyProspects.Where(x => x.Timestamp > start && x.Timestamp < end).AnyAsync())
+                if (!await _dbContext.UnderwritingPropertyProspects.Where(x => x.Timestamp.Date >= start && x.Timestamp.Date <= end.Date).AnyAsync())
                     return Ok(Array.Empty<ProspectPropertyResponse>());
 
                 var query = _dbContext.UnderwritingPropertyProspects
                     .Include(x => x.Underwriter)
-                    .Where(x => x.Timestamp > start && x.Timestamp < end);
+                    .Where(x => x.Timestamp.Date >= start.Date && x.Timestamp.Date <= end.Date);
 
                 if (!string.IsNullOrEmpty(underwriterId))
                 {

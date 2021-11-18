@@ -1,86 +1,27 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.JSInterop;
-using MultiFamilyPortal.CoreUI;
-using MultiFamilyPortal.AdminTheme.Components;
 using MultiFamilyPortal.AdminTheme.Models;
-using Telerik.Blazor;
 using Telerik.Blazor.Components;
-using Telerik.Blazor.Components.Editor;
 using MultiFamilyPortal.Collections;
-using System.Collections;
 using System.Net.Http.Json;
-using System.Web;
+using Microsoft.Extensions.Logging;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 {
     public partial class UnderwritingList
     {
-        [Parameter]
-        public UnderwriterResponse Profile { get; set; }
-
-        [Parameter]
-        public EventCallback<UnderwriterResponse> ProfileChanged { get; set; }
-
-        [Parameter]
-        public DateTimeOffset Start { get; set; }
-
-        [Parameter]
-        public EventCallback<DateTimeOffset> StartChanged { get; set; }
-
-        [Parameter]
-        public DateTimeOffset End { get; set; }
-
-        [Parameter]
-        public EventCallback<DateTimeOffset> EndChanged { get; set; }
-
         [Inject]
         private HttpClient _client { get; set; }
+
+        [Inject]
+        private ILogger<UnderwritingList> Logger { get; set; }
 
         [Inject]
         public NavigationManager _navigationManager { get; set; }
 
         private CreateUnderwritingPropertyRequest NewProspect;
-        private ObservableRangeCollection<ProspectPropertyResponse> Prospects = new ObservableRangeCollection<ProspectPropertyResponse>();
-        private PortalNotification notification { get; set; }
 
-        protected override async Task OnInitializedAsync()
-        {
-            await Update();
-        }
-
-        public async Task Update()
-        {
-            if (Start == default)
-                Start = DateTimeOffset.Now.AddMonths(-1);
-
-            if (End == default)
-                End = DateTimeOffset.Now;
-
-            try
-            {
-                var start = HttpUtility.UrlEncode(Start.ToString());
-                var end = HttpUtility.UrlEncode(End.ToString());
-                var underwriterId = Profile?.Id;
-                var properties = await _client.GetFromJsonAsync<IEnumerable<ProspectPropertyResponse>>($"/api/admin/underwriting?start={start}&end={end}&underwriterId={underwriterId}");
-
-                Prospects.ReplaceRange(properties);
-            }
-            catch 
-            {
-                notification.ShowError("An error occurred while attempting to load the properties.");
-            }
-        }
+        [Parameter]
+        public ObservableRangeCollection<ProspectPropertyResponse> Prospects { get; set; }
 
         private void CreateProperty()
         {
@@ -89,10 +30,17 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
         private async Task StartUnderwriting()
         {
-            using var response = await _client.PostAsJsonAsync("/api/admin/underwriting/create", NewProspect);
-            var property = await response.Content.ReadFromJsonAsync<ProspectPropertyResponse>();
-            Prospects.Add(property);
-            NavigateToProperty(property);
+            try
+            {
+                using var response = await _client.PostAsJsonAsync("/api/admin/underwriting/create", NewProspect);
+                var property = await response.Content.ReadFromJsonAsync<ProspectPropertyResponse>();
+                Prospects.Add(property);
+                NavigateToProperty(property);
+            }
+            catch (System.Exception ex)
+            {
+                Logger.LogError(ex.Message);
+            }
         }
 
         private void ViewProperty(GridCommandEventArgs args)

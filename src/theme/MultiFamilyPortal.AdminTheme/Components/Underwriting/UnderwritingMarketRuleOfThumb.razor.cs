@@ -26,6 +26,7 @@ using Telerik.Blazor.Components.Editor;
 using Telerik.Blazor.Components.Upload;
 using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.Data.Models;
+using System.Net.Http.Json;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 {
@@ -38,10 +39,27 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private HttpClient _client { get; set; }
 
         private ObservableRangeCollection<UnderwritingGuidance> _rules = new();
+        private PortalNotification _notification;
+        private UnderwritingGuidance _selected;
+        private double _currentCost;
+        private double _min;
+        private double _max;
+        private bool showSelectedGuidance;
 
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if (!firstRender)
+                return;
 
+            try
+            {
+                var guidanceList = await _client.GetFromJsonAsync<IEnumerable<UnderwritingGuidance>>($"/api/admin/underwriting/guidance?market={Property.Market}");
+                _rules.ReplaceRange(guidanceList);
+            }
+            catch (Exception ex)
+            {
+                _notification.ShowError(ex.Message);
+            }
         }
     }
 }

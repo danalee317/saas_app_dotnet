@@ -41,12 +41,12 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
 
             try
             {
-                if (!await _dbContext.UnderwritingPropertyProspects.Where(x => x.Timestamp > start && x.Timestamp < end).AnyAsync())
+                if (!await _dbContext.UnderwritingPropertyProspects.Where(x => x.Timestamp.Date >= start && x.Timestamp.Date <= end.Date).AnyAsync())
                     return Ok(Array.Empty<ProspectPropertyResponse>());
 
                 var query = _dbContext.UnderwritingPropertyProspects
                     .Include(x => x.Underwriter)
-                    .Where(x => x.Timestamp > start && x.Timestamp < end);
+                    .Where(x => x.Timestamp.Date >= start.Date && x.Timestamp.Date <= end.Date);
 
                 if (!string.IsNullOrEmpty(underwriterId))
                 {

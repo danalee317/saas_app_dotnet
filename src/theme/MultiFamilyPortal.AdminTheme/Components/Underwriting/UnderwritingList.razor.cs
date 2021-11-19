@@ -1,26 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.JSInterop;
 using MultiFamilyPortal.CoreUI;
-using MultiFamilyPortal.AdminTheme.Components;
 using MultiFamilyPortal.AdminTheme.Models;
-using Telerik.Blazor;
 using Telerik.Blazor.Components;
-using Telerik.Blazor.Components.Editor;
 using MultiFamilyPortal.Collections;
-using System.Collections;
 using System.Net.Http.Json;
-using System.Web;
+using Microsoft.Extensions.Logging;
+using MultiFamilyPortal.Data.Models;
+using Humanizer;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 {
@@ -44,14 +30,21 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         [Parameter]
         public EventCallback<DateTimeOffset> EndChanged { get; set; }
 
+        [Parameter]
+        public string Status { get; set; }
+
         [Inject]
         private HttpClient _client { get; set; }
 
         [Inject]
         public NavigationManager _navigationManager { get; set; }
 
+        [Inject]
+        private ILogger<UnderwritingList> Logger { get; set; }
+
         private CreateUnderwritingPropertyRequest NewProspect;
-        private ObservableRangeCollection<ProspectPropertyResponse> Prospects = new ObservableRangeCollection<ProspectPropertyResponse>();
+        private ObservableRangeCollection<ProspectPropertyResponse> Prospects = new();
+        private ObservableRangeCollection<ProspectPropertyResponse> FilteredProspects = new();
         private PortalNotification notification { get; set; }
 
         protected override async Task OnInitializedAsync()
@@ -69,16 +62,23 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
             try
             {
-                var start = HttpUtility.UrlEncode(Start.ToString());
-                var end = HttpUtility.UrlEncode(End.ToString());
+                var start = Start.ToQueryString();
+                var end = End.ToQueryString();
                 var underwriterId = Profile?.Id;
                 var properties = await _client.GetFromJsonAsync<IEnumerable<ProspectPropertyResponse>>($"/api/admin/underwriting?start={start}&end={end}&underwriterId={underwriterId}");
 
                 Prospects.ReplaceRange(properties);
+
+                if (Status != "All")
+                    FilteredProspects.ReplaceRange(Prospects.Where(x => x.Status == (UnderwritingStatus)Enum.Parse(typeof(UnderwritingStatus), Status.Dehumanize())));
+                else
+                    FilteredProspects.ReplaceRange(Prospects);
             }
-            catch 
+            catch (Exception ex)
             {
-                notification.ShowError("An error occurred while attempting to load the properties.");
+                string message = "An error occurred while attempting to load the properties.";
+                Logger.LogError($"{message} : {ex.Message}");
+                notification.ShowError(message);
             }
         }
 

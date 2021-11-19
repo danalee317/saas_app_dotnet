@@ -2,7 +2,6 @@ using System.Data;
 using System.IO.Compression;
 using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,11 +31,8 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery]String Start, [FromQuery]string End, [FromQuery]string underwriterId = null)
+        public async Task<IActionResult> Get([FromQuery]DateTimeOffset start, [FromQuery]DateTimeOffset end, [FromQuery]string underwriterId = null)
         {
-            var start = DateTimeOffset.Parse(HttpUtility.UrlDecode(Start).Split(' ')[0]);
-            var end = DateTimeOffset.Parse(HttpUtility.UrlDecode(End).Split(' ')[0]);
-
             if (start == default)
                 start = DateTimeOffset.Now.AddMonths(-1);
 

@@ -51,7 +51,7 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
 
             await GetUnderwriters();
             await UpdateAsync();
-            await GetUnderWrites();
+            await GetUnderwriting();
         }
 
         private async Task GetUnderwriters()
@@ -68,12 +68,12 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
             }
         }
 
-        private async Task GetUnderWrites()
+        private async Task GetUnderwriting()
         {
             try
             {
-                var start = HttpUtility.UrlEncode(Start.ToString());
-                var end = HttpUtility.UrlEncode(End.ToString());
+                var start = HttpUtility.UrlEncode(Start.ToQueryString());
+                var end = HttpUtility.UrlEncode(End.ToQueryString());
                 var underwriterId = Profile?.Id;
                 var properties = await _client.GetFromJsonAsync<IEnumerable<ProspectPropertyResponse>>($"/api/admin/underwriting?start={start}&end={end}&underwriterId={underwriterId}");
 
@@ -91,7 +91,7 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
         public async Task UpdateAsync()
         {
             Profile = Underwriters.First(x => x.Id == ProfileId);
-            await GetUnderWrites();
+            await GetUnderwriting();
             
             if (Status != "All")
                 FilteredProspects.ReplaceRange(Prospects.Where(x => x.Status == (UnderwritingStatus)Enum.Parse(typeof(UnderwritingStatus), Status.Dehumanize())));

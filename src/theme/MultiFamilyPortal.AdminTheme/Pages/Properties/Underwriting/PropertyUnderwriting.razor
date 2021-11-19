@@ -38,36 +38,76 @@ else
 
 <div class="row">
   <div class="col-12">
-    <TelerikTabStrip TabPosition="TabPosition.Top"
-                      ActiveTabIndexChanged="OnTabChanged">
-      <TabStripTab Title="Property Info">
-        <UnderwritingPropertyInfoTab Property=@Property />
-      </TabStripTab>
-      <TabStripTab Title="Bucketlist">
-        <UnderwritingBucketlistTab Property=@Property />
-      </TabStripTab>
-      <TabStripTab Title="Seller Info">
-        <UnderwritingSellerInfoTab Property=@Property />
-      </TabStripTab>
-      <TabStripTab Title="Our Info">
-        <UnderwritingOurInfoTab Property=@Property />
-      </TabStripTab>
-      <TabStripTab Title="Mortgage">
-        <UnderwritingMortgagesTab Property=@Property />
-      </TabStripTab>
-      <TabStripTab Title="Closing Costs">
-        <UnderwritingClosingCostsTab Property=@Property />
-      </TabStripTab>
-      <TabStripTab Title="Summary">
-        <UnderwritingSummaryTab Property=@Property />
-      </TabStripTab>
-      <TabStripTab Title="Notes">
-        <UnderwritingNotesTab Property=@Property />
-      </TabStripTab>
-      <TabStripTab Title="Files">
-        <UnderwritingFilesTab Property=@Property />
-      </TabStripTab>
-    </TelerikTabStrip>
+    <TelerikWizard>
+      <WizardSettings >
+        <WizardStepperSettings Linear=@false />
+      </WizardSettings>
+      <WizardSteps>
+        <WizardStep Label="Property Info">
+          <Content>
+            <UnderwritingPropertyInfoTab Property=@Property />
+          </Content>
+        </WizardStep>
+        <WizardStep Label="Financials">
+          <Content>
+            <TelerikTabStrip TabPosition="TabPosition.Top">
+              <TabStripTab Title="Seller Info">
+                <UnderwritingSellerInfoTab Property=@Property />
+              </TabStripTab>
+              <TabStripTab Title="Our Info">
+                <UnderwritingOurInfoTab Property=@Property />
+              </TabStripTab>
+              <TabStripTab Title="Rule of Thumb">
+                <UnderwritingMarketRuleOfThumb Property=@Property />
+              </TabStripTab>
+            </TelerikTabStrip>
+          </Content>
+        </WizardStep>
+        <WizardStep Label="Closing">
+          <Content>
+            <TelerikTabStrip TabPosition="TabPosition.Top">
+              <TabStripTab Title="Mortgage">
+                <UnderwritingMortgagesTab Property=@Property />
+              </TabStripTab>
+              <TabStripTab Title="Closing Costs">
+                <UnderwritingClosingCostsTab Property=@Property />
+              </TabStripTab>
+              <TabStripTab Title="Summary">
+                <UnderwritingSummaryTab Property=@Property />
+              </TabStripTab>
+            </TelerikTabStrip>
+          </Content>
+        </WizardStep>
+        <WizardStep Label="Files/Notes">
+          <Content>
+            <TelerikTabStrip TabPosition="TabPosition.Top">
+              <TabStripTab Title="Bucketlist">
+                <UnderwritingBucketlistTab Property=@Property />
+              </TabStripTab>
+              <TabStripTab Title="Notes">
+                <UnderwritingNotesTab Property=@Property />
+              </TabStripTab>
+              <TabStripTab Title="Files">
+                <UnderwritingFilesTab Property=@Property />
+              </TabStripTab>
+            </TelerikTabStrip>
+          </Content>
+        </WizardStep>
+        <WizardStep Label="Rent Roll">
+          <Content>
+            <TelerikTabStrip TabPosition="TabPosition.Top">
+              <TabStripTab Title="Models">
+                <h2>Models</h2>
+              </TabStripTab>
+              <TabStripTab Title="Units">
+                <h2>Units</h2>
+              </TabStripTab>
+            </TelerikTabStrip>
+          </Content>
+        </WizardStep>
+      </WizardSteps>
+      
+    </TelerikWizard>
   </div>
 </div>
 

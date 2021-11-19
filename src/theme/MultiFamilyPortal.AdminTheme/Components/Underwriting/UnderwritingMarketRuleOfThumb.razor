@@ -1,0 +1,146 @@
+﻿<TelerikGrid Data=@_rules>
+  <GridColumns>
+    <GridColumn Field="Market" Groupable="true">
+      <Template>
+        @{ var guidance = context as Data.Models.UnderwritingGuidance; }
+        @if(string.IsNullOrEmpty(guidance.Market))
+        {
+          <span>Default</span>
+        }
+        else
+        {
+          <span>@guidance.Market</span>
+        }
+      </Template>
+    </GridColumn>
+    <GridColumn Field="Category" Groupable="false">
+      <Template>
+        @{ var guidance = context as Data.Models.UnderwritingGuidance; }
+          <span>@guidance.Category.Humanize(LetterCasing.Title)</span>
+      </Template>
+    </GridColumn>
+    <GridColumn Title="Amount" TextAlign=@ColumnTextAlign.Center>
+      <Template>
+        @{ var guidance = context as Data.Models.UnderwritingGuidance; }
+        @if(guidance.Type == Data.Models.CostType.PerDoor)
+        {
+          if(guidance.Min == guidance.Max)
+          {
+            <span>@guidance.Max.ToString("C") Per Door</span>
+          }
+          else
+          {
+            <span>@guidance.Min.ToString("C") - @guidance.Max.ToString("C") Per Door</span>
+          }
+        }
+        else if(guidance.Type == Data.Models.CostType.PercentOfPurchase)
+        {
+          <span>@guidance.Max.ToString("P") of Purchase</span>
+        }
+        else
+        {
+          <span>@guidance.Max.ToString("C")</span>
+        }
+      </Template>
+    </GridColumn>
+    <GridColumn Title="Total" TextAlign=@ColumnTextAlign.Center>
+      <Template>
+        @{ var guidance = context as Data.Models.UnderwritingGuidance; }
+        @if(guidance.Type == Data.Models.CostType.PerDoor)
+        {
+          var min = guidance.Min * Property.Units;
+          var max = guidance.Max * Property.Units;
+          if(min == max)
+          {
+            <span>@max.ToString("C")</span>
+          }
+          else
+          {
+            <span>@min.ToString("C") - @max.ToString("C")</span>
+          }
+        }
+        else if(guidance.Type == Data.Models.CostType.PercentOfPurchase)
+        {
+          var total = guidance.Max * Property.PurchasePrice;
+          <span>@total.ToString("C")</span>
+        }
+        else
+        {
+          <span>@guidance.Max.ToString("C")</span>
+        }
+      </Template>
+    </GridColumn>
+    <GridCommandColumn>
+      <div class="text-center">
+        <GridCommandButton Primary=@true Title="Update Underwriting" OnClick=@ShowUpdateUnderwriting>Update Underwriting</GridCommandButton>
+      </div>
+    </GridCommandColumn>
+  </GridColumns>
+</TelerikGrid>
+
+<TelerikWindow @bind-Visible=@showSelectedGuidance
+               Modal=@true>
+  <WindowTitle>
+    <h3>Update Underwriting</h3>
+  </WindowTitle>
+  <WindowActions>
+    <WindowAction Name="Close" />
+  </WindowActions>
+  <WindowContent>
+    <div class="row gt-3">
+      <div class="col-md-12">
+        <strong>@_selected.Category.Humanize(LetterCasing.Title)</strong>
+      </div>
+      <div class="col-md-4">
+        Rule:
+      </div>
+      <div class="col-md-8">
+        @if(_selected.Type == Data.Models.CostType.PerDoor)
+        {
+          var min = _selected.Min * Property.Units;
+          var max = _selected.Max * Property.Units;
+          if(min == max)
+          {
+            <span>@max.ToString("C")</span>
+          }
+          else
+          {
+            <span>@min.ToString("C") - @max.ToString("C")</span>
+          }
+        }
+        else if(_selected.Type == Data.Models.CostType.PercentOfPurchase)
+        {
+          var total = _selected.Max * Property.PurchasePrice;
+          <span>@total.ToString("C")</span>
+        }
+        else
+        {
+          <span>@_selected.Max.ToString("C")</span>
+        }
+      </div>
+      <div class="col-md-4">
+        Current:
+      </div>
+      <div class="col-md-8">
+        @_currentCost.ToString("C")
+      </div>
+      <div class="col-md-8">
+        <TelerikSlider Min=@_min
+                       Max=@_max
+                       Width="100%"
+                       @bind-Value=@_currentCost>
+          <LabelTemplate>
+            @context.ToString("C")
+          </LabelTemplate>
+        </TelerikSlider>
+      </div>
+      <div class="col-md-4">
+        <TelerikNumericTextBox @bind-Value=@_currentCost
+                               Format="{0:C}"
+                               Width="100%" />
+      </div>
+    </div>
+  </WindowContent>
+</TelerikWindow>
+
+<PortalNotification @ref="_notification" />

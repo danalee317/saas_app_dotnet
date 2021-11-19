@@ -4,7 +4,6 @@ using MultiFamilyPortal.AdminTheme.Models;
 using Telerik.Blazor.Components;
 using MultiFamilyPortal.Collections;
 using System.Net.Http.Json;
-using System.Web;
 using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.Data.Models;
 using Humanizer;
@@ -63,8 +62,8 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
             try
             {
-                var start = HttpUtility.UrlEncode(Start.ToQueryString());
-                var end = HttpUtility.UrlEncode(End.ToQueryString());
+                var start = Start.ToQueryString();
+                var end = End.ToQueryString();
                 var underwriterId = Profile?.Id;
                 var properties = await _client.GetFromJsonAsync<IEnumerable<ProspectPropertyResponse>>($"/api/admin/underwriting?start={start}&end={end}&underwriterId={underwriterId}");
 

@@ -65,10 +65,10 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
             }
         }
 
-        public async Task UpdateAsync()
+        private async Task UpdateAsync()
         {
             Profile = Underwriters.First(x => x.Id == ProfileId);
-             await underwritingList.Update();
+            await underwritingList.Update();
         }
     }
 }

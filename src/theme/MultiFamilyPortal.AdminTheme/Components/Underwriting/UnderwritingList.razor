@@ -1,6 +1,6 @@
 ﻿<div class="row pt-3">
   <div class="col-12">
-    <TelerikGrid Data=@Prospects
+    <TelerikGrid Data=@FilteredProspects
                   Pageable="true"
                   PageSize="25"
                   Height="800px">
@@ -107,3 +107,5 @@
     </form>
   </WindowContent>
 </TelerikWindow>
+
+<PortalNotification @ref="notification" />

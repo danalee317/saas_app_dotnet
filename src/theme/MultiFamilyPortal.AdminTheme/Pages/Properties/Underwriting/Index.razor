@@ -33,11 +33,13 @@
 
 <TelerikTabStrip TabPosition=@TabPosition.Top>
   <TabStripTab Title="Underwriting">
-    <UnderwritingList Prospects=@FilteredProspects/>
+    <UnderwritingList @ref="underwritingList"
+                      @bind-Profile=@Profile
+                      @bind-Start=@Start
+                      @bind-End=@End 
+                      Status=@Status/>
   </TabStripTab>
   <TabStripTab Title="Defaults">
     <UnderwritingGuidanceDefaults />
   </TabStripTab>
 </TelerikTabStrip>
-
-<PortalNotification @ref="notification" />

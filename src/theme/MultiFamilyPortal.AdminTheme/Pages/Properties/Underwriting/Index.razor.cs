@@ -33,10 +33,8 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
         private DateTimeOffset Start = DateTimeOffset.Now.AddYears(-1);
         private DateTimeOffset End = DateTimeOffset.Now;
         private ObservableRangeCollection<UnderwriterResponse> Underwriters = new ObservableRangeCollection<UnderwriterResponse> { new UnderwriterResponse { DisplayName = "All" } };
-        private ObservableRangeCollection<ProspectPropertyResponse> Prospects = new ();
-        private ObservableRangeCollection<ProspectPropertyResponse> FilteredProspects = new ();
-        private PortalNotification notification { get; set; }
-         private IEnumerable<string> AvailableStatus = Enum.GetValues<UnderwritingStatus>().AsEnumerable().Select(x => x.Humanize(LetterCasing.Title));
+        private IEnumerable<string> AvailableStatus = Enum.GetValues<UnderwritingStatus>().AsEnumerable().Select(x => x.Humanize(LetterCasing.Title));
+        
         protected override async Task OnInitializedAsync()
         {
             Profile = Underwriters.First();
@@ -51,7 +49,6 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
 
             await GetUnderwriters();
             await UpdateAsync();
-            await GetUnderwriting();
         }
 
         private async Task GetUnderwriters()
@@ -68,35 +65,10 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
             }
         }
 
-        private async Task GetUnderwriting()
-        {
-            try
-            {
-                var start = HttpUtility.UrlEncode(Start.ToQueryString());
-                var end = HttpUtility.UrlEncode(End.ToQueryString());
-                var underwriterId = Profile?.Id;
-                var properties = await _client.GetFromJsonAsync<IEnumerable<ProspectPropertyResponse>>($"/api/admin/underwriting?start={start}&end={end}&underwriterId={underwriterId}");
-
-                Prospects.ReplaceRange(properties);
-            }
-            catch (Exception ex)
-            {
-                var logger = _loggerFactory.CreateLogger("Underwriting");
-                string message = "An error occurred while attempting to load the properties.";
-                notification.ShowError(message);
-                logger.LogError($"{message} : {ex.Message}");
-            }
-        }
-
         public async Task UpdateAsync()
         {
             Profile = Underwriters.First(x => x.Id == ProfileId);
-            await GetUnderwriting();
-            
-            if (Status != "All")
-                FilteredProspects.ReplaceRange(Prospects.Where(x => x.Status == (UnderwritingStatus)Enum.Parse(typeof(UnderwritingStatus), Status.Dehumanize())));
-            else
-                FilteredProspects.ReplaceRange(Prospects);
+             await underwritingList.Update();
         }
     }
 }

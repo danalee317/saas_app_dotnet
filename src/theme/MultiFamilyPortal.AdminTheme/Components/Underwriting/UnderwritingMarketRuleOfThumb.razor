@@ -1,4 +1,4 @@
-<TelerikGrid Data=@_rules>
+﻿<TelerikGrid Data=@_rules>
   <GridColumns>
     <GridColumn Field="Market" Groupable="true">
       <Template>
@@ -78,5 +78,69 @@
   </GridColumns>
 </TelerikGrid>
 
+<TelerikWindow @bind-Visible=@showSelectedGuidance
+               Modal=@true>
+  <WindowTitle>
+    <h3>Update Underwriting</h3>
+  </WindowTitle>
+  <WindowActions>
+    <WindowAction Name="Close" />
+  </WindowActions>
+  <WindowContent>
+    <div class="row gt-3">
+      <div class="col-md-12">
+        <strong>@_selected.Category.Humanize(LetterCasing.Title)</strong>
+      </div>
+      <div class="col-md-4">
+        Rule:
+      </div>
+      <div class="col-md-8">
+        @if(_selected.Type == Data.Models.CostType.PerDoor)
+        {
+          var min = _selected.Min * Property.Units;
+          var max = _selected.Max * Property.Units;
+          if(min == max)
+          {
+            <span>@max.ToString("C")</span>
+          }
+          else
+          {
+            <span>@min.ToString("C") - @max.ToString("C")</span>
+          }
+        }
+        else if(_selected.Type == Data.Models.CostType.PercentOfPurchase)
+        {
+          var total = _selected.Max * Property.PurchasePrice;
+          <span>@total.ToString("C")</span>
+        }
+        else
+        {
+          <span>@_selected.Max.ToString("C")</span>
+        }
+      </div>
+      <div class="col-md-4">
+        Current:
+      </div>
+      <div class="col-md-8">
+        @_currentCost.ToString("C")
+      </div>
+      <div class="col-md-8">
+        <TelerikSlider Min=@_min
+                       Max=@_max
+                       Width="100%"
+                       @bind-Value=@_currentCost>
+          <LabelTemplate>
+            @context.ToString("C")
+          </LabelTemplate>
+        </TelerikSlider>
+      </div>
+      <div class="col-md-4">
+        <TelerikNumericTextBox @bind-Value=@_currentCost
+                               Format="{0:C}"
+                               Width="100%" />
+      </div>
+    </div>
+  </WindowContent>
+</TelerikWindow>
 
 <PortalNotification @ref="_notification" />

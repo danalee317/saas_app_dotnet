@@ -1,32 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using System.Net.Http;
-using System.Security.Claims;
-using Humanizer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.JSInterop;
-using MultiFamilyPortal.AdminTheme.Components;
-using MultiFamilyPortal.AdminTheme.Models;
-using MultiFamilyPortal.Authentication;
-using MultiFamilyPortal.CoreUI;
-using MultiFamilyPortal.Dtos.Underwriting;
-using MultiFamilyPortal.Extensions;
-using MultiFamilyPortal.SideBarTheme.Components;
-using Telerik.Blazor;
-using Telerik.Blazor.Components;
-using Telerik.Blazor.Components.Editor;
-using Telerik.Blazor.Components.Upload;
-using MultiFamilyPortal.Collections;
-using MultiFamilyPortal.Data.Models;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Components;
+using MultiFamilyPortal.Collections;
+using MultiFamilyPortal.CoreUI;
+using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.Dtos.Underwriting;
+using Telerik.Blazor.Components;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 {
@@ -60,6 +38,36 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             {
                 _notification.ShowError(ex.Message);
             }
+        }
+
+        private void ShowUpdateUnderwriting(GridCommandEventArgs args)
+        {
+            _selected = args.Item as UnderwritingGuidance;
+            if(_selected.Type == CostType.PercentOfPurchase)
+            {
+                _min = _selected.Min * Property.PurchasePrice / 2;
+                _max = _selected.Max * Property.PurchasePrice * 2;
+            }
+            else if(_selected.Type == CostType.PerDoor)
+            {
+                _min = _selected.Min * Property.Units / 2;
+                _max = _selected.Max * Property.Units * 2;
+            }
+            else
+            {
+                _min = _selected.Min / 2;
+                _max = _selected.Max * 2;
+            }
+
+            _currentCost = Property.Ours.Where(x => x.Category == _selected.Category)
+                .Sum(x => x.AnnualizedTotal);
+
+            if (_currentCost < _min)
+                _min *= 0.7;
+            if (_currentCost > _max)
+                _max = _currentCost * 1.3;
+
+            showSelectedGuidance = true;
         }
     }
 }

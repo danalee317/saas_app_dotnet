@@ -116,9 +116,6 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             var guidance = await _dbContext.UnderwritingGuidance
                 .ToArrayAsync();
 
-            if (market == null)
-                market = string.Empty;
-
             var marketGuidance = guidance.Where(x => IsMarket(x.Market, market));
             if (marketGuidance is null || !marketGuidance.Any())
                 marketGuidance = guidance.Where(x => string.IsNullOrEmpty(x.Market));

@@ -119,21 +119,28 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 PhoneNumber = request.Phone,
                 PhoneNumberConfirmed = true,
             };
-            var Password = "";
+
+            var password = "";
+            var info = "Use your Microsoft or Google Account to login";
+            var tip = "";
+            var actionPoint = "<b>If you are not aware of this action, ignore this message.</b>";
             IdentityResult result = null;
             if (request.UseLocalAccount)
             {
                 try
                 {
                     HttpClient _client = new HttpClient();
-                    var password = await _client.GetAsync("https://www.passwordrandom.com/query?command=password");
-                    Password = password.Content.ReadAsStringAsync().Result;
-                    result = await _userManager.CreateAsync(user, Password);
+                    var response = await _client.GetAsync("https://www.passwordrandom.com/query?command=password");
+                    password = await response.Content.ReadAsStringAsync();
+                    result = await _userManager.CreateAsync(user, password);
                 }
                 catch  (Exception ex)
                 {
                     return StatusCode(500,ex);
                 }
+
+                info=$"Your password is <b> {password}</b>";
+                tip="You can change your password in your profile.";
             }
             else
             {
@@ -155,10 +162,6 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             }
 
             // TODO: Email User confirmation 
-            var info = request.UseLocalAccount ? $"Your password is <b> {Password}</b>" : "Use your Microsoft or Google Account to login";
-            var tip = request.UseLocalAccount ? "You can change your password in your profile" : "";
-            var actionPoint = "<b>If you are not aware of this action, ignore this message.</b>";
-
             if (result.Succeeded)
             {
                 var siteTitle = await _dbContext.GetSettingAsync<string>(PortalSetting.SiteTitle);

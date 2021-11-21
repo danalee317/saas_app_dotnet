@@ -15,7 +15,7 @@ namespace MultiFamilyPortal.AdminTheme.Models
 
         [Required]
         public string Phone { get; set; }
-                 
+        
         [Required]
         public List<string> Roles { get; set; }
 

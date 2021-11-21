@@ -65,7 +65,8 @@
     <GridColumn Field="Description">
       <Template>
         @{ var activity = context as ActivityResponse; }
-        @((MarkupString)activity.Description)
+        <div><b>@activity.Description</b></div>
+        <div>@((MarkupString)activity.Notes)</div>
       </Template>
     </GridColumn>
     <GridColumn Field="Date" TextAlign=@ColumnTextAlign.Center>
@@ -89,7 +90,7 @@
 <TelerikWindow Visible=@(_newActivity != null)
                Modal="true"
                Width="600px"
-               Height="600px">
+               Height="650px">
   <WindowTitle>
     <h3>Add Activity</h3>
   </WindowTitle>
@@ -108,13 +109,24 @@
         </div>
        </div>
 
+       <div class="row mb-1">
+        <label for="Description" class="form-label col-sm-4 my-auto">Description</label>
+        <div class="col-sm-8">
+          <div class="mx-2">
+            <TelerikTextBox @bind-Value=@_newActivity.Description
+                            Id="Description"
+                            Class="form-control w-100"/>
+           </div>
+        </div>
+      </div>
+
       <div class="row mb-1">
-        <label for="Description" class="form-label col-sm-12">Description</label>
+        <label for="Note" class="form-label col-sm-12">Notes</label>
         <div class="col-sm-12">
-         <TelerikEditor @bind-Value=@_newActivity.Description 
+         <TelerikEditor @bind-Value=@_newActivity.Notes
                          Width="556px" 
                          Height="250px" 
-                         Id="Description"/>
+                         Id="Note"/>
         </div>
       </div>
       <div class="row mb-1">
@@ -148,7 +160,7 @@
 <TelerikWindow Visible=@(_updateActivity != null)
                Modal="true"
                Width="600px"
-               Height="600px">
+               Height="650px">
   <WindowTitle>
     <h3>Update Activity</h3>
   </WindowTitle>
@@ -166,13 +178,23 @@
                                Class="form-control"/>
         </div>
       </div>
+       <div class="row mb-1">
+        <label for="DescriptionEdit" class="form-label col-sm-4 my-auto">Description</label>
+        <div class="col-sm-8">
+          <div class="mx-2">
+            <TelerikTextBox @bind-Value=@_updateActivity.Description
+                            Id="DescriptionEdit"
+                            Class="form-control"/>
+          </div>
+        </div>
+      </div>
       <div class="row mb-1">
-        <label for="DescriptionEdit" class="form-label col-sm-12">Description</label>
+        <label for="NoteEdit" class="form-label col-sm-12">Notes</label>
         <div class="col-sm-12">
-          <TelerikEditor @bind-Value=@_updateActivity.Description 
+          <TelerikEditor @bind-Value=@_updateActivity.Notes
                          Width="556px" 
                          Height="250px"
-                         Id="DescriptionEdit"/>
+                         Id="NotesEdit"/>
         </div>
       </div>
       <div class="row mb-1">

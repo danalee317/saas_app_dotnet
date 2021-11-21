@@ -49,12 +49,6 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Users
         {
             try
             {
-                if (_createUser.UseLocalAccount)
-                {
-                    var password = await _client.GetAsync("https://www.passwordrandom.com/query?command=password");
-                    _createUser.Password = password.Content.ReadAsStringAsync().Result;
-                }
-
                 Logger.LogInformation("Creating new user account");
                 _createUser.FirstName = _createUser.FirstName.Trim();
                 _createUser.LastName = _createUser.LastName.Trim();

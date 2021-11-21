@@ -119,15 +119,21 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 PhoneNumber = request.Phone,
                 PhoneNumberConfirmed = true,
             };
-
+            var Password = "";
             IdentityResult result = null;
-            if(request.UseLocalAccount)
+            if (request.UseLocalAccount)
             {
-                if (string.IsNullOrEmpty(request.Password))
+                try
                 {
-                    return BadRequest();
+                    HttpClient _client = new HttpClient();
+                    var password = await _client.GetAsync("https://www.passwordrandom.com/query?command=password");
+                    Password = password.Content.ReadAsStringAsync().Result;
+                    result = await _userManager.CreateAsync(user, Password);
                 }
-                result = await _userManager.CreateAsync(user, request.Password);
+                catch  (Exception ex)
+                {
+                    return StatusCode(500,ex);
+                }
             }
             else
             {
@@ -149,7 +155,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             }
 
             // TODO: Email User confirmation 
-            var info = request.UseLocalAccount ? $"Your password is <b> {request.Password}</b>" : "Use your Microsoft or Google Account to login";
+            var info = request.UseLocalAccount ? $"Your password is <b> {Password}</b>" : "Use your Microsoft or Google Account to login";
             var tip = request.UseLocalAccount ? "You can change your password in your profile" : "";
             var actionPoint = "<b>If you are not aware of this action, ignore this message.</b>";
 

@@ -68,8 +68,8 @@ namespace MultiFamilyPortal.AdminTheme.Pages
         {
             try
             {
-                var start = WebUtility.UrlEncode(_start.ToString());
-                var end = WebUtility.UrlEncode(_end.ToString());
+                var start = _start.ToQueryString();
+                var end = _end.ToQueryString();
                 var activities = await _client.GetFromJsonAsync<IEnumerable<ActivityResponse>>($"/api/admin/activity/list?profileId={_profileId}&start={start}&end={end}");
                 _activities.ReplaceRange(activities.OrderByDescending(x => x.Date));
             }

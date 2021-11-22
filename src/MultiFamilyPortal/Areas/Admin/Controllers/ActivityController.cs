@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -66,11 +61,11 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
 
             var activity = new ActivityLog {
                 Date = request.Date,
-                Description = request.Description,
+                Description = request.Description.Trim(),
                 Total = request.Total,
                 Type = request.Type,
                 UserId = user.Id,
-                Notes = request.Notes
+                Notes = request.Notes.Trim()
             };
 
             await _dbContext.ActivityLogs.AddAsync(activity);
@@ -93,10 +88,10 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 return BadRequest();
 
             activity.Date = request.Date;
-            activity.Description = request.Description;
+            activity.Description = request.Description.Trim();
             activity.Total = request.Total;
             activity.Type = request.Type;
-            activity.Notes = request.Notes;
+            activity.Notes = request.Notes.Trim();
             _dbContext.ActivityLogs.Update(activity);
             await _dbContext.SaveChangesAsync();
             return Ok();

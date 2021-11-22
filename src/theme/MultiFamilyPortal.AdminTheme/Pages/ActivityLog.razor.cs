@@ -97,8 +97,6 @@ namespace MultiFamilyPortal.AdminTheme.Pages
         {
             if (_newActivity is null)
                 return;
-            _newActivity.Notes = _newActivity.Notes.Trim();
-            _newActivity.Description = _newActivity.Description.Trim(); 
 
             using var response = await _client.PostAsJsonAsync("/api/admin/activity/create", _newActivity);
 
@@ -115,8 +113,6 @@ namespace MultiFamilyPortal.AdminTheme.Pages
         {
             if (_updateActivity is null)
                 return;
-            _newActivity.Notes = _newActivity.Notes.Trim();
-            _newActivity.Description = _newActivity.Description.Trim(); 
 
             using var response = await _client.PostAsJsonAsync("/api/admin/activity/update", _updateActivity);
 

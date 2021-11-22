@@ -120,13 +120,13 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 PhoneNumberConfirmed = true,
             };
 
-            var password = "";
             var info = "Use your Microsoft or Google Account to login";
             var tip = "";
             var actionPoint = "<b>If you are not aware of this action, ignore this message.</b>";
             IdentityResult result = null;
             if (request.UseLocalAccount)
             {
+                var password = "";
                 try
                 {
                     HttpClient _client = new HttpClient();

@@ -129,7 +129,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 var password = "";
                 try
                 {
-                    HttpClient _client = new HttpClient();
+                    using var _client = new HttpClient();
                     var response = await _client.GetAsync("https://www.passwordrandom.com/query?command=password");
                     password = await response.Content.ReadAsStringAsync();
                     result = await _userManager.CreateAsync(user, password);

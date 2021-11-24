@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.CoreUI;
@@ -21,6 +22,9 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Users
 
         [Inject]
         private HttpClient _client { get; set; }
+
+        [Inject]
+        private ILogger<Users> Logger { get; set; }
 
         [CascadingParameter]
         private ClaimsPrincipal User { get; set; }
@@ -43,21 +47,34 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Users
 
         private async Task OnCreateNewUser()
         {
-            using var response = await _client.PostAsJsonAsync("/api/admin/users/create", _createUser);
-            switch(response.StatusCode)
+            try
             {
-                case HttpStatusCode.BadRequest:
-                    notification.ShowWarning("The user already exists");
-                    break;
-                case HttpStatusCode.NoContent:
-                    notification.ShowError("Failed to create user");
-                    break;
-                case HttpStatusCode.OK:
-                    notification.ShowSuccess("The user was created successfully");
-                    break;
-                default:
-                    notification.ShowError("An unknown error occurred while created the user");
-                    break;
+                Logger.LogInformation("Creating new user account");
+                _createUser.FirstName = _createUser.FirstName.Trim();
+                _createUser.LastName = _createUser.LastName.Trim();
+                _createUser.Email = _createUser.Email.Trim();
+                using var response = await _client.PostAsJsonAsync("/api/admin/users/create", _createUser);
+                Logger.LogInformation($"User creation : {response.StatusCode}");
+
+                switch(response.StatusCode)
+                {
+                    case HttpStatusCode.BadRequest:
+                        notification.ShowWarning("The user already exists");
+                        break;
+                    case HttpStatusCode.NoContent:
+                        notification.ShowError("Failed to create user");
+                        break;
+                    case HttpStatusCode.OK:
+                        notification.ShowSuccess("The user was created successfully");
+                        break;
+                    default:
+                        notification.ShowError("An unknown error occurred while created the user");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"User password creation failed : {ex.Message}");
             }
             _createUser = null;
             await OnInitializedAsync();

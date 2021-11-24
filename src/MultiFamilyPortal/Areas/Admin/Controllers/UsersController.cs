@@ -6,6 +6,8 @@ using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.Dtos;
+using MultiFamilyPortal.Services;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
 {
@@ -101,7 +103,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateUser([FromBody]CreateUserRequest request)
+        public async Task<IActionResult> CreateUser([FromBody]CreateUserRequest request, [FromServices] IEmailService emailSender, [FromServices] ITemplateProvider templateProvider)
         {
             if (await _userManager.Users.AnyAsync(x => x.Email == request.Email) || !ModelState.IsValid)
             {
@@ -118,10 +120,27 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 PhoneNumberConfirmed = true,
             };
 
+            var info = "Use your Microsoft or Google Account to login";
+            var tip = "";
+            var actionPoint = "<b>If you are not aware of this action, ignore this message.</b>";
             IdentityResult result = null;
-            if(request.UseLocalAccount)
+            if (request.UseLocalAccount)
             {
-                result = await _userManager.CreateAsync(user, "helloW0rld!");
+                var password = "";
+                try
+                {
+                    using var _client = new HttpClient();
+                    var response = await _client.GetAsync("https://www.passwordrandom.com/query?command=password");
+                    password = await response.Content.ReadAsStringAsync();
+                    result = await _userManager.CreateAsync(user, password);
+                }
+                catch  (Exception ex)
+                {
+                    return StatusCode(500,ex);
+                }
+
+                info=$"Your password is <b> {password}</b>";
+                tip="You can change your password in your profile.";
             }
             else
             {
@@ -129,10 +148,10 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             }
 
             if (!result.Succeeded)
-                return NoContent();
+                return BadRequest();
 
             await _userManager.AddToRolesAsync(user, request.Roles);
-            if(request.Roles.Contains(PortalRoles.PortalAdministrator) || request.Roles.Contains(PortalRoles.Underwriter))
+            if (request.Roles.Contains(PortalRoles.PortalAdministrator) || request.Roles.Contains(PortalRoles.Underwriter))
             {
                 var goals = new UnderwriterGoal
                 {
@@ -142,7 +161,25 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 await _dbContext.SaveChangesAsync();
             }
 
-            // TODO: Email User confirmation & their password
+            // TODO: Email User confirmation 
+            if (result.Succeeded)
+            {
+                var siteTitle = await _dbContext.GetSettingAsync<string>(PortalSetting.SiteTitle);
+                var notification = new ContactFormEmailNotification
+                {
+                    DisplayName = user.DisplayName,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Message = $"<p>A new account has been created at https://{HttpContext.Request.Host} with your email address. {info} .<br/>{tip}<br/> {actionPoint}</p>",
+                    SiteTitle = siteTitle,
+                    SiteUrl = $"https://{HttpContext.Request.Host}",
+                    Subject = $"{siteTitle} - New Account Created",
+                    Year = DateTime.Now.Year,
+                };
+                var template = await templateProvider.GetTemplate(PortalTemplate.ContactMessage, notification);
+                await emailSender.SendAsync(user.Email, template);
+            }
 
             return Ok();
         }

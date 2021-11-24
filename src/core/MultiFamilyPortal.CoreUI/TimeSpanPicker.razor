@@ -1,14 +1,11 @@
-﻿<div class="row-fluid">
-  <div class="col-12">
-    <TelerikTimePicker Min=@min
-                       Max=@max
-                       T="DateTime"
-                       Value=@selectedTime
-                       ValueChanged=@OnSelectedTimeChanged
-                       Format="HH:mm" />
-  </div>
-</div>
-
+﻿<TelerikTimePicker Min=@min
+                   Max=@max
+                   T="DateTime"
+                   Value=@selectedTime
+                   ValueChanged=@OnSelectedTimeChanged
+                   Class=@ClassName
+                   Id=@Id
+                   Format="HH:mm" />
 @code {
     [Parameter]
     public TimeSpan TimeSpan { get; set; }
@@ -16,6 +13,11 @@
     [Parameter]
     public EventCallback<TimeSpan> TimeSpanChanged { get; set; }
 
+    [Parameter]
+    public string ClassName { get; set; }
+
+    [Parameter]
+    public string Id { get; set; }
     public DateTime min = new DateTime(1900, 1, 1, 0, 0, 0);
     public DateTime max = new DateTime(1900, 1, 1, 23, 59, 59);
     DateTime selectedTime { get; set; } = new DateTime(1900, 1, 1, 0, 0, 0);

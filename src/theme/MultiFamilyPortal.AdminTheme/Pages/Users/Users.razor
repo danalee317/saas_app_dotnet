@@ -4,6 +4,7 @@
 
 <TelerikGrid Data=@_data
              ConfirmDelete="true"
+             OnDelete="DeleteUser"
              EnableLoaderContainer="true">
   <GridToolBar>
     <GridCommandButton Command="CustomAdd" Title="Add" IconClass="fa-duotone fa-plus" Primary="true" OnClick=@OnAddUser>Add</GridCommandButton>
@@ -32,7 +33,7 @@
         <ul>
           @foreach(var role in user.Roles)
           {
-            <li>@role</li>
+            <li>@role.Humanize(LetterCasing.Title)</li>
           }
         </ul>
       </Template>
@@ -41,10 +42,10 @@
       @{ var user = context as UserAccountResponse; }
       @if(user.Email != User.FindFirstValue(ClaimTypes.Email))
       {
-        <GridCommandButton Command="EditRoles" Title="Edit Roles">Edit Roles</GridCommandButton>
+        <GridCommandButton Command="Custom" OnClick=@OnEditUser Title="Edit Roles">Edit Roles</GridCommandButton>
         @if(user.LocalAccount)
         {
-          <GridCommandButton Command="ResetPassword" Title="Reset Password">Reset Password</GridCommandButton>
+          <GridCommandButton Command="Custom" OnClick=@OnResetPassword Title="Reset Password">Reset Password</GridCommandButton>
         }
         <GridCommandButton Command="Delete" Icon="delete" Title="Delete">Delete</GridCommandButton>
       }
@@ -113,6 +114,27 @@
     </div>
     <div class="row text-center p-3">
       <TelerikButton Title="Create User" Primary="true" IconClass="fa-duotone fa-plus" OnClick=@OnCreateNewUser>Create User</TelerikButton>
+    </div>
+  </WindowContent>
+</TelerikWindow>
+
+<TelerikWindow Visible="@(_editUser != null)"
+               Modal="true"
+               Width="650px">
+  <WindowTitle>
+    Edit @_editUser.FirstName's Roles
+  </WindowTitle>
+  <WindowActions>
+    <WindowAction Name="Close" OnClick="() => _editUser = null"/>
+  </WindowActions>
+  <WindowContent>
+    <div class="row px-3 py-1">
+      <div class="col-12 form-group">
+        <TelerikMultiSelect Data=@_roles @bind-Value=@_editUser.Roles Class="form-control" Placeholder="Roles" />
+      </div>
+    </div>
+    <div class="row text-center p-3">
+      <TelerikButton Title="Update User" Primary="true" IconClass="fa-duotone fa-plus" OnClick=@UpdateUser>Update User</TelerikButton>
     </div>
   </WindowContent>
 </TelerikWindow>

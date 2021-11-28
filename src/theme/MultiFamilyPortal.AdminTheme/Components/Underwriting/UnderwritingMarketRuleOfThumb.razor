@@ -1,4 +1,5 @@
-﻿<TelerikGrid Data=@_rules>
+﻿@using Data.Models
+<TelerikGrid Data=@_rules>
   <GridColumns>
     <GridColumn Field="Market" Groupable="true">
       <Template>
@@ -67,6 +68,88 @@
         else
         {
           <span>@guidance.Max.ToString("C")</span>
+        }
+      </Template>
+    </GridColumn>
+    <GridColumn Title="Expense Status" TextAlign=@ColumnTextAlign.Center>
+      <Template>
+        @{ var guidance = context as Data.Models.UnderwritingGuidance; }
+        @if(guidance.Type == Data.Models.CostType.PerDoor)
+        {
+          var min = guidance.Min * Property.Units;
+          var max = guidance.Max * Property.Units;
+          var totalMax  = Property.SellerExpense.Where(x => x.Category == guidance.Category).Sum(y => y.AnnualizedTotal);
+          if(min == max)
+          {
+            if(max > totalMax)
+            {
+              <span class="text-warning">
+               <i class="fas fa-shield-check"></i>
+              </span>
+            }
+            else if(max < totalMax)
+            {
+              <span class="text-danger">
+                <i class="fas fa-exclamation-circle"></i>
+              </span>
+            }
+            else
+            {
+              <span class="text-success">
+                <i class="fad fa-badge-check"></i>
+              </span>
+            }
+          } else
+          {
+            if(min > totalMax)
+            {
+             <span class="text-warning">
+              <i class="fas fa-shield-check"></i>
+             </span>
+            }
+            else if(max < totalMax)
+            {  
+              <span class="text-danger">
+                <i class="fas fa-exclamation-circle"></i>
+              </span>
+            }
+            else
+            {
+              <span class="text-success">
+                 <i class="fad fa-badge-check"></i>
+               </span>
+            }
+          }
+        }
+        else if(guidance.Type == Data.Models.CostType.PercentOfPurchase)
+        {
+          var total = guidance.Max * Property.PurchasePrice;
+          var totalTaxes = Property.SellerExpense.Where(x => x.Category == UnderwritingCategory.Taxes).Sum(y => y.AnnualizedTotal);
+          
+          if(totalTaxes > total)
+          {
+            <span class="text-danger">
+              <i class="fas fa-exclamation-circle"></i>
+            </span>
+          }
+          else if(totalTaxes == total)
+          {
+            <span class="text-success">
+              <i class="fad fa-badge-check"></i>
+            </span>
+          }
+          else
+          {
+            <span class="text-warning">
+             <i class="fas fa-shield-check"></i>
+            </span>
+          }
+        }
+        else
+        {
+          <span class="text-secondary">
+            <i class="fas fa-question-circle"></i>
+          </span>
         }
       </Template>
     </GridColumn>

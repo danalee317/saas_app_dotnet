@@ -199,24 +199,20 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 await _userManager.RemoveFromRolesAsync(user, roles.Select(x => x).ToArray());
                 await _dbContext.SaveChangesAsync();
                 await _userManager.AddToRolesAsync(user, request.Roles);
+                var goals = await _dbContext.UnderwriterGoals.FirstOrDefaultAsync(x => x.UnderwriterId == user.Id);
 
-                if (!request.Roles.Contains(PortalRoles.PortalAdministrator) && !request.Roles.Contains(PortalRoles.Underwriter))
+                if ((request.Roles.Contains(PortalRoles.PortalAdministrator) || request.Roles.Contains(PortalRoles.Underwriter)) && (goals == null))
                 {
-                    var goals = await _dbContext.UnderwriterGoals.FirstOrDefaultAsync(x => x.UnderwriterId == user.Id);
-                    if (goals != null)
-                    {
-                        _dbContext.UnderwriterGoals.Remove(goals);
-                        await _dbContext.SaveChangesAsync();
-                    }
-                }
-                else
-                {
-                    var goals = new UnderwriterGoal
+                    goals = new UnderwriterGoal
                     {
                         UnderwriterId = user.Id,
                     };
-
                     await _dbContext.UnderwriterGoals.AddAsync(goals);
+                    await _dbContext.SaveChangesAsync();
+                }
+                else
+                {
+                    _dbContext.UnderwriterGoals.Remove(goals);
                     await _dbContext.SaveChangesAsync();
                 }
 
@@ -248,46 +244,6 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             }
 
             return NoContent();
-        }
-
-        [HttpPost("update/password")]
-        public async Task<IActionResult> UpdatePassword([FromBody] CreateUserRequest request, [FromServices] IEmailService emailSender, [FromServices] ITemplateProvider templateProvider)
-        {
-            if (request.UseLocalAccount)
-                try
-                {
-                    using var _client = new HttpClient();
-                    var response = await _client.GetAsync("https://www.passwordrandom.com/query?command=password");
-                    var password = await response.Content.ReadAsStringAsync();
-
-                    if (string.IsNullOrEmpty(password))
-                        return BadRequest();
-
-                    var siteTitle = await _dbContext.GetSettingAsync<string>(PortalSetting.SiteTitle);
-                    var info = $"Your password is <b> {password}</b>";
-                    var tip = "You can change your password in your profile.";
-                    var notification = new ContactFormEmailNotification
-                    {
-                        DisplayName = request.FirstName + " " + request.LastName,
-                        Email = request.Email,
-                        FirstName = request.FirstName,
-                        LastName = request.LastName,
-                        Message = $"<p>Your password at https://{HttpContext.Request.Host} with your this email address has been reset by the administrator. {info} .<br/>{tip}<br/></p>",
-                        SiteTitle = siteTitle,
-                        SiteUrl = $"https://{HttpContext.Request.Host}",
-                        Subject = $"{siteTitle} - New Account Created",
-                        Year = DateTime.Now.Year,
-                    };
-                    var template = await templateProvider.GetTemplate(PortalTemplate.ContactMessage, notification);
-                    await emailSender.SendAsync(request.Email, template);
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(500, ex);
-                }
-            else
-                return BadRequest();
-            return Ok();
         }
     }
 }

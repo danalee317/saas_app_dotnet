@@ -154,43 +154,5 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Users
 
             _editUser = null;
         }
-
-        private async Task OnResetPassword(GridCommandEventArgs args)
-        {
-            var user = args.Item as UserAccountResponse;
-            var User = new CreateUserRequest
-            {
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Phone= user.Phone,
-                UseLocalAccount = user.LocalAccount,
-                Roles = user.Roles.ToList()
-            };
-
-            try
-            { 
-                Logger.LogInformation($"Resetting password for user {user.Email}");
-                using var response = await _client.PostAsJsonAsync($"/api/admin/users/update/password", User);
-                Logger.LogInformation($"User password reset : {response.StatusCode}");
-
-                switch (response.StatusCode)
-                {
-                    case HttpStatusCode.OK:
-                        notification.ShowSuccess("The user password was reset successfully");
-                        break;
-                    case HttpStatusCode.NotFound:
-                        notification.ShowWarning("The user was not found");
-                        break;
-                    default:
-                        notification.ShowError("An unknown error occurred while resetting the user password");
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError($"User password reset failed : {ex.Message}");
-            }
-        }
     }
 }

@@ -45,7 +45,7 @@
         <GridCommandButton Command="Custom" OnClick=@OnEditUser Title="Edit Roles">Edit Roles</GridCommandButton>
         @if(user.LocalAccount)
         {
-          <GridCommandButton Command="Custom" OnClick=@OnResetPassword Title="Reset Password">Reset Password</GridCommandButton>
+          <GridCommandButton Command="Custom" Enabled=@false Title="Reset Password">Reset Password</GridCommandButton>
         }
         <GridCommandButton Command="Delete" Icon="delete" Title="Delete">Delete</GridCommandButton>
       }
@@ -91,7 +91,13 @@
     </div>
     <div class="row px-3 py-1">
       <div class="col-12 form-group">
-        <TelerikMultiSelect Data=@_roles @bind-Value=@_createUser.Roles Class="form-control" Placeholder="Roles" />
+        <TelerikMultiSelect Data=@_roles @bind-Value=@_createUser.Roles 
+                            Class="form-control" 
+                            Placeholder="Roles" >
+           <ItemTemplate>
+            @context.Humanize(LetterCasing.Title)
+           </ItemTemplate>
+        </TelerikMultiSelect>
       </div>
     </div>
     <div class="row px-3 py-1">
@@ -130,7 +136,13 @@
   <WindowContent>
     <div class="row px-3 py-1">
       <div class="col-12 form-group">
-        <TelerikMultiSelect Data=@_roles @bind-Value=@_editUser.Roles Class="form-control" Placeholder="Roles" />
+        <TelerikMultiSelect Data=@_roles @bind-Value=@_editUser.Roles 
+                            Class="form-control" 
+                            Placeholder="Roles" >
+          <ItemTemplate>
+            @context.Humanize(LetterCasing.Title)
+          </ItemTemplate>
+        </TelerikMultiSelect>
       </div>
     </div>
     <div class="row text-center p-3">

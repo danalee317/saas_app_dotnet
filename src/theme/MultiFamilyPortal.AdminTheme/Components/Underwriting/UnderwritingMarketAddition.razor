@@ -32,7 +32,7 @@
               <span class="text-secondary my-auto"> Category</span>
             </div>
             <div class="col">
-              <TelerikDropDownList Data="@ExpenseCategories" 
+              <TelerikDropDownList Data="@_expenseCategories" 
                                    @bind-Value="@item.Category"
                                    Class="form-control form-control-sm w-100" 
                                    Enabled=@(!string.IsNullOrEmpty(item.Market))
@@ -52,7 +52,7 @@
               <span class="text-secondary my-auto">Type</span>
             </div>
             <div class="col">
-              <TelerikDropDownList Data="@ExpenseTypes" 
+              <TelerikDropDownList Data="@_expenseTypes" 
                                    @bind-Value="@item.Type"
                                    Class="form-control form-control-sm w-100" 
                                    Id="market-cat-ed">
@@ -140,7 +140,7 @@
             <span class="text-secondary my-auto">Category</span>
           </div>
           <div class="col">
-            <TelerikDropDownList Data="@ExpenseCategories" 
+            <TelerikDropDownList Data="@_expenseCategories" 
                                  @bind-Value=@_underwritingGuidance.Category
                                  OnChange="@AutoFill"
                                  Class="form-control form-control-sm w-100" 
@@ -160,7 +160,7 @@
             <span class="text-secondary my-auto">Type</span>
           </div>
           <div class="col">
-            <TelerikDropDownList Data="@ExpenseTypes" 
+            <TelerikDropDownList Data="@_expenseTypes" 
                                  @bind-Value=@_underwritingGuidance.Type
                                  Class="form-control form-control-sm w-100" 
                                  Id="market-cat-add">

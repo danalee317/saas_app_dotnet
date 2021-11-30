@@ -27,11 +27,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
         private readonly ObservableRangeCollection<string> _markets = new();
         private PortalNotification notification;
-        private readonly IEnumerable<CostType> ExpenseTypes = Enum.GetValues<CostType>();
-        private readonly IEnumerable<UnderwritingCategory> ExpenseCategories = Enum.GetValues<UnderwritingCategory>();
+        private readonly IEnumerable<CostType> _expenseTypes = Enum.GetValues<CostType>();
+        private readonly IEnumerable<UnderwritingCategory> _expenseCategories = Enum.GetValues<UnderwritingCategory>();
         protected override async Task OnInitializedAsync() => await LoadMarkets();
         private UnderwritingGuidance _underwritingGuidance = new();
-        private string WindowHeight = "0";
+        private string _windowHeight = "900px";
         private async Task LoadMarkets()
         {
             try

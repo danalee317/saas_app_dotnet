@@ -9,7 +9,7 @@
       <TelerikButton ButtonType=@ButtonType.Button
                      Primary=@true
                      IconClass="fa-duotone fa-copy"
-                     OnClick="@(() => WindowIsVisible = !WindowIsVisible)"
+                     OnClick="@(() => _windowVisibility = !_windowVisibility)"
                      Title="Add Market">Add Market</TelerikButton>
     </AuthorizedPolicy>
   </GridToolBar>
@@ -53,11 +53,11 @@
   </GridColumns>
 </TelerikGrid>
 
-<TelerikWindow @bind-Visible="@WindowIsVisible" 
+<TelerikWindow @bind-Visible="@_windowVisibility" 
                Top="25px" 
                Modal="true" 
                Width="600px" 
-               Height="@WindowHeight">
+               Height="@_windowHeight">
   <WindowTitle>
     <strong>Add Market</strong>
   </WindowTitle>

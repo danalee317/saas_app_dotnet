@@ -17,8 +17,8 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private ILogger<UnderwritingGuidanceDefaults> _logger { get; set; }
         private readonly ObservableRangeCollection<UnderwritingGuidance> _guidance = new();
         private TelerikGrid<UnderwritingGuidance> grid;
-        private bool WindowIsVisible { get; set; }
-        private string WindowHeight = "900px";
+        private bool _windowVisibility { get; set; }
+        private string _windowHeight = "900px";
 
         protected override async Task OnInitializedAsync()
         {
@@ -50,6 +50,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
         private async Task RefreshGuidance() => await OnInitializedAsync();
 
-        private void ChangeWindowSize(string newH) => WindowHeight = newH;
+        private void ChangeWindowSize(string newH) => _windowHeight = newH;
     }
 }

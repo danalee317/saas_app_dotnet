@@ -1,225 +1,108 @@
 @using Data.Models
 
-<TelerikTabStrip ActiveTabIndexChanged="@TabChangedHandler">
-  <TabStripTab Title="Select Defaults">
-    <div class="mb-5">
-      @foreach (var item in Guidance)
-      {
-        <div class="container">
-          <div class="row">
-            <div class="col">
-              <span class="text-secondary my-auto">Market</span>
-            </div>
-            <div class="col">
-              @if (string.IsNullOrEmpty(item.Market))
-              {
-                <div class="mx-3">
-                  <b>Default</b>
-                </div>
-              }
-              else
-              {
-                <TelerikAutoComplete @bind-Value=@item.Market 
-                                     Class="form-control form-control-sm w-100" 
-                                     ClearButton="true"
-                                     Data=@_markets />
-              }
-            </div>
-          </div>
-
-          <div class="row my-2">
-            <div class="col">
-              <span class="text-secondary my-auto"> Category</span>
-            </div>
-            <div class="col">
-              <TelerikDropDownList Data="@_expenseCategories" 
-                                   @bind-Value="@item.Category"
-                                   Class="form-control form-control-sm w-100" 
-                                   Enabled=@(!string.IsNullOrEmpty(item.Market))
-                                   Id="market-cat-ed">
-                <ValueTemplate>
-                  @(context.Humanize(LetterCasing.Title))
-                </ValueTemplate>
-                <ItemTemplate>
-                  @(context.Humanize(LetterCasing.Title))
-                </ItemTemplate>
-              </TelerikDropDownList>
-            </div>
-          </div>
-
-          <div class="row my-2">
-            <div class="col">
-              <span class="text-secondary my-auto">Type</span>
-            </div>
-            <div class="col">
-              <TelerikDropDownList Data="@_expenseTypes" 
-                                   @bind-Value="@item.Type"
-                                   Class="form-control form-control-sm w-100" 
-                                   Id="market-cat-ed">
-                <ValueTemplate>
-                  @(context.Humanize(LetterCasing.Title))
-                </ValueTemplate>
-                <ItemTemplate>
-                  @(context.Humanize(LetterCasing.Title))
-                </ItemTemplate>
-              </TelerikDropDownList>
-            </div>
-          </div>
-
-          <div class="row my-2">
-            <div class="col">
-              <span class="text-secondary my-auto">Min</span>
-            </div>
-            <div class="col">
-              <TelerikNumericTextBox Format="C" 
-                                     Min="0" Id="market-min-ed" 
-                                     Class="form-control form-control-sm w-100"
-                                     @bind-Value=@item.Min />
-            </div>
-          </div>
-
-          <div class="row my-2">
-            <div class="col">
-              <span class="text-secondary my-auto">Max</span>
-            </div>
-            <div class="col">
-              <TelerikNumericTextBox Format="C" 
-                                     Min=@item.Min 
-                                     Id="market-min-ed"
-                                     Class="form-control form-control-sm w-100" 
-                                     @bind-Value=@item.Max />
-            </div>
-          </div>
-
-          <div class="row my-2">
-            <div class="col">
-              <span class="text-secondary my-auto">Ignore Out Of Range</span>
-            </div>
-            <div class="col">
-              <div class="mx-3">
-                <TelerikCheckBox Id="market-IOR-ed" @bind-Value=@item.IgnoreOutOfRange />
-              </div>
-            </div>
-          </div>
-
-          <div class="row mt-3">
-            <div class="col">
-              <button class="btn btn-primary" @onclick=@(()=> OnAddMarket(item))>Save</button>
-            </div>
-            @if (!string.IsNullOrEmpty(item.Market))
-            {
-              <div class="col-3">
-                <button class="btn btn-danger" @onclick=@(()=> OnDeleteMarket(item))>Remove</button>
-              </div>
-            }
-          </div>
+<div class="mb-3">
+  @foreach (var item in Guidance)
+  {
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <span class="text-secondary my-auto">Market</span>
         </div>
-        <hr />
-      }
-    </div>
-
-  </TabStripTab>
-  <TabStripTab Title="Add New Market">
-    <form>
-      <div class="container">
-        <div class="row">
-          <div class="col">
-            <span class="text-secondary my-auto">Market</span>
-          </div>
-          <div class="col">
-            <TelerikAutoComplete @bind-Value=@_underwritingGuidance.Market 
-                                 Class="form-control form-control-sm w-100"
-                                 ClearButton="true" 
-                                 Id="market-add-new" 
+        <div class="col">
+            <TelerikAutoComplete @bind-Value=@item.Market 
+                                 Class="form-control form-control-sm w-100" 
+                                 ClearButton="true"
                                  Data=@_markets />
-          </div>
         </div>
-
-        <div class="row my-2">
-          <div class="col">
-            <span class="text-secondary my-auto">Category</span>
-          </div>
-          <div class="col">
-            <TelerikDropDownList Data="@_expenseCategories" 
-                                 @bind-Value=@_underwritingGuidance.Category
-                                 OnChange="@AutoFill"
-                                 Class="form-control form-control-sm w-100" 
-                                 Id="market-cat-add">
-              <ValueTemplate>
-                @(context.Humanize(LetterCasing.Title))
-              </ValueTemplate>
-              <ItemTemplate>
-                @(context.Humanize(LetterCasing.Title))
-              </ItemTemplate>
-            </TelerikDropDownList>
-          </div>
-        </div>
-
-        <div class="row my-2">
-          <div class="col">
-            <span class="text-secondary my-auto">Type</span>
-          </div>
-          <div class="col">
-            <TelerikDropDownList Data="@_expenseTypes" 
-                                 @bind-Value=@_underwritingGuidance.Type
-                                 Class="form-control form-control-sm w-100" 
-                                 Id="market-cat-add">
-              <ValueTemplate>
-                @(context.Humanize(LetterCasing.Title))
-              </ValueTemplate>
-              <ItemTemplate>
-                @(context.Humanize(LetterCasing.Title))
-              </ItemTemplate>
-            </TelerikDropDownList>
-          </div>
-        </div>
-
-        <div class="row my-2">
-          <div class="col">
-            <span class="text-secondary my-auto">Min</span>
-          </div>
-          <div class="col">
-            <TelerikNumericTextBox Format="C" 
-                                   Min="0" 
-                                   Id="market-min-ed" 
-                                   Class="form-control form-control-sm w-100"
-                                   @bind-Value=@_underwritingGuidance.Min />
-          </div>
-        </div>
-
-        <div class="row my-2">
-          <div class="col">
-            <span class="text-secondary my-auto">Max</span>
-          </div>
-          <div class="col">
-            <TelerikNumericTextBox Format="C" 
-                                   Min=@_underwritingGuidance.Min 
-                                   Id="market-min-add"
-                                   Class="form-control form-control-sm w-100" 
-                                   @bind-Value=@_underwritingGuidance.Max />
-          </div>
-        </div>
-
-        <div class="row my-2">
-          <div class="col">
-            <span class="text-secondary my-auto">Ignore Out Of Range</span>
-          </div>
-          <div class="col">
-            <div class="mx-3">
-              <TelerikCheckBox Id="market-IOR-add" @bind-Value=@_underwritingGuidance.IgnoreOutOfRange />
-            </div>
-          </div>
-        </div>
-
-        <div class="row mt-3">
-          <div class="col">
-            <button class="btn btn-success" Id="add-market" type="button" @onclick=@OnCreateMarket>Create</button>
-          </div>
-        </div>
-
       </div>
-    </form>
-  </TabStripTab>
-</TelerikTabStrip>
+
+      <div class="row my-2">
+        <div class="col">
+          <span class="text-secondary my-auto"> Category</span>
+        </div>
+        <div class="col">
+          <TelerikDropDownList Data="@_expenseCategories" 
+                               @bind-Value="@item.Category"
+                               Class="form-control form-control-sm w-100" 
+                               Enabled=@(!string.IsNullOrEmpty(item.Market)) 
+                               Id="market-cat-ed">
+            <ValueTemplate>
+              @(context.Humanize(LetterCasing.Title))
+            </ValueTemplate>
+            <ItemTemplate>
+              @(context.Humanize(LetterCasing.Title))
+            </ItemTemplate>
+          </TelerikDropDownList>
+        </div>
+      </div>
+
+      <div class="row my-2">
+        <div class="col">
+          <span class="text-secondary my-auto">Type</span>
+        </div>
+        <div class="col">
+          <TelerikDropDownList Data="@_expenseTypes" 
+                               @bind-Value="@item.Type" 
+                               Class="form-control form-control-sm w-100"
+                               Id="market-cat-ed">
+            <ValueTemplate>
+              @(context.Humanize(LetterCasing.Title))
+            </ValueTemplate>
+            <ItemTemplate>
+              @(context.Humanize(LetterCasing.Title))
+            </ItemTemplate>
+          </TelerikDropDownList>
+        </div>
+      </div>
+
+      <div class="row my-2">
+        <div class="col">
+          <span class="text-secondary my-auto">Min</span>
+        </div>
+        <div class="col">
+          <TelerikNumericTextBox Format=@(item.Type == CostType.PercentOfPurchase?"P":"C") 
+                                 Min="0" 
+                                 Id="market-min-ed" 
+                                 Class="form-control form-control-sm w-100"
+                                 @bind-Value=@item.Min />
+        </div>
+      </div>
+
+      <div class="row my-2">
+        <div class="col">
+          <span class="text-secondary my-auto">Max</span>
+        </div>
+        <div class="col">
+          <TelerikNumericTextBox Format=@(item.Type == CostType.PercentOfPurchase?"P":"C") 
+                                 Min=@item.Min 
+                                 Id="market-max-ed" 
+                                 Class="form-control form-control-sm w-100"
+                                 @bind-Value=@item.Max />
+        </div>
+      </div>
+
+      <div class="row my-2">
+        <div class="col">
+          <span class="text-secondary my-auto">Ignore Out Of Range</span>
+        </div>
+        <div class="col">
+          <div class="mx-3">
+            <TelerikCheckBox Id="market-IOR-ed" @bind-Value=@item.IgnoreOutOfRange />
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr />
+  }
+
+@if(Guidance.Count != 0)
+{
+  <div class="row mt-3">
+    <div class="col">
+      <button class="btn btn-primary" @onclick=@OnAddMarket>Save</button>
+    </div>
+  </div>
+}
+</div>
 
 <PortalNotification @ref="notification" />

@@ -157,42 +157,6 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             return NoContent();
         }
 
-        [HttpPost("guidance")]
-        public async Task<IActionResult> CreateGuidance(UnderwritingGuidance guidance)
-        {
-            if(string.IsNullOrEmpty(guidance.Market))
-                    return BadRequest();
-
-            var existing = await _dbContext.UnderwritingGuidance
-                                           .Where(x => x.Market.ToLower() == guidance.Market.Trim().ToLower() && 
-                                           x.Category == guidance.Category && 
-                                           x.Type == guidance.Type)
-                                           .FirstOrDefaultAsync();
-
-            if (existing is not null)
-                return BadRequest();
-
-            guidance.Id = Guid.NewGuid();
-            guidance.Market = guidance.Market.Trim();
-            await _dbContext.UnderwritingGuidance.AddAsync(guidance);
-            await _dbContext.SaveChangesAsync();
-            return NoContent();
-        }
-
-        [HttpDelete("guidance/{id}")]
-        public async Task<IActionResult> DeleteGuidance(Guid id)
-        {
-            var existing = await _dbContext.UnderwritingGuidance
-                .FirstOrDefaultAsync(x => x.Id == id);
-
-            if (existing is null)
-                return NotFound();
-
-            _dbContext.UnderwritingGuidance.Remove(existing);
-            await _dbContext.SaveChangesAsync();
-            return NoContent();
-        }
-
         [HttpGet("markets")]
         public async Task<IActionResult> GetMarkets()
         {

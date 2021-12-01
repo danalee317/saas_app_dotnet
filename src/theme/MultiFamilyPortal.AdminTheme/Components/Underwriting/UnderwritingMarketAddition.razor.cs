@@ -1,4 +1,3 @@
-using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
@@ -30,8 +29,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private readonly IEnumerable<CostType> _expenseTypes = Enum.GetValues<CostType>();
         private readonly IEnumerable<UnderwritingCategory> _expenseCategories = Enum.GetValues<UnderwritingCategory>();
         protected override async Task OnInitializedAsync() => await LoadMarkets();
-        private UnderwritingGuidance _underwritingGuidance = new();
-        private string _windowHeight = "900px";
+        
         private async Task LoadMarkets()
         {
             try
@@ -44,117 +42,23 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             }
         }
 
-        private void TabChangedHandler(int newIndex)
-        {
-            var result = newIndex == 0 ? "900px" : "520px";
-            NewHeight.InvokeAsync(result);
-        }
-
-        private void AutoFill()
-        {
-            var guidance = Guidance.FirstOrDefault(x => x.Category == _underwritingGuidance.Category && string.IsNullOrEmpty(x.Market));
-            if (guidance != null)
-            {
-                _underwritingGuidance.Min = guidance.Min;
-                _underwritingGuidance.Max = guidance.Max;
-                _underwritingGuidance.Type = guidance.Type;
-                _underwritingGuidance.IgnoreOutOfRange = guidance.IgnoreOutOfRange;
-            }
-        }
-
-        private async Task OnAddMarket(UnderwritingGuidance guidance)
+        private async Task OnAddMarket()
         {
             try
             {
-                var response = await _client.PutAsJsonAsync($"/api/admin/underwriting/guidance/{guidance.Id}", guidance);
-                var feedback = "";
-
-                switch (response.StatusCode)
+                foreach (var market in Guidance)
                 {
-                    case HttpStatusCode.BadRequest:
-                        feedback = "Error adding market";
-                        notification.ShowWarning(feedback);
-                        _logger.LogWarning(feedback);
-                        break;
-                    case HttpStatusCode.NoContent:
-                        notification.ShowSuccess("Market successfully updated.");
-                        _logger.LogInformation($"Market {guidance.Market} added to guidance {guidance.Id}");
-                        await UpdateGuidance.InvokeAsync();
-                        break;
-                    default:
-                        feedback = "An unknown error occurred while updating the market";
-                        notification.ShowError(feedback);
-                        _logger.LogWarning(feedback);
-                        break;
+                   await _client.PutAsJsonAsync($"/api/admin/underwriting/guidance/{market.Id}", market);
                 }
+                
+                notification.ShowSuccess("Markets successfully updated.");
+                _logger.LogInformation($"Markets added to guidance");
+                await UpdateGuidance.InvokeAsync();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error adding market {market} to guidance {guidance}", guidance.Market, guidance.Id);
-            }
-        }
-
-        private async Task OnCreateMarket()
-        {
-            try
-            {
-                var response = await _client.PostAsJsonAsync("/api/admin/underwriting/guidance", _underwritingGuidance);
-                var feedback = "";
-
-                switch (response.StatusCode)
-                {
-                    case HttpStatusCode.BadRequest:
-                        feedback = "Error adding market";
-                        notification.ShowWarning(feedback);
-                        _logger.LogWarning(feedback);
-                        break;
-                    case HttpStatusCode.NoContent:
-                        notification.ShowSuccess("Market successfully updated.");
-                        _logger.LogInformation($"Market added successfully");
-                        await UpdateGuidance.InvokeAsync();
-                        break;
-                    default:
-                        feedback = "An unknown error occurred while updating the market";
-                        notification.ShowError(feedback);
-                        _logger.LogWarning(feedback);
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error adding new market");
-            }
-        }
-
-        private async Task OnDeleteMarket(UnderwritingGuidance guidance)
-        {
-            try
-            {
-                var response = await _client.DeleteAsync($"/api/admin/underwriting/guidance/{guidance.Id}");
-                var feedback = "";
-
-                switch (response.StatusCode)
-                {
-                    case HttpStatusCode.BadRequest:
-                        feedback = "Error deleting market";
-                        notification.ShowWarning(feedback);
-                        _logger.LogWarning(feedback);
-                        break;
-                    case HttpStatusCode.NoContent:
-                        notification.ShowSuccess("Market successfully deleted.");
-                        _logger.LogInformation($"Market {guidance.Market} deleted from guidance {guidance.Id}");
-                        await UpdateGuidance.InvokeAsync();
-                        break;
-                    default:
-                        feedback = "An unknown error occurred while deleting the market";
-                        notification.ShowError(feedback);
-                        _logger.LogWarning(feedback);
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error deleting market {market} from guidance {guidance}", guidance.Market, guidance.Id);
+                notification.ShowError("An unknown error occurred while updating the market");
+                _logger.LogError(ex, "Error updating markets");
             }
         }
     }

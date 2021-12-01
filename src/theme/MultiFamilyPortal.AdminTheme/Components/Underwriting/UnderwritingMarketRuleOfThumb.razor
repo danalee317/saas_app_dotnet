@@ -1,4 +1,5 @@
-﻿<TelerikGrid Data=@_rules>
+﻿@using Data.Models
+<TelerikGrid Data=@_rules>
   <GridColumns>
     <GridColumn Field="Market" Groupable="true">
       <Template>
@@ -68,6 +69,12 @@
         {
           <span>@guidance.Max.ToString("C")</span>
         }
+      </Template>
+    </GridColumn>
+    <GridColumn Title="Expense Status" TextAlign=@ColumnTextAlign.Center>
+      <Template>
+        @{ var guidance = context as Data.Models.UnderwritingGuidance; }
+        <UnderwritingExpenseStatus Guidance=@guidance Property=@Property/>
       </Template>
     </GridColumn>
     <GridCommandColumn>

@@ -112,10 +112,10 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
 
             var user = new SiteUser(request.Email)
             {
-                Email = request.Email,
+                Email = request.Email.Trim(),
                 EmailConfirmed = true,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
+                FirstName = request.FirstName.Trim(),
+                LastName = request.LastName.Trim(),
                 PhoneNumber = request.Phone,
                 PhoneNumberConfirmed = true,
             };
@@ -134,13 +134,13 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     password = await response.Content.ReadAsStringAsync();
                     result = await _userManager.CreateAsync(user, password);
                 }
-                catch  (Exception ex)
+                catch (Exception ex)
                 {
                     return StatusCode(500,ex);
                 }
 
-                info=$"Your password is <b> {password}</b>";
-                tip="You can change your password in your profile.";
+                info = $"Your password is <b> {password}</b>";
+                tip = "You can change your password in your profile.";
             }
             else
             {
@@ -180,8 +180,70 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 var template = await templateProvider.GetTemplate(PortalTemplate.ContactMessage, notification);
                 await emailSender.SendAsync(user.Email, template);
             }
-
+            
             return Ok();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditUser(string id, [FromBody] CreateUserRequest request)
+        {
+            // only deals with roles
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (user == null)
+                return BadRequest();
+
+            try
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                await _userManager.RemoveFromRolesAsync(user, roles.Select(x => x).ToArray());
+                await _dbContext.SaveChangesAsync();
+                await _userManager.AddToRolesAsync(user, request.Roles);
+                var goals = await _dbContext.UnderwriterGoals.FirstOrDefaultAsync(x => x.UnderwriterId == user.Id);
+
+                if ((request.Roles.Contains(PortalRoles.PortalAdministrator) || request.Roles.Contains(PortalRoles.Underwriter)) && (goals == null))
+                {
+                    goals = new UnderwriterGoal
+                    {
+                        UnderwriterId = user.Id,
+                    };
+                    await _dbContext.UnderwriterGoals.AddAsync(goals);
+                    await _dbContext.SaveChangesAsync();
+                }
+                else
+                {
+                    _dbContext.UnderwriterGoals.Remove(goals);
+                    await _dbContext.SaveChangesAsync();
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var exists = await _dbContext.Users.AnyAsync(x => x.Id == id);
+
+            if (!exists)
+                return NotFound();
+
+            try
+            {
+                var user = await _dbContext.Users.FirstAsync(x => x.Id == id);
+                await _userManager.DeleteAsync(user);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+
+            return NoContent();
         }
     }
 }

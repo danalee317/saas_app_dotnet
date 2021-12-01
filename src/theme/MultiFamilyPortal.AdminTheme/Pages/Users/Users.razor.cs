@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.CoreUI;
+using Telerik.Blazor.Components;
 
 namespace MultiFamilyPortal.AdminTheme.Pages.Users
 {
@@ -34,7 +35,8 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Users
         private readonly IEnumerable<string> _roles;
         private readonly ObservableRangeCollection<UserAccountResponse> _data = new ObservableRangeCollection<UserAccountResponse>();
         private CreateUserRequest _createUser;
-
+        private CreateUserRequest _editUser;
+        private string _editId;
         protected override async Task OnInitializedAsync()
         {
             _data.ReplaceRange(await _client.GetFromJsonAsync<IEnumerable<UserAccountResponse>>("/api/admin/users"));
@@ -50,9 +52,6 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Users
             try
             {
                 Logger.LogInformation("Creating new user account");
-                _createUser.FirstName = _createUser.FirstName.Trim();
-                _createUser.LastName = _createUser.LastName.Trim();
-                _createUser.Email = _createUser.Email.Trim();
                 using var response = await _client.PostAsJsonAsync("/api/admin/users/create", _createUser);
                 Logger.LogInformation($"User creation : {response.StatusCode}");
 
@@ -78,6 +77,82 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Users
             }
             _createUser = null;
             await OnInitializedAsync();
+        }
+
+        private async Task DeleteUser(GridCommandEventArgs args)
+        {
+            var user = args.Item as UserAccountResponse;
+
+            try
+            {
+                Logger.LogInformation($"Deleting user account {user.Email}");
+                using var response = await _client.DeleteAsync($"/api/admin/users/{user.Id}");
+                Logger.LogInformation($"User deletion : {response.StatusCode}");
+
+                switch (response.StatusCode)
+                {
+                    case HttpStatusCode.NoContent:
+                        notification.ShowSuccess("The user was deleted successfully");
+                        await OnInitializedAsync();
+                        break;
+                    case HttpStatusCode.NotFound:
+                        notification.ShowWarning("The user was not found");
+                        break;
+                    default:
+                        notification.ShowError("An unknown error occurred while deleting the user");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"User deletion failed : {ex.Message}");
+            }
+        }
+
+        private void OnEditUser(GridCommandEventArgs args)
+        {
+            var user = args.Item as UserAccountResponse;
+            _editId = user.Id;
+            
+            _editUser = new CreateUserRequest
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Phone= user.Phone,
+                UseLocalAccount = user.LocalAccount,
+                Roles = user.Roles.ToList()
+            };
+        }
+
+        private async Task UpdateUser()
+        {
+            try
+            {
+                Logger.LogInformation("Updating user");
+                using var response = await _client.PutAsJsonAsync($"/api/admin/users/{_editId}", _editUser);
+                Logger.LogInformation($"User update : {response.StatusCode}");
+
+                 switch (response.StatusCode)
+                {
+                    case HttpStatusCode.NoContent:
+                        notification.ShowSuccess("The user was updated successfully");
+                        await OnInitializedAsync();
+                        break;
+                    case HttpStatusCode.NotFound:
+                        notification.ShowWarning("The user was not found");
+                        break;
+                    default:
+                        notification.ShowError("An unknown error occurred while updating the user");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"User update failed : {ex.Message}");
+            }
+
+            _editUser = null;
         }
     }
 }

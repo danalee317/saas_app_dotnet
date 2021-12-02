@@ -105,7 +105,14 @@
           <TelerikDropDownList Data=@_activityTypes
                                @bind-Value=@_newActivity.Type
                                Id="ActivityType"
-                               Class="form-control w-100"/>
+                               Class="form-control w-100">
+            <ValueTemplate>
+              @context.Humanize(LetterCasing.Title)
+            </ValueTemplate>
+            <ItemTemplate>
+              @context.Humanize(LetterCasing.Title)
+            </ItemTemplate>
+          </TelerikDropDownList>
         </div>
        </div>
 
@@ -175,7 +182,14 @@
           <TelerikDropDownList Data=@_activityTypes
                                @bind-Value=@_updateActivity.Type
                                Id="ActivityTypeEdit"
-                               Class="form-control"/>
+                               Class="form-control">
+            <ValueTemplate>
+              @context.Humanize(LetterCasing.Title)
+            </ValueTemplate>
+            <ItemTemplate>
+              @context.Humanize(LetterCasing.Title)
+            </ItemTemplate>
+          </TelerikDropDownList>
         </div>
       </div>
        <div class="row mb-1">

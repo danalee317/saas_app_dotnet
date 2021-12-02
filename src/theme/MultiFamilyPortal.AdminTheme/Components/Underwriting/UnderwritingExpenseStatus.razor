@@ -3,7 +3,7 @@
 {
   var min = Guidance.Min * Property.Units;
   var max = Guidance.Max * Property.Units;
-  var totalMax = Property.SellerExpense.Where(x => x.Category == Guidance.Category).Sum(y => y.AnnualizedTotal);
+  var totalMax = Property.OurExpense.Where(x => x.Category == Guidance.Category).Sum(y => y.AnnualizedTotal);
   if (min == max)
   {
     if (max > totalMax)
@@ -50,7 +50,7 @@
 else if (Guidance.Type == Data.Models.CostType.PercentOfPurchase)
 {
   var total = Guidance.Max * Property.PurchasePrice;
-  var totalTaxes = Property.SellerExpense.Where(x => x.Category == UnderwritingCategory.Taxes).Sum(y =>
+  var totalTaxes = Property.OurExpense.Where(x => x.Category == UnderwritingCategory.Taxes).Sum(y =>
   y.AnnualizedTotal);
 
   if (totalTaxes > total)

@@ -46,6 +46,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private ObservableRangeCollection<ProspectPropertyResponse> Prospects = new();
         private ObservableRangeCollection<ProspectPropertyResponse> FilteredProspects = new();
         private PortalNotification notification { get; set; }
+        private readonly ObservableRangeCollection<string> _markets = new();
 
         protected override async Task OnInitializedAsync()
         {
@@ -82,9 +83,21 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             }
         }
 
-        private void CreateProperty()
+        private async Task CreateProperty()
         {
-            NewProspect = new CreateUnderwritingPropertyRequest();
+            NewProspect = new()
+            {
+                Vintage = 1900
+            };
+
+            try
+            {
+                _markets.ReplaceRange(await _client.GetFromJsonAsync<IEnumerable<string>>("/api/admin/underwriting/markets"));
+            }
+            catch (Exception ex)
+            {
+                notification.ShowError($"{ex.GetType().Name} - {ex.Message}");
+            }
         }
 
         private async Task StartUnderwriting()

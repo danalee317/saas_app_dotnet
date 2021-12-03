@@ -146,6 +146,11 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             {
                 Name = property.Name,
                 Units = property.Units,
+                Address = property.Address,
+                City = property.City,
+                State = property.State,
+                Zip = property.Zip,
+                Market = property.Market,
                 UnderwriterId = user.Id,
                 RentableSqFt = property.Units * 800,
                 Management = property.Units < 80 ? 0.07 : 0.05,

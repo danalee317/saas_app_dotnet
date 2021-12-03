@@ -71,7 +71,7 @@
         }
       </Template>
     </GridColumn>
-    <GridColumn Title="Expense Status" TextAlign=@ColumnTextAlign.Center>
+    <GridColumn Title="Status" TextAlign=@ColumnTextAlign.Center>
       <Template>
         @{ var guidance = context as Data.Models.UnderwritingGuidance; }
         <UnderwritingExpenseStatus Guidance=@guidance Property=@Property/>

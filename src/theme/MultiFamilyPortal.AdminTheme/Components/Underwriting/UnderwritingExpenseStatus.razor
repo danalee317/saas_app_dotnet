@@ -8,19 +8,19 @@
   {
     if (max > totalMax)
     {
-      <span class="text-warning">
+      <span class="text-warning" id="icon" title="Below Expected">
         <i class="fas fa-shield-check"></i>
       </span>
     }
     else if (max < totalMax)
     {
-      <span class="text-danger">
+      <span class="text-danger" id="icon" title="Above Expected">
         <i class="fas fa-exclamation-circle"></i>
       </span>
     }
     else
     {
-      <span class="text-success">
+      <span class="text-success" id="icon" title="Within Range">
        <i class="fad fa-badge-check"></i>
       </span>
     }
@@ -29,19 +29,19 @@
   {
     if (min > totalMax)
     {
-      <span class="text-warning">
+      <span class="text-warning" id="icon" title="Below Minumum">
        <i class="fas fa-shield-check"></i>
       </span>
     }
     else if (max < totalMax)
     {
-      <span class="text-danger">
+      <span class="text-danger" title="Above Maximum">
        <i class="fas fa-exclamation-circle"></i>
       </span>
     }
     else
     {
-      <span class="text-success">
+      <span class="text-success" id="icon" title="Within Bounds">
        <i class="fad fa-badge-check"></i>
       </span>
     }
@@ -55,26 +55,28 @@ else if (Guidance.Type == Data.Models.CostType.PercentOfPurchase)
 
   if (totalTaxes > total)
   {
-    <span class="text-danger">
+    <span class="text-danger" id="icon" title="Higher Percentage">
      <i class="fas fa-exclamation-circle"></i>
     </span>
   }
   else if (totalTaxes == total)
   {
-    <span class="text-success">
+    <span class="text-success" id="icon" title="All Good.">
      <i class="fad fa-badge-check"></i>
     </span>
   }
   else
   {
-    <span class="text-warning">
+    <span class="text-warning" id="icon" title="Lower Percentage">
      <i class="fas fa-shield-check"></i>
     </span>
   }
 }
 else
 {
-  <span class="text-secondary">
+  <span class="text-secondary" id="icon" title="Unknown Expense">
     <i class="fas fa-question-circle"></i>
   </span>
 }
+
+<TelerikTooltip TargetSelector="#icon"/>

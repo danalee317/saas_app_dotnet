@@ -8,19 +8,19 @@
   {
     if (max > totalMax)
     {
-      <span class="text-warning" id="icon" title="Below Expected">
+      <span class="text-warning" id="icon" title="Below Rule of Thumb">
         <i class="fas fa-shield-check"></i>
       </span>
     }
     else if (max < totalMax)
     {
-      <span class="text-danger" id="icon" title="Above Expected">
+      <span class="text-danger" id="icon" title="Above the Rule of Thumb">
         <i class="fas fa-exclamation-circle"></i>
       </span>
     }
     else
     {
-      <span class="text-success" id="icon" title="Within Range">
+      <span class="text-success" id="icon" title="Within the Rule of Thumb">
        <i class="fad fa-badge-check"></i>
       </span>
     }
@@ -29,19 +29,19 @@
   {
     if (min > totalMax)
     {
-      <span class="text-warning" id="icon" title="Below Minumum">
+      <span class="text-warning" id="icon" title="Below Rule of Thumb">
        <i class="fas fa-shield-check"></i>
       </span>
     }
     else if (max < totalMax)
     {
-      <span class="text-danger" title="Above Maximum">
+      <span class="text-danger" title="Above the Rule of Thumb">
        <i class="fas fa-exclamation-circle"></i>
       </span>
     }
     else
     {
-      <span class="text-success" id="icon" title="Within Bounds">
+      <span class="text-success" id="icon" title="Within the Rule of Thumb">
        <i class="fad fa-badge-check"></i>
       </span>
     }
@@ -55,19 +55,19 @@ else if (Guidance.Type == Data.Models.CostType.PercentOfPurchase)
 
   if (totalTaxes > total)
   {
-    <span class="text-danger" id="icon" title="Higher Percentage">
+    <span class="text-danger" id="icon" title="Above the Rule of Thumb">
      <i class="fas fa-exclamation-circle"></i>
     </span>
   }
   else if (totalTaxes == total)
   {
-    <span class="text-success" id="icon" title="All Good.">
+    <span class="text-success" id="icon" title="Within the Rule of Thumb">
      <i class="fad fa-badge-check"></i>
     </span>
   }
   else
   {
-    <span class="text-warning" id="icon" title="Lower Percentage">
+    <span class="text-warning" id="icon" title="Below Rule of Thumb">
      <i class="fas fa-shield-check"></i>
     </span>
   }

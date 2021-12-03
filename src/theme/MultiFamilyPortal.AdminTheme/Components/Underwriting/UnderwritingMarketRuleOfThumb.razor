@@ -86,6 +86,7 @@
 </TelerikGrid>
 
 <TelerikWindow @bind-Visible=@showSelectedGuidance
+               Width="600px"
                Modal=@true>
   <WindowTitle>
     <h3>Update Underwriting</h3>
@@ -95,13 +96,13 @@
   </WindowActions>
   <WindowContent>
     <div class="row gt-3">
-      <div class="col-md-12">
+      <div class="col-md-12 my-3">
         <strong>@_selected.Category.Humanize(LetterCasing.Title)</strong>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-4 my-3">
         Rule:
       </div>
-      <div class="col-md-8">
+      <div class="col-md-8 my-3">
         @if(_selected.Type == Data.Models.CostType.PerDoor)
         {
           var min = _selected.Min * Property.Units;
@@ -125,25 +126,32 @@
           <span>@_selected.Max.ToString("C")</span>
         }
       </div>
-      <div class="col-md-4">
+      <div class="col-md-4 my-3">
         Current:
       </div>
-      <div class="col-md-8">
+      <div class="col-md-8 my-3">
         @_currentCost.ToString("C")
       </div>
-      <div class="col-md-8">
+      <div class="col-md-8 my-3">
         <TelerikSlider Min=@_min
                        Max=@_max
+                       SmallStep=@_smallStep
+                       LargeStep=@_largeStep
                        Width="100%"
+                       OnChange=@InnerUpdate
                        @bind-Value=@_currentCost>
           <LabelTemplate>
-            @context.ToString("C")
+            @if (context == _min || context == _max)
+            {
+              @context.ToString("C")
+            }
           </LabelTemplate>
         </TelerikSlider>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-4 my-3">
         <TelerikNumericTextBox @bind-Value=@_currentCost
-                               Format="{0:C}"
+                               Format="C"
+                               OnChange=@InnerUpdate
                                Width="100%" />
       </div>
     </div>

@@ -22,6 +22,8 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private double _currentCost;
         private double _min;
         private double _max;
+        private double _smallStep;
+        private double _largeStep;
         private bool showSelectedGuidance;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -59,15 +61,27 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
                 _max = _selected.Max * 2;
             }
 
-            _currentCost = Property.Ours.Where(x => x.Category == _selected.Category)
-                .Sum(x => x.AnnualizedTotal);
+            var propertyExpenses = Property.Ours.Where(x => x.Category == _selected.Category);
+            if (propertyExpenses.Any())
+                _currentCost = propertyExpenses.Sum(x => x.AnnualizedTotal);
+            else
+                _currentCost = _min;
+
 
             if (_currentCost < _min)
                 _min *= 0.7;
             if (_currentCost > _max)
                 _max = _currentCost * 1.3;
 
+            var numberOfMajorPoints = 50;
+            var numberOfMinorPoints = 10;
+
+            _smallStep = Math.Round(Math.Floor((_max - _min) / numberOfMajorPoints), 2);
+            _largeStep = Math.Round(Math.Floor((_max - _min) / numberOfMinorPoints), 2);
             showSelectedGuidance = true;
         }
+        
+        private void InnerUpdate() =>  Property.Ours.Where(x => x.Category == _selected.Category)
+            .FirstOrDefault().Amount = _currentCost;
     }
 }

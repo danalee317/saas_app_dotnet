@@ -25,21 +25,12 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         public EventCallback<UnderwritingAnalysisMortgage> OnSave { get; set; }
 
         private bool showBalloon;
-        private double _showDecimals = 0.01;
         private string SaveBtn => Update ? "Update" : "Save";
         private bool enableLoanAmountEdit => LoanType == UnderwritingLoanType.Custom;
 
         private async Task SaveMortgage()
         {
             await OnSave.InvokeAsync(Mortgage);
-        }
-
-        private void ShowRealValue() => _showDecimals = 0.01;
-
-        private void ShowPercentage(double value)
-        {
-            _showDecimals = 1;
-            Mortgage.InterestRate = value/100;
         }
     }
 }

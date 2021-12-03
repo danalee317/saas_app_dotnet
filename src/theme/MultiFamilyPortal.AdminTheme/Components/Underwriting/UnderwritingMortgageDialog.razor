@@ -14,14 +14,16 @@
                         Class="form-control" />
       </div>
 
-      <label for="InterestRate" class="col-sm-2 col-form-label">Interest Rate</label>
+      <label for="InterestRate" class="col-sm-2 col-form-label">Interest Rate @(_showDecimals==1? "(%)": "") </label>
       <div class="col-sm-4">
-        <TelerikNumericTextBox @bind-Value=@Mortgage.InterestRate
-                        Format="P"
+        <TelerikNumericTextBox Value=@(100*Mortgage.InterestRate*_showDecimals)
+                        Format="N5"
                         Min="0"
-                        Max="1"
-                        Step="0.005"
+                        Max="100"
+                        Step="5"
                         Decimals="6"
+                        OnBlur="@ShowRealValue"
+                        ValueChanged="@((double v) => ShowPercentage(v))"
                         Class="form-control" />
       </div>
 

@@ -17,7 +17,8 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private ILogger<UnderwritingGuidanceDefaults> _logger { get; set; }
         private readonly ObservableRangeCollection<UnderwritingGuidance> _guidance = new();
         private TelerikGrid<UnderwritingGuidance> grid;
-
+        private bool _windowVisibility { get; set; }
+        
         protected override async Task OnInitializedAsync()
         {
             try
@@ -46,9 +47,10 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             }
         }
 
-        private void OnAddMarket()
+        private async Task RefreshGuidance()
         {
-
+            await OnInitializedAsync();
+            _windowVisibility = false;
         }
     }
 }

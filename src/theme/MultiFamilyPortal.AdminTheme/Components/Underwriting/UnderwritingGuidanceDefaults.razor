@@ -9,7 +9,7 @@
       <TelerikButton ButtonType=@ButtonType.Button
                      Primary=@true
                      IconClass="fa-duotone fa-copy"
-                     OnClick=@OnAddMarket
+                     OnClick="@(() => _windowVisibility = !_windowVisibility)"
                      Title="Add Market">Add Market</TelerikButton>
     </AuthorizedPolicy>
   </GridToolBar>
@@ -52,3 +52,22 @@
     </GridColumn>
   </GridColumns>
 </TelerikGrid>
+
+<TelerikWindow @bind-Visible="@_windowVisibility" 
+               Top="25px" 
+               Modal="true" 
+               Width="1200px"
+               Height="800px">
+  <WindowTitle>
+    <strong>Add Market</strong>
+  </WindowTitle>
+  <WindowActions>
+      <WindowAction Name="Minimize"></WindowAction>
+      <WindowAction Name="Maximize"></WindowAction>
+      <WindowAction Name="Close"></WindowAction>
+  </WindowActions>
+    <WindowContent>
+      <UnderwritingMarketAddition Guidance="@(_guidance.Where(x => string.IsNullOrEmpty(x.Market)))"
+                                  UpdateGuidance=@RefreshGuidance />
+  </WindowContent>
+</TelerikWindow>

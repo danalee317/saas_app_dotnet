@@ -4,6 +4,6 @@
     {
         Automatic,
         Assumption,
-        Custom
+        NewLoan
     }
 }

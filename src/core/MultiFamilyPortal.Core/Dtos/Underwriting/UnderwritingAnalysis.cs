@@ -507,7 +507,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
         private void OnDownpaymentCommandExecuted()
         {
-            if (PurchasePrice > 0 && LoanType == UnderwritingLoanType.Custom && Mortgages != null && Mortgages.Any())
+            if (PurchasePrice > 0 && LoanType == UnderwritingLoanType.NewLoan && Mortgages != null && Mortgages.Any())
             {
                 var mortgageTotal = Mortgages.Sum(x => x.LoanAmount);
                 LTV = mortgageTotal / PurchasePrice;

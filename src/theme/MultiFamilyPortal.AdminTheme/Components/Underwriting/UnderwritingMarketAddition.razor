@@ -1,108 +1,149 @@
 @using Data.Models
 
-<div class="mb-3">
-  @foreach (var item in Guidance)
-  {
-    <div class="container">
-      <div class="row">
-        <div class="col">
-          <span class="text-secondary my-auto">Market</span>
-        </div>
-        <div class="col">
-            <TelerikAutoComplete @bind-Value=@item.Market 
-                                 Class="form-control form-control-sm w-100" 
-                                 ClearButton="true"
-                                 Data=@_markets />
-        </div>
-      </div>
+<div class="container mb-3">
+  <TelerikGrid Data=@Guidance 
+               Groupable="false" 
+               FilterMode="GridFilterMode.None" 
+               Sortable="false"
+               ShowColumnMenu="false">
 
-      <div class="row my-2">
-        <div class="col">
-          <span class="text-secondary my-auto"> Category</span>
+    <GridToolBar>
+      <div class="row w-100">
+        <div class="col-4">
+          <div class="text-secondary mt-3"><b>Market</b></div>
         </div>
-        <div class="col">
-          <TelerikDropDownList Data="@_expenseCategories" 
-                               @bind-Value="@item.Category"
+        <div class="col-8">
+          <TelerikAutoComplete @bind-Value=@_newMarket 
                                Class="form-control form-control-sm w-100" 
-                               Enabled=@(!string.IsNullOrEmpty(item.Market)) 
-                               Id="market-cat-ed">
-            <ValueTemplate>
-              @(context.Humanize(LetterCasing.Title))
-            </ValueTemplate>
-            <ItemTemplate>
-              @(context.Humanize(LetterCasing.Title))
-            </ItemTemplate>
-          </TelerikDropDownList>
+                               ClearButton="true"
+                               Data=@_markets />
         </div>
       </div>
+    </GridToolBar>
 
-      <div class="row my-2">
-        <div class="col">
-          <span class="text-secondary my-auto">Type</span>
-        </div>
-        <div class="col">
+    <GridColumns>
+      <GridColumn Field="Category" Groupable="false">
+        <Template>
+          @{
+            var guidance = context as Data.Models.UnderwritingGuidance;
+           }
+           <span>@guidance.Category.Humanize(LetterCasing.Title)</span>
+        </Template>
+      </GridColumn>
+      <GridColumn Field="Type" Groupable="false">
+        <Template>
+          @{
+            var guidance = context as Data.Models.UnderwritingGuidance;
+           }
           <TelerikDropDownList Data="@_expenseTypes" 
-                               @bind-Value="@item.Type" 
+                               @bind-Value="@guidance.Type"
+                               OnChange="@(() => _activeUnderwriting = guidance)" 
                                Class="form-control form-control-sm w-100"
                                Id="market-cat-ed">
-            <ValueTemplate>
-              @(context.Humanize(LetterCasing.Title))
-            </ValueTemplate>
-            <ItemTemplate>
-              @(context.Humanize(LetterCasing.Title))
-            </ItemTemplate>
           </TelerikDropDownList>
-        </div>
+        </Template>
+      </GridColumn>
+      <GridColumn Title="Amount">
+        <Template>
+          @{
+            var guidance = context as Data.Models.UnderwritingGuidance;
+          }
+          @if (guidance.Type == Data.Models.CostType.PerDoor)
+          {
+            <span>@guidance.Min.ToString("C") - @guidance.Max.ToString("C") Per Door</span>
+          }
+          else if (guidance.Type == Data.Models.CostType.PercentOfPurchase)
+          {
+            <span>@guidance.Max.ToString("P") of Purchase</span>
+          }
+          else
+          {
+            <span>@guidance.Max.ToString("C")</span>
+          }
+         </Template>
+      </GridColumn>
+    </GridColumns>
+  </TelerikGrid>
+
+  @if (_activeUnderwriting.Type == CostType.PerDoor)
+  {
+    <div class="row my-3">
+      <div class="col-4">
+          <div class="text-secondary my-3">Per Door</div>
+      </div>
+      <div class="col-3">
+        <TelerikNumericTextBox Format="C"
+                        Min="0" 
+                        Step="50"
+                        Id="market-min-ed"
+                        Class="form-control form-control-sm w-100" 
+                        @bind-Value=@_activeUnderwriting.Min />
+      </div>
+      <div class="col-2">
+        <div class="text-center my-3"> - </div>
       </div>
 
-      <div class="row my-2">
-        <div class="col">
-          <span class="text-secondary my-auto">Min</span>
-        </div>
-        <div class="col">
-          <TelerikNumericTextBox Format=@(item.Type == CostType.PercentOfPurchase?"P":"C") 
-                                 Min="0" 
-                                 Id="market-min-ed" 
-                                 Class="form-control form-control-sm w-100"
-                                 @bind-Value=@item.Min />
-        </div>
-      </div>
-
-      <div class="row my-2">
-        <div class="col">
-          <span class="text-secondary my-auto">Max</span>
-        </div>
-        <div class="col">
-          <TelerikNumericTextBox Format=@(item.Type == CostType.PercentOfPurchase?"P":"C") 
-                                 Min=@item.Min 
-                                 Id="market-max-ed" 
-                                 Class="form-control form-control-sm w-100"
-                                 @bind-Value=@item.Max />
-        </div>
-      </div>
-
-      <div class="row my-2">
-        <div class="col">
-          <span class="text-secondary my-auto">Ignore Out Of Range</span>
-        </div>
-        <div class="col">
-          <div class="mx-3">
-            <TelerikCheckBox Id="market-IOR-ed" @bind-Value=@item.IgnoreOutOfRange />
-          </div>
-        </div>
+      <div class="col-3">
+        <TelerikNumericTextBox Format="C" 
+                               Min=@_activeUnderwriting.Min 
+                               Id="market-max-ed"
+                               Step="50"
+                               Class="form-control form-control-sm w-100" 
+                               @bind-Value=@_activeUnderwriting.Max />
       </div>
     </div>
-    <hr />
+  }
+  else if (_activeUnderwriting.Type == CostType.PercentOfPurchase)
+  {
+    <div class="row my-3">
+      <div class="col-4">
+         <div class="text-secondary my-3">Percent of Purchase</div>
+      </div>
+      <div class="col-8">
+        <TelerikNumericTextBox @bind-Value=@_activeUnderwriting.Max 
+                                Format="P" 
+                                Min="0" 
+                                Max="1" 
+                                Step="0.01"
+                                Id="market-max-ed"
+                                Class="form-control form-control-sm w-100" />  
+      </div>
+    </div>
+  }
+  else
+  {
+    <div class="row my-3">
+      <div class="col-4">
+        <div class="text-secondary my-3">Total</div>
+      </div>
+      <div class="col-8">
+        <TelerikNumericTextBox @bind-Value=@_activeUnderwriting.Max
+                                Format="C" 
+                                Min="0" 
+                                Step="50"
+                                Id="market-max-ed"
+                                Class="form-control form-control-sm w-100" />
+      </div>
+    </div>
   }
 
-@if(Guidance.Count != 0)
-{
-  <div class="row mt-3">
+  <div class="row my-3">
+    <div class="col-4">
+      <div class="text-secondary">Ignore Out Of Range</div>
+    </div>
+    <div class="col">
+      <div class="mx-3">
+        <TelerikCheckBox Id="market-IOR-ed" @bind-Value=@_activeUnderwriting.IgnoreOutOfRange />
+      </div>
+    </div>
+  </div>
+
+  <div class="row my-3">
     <div class="col">
       <button class="btn btn-primary" @onclick=@OnAddMarket>Save</button>
     </div>
   </div>
-}
+
 </div>
 
 <PortalNotification @ref="notification" />

@@ -18,8 +18,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private readonly ObservableRangeCollection<UnderwritingGuidance> _guidance = new();
         private TelerikGrid<UnderwritingGuidance> grid;
         private bool _windowVisibility { get; set; }
-        private string _windowHeight = "900px";
-
+        
         protected override async Task OnInitializedAsync()
         {
             try
@@ -48,8 +47,10 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             }
         }
 
-        private async Task RefreshGuidance() => await OnInitializedAsync();
-
-        private void ChangeWindowSize(string newH) => _windowHeight = newH;
+        private async Task RefreshGuidance()
+        {
+            await OnInitializedAsync();
+            _windowVisibility = false;
+        }
     }
 }

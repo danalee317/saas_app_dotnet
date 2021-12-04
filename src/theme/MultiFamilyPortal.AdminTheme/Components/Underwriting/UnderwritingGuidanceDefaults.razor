@@ -56,8 +56,8 @@
 <TelerikWindow @bind-Visible="@_windowVisibility" 
                Top="25px" 
                Modal="true" 
-               Width="600px" 
-               Height="@_windowHeight">
+               Width="800px" 
+               Height="900px">
   <WindowTitle>
     <strong>Add Market</strong>
   </WindowTitle>
@@ -67,8 +67,6 @@
       <WindowAction Name="Close"></WindowAction>
   </WindowActions>
     <WindowContent>
-      <UnderwritingMarketAddition Guidance=@_guidance 
-                                  UpdateGuidance=@RefreshGuidance
-                                  NewHeight=@ChangeWindowSize/>
+      <UnderwritingMarketAddition Guidance=@_guidance  UpdateGuidance=@RefreshGuidance/>
   </WindowContent>
 </TelerikWindow>

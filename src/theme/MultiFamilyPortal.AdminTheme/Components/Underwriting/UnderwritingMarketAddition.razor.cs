@@ -21,15 +21,13 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         [Parameter]
         public EventCallback UpdateGuidance { get; set; }
 
-        [Parameter]
-        public EventCallback<string> NewHeight { get; set; }
-
+        private UnderwritingGuidance _activeUnderwriting = new();
         private readonly ObservableRangeCollection<string> _markets = new();
         private PortalNotification notification;
         private readonly IEnumerable<CostType> _expenseTypes = Enum.GetValues<CostType>();
-        private readonly IEnumerable<UnderwritingCategory> _expenseCategories = Enum.GetValues<UnderwritingCategory>();
+        private string _newMarket;
         protected override async Task OnInitializedAsync() => await LoadMarkets();
-        
+
         private async Task LoadMarkets()
         {
             try
@@ -44,13 +42,21 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
         private async Task OnAddMarket()
         {
+            if (string.IsNullOrWhiteSpace(_newMarket))
+            { 
+                notification.ShowError("Market name is required.");
+                return;
+            }
+
             try
             {
                 foreach (var market in Guidance)
                 {
-                   await _client.PutAsJsonAsync($"/api/admin/underwriting/guidance/{market.Id}", market);
+                    market.Market = _newMarket;
+                    market.Id = Guid.Empty;
+                    await _client.PostAsJsonAsync($"/api/admin/underwriting/guidance", market);
                 }
-                
+
                 notification.ShowSuccess("Markets successfully updated.");
                 _logger.LogInformation($"Markets added to guidance");
                 await UpdateGuidance.InvokeAsync();

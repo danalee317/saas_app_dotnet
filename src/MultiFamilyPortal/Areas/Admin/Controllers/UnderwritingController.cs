@@ -127,32 +127,24 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             return Ok(marketGuidance);
         }
 
-        [HttpPut("guidance/{id}")]
-        public async Task<IActionResult> UpdateGuidance(Guid id, UnderwritingGuidance guidance)
+        [HttpPost("guidance")]
+        public async Task<IActionResult> CreateGuidance(UnderwritingGuidance guidance)
         {
-            if (id == Guid.Empty || id != guidance.Id)
-                return BadRequest();
+            if(string.IsNullOrEmpty(guidance.Market))
+                    return BadRequest();
 
             var existing = await _dbContext.UnderwritingGuidance
-                .FirstOrDefaultAsync(x => x.Id == id);
+                                           .Where(x => x.Market.ToLower() == guidance.Market.Trim().ToLower() && 
+                                           x.Category == guidance.Category && 
+                                           x.Type == guidance.Type)
+                                           .FirstOrDefaultAsync();
 
-            if (existing is null)
-                return NotFound();
+            if (existing is not null)
+                return BadRequest();
 
-            if(string.IsNullOrEmpty(guidance.Market))
-            {
-                existing.Market = null;
-            }
-            else
-            {
-                existing.Market = guidance.Market.Trim();
-            }
-
-            existing.Max = guidance.Max;
-            existing.Min = guidance.Min;
-            existing.Type = guidance.Type;
-            existing.Category= guidance.Category;
-            existing.IgnoreOutOfRange = guidance.IgnoreOutOfRange;
+            guidance.Id = Guid.NewGuid();
+            guidance.Market = guidance.Market.Trim();
+            await _dbContext.UnderwritingGuidance.AddAsync(guidance);
             await _dbContext.SaveChangesAsync();
             return NoContent();
         }

@@ -16,12 +16,10 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private ILogger<UnderwritingMarketAddition> _logger { get; set; }
 
         [Parameter]
-        public ObservableRangeCollection<UnderwritingGuidance> Guidance { get; set; }
+        public IEnumerable<UnderwritingGuidance> Guidance { get; set; }
 
         [Parameter]
         public EventCallback UpdateGuidance { get; set; }
-
-        private UnderwritingGuidance _activeUnderwriting = new();
         private readonly ObservableRangeCollection<string> _markets = new();
         private PortalNotification notification;
         private readonly IEnumerable<CostType> _expenseTypes = Enum.GetValues<CostType>();

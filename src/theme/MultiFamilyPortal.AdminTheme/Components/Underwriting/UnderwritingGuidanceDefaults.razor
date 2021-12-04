@@ -56,8 +56,8 @@
 <TelerikWindow @bind-Visible="@_windowVisibility" 
                Top="25px" 
                Modal="true" 
-               Width="800px" 
-               Height="900px">
+               Width="1200px"
+               Height="800px">
   <WindowTitle>
     <strong>Add Market</strong>
   </WindowTitle>
@@ -67,6 +67,7 @@
       <WindowAction Name="Close"></WindowAction>
   </WindowActions>
     <WindowContent>
-      <UnderwritingMarketAddition Guidance=@_guidance  UpdateGuidance=@RefreshGuidance/>
+      <UnderwritingMarketAddition Guidance="@(_guidance.Where(x => string.IsNullOrEmpty(x.Market)))"
+                                  UpdateGuidance=@RefreshGuidance />
   </WindowContent>
 </TelerikWindow>

@@ -1,0 +1,85 @@
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center my-3 display-3">@Property.Name</h1>
+        </div>
+        <div class="col-12 bg-secondary">
+            <div class="row">
+                <div class="col-12 ">
+                    <div class="row">
+                        <div class="col">
+                            <UnderwritingInfoBar Title="Start Date"
+                                                 Colour="#00bfff"
+                                                 Value="@Property.Timestamp.ToString("dd/MM/yyyy")" />
+                        </div>
+                        <div class="col">
+                            <UnderwritingInfoBar Title="Price"
+                                                 Colour=@(Property.PurchasePrice < Property.AskingPrice? "lightgreen": "#ffc1cc")
+                                                 Value=@(Property.PurchasePrice.ToString("N2")) />
+                        </div>
+                        <div class="col">
+                            <UnderwritingInfoBar Title="Hold Period"
+                                                 Colour="#00bfff"
+                                                 Value="X Years" /> <!--Sale Date - Purchase Date | Humanize to Time-->
+                        </div>
+                        <div class="col">
+                            <UnderwritingInfoBar Title="Reversion Cap"
+                                                 Colour="#00bfff"
+                                                 Value="X" />
+                        </div>
+                        <div class="col">
+                            <UnderwritingInfoBar Title="Number of Units"
+                                                 Colour="#00bfff"
+                                                 Value=@Property.Units.ToString("N0") />
+                        </div>
+                        <div class="col">
+                          <UnderwritingInfoBar Title="Year Built"
+                                                Colour="#00bfff"
+                                                Value=@Property.Vintage.ToString() />
+                        </div>
+                        <div class="col">
+                          <UnderwritingInfoBar Title="Total Square Ft"
+                                               Colour="lightgreen"
+                                               Value=@Property.RentableSqFt.ToString("N2") />
+                        </div>
+                        <div class="col">
+                          <UnderwritingInfoBar Title="Ann. CoC Return"
+                                               Colour="#00bfff"
+                                               Value="7.6" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col">
+                          <UnderwritingInfoBar Title="Actual Cap Rate"
+                                               Colour="lightgreen"
+                                               Value=@Property.CapRate.ToString() />
+                        </div>
+                        <div class="col">
+                            <UnderwritingInfoBar Title="Purchase DSCR" Colour="#00bfff" Value="7.6" />
+                        </div>
+                        <div class="col">
+                            <UnderwritingInfoBar Title="Purchase CoC" Colour="green" Value="7.6" />
+                        </div>
+                        <div class="col">
+                            <UnderwritingInfoBar Title="Reversion Value" Colour="green" Value="7.6" />
+                        </div>
+                        <div class="col">
+                            <UnderwritingInfoBar Title="Desired Yield" Colour="green" Value="7.6" />
+                        </div>
+                        <div class="col">
+                            <UnderwritingInfoBar Title="NPV" Colour="green" Value="7.6" />
+                        </div>
+                        <div class="col">
+                            <UnderwritingInfoBar Title="IRR" Colour="green" Value="7.6" />
+                        </div>
+                        <div class="col">
+                            <UnderwritingInfoBar Title="Total Ann. Return" Colour="green" Value="7.6" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

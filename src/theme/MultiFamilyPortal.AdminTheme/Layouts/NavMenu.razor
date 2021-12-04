@@ -1,9 +1,7 @@
-﻿@using MultiFamilyPortal.Authentication
-
-<div class="top-row ps-3 navbar navbar-dark">
-  <div class="container-fluid">
+﻿<div class="top-row ps-3 navbar navbar-dark" style="border-bottom: 1px grey solid;">
+  <div class="container">
     <a class="navbar-brand" href="/admin">
-      <img src="/theme/branding/logo-dark-side" class="img img-fluid logo" />
+      <img src="/theme/branding/logo-dark-side" class="img img-fluid logo" alt="company logo"/>
     </a>
 
     <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -15,20 +13,29 @@
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
   <ul class="nav flex-column">
     <AuthorizedPolicy Policy=@PortalPolicy.AdminPortalViewer>
-      <li class="nav-item px-3">
+      <li class="nav-item">
         <NavLink class="nav-link" href="/admin" Match="NavLinkMatch.All">
           <i class="fa-duotone fa-tachometer-alt-fastest" aria-hidden="true"></i>&nbsp;&nbsp;Dashboard
         </NavLink>
       </li>
     </AuthorizedPolicy>
     <AuthorizedPolicy Policy=@PortalPolicy.Blogger>
-      <li class="nav-item px-3">
-        <a class="nav-link px-3" role="button" @onclick=@ToggleContentMenu>
+      <li class="nav-item" id=@(showContentMenu?"sideline" : "")>
+        <a class="nav-link px-3"  role="button" @onclick=@ToggleContentMenu>
           <i class="fa-duotone fa-pen-to-square"></i>&nbsp;&nbsp;Content
+           <span class="w-75"></span>
+            @if(showContentMenu)
+            {
+              <span><i class="fas fa-chevron-down"></i></span>
+            }
+            else
+            {
+               <span> <i class="fas fa-chevron-right"></i></span>
+            }
         </a>
         @if(showContentMenu)
         {
-          <ul>
+          <ul class="">
             <AuthorizedRole Role=@PortalRoles.PortalAdministrator>
               <li><NavLink class="dropdown-item" href="/admin/pages">Pages</NavLink></li>
             </AuthorizedRole>
@@ -39,14 +46,23 @@
       </li>
     </AuthorizedPolicy>
     <AuthorizedPolicy Policy=@PortalPolicy.UnderwritingViewer>
-      <li class="nav-item px-3">
+      <li class="nav-item">
         <NavLink class="nav-link" href="/admin/activity-log">
           <span class="fa-duotone fa-mobile" aria-hidden="true"></span>&nbsp;&nbsp;Activity Log
         </NavLink>
       </li>
-      <li class="nav-item px-3">
+      <li class="nav-item" id=@(showPropertyMenu?"sideline" : "")>
         <a class="nav-link px-3" role="button" @onclick=@TogglePropertyMenu>
           <i class="fa-duotone fa-city" aria-hidden="true"></i>&nbsp;&nbsp;Properties
+            <span class="w-75"></span>
+            @if(showPropertyMenu)
+            {
+              <span><i class="fas fa-chevron-down"></i></span>
+            }
+            else
+            {
+               <span> <i class="fas fa-chevron-right"></i></span>
+            }
         </a>
         @if(showPropertyMenu)
         {
@@ -61,9 +77,18 @@
       </li>
     </AuthorizedPolicy>
     <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
-      <li class="nav-item px-3">
+      <li class="nav-item" id=@(showUsersMenu?"sideline" : "")>
         <a class="nav-link px-3" role="button" @onclick=@ToggleUsersMenu>
           <i class="fa-duotone fa-users" aria-hidden="true"></i>&nbsp;&nbsp;Users
+          <span class="w-75"></span>
+            @if(showUsersMenu)
+            {
+              <span><i class="fas fa-chevron-down"></i></span>
+            }
+            else
+            {
+               <span> <i class="fas fa-chevron-right"></i></span>
+            }
         </a>
         @if(showUsersMenu)
         {
@@ -79,20 +104,20 @@
       </li>
     </AuthorizedPolicy>
     <AuthorizedPolicy Policy=@PortalPolicy.AdminPortalViewer>
-      <li class="nav-item px-3">
+      <li class="nav-item">
         <NavLink class="nav-link" href="/admin/user-profile">
           <span class="fa-duotone fa-user" aria-hidden="true"></span>&nbsp;&nbsp;Profile
         </NavLink>
       </li>
     </AuthorizedPolicy>
     <AuthorizedRole Role=@PortalRoles.PortalAdministrator>
-      <li class="nav-item px-3">
+      <li class="nav-item">
         <NavLink class="nav-link" href="/admin/settings">
           <span class="fa-duotone fa-cogs" aria-hidden="true"></span>&nbsp;&nbsp;Settings
         </NavLink>
       </li>
     </AuthorizedRole>
-    <li class="nav-item px-3">
+    <li class="nav-item">
       <NavLink class="nav-link" href="/logout">
         <i class="fa-duotone fa-sign-out-alt" aria-hidden="true"></i>&nbsp;&nbsp;Logout
       </NavLink>

@@ -45,7 +45,7 @@
                         <div class="col">
                           <UnderwritingInfoBar Title="Ann. CoC Return"
                                                Colour="#00bfff"
-                                               Value="7.6" />
+                                               Value=@Property.CashOnCash.ToString("N2") />
                         </div>
                     </div>
                 </div>
@@ -54,28 +54,42 @@
                         <div class="col">
                           <UnderwritingInfoBar Title="Actual Cap Rate"
                                                Colour="lightgreen"
-                                               Value=@Property.CapRate.ToString() />
+                                               Value=@Property.CapRate.ToString("N2") />
                         </div>
                         <div class="col">
-                            <UnderwritingInfoBar Title="Purchase DSCR" Colour="#00bfff" Value="7.6" />
+                          <UnderwritingInfoBar Title="Purchase DSCR"
+                                               Colour="#00bfff"
+                                               Value=@Property.DebtCoverage.ToString("N2") />
                         </div>
                         <div class="col">
-                            <UnderwritingInfoBar Title="Purchase CoC" Colour="green" Value="7.6" />
+                          <UnderwritingInfoBar Title="Purchase CoC"
+                                               Colour="lightgreen"
+                                               Value=@Property.SellerCashOnCash.ToString("N2") />
                         </div>
                         <div class="col">
-                            <UnderwritingInfoBar Title="Reversion Value" Colour="green" Value="7.6" />
+                          <UnderwritingInfoBar Title="Reversion Value"
+                                               Colour="#ffc1cc"
+                                               Value="X" />
                         </div>
                         <div class="col">
-                            <UnderwritingInfoBar Title="Desired Yield" Colour="green" Value="7.6" />
+                          <UnderwritingInfoBar Title="Desired Yield"
+                                               Colour="#ffc1cc"
+                                               Value="X" />
                         </div>
                         <div class="col">
-                            <UnderwritingInfoBar Title="NPV" Colour="green" Value="7.6" />
+                          <UnderwritingInfoBar Title="NPV"
+                                               Colour="lightgreen"
+                                               Value="X" />
                         </div>
                         <div class="col">
-                            <UnderwritingInfoBar Title="IRR" Colour="green" Value="7.6" />
+                          <UnderwritingInfoBar Title="IRR"
+                                               Colour="#ffc1cc"
+                                               Value="X" />
                         </div>
                         <div class="col">
-                            <UnderwritingInfoBar Title="Total Ann. Return" Colour="green" Value="7.6" />
+                          <UnderwritingInfoBar Title="Total Ann. Return"
+                                               Colour="lightgreen"
+                                               Value=@Property.NOI.ToString("N2") />
                         </div>
                     </div>
                 </div>

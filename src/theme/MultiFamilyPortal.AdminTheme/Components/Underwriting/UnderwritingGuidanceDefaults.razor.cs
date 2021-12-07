@@ -18,7 +18,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private readonly ObservableRangeCollection<UnderwritingGuidance> _guidance = new();
         private TelerikGrid<UnderwritingGuidance> grid;
         private bool _windowVisibility { get; set; }
-        
+        private string _marketTitle = null;
         protected override async Task OnInitializedAsync()
         {
             try
@@ -51,6 +51,19 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         {
             await OnInitializedAsync();
             _windowVisibility = false;
+            _marketTitle = null;
+        }
+
+        private void OnAddGuidance()
+        {
+            _marketTitle = null;
+            _windowVisibility = true;
+        }
+
+        private void EditAddGuidance(string market)
+        {
+            _marketTitle = market;
+            _windowVisibility = true;
         }
     }
 }

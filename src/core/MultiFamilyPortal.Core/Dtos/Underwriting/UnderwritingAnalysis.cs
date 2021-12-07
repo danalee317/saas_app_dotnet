@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reactive;
 using System.Reactive.Disposables;
@@ -33,6 +33,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         private ObservableAsPropertyHelper<double> _closingCostOther;
         private ObservableAsPropertyHelper<double> _closingCosts;
         private ObservableAsPropertyHelper<double> _aquisitionFee;
+        private ObservableAsPropertyHelper<double> _costPerUnit;
 
         // Seller
         private ObservableAsPropertyHelper<double> _sellerIncome;
@@ -198,6 +199,10 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .ToProperty(this, nameof(SellerCapRate), out _sellerCapRate)
                 .DisposeWith(_disposable);
 
+            this.WhenAnyValue(x => x.PurchasePrice, x => x.Units, (p, u) => p / u)
+                .ToProperty(this, nameof(CostPerUnit), out _costPerUnit)
+                .DisposeWith(_disposable);
+
             ourRefCount
                 .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.GrossPotentialRent))
                 .Batch(throttle)
@@ -251,6 +256,13 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         public string State { get; set; }
 
         public string Zip { get; set; }
+
+        [Reactive]
+        [DisplayFormat(DataFormatString = "{0:P}")]
+        public double DesiredYield { get; set; }
+
+        [Reactive]
+        public int HoldYears { get; set; }
 
         [Reactive]
         public int Units { get; set; }
@@ -347,6 +359,10 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
         [JsonIgnore]
         [DisplayFormat(DataFormatString = "{0:C}")]
+        public double CostPerUnit => _costPerUnit?.Value ?? 0;
+
+        [JsonIgnore]
+        [DisplayFormat(DataFormatString = "{0:C}")]
         public double PricePerSqFt => _pricePerSqFt?.Value ?? 0;
 
         [JsonIgnore]
@@ -411,6 +427,8 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         public IEnumerable<UnderwritingAnalysisLineItem> OurExpense => _ourExpenseItems;
         public IEnumerable<UnderwritingAnalysisMortgage> Mortgages => _mortgages;
         public List<UnderwritingAnalysisNote> Notes { get; set; }
+        public List<UnderwritingAnalysisModel> Models { get; set; }
+        public List<UnderwritingAnalysisCapitalImprovement> CapitalImprovements { get; set; }
 
         private ReactiveCommand<Unit, Unit> _downpaymentCommand;
         private ReactiveCommand<Unit, Unit> _calculateVacancyAndManagement;

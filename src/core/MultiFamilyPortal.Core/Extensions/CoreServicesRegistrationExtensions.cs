@@ -29,7 +29,8 @@ namespace MultiFamilyPortal.Extensions
                 .AddScoped<IFormService, FormService>()
                 .AddScoped<ITimeZoneService, TimeZoneService>()
                 .AddScoped<ISiteInfo, SiteInfo>()
-                .AddScoped<IBrandService, BrandService>();
+                .AddScoped<IBrandService, BrandService>()
+                .AddScoped<IUnderwritingService, UnderwritingService>();
 
             var config = new SiteConfiguration();
             configuration.Bind(config);

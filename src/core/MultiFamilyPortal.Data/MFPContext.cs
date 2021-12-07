@@ -54,12 +54,14 @@ namespace MultiFamilyPortal.Data
         #region Underwriting
         public DbSet<UnderwriterGoal> UnderwriterGoals { get; set; } = default!;
         public DbSet<UnderwritingProspectProperty> UnderwritingPropertyProspects { get; set; } = default!;
+        public DbSet<UnderwritingProspectPropertyCapitalImprovements> UnderwritingProspectPropertyCapitalImprovements { get; set; } = default!;
         public DbSet<UnderwritingLineItem> UnderwritingLineItems { get; set; } = default!;
         public DbSet<UnderwritingMortgage> UnderwritingMortgages { get; set; } = default!;
         public DbSet<UnderwritingNote> UnderwritingNotes { get; set; } = default!;
         public DbSet<UnderwritingGuidance> UnderwritingGuidance { get; set; } = default!;
         public DbSet<UnderwritingPropertyUnitModel> UnderwritingPropertyUnitModels { get; set; } = default!;
         public DbSet<UnderwritingPropertyUnit> UnderwritingPropertyUnits { get; set; } = default!;
+        public DbSet<UnderwritingPropertyUnitLedger> UnderwritingPropertyUnitsLedger { get; set; } = default!;
         public DbSet<UnderwritingProspectFile> UnderwritingProspectFiles { get; set; } = default!;
         public DbSet<UnderwritingProspectPropertyBucketList> UnderwritingProspectPropertyBucketLists { get; set; } = default!;
         #endregion

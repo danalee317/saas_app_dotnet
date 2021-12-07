@@ -1,11 +1,26 @@
-﻿namespace MultiFamilyPortal.Dtos.Underwriting
+﻿using System.Text.Json.Serialization;
+using MultiFamilyPortal.Converters;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
+
+namespace MultiFamilyPortal.Dtos.Underwriting
 {
-    public class UnderwritingAnalysisFile
+    [JsonConverter(typeof(ReactiveObjectConverter<UnderwritingAnalysisFile>))]
+    public class UnderwritingAnalysisFile : ReactiveObject
     {
+        [Reactive]
         public string Icon { get; set; }
+
+        [Reactive]
         public string Name { get; set; }
+
+        [Reactive]
         public string Description { get; set; }
+
+        [Reactive]
         public string DownloadLink { get; set; }
+
+        [Reactive]
         public DateTimeOffset Timestamp { get; set; }
     }
 }

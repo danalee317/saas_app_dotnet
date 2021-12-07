@@ -18,5 +18,7 @@ namespace MultiFamilyPortal.Data.Models
         public double MarketRent { get; set; }
 
         public UnderwritingProspectProperty Property { get; set; }
+
+        public virtual ICollection<UnderwritingPropertyUnit> Units { get; set; }
     }
 }

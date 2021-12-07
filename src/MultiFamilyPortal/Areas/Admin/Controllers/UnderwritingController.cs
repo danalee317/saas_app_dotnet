@@ -170,6 +170,12 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
             var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
+            var startDate = DateTimeOffset.Now.AddMonths(3);
+            while(startDate.DayOfWeek == DayOfWeek.Saturday || startDate.DayOfWeek == DayOfWeek.Sunday)
+            {
+                startDate = startDate.AddDays(1);
+            }
+
             var prospect = new UnderwritingProspectProperty
             {
                 Name = property.Name,
@@ -193,6 +199,9 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 GrossPotentialRent = 800 * property.Units,
                 PropertyClass = PropertyClass.ClassB,
                 NeighborhoodClass = PropertyClass.ClassB,
+                StartDate = startDate,
+                DesiredYield = 0.1,
+                HoldYears = 5,
                 BucketList = new UnderwritingProspectPropertyBucketList()
             };
 

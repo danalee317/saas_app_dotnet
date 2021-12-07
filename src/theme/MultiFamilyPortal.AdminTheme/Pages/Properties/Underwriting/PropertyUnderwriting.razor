@@ -28,9 +28,11 @@ else
   <div class="col-md-3 col-sm-6 offset-md-9 offset-sm-6">
     <TelerikDropDownList Data=@AvailableStatus
                          @bind-Value=@Property.Status>
+      <ValueTemplate>
+        @context.Humanize(LetterCasing.Title)
+      </ValueTemplate>
       <ItemTemplate>
-        @{var status = (Data.Models.UnderwritingStatus)context; }
-        @status.Humanize(LetterCasing.Title)
+        @context.Humanize(LetterCasing.Title)
       </ItemTemplate>
     </TelerikDropDownList>
   </div>

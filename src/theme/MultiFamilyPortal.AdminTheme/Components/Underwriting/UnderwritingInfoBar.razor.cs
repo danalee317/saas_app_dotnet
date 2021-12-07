@@ -4,13 +4,13 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 {
     public partial class UnderwritingInfoBar
     {
-        [Parameter] 
+        [Parameter]
         public string Title { get; set; }
 
-         [Parameter] 
+        [Parameter]
         public string Value { get; set; }
 
-         [Parameter] 
-        public string Colour { get; set; }
+        [Parameter]
+        public string Color { get; set; }
     }
 }

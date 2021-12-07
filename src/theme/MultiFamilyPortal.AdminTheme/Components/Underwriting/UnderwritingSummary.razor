@@ -9,43 +9,43 @@
                     <div class="row">
                         <div class="col">
                             <UnderwritingInfoBar Title="Start Date"
-                                                 Colour="#00bfff"
-                                                 Value="@Property.Timestamp.ToString("dd/MM/yyyy")" />
+                                                 Color="#FFFF99"
+                                                 Value="XXX" />
                         </div>
                         <div class="col">
                             <UnderwritingInfoBar Title="Price"
-                                                 Colour=@(Property.PurchasePrice < Property.AskingPrice? "lightgreen": "#ffc1cc")
-                                                 Value=@(Property.PurchasePrice.ToString("N2")) />
+                                                 Color=@(Property.PurchasePrice < Property.AskingPrice? "lightgreen": "salmon")
+                                                 Value=@(Property.PurchasePrice.ToString("C")) />
                         </div>
                         <div class="col">
                             <UnderwritingInfoBar Title="Hold Period"
-                                                 Colour="#00bfff"
+                                                 Color="#FFFF99"
                                                  Value="X Years" /> <!--Sale Date - Purchase Date | Humanize to Time-->
                         </div>
                         <div class="col">
                             <UnderwritingInfoBar Title="Reversion Cap"
-                                                 Colour="#00bfff"
-                                                 Value="X" />
+                                                 Color="#FFFF99"
+                                                 Value="XXX" />
                         </div>
                         <div class="col">
                             <UnderwritingInfoBar Title="Number of Units"
-                                                 Colour="#00bfff"
+                                                 Color="#FFFF99"
                                                  Value=@Property.Units.ToString("N0") />
                         </div>
                         <div class="col">
                           <UnderwritingInfoBar Title="Year Built"
-                                                Colour="#00bfff"
-                                                Value=@Property.Vintage.ToString() />
+                                                Color="#FFFF99"
+                                                Value=@Property.Vintage.ToString("0000") />
                         </div>
                         <div class="col">
                           <UnderwritingInfoBar Title="Total Square Ft"
-                                               Colour="lightgreen"
-                                               Value=@Property.RentableSqFt.ToString("N2") />
+                                               Color="lightgreen"
+                                               Value=@Property.RentableSqFt.ToString("NO") />
                         </div>
                         <div class="col">
                           <UnderwritingInfoBar Title="Ann. CoC Return"
-                                               Colour="#00bfff"
-                                               Value=@Property.CashOnCash.ToString("N2") />
+                                               Color="#FFFF99"
+                                               Value=@Property.CashOnCash.ToString("P") />
                         </div>
                     </div>
                 </div>
@@ -53,43 +53,43 @@
                     <div class="row">
                         <div class="col">
                           <UnderwritingInfoBar Title="Actual Cap Rate"
-                                               Colour="lightgreen"
-                                               Value=@Property.CapRate.ToString("N2") />
+                                               Color="lightgreen"
+                                               Value=@Property.CapRate.ToString("P") />
                         </div>
                         <div class="col">
                           <UnderwritingInfoBar Title="Purchase DSCR"
-                                               Colour="#00bfff"
-                                               Value=@Property.DebtCoverage.ToString("N2") />
+                                               Color=@(Property.DebtCoverage<1.2?"salmon": Property.DebtCoverage < 1.5?"#FFFF99":"lightgreen")
+                                               Value=@Property.DebtCoverage.ToString("N") />
                         </div>
                         <div class="col">
                           <UnderwritingInfoBar Title="Purchase CoC"
-                                               Colour="lightgreen"
-                                               Value=@Property.SellerCashOnCash.ToString("N2") />
+                                               Color=@(Property.SellerCashOnCash<0.17?"salmon": Property.SellerCashOnCash < 1.12?"#FFFF99":"lightgreen")
+                                               Value=@Property.SellerCashOnCash.ToString("P") />
                         </div>
                         <div class="col">
                           <UnderwritingInfoBar Title="Reversion Value"
-                                               Colour="#ffc1cc"
-                                               Value="X" />
+                                               Color="salmon"
+                                               Value="XXX" />
                         </div>
                         <div class="col">
-                          <UnderwritingInfoBar Title="Desired Yield"
-                                               Colour="#ffc1cc"
-                                               Value="X" />
+                          <UnderwritingInfoBar Title="Desisalmon Yield"
+                                               Color="salmon"
+                                               Value="XXX" />
                         </div>
                         <div class="col">
                           <UnderwritingInfoBar Title="NPV"
-                                               Colour="lightgreen"
-                                               Value="X" />
+                                               Color="lightgreen"
+                                               Value="XXX" />
                         </div>
                         <div class="col">
                           <UnderwritingInfoBar Title="IRR"
-                                               Colour="#ffc1cc"
-                                               Value="X" />
+                                               Color="salmon"
+                                               Value="XXX" />
                         </div>
                         <div class="col">
                           <UnderwritingInfoBar Title="Total Ann. Return"
-                                               Colour="lightgreen"
-                                               Value=@Property.NOI.ToString("N2") />
+                                               Color="lightgreen"
+                                               Value="XXX" />
                         </div>
                     </div>
                 </div>

@@ -1140,8 +1140,9 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.Property<double>("Min")
                         .HasColumnType("float");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -1157,11 +1158,13 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("float");
 
-                    b.Property<int>("Category")
-                        .HasColumnType("int");
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Column")
-                        .HasColumnType("int");
+                    b.Property<string>("Column")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -1172,8 +1175,9 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.Property<Guid>("PropertyId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -1253,20 +1257,26 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.Property<bool>("AtWill")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("LeaseEnd")
+                    b.Property<double>("Balance")
+                        .HasColumnType("float");
+
+                    b.Property<double>("DepositOnHand")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("LeaseEnd")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("LeaseStart")
+                    b.Property<DateTime?>("LeaseStart")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("ModelId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Render")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double>("Rent")
                         .HasColumnType("float");
+
+                    b.Property<string>("Renter")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Unit")
                         .HasColumnType("nvarchar(max)");
@@ -1276,6 +1286,32 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.HasIndex("ModelId");
 
                     b.ToTable("UnderwritingPropertyUnits");
+                });
+
+            modelBuilder.Entity("MultiFamilyPortal.Data.Models.UnderwritingPropertyUnitLedger", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("ChargesCredits")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Rent")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UnitId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UnitId");
+
+                    b.ToTable("UnderwritingPropertyUnitsLedger");
                 });
 
             modelBuilder.Entity("MultiFamilyPortal.Data.Models.UnderwritingPropertyUnitModel", b =>
@@ -1324,8 +1360,9 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.Property<Guid>("PropertyId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UnderwriterEmail")
                         .HasColumnType("nvarchar(max)");
@@ -1361,8 +1398,9 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.Property<double>("CapX")
                         .HasColumnType("float");
 
-                    b.Property<int>("CapXType")
-                        .HasColumnType("int");
+                    b.Property<string>("CapXType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("CashOnCash")
                         .HasColumnType("float");
@@ -1382,17 +1420,24 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.Property<double>("DeferredMaintenance")
                         .HasColumnType("float");
 
+                    b.Property<double>("DesiredYield")
+                        .HasColumnType("float");
+
                     b.Property<double>("Downpayment")
                         .HasColumnType("float");
 
                     b.Property<double>("GrossPotentialRent")
                         .HasColumnType("float");
 
+                    b.Property<int>("HoldYears")
+                        .HasColumnType("int");
+
                     b.Property<double>("LTV")
                         .HasColumnType("float");
 
-                    b.Property<int>("LoanType")
-                        .HasColumnType("int");
+                    b.Property<string>("LoanType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Management")
                         .HasColumnType("float");
@@ -1433,11 +1478,15 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.Property<double>("SECAttorney")
                         .HasColumnType("float");
 
+                    b.Property<DateTimeOffset>("StartDate")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("StrikePrice")
                         .HasColumnType("float");
@@ -1503,6 +1552,28 @@ namespace MultiFamilyPortal.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("UnderwritingProspectPropertyBucketLists");
+                });
+
+            modelBuilder.Entity("MultiFamilyPortal.Data.Models.UnderwritingProspectPropertyCapitalImprovements", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Cost")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("PropertyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyId");
+
+                    b.ToTable("UnderwritingProspectPropertyCapitalImprovements");
                 });
 
             modelBuilder.Entity("PostSubscriber", b =>
@@ -1750,12 +1821,23 @@ namespace MultiFamilyPortal.Data.Migrations
             modelBuilder.Entity("MultiFamilyPortal.Data.Models.UnderwritingPropertyUnit", b =>
                 {
                     b.HasOne("MultiFamilyPortal.Data.Models.UnderwritingPropertyUnitModel", "Model")
-                        .WithMany()
+                        .WithMany("Units")
                         .HasForeignKey("ModelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Model");
+                });
+
+            modelBuilder.Entity("MultiFamilyPortal.Data.Models.UnderwritingPropertyUnitLedger", b =>
+                {
+                    b.HasOne("MultiFamilyPortal.Data.Models.UnderwritingPropertyUnit", "Unit")
+                        .WithMany("Ledger")
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("MultiFamilyPortal.Data.Models.UnderwritingPropertyUnitModel", b =>
@@ -1794,6 +1876,17 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.HasOne("MultiFamilyPortal.Data.Models.UnderwritingProspectProperty", "Property")
                         .WithOne("BucketList")
                         .HasForeignKey("MultiFamilyPortal.Data.Models.UnderwritingProspectPropertyBucketList", "PropertyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Property");
+                });
+
+            modelBuilder.Entity("MultiFamilyPortal.Data.Models.UnderwritingProspectPropertyCapitalImprovements", b =>
+                {
+                    b.HasOne("MultiFamilyPortal.Data.Models.UnderwritingProspectProperty", "Property")
+                        .WithMany("CapitalImprovements")
+                        .HasForeignKey("PropertyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1857,9 +1950,21 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.Navigation("SocialLinks");
                 });
 
+            modelBuilder.Entity("MultiFamilyPortal.Data.Models.UnderwritingPropertyUnit", b =>
+                {
+                    b.Navigation("Ledger");
+                });
+
+            modelBuilder.Entity("MultiFamilyPortal.Data.Models.UnderwritingPropertyUnitModel", b =>
+                {
+                    b.Navigation("Units");
+                });
+
             modelBuilder.Entity("MultiFamilyPortal.Data.Models.UnderwritingProspectProperty", b =>
                 {
                     b.Navigation("BucketList");
+
+                    b.Navigation("CapitalImprovements");
 
                     b.Navigation("Files");
 

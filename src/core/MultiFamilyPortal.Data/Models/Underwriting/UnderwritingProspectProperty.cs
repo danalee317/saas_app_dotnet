@@ -9,8 +9,10 @@ namespace MultiFamilyPortal.Data.Models
 
         public Guid BucketListId { get; set; }
 
-        private DateTimeOffset _timestamp = DateTimeOffset.Now;
+        private DateTimeOffset _timestamp = DateTimeOffset.UtcNow;
         public DateTimeOffset Timestamp => _timestamp;
+
+        public DateTimeOffset StartDate { get; set; }
 
         public string Name { get; set; }
 
@@ -35,6 +37,10 @@ namespace MultiFamilyPortal.Data.Models
         public double CashOnCash { get; set; }
 
         public double DebtCoverage { get; set; }
+
+        public double DesiredYield { get; set; }
+
+        public int HoldYears { get; set; }
 
         public double NOI { get; set; }
 
@@ -87,6 +93,8 @@ namespace MultiFamilyPortal.Data.Models
         public SiteUser Underwriter { get; set; }
 
         public UnderwritingProspectPropertyBucketList BucketList { get; set; }
+
+        public virtual ICollection<UnderwritingProspectPropertyCapitalImprovements> CapitalImprovements { get; set; }
 
         public virtual ICollection<UnderwritingLineItem> LineItems { get; set; }
 

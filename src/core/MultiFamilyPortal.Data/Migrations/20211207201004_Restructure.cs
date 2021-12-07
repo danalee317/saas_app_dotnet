@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MultiFamilyPortal.Data.Migrations
 {
-    public partial class Initial : Migration
+    public partial class Restructure : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,7 +20,11 @@ namespace MultiFamilyPortal.Data.Migrations
                     State = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Zip = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PurchasePrice = table.Column<double>(type: "float", nullable: false),
-                    Units = table.Column<int>(type: "int", nullable: false)
+                    SalesPrice = table.Column<double>(type: "float", nullable: true),
+                    Units = table.Column<int>(type: "int", nullable: false),
+                    Highlighted = table.Column<bool>(type: "bit", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    InvestorState = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -280,7 +284,7 @@ namespace MultiFamilyPortal.Data.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Category = table.Column<int>(type: "int", nullable: false),
                     Market = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Type = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Min = table.Column<double>(type: "float", nullable: false),
                     Max = table.Column<double>(type: "float", nullable: false),
                     IgnoreOutOfRange = table.Column<bool>(type: "bit", nullable: false)
@@ -350,6 +354,7 @@ namespace MultiFamilyPortal.Data.Migrations
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Timestamp = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Type = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -504,7 +509,9 @@ namespace MultiFamilyPortal.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BucketListId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Timestamp = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    StartDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UnderwriterId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -517,6 +524,8 @@ namespace MultiFamilyPortal.Data.Migrations
                     CapRate = table.Column<double>(type: "float", nullable: false),
                     CashOnCash = table.Column<double>(type: "float", nullable: false),
                     DebtCoverage = table.Column<double>(type: "float", nullable: false),
+                    DesiredYield = table.Column<double>(type: "float", nullable: false),
+                    HoldYears = table.Column<int>(type: "int", nullable: false),
                     NOI = table.Column<double>(type: "float", nullable: false),
                     AskingPrice = table.Column<double>(type: "float", nullable: false),
                     StrikePrice = table.Column<double>(type: "float", nullable: false),
@@ -529,16 +538,18 @@ namespace MultiFamilyPortal.Data.Migrations
                     MarketVacancy = table.Column<double>(type: "float", nullable: false),
                     Management = table.Column<double>(type: "float", nullable: false),
                     CapX = table.Column<double>(type: "float", nullable: false),
-                    CapXType = table.Column<int>(type: "int", nullable: false),
+                    CapXType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OurEquityOfCF = table.Column<double>(type: "float", nullable: false),
                     AquisitionFeePercent = table.Column<double>(type: "float", nullable: false),
                     ClosingCostPercent = table.Column<double>(type: "float", nullable: false),
                     DeferredMaintenance = table.Column<double>(type: "float", nullable: false),
                     SECAttorney = table.Column<double>(type: "float", nullable: false),
                     ClosingCostMiscellaneous = table.Column<double>(type: "float", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    LoanType = table.Column<int>(type: "int", nullable: false),
-                    LTV = table.Column<double>(type: "float", nullable: false)
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LoanType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LTV = table.Column<double>(type: "float", nullable: false),
+                    PropertyClass = table.Column<int>(type: "int", nullable: false),
+                    NeighborhoodClass = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -782,11 +793,11 @@ namespace MultiFamilyPortal.Data.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PropertyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Category = table.Column<int>(type: "int", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
+                    Category = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Amount = table.Column<double>(type: "float", nullable: false),
                     ExpenseType = table.Column<int>(type: "int", nullable: false),
-                    Column = table.Column<int>(type: "int", nullable: false)
+                    Column = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -877,8 +888,11 @@ namespace MultiFamilyPortal.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PropertyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UnderwriterEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Icon = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Icon = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -892,17 +906,65 @@ namespace MultiFamilyPortal.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UnderwritingProspectPropertyBucketLists",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PropertyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Summary = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ValuePlays = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConstructionType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UtilityNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompetitionNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HowUnderwritingWasDetermined = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MarketPricePerUnit = table.Column<double>(type: "float", nullable: false),
+                    MarketCapRate = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UnderwritingProspectPropertyBucketLists", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UnderwritingProspectPropertyBucketLists_UnderwritingPropertyProspects_PropertyId",
+                        column: x => x.PropertyId,
+                        principalTable: "UnderwritingPropertyProspects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UnderwritingProspectPropertyCapitalImprovements",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Cost = table.Column<double>(type: "float", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PropertyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UnderwritingProspectPropertyCapitalImprovements", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UnderwritingProspectPropertyCapitalImprovements_UnderwritingPropertyProspects_PropertyId",
+                        column: x => x.PropertyId,
+                        principalTable: "UnderwritingPropertyProspects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UnderwritingPropertyUnits",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ModelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Unit = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Render = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LeaseStart = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LeaseEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Renter = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LeaseStart = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LeaseEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
                     AtWill = table.Column<bool>(type: "bit", nullable: false),
-                    Rent = table.Column<double>(type: "float", nullable: false)
+                    Rent = table.Column<double>(type: "float", nullable: false),
+                    DepositOnHand = table.Column<double>(type: "float", nullable: false),
+                    Balance = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -911,6 +973,27 @@ namespace MultiFamilyPortal.Data.Migrations
                         name: "FK_UnderwritingPropertyUnits_UnderwritingPropertyUnitModels_ModelId",
                         column: x => x.ModelId,
                         principalTable: "UnderwritingPropertyUnitModels",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UnderwritingPropertyUnitsLedger",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UnitId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Rent = table.Column<double>(type: "float", nullable: false),
+                    ChargesCredits = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UnderwritingPropertyUnitsLedger", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UnderwritingPropertyUnitsLedger_UnderwritingPropertyUnits_UnitId",
+                        column: x => x.UnitId,
+                        principalTable: "UnderwritingPropertyUnits",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1079,8 +1162,24 @@ namespace MultiFamilyPortal.Data.Migrations
                 column: "ModelId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UnderwritingPropertyUnitsLedger_UnitId",
+                table: "UnderwritingPropertyUnitsLedger",
+                column: "UnitId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UnderwritingProspectFiles_PropertyId",
                 table: "UnderwritingProspectFiles",
+                column: "PropertyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UnderwritingProspectPropertyBucketLists_PropertyId",
+                table: "UnderwritingProspectPropertyBucketLists",
+                column: "PropertyId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UnderwritingProspectPropertyCapitalImprovements_PropertyId",
+                table: "UnderwritingProspectPropertyCapitalImprovements",
                 column: "PropertyId");
 
             migrationBuilder.CreateIndex(
@@ -1192,10 +1291,16 @@ namespace MultiFamilyPortal.Data.Migrations
                 name: "UnderwritingNotes");
 
             migrationBuilder.DropTable(
-                name: "UnderwritingPropertyUnits");
+                name: "UnderwritingPropertyUnitsLedger");
 
             migrationBuilder.DropTable(
                 name: "UnderwritingProspectFiles");
+
+            migrationBuilder.DropTable(
+                name: "UnderwritingProspectPropertyBucketLists");
+
+            migrationBuilder.DropTable(
+                name: "UnderwritingProspectPropertyCapitalImprovements");
 
             migrationBuilder.DropTable(
                 name: "UserClaims");
@@ -1228,10 +1333,13 @@ namespace MultiFamilyPortal.Data.Migrations
                 name: "SocialProviders");
 
             migrationBuilder.DropTable(
-                name: "UnderwritingPropertyUnitModels");
+                name: "UnderwritingPropertyUnits");
 
             migrationBuilder.DropTable(
                 name: "IdentityRoles");
+
+            migrationBuilder.DropTable(
+                name: "UnderwritingPropertyUnitModels");
 
             migrationBuilder.DropTable(
                 name: "UnderwritingPropertyProspects");

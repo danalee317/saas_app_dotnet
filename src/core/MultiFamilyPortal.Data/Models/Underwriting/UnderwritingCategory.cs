@@ -26,6 +26,14 @@ namespace MultiFamilyPortal.Data.Models
         [Display(Name = "Other Income")]
         OtherIncome,
 
+        [UnderwritingType(UnderwritingType.Income)]
+        [Display(Name = "Other Income (Bad)")]
+        OtherIncomeBad,
+
+        [UnderwritingType(UnderwritingType.Income)]
+        [Display(Name = "Other Income (One Time)")]
+        OtherIncomeOneTime,
+
         // Expenses
         [UnderwritingType(UnderwritingType.Expense)]
         [Display(Name = "Taxes")]

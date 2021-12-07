@@ -42,6 +42,10 @@ namespace MultiFamilyPortal.Converters
                             var bucketListConverter = options.GetConverter<UnderwritingAnalysisBucketList>();
                             value.BucketList = bucketListConverter.Read(ref reader, typeToConvert, options);
                             break;
+                        case nameof(UnderwritingAnalysis.CapitalImprovements):
+                            var capitalImprovementsConverter = options.GetConverter<List<UnderwritingAnalysisCapitalImprovement>>();
+                            value.CapitalImprovements = capitalImprovementsConverter.Read(ref reader, typeToConvert, options);
+                            break;
                         case nameof(UnderwritingAnalysis.CapX):
                             value.CapX = reader.GetDouble();
                             break;
@@ -60,11 +64,17 @@ namespace MultiFamilyPortal.Converters
                         case nameof(UnderwritingAnalysis.DeferredMaintenance):
                             value.DeferredMaintenance = reader.GetDouble();
                             break;
+                        case nameof(UnderwritingAnalysis.DesiredYield):
+                            value.DesiredYield = reader.GetDouble();
+                            break;
                         case nameof(UnderwritingAnalysis.Downpayment):
                             value.Downpayment = reader.GetDouble();
                             break;
                         case nameof(UnderwritingAnalysis.GrossPotentialRent):
                             value.GrossPotentialRent = reader.GetDouble();
+                            break;
+                        case nameof(UnderwritingAnalysis.HoldYears):
+                            value.HoldYears = reader.GetInt32();
                             break;
                         case nameof(UnderwritingAnalysis.Id):
                             value.Id = reader.GetGuid();
@@ -83,6 +93,10 @@ namespace MultiFamilyPortal.Converters
                             break;
                         case nameof(UnderwritingAnalysis.MarketVacancy):
                             value.MarketVacancy = reader.GetDouble();
+                            break;
+                        case nameof(UnderwritingAnalysis.Models):
+                            var modelConverter = options.GetConverter<List<UnderwritingAnalysisModel>>();
+                            value.Models = modelConverter.Read(ref reader, typeof(List<UnderwritingAnalysisModel>), options);
                             break;
                         case nameof(UnderwritingAnalysis.Mortgages):
                             var mortgageConverter = options.GetConverter<List<UnderwritingAnalysisMortgage>>();
@@ -175,20 +189,24 @@ namespace MultiFamilyPortal.Converters
             WriteNumber(writer, nameof(UnderwritingAnalysis.AquisitionFeePercent), value.AquisitionFeePercent);
             WriteNumber(writer, nameof(UnderwritingAnalysis.AskingPrice), value.AskingPrice);
             Write(writer, nameof(UnderwritingAnalysis.BucketList), value.BucketList, options);
+            WriteArray(writer, nameof(UnderwritingAnalysis.CapitalImprovements), value.CapitalImprovements, options);
             WriteNumber(writer, nameof(UnderwritingAnalysis.CapX), value.CapX);
             Write(writer, nameof(UnderwritingAnalysis.CapXType), value.CapXType);
             Write(writer, nameof(UnderwritingAnalysis.City), value.City);
             WriteNumber(writer, nameof(UnderwritingAnalysis.ClosingCostMiscellaneous), value.ClosingCostMiscellaneous);
             WriteNumber(writer, nameof(UnderwritingAnalysis.ClosingCostPercent), value.ClosingCostPercent);
             WriteNumber(writer, nameof(UnderwritingAnalysis.DeferredMaintenance), value.DeferredMaintenance);
+            WriteNumber(writer, nameof(UnderwritingAnalysis.DesiredYield), value.DesiredYield);
             WriteNumber(writer, nameof(UnderwritingAnalysis.Downpayment), value.Downpayment);
             WriteNumber(writer, nameof(UnderwritingAnalysis.GrossPotentialRent), value.GrossPotentialRent);
+            WriteNumber(writer, nameof(UnderwritingAnalysis.HoldYears), value.HoldYears);
             Write(writer, nameof(UnderwritingAnalysis.Id), value.Id);
             Write(writer, nameof(UnderwritingAnalysis.LoanType), value.LoanType);
             WriteNumber(writer, nameof(UnderwritingAnalysis.LTV), value.LTV);
             WriteNumber(writer, nameof(UnderwritingAnalysis.Management), value.Management);
             Write(writer, nameof(UnderwritingAnalysis.Market), value.Market);
             WriteNumber(writer, nameof(UnderwritingAnalysis.MarketVacancy), value.MarketVacancy);
+            WriteArray(writer, nameof(UnderwritingAnalysis.Models), value.Models, options);
             WriteArray(writer, nameof(UnderwritingAnalysis.Mortgages), value.Mortgages, options);
             Write(writer, nameof(UnderwritingAnalysis.Name), value.Name);
             Write(writer, nameof(UnderwritingAnalysis.NeighborhoodClass), value.NeighborhoodClass);

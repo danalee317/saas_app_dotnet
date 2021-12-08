@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MultiFamilyPortal.Data;
+using MultiFamilyPortal.Data.Services;
 
 namespace MultiFamilyPortal.Extensions
 {
@@ -23,19 +23,7 @@ namespace MultiFamilyPortal.Extensions
         {
             using(var scope = app.Services.CreateScope())
             {
-                var db = scope.ServiceProvider.GetRequiredService<MFPContext>();
-                try
-                {
-                    var migrations = await db.Database.GetPendingMigrationsAsync();
-                    if (migrations.Any())
-                        await db.Database.MigrateAsync();
-                }
-                catch(Exception ex)
-                {
-                    var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
-                    var logger = loggerFactory.CreateLogger(nameof(StartupExtensions));
-                    logger.LogError(ex, "Unable to apply database migrations");
-                }
+                await RunMigrations(app, scope.ServiceProvider);
 
                 var startupTasks = scope.ServiceProvider.GetServices<IStartupTask>();
                 foreach (var task in startupTasks)
@@ -54,6 +42,26 @@ namespace MultiFamilyPortal.Extensions
             }
 
             await app.RunAsync();
+        }
+
+        private static async Task RunMigrations(WebApplication app, IServiceProvider services)
+        {
+            var contextHelper = services.GetRequiredService<IStartupContextHelper>();
+            await contextHelper.RunDatabaseAction(async (db, tenant) =>
+            {
+                try
+                {
+                    var migrations = await db.Database.GetPendingMigrationsAsync();
+                    if (migrations.Any())
+                        await db.Database.MigrateAsync();
+                }
+                catch (Exception ex)
+                {
+                    var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
+                    var logger = loggerFactory.CreateLogger(nameof(StartupExtensions));
+                    logger.LogError(ex, $"Unable to apply database migrations for Tenant {tenant.Host}");
+                }
+            });
         }
     }
 }

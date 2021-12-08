@@ -1,0 +1,106 @@
+﻿@page "/"
+@using MultiFamilyPortal.SaaS.Models
+
+<PageTitle>Index</PageTitle>
+
+<h1>Tenants</h1>
+
+<TelerikGrid Data=@_tenants
+             ConfirmDelete=@true
+             EditMode=@GridEditMode.Inline
+             OnUpdate=@OnUpdateTenant
+             OnDelete=@OnDeleteTenant>
+  <GridToolBar>
+    <TelerikButton Primary=@true
+                   IconClass="fa-duotone fa-circle-plus"
+                   Title="Add Tenant"
+                   OnClick=@OnAddTenantClicked>Add Tenant</TelerikButton>
+  </GridToolBar>
+  <GridColumns>
+    <GridColumn Field="Disabled"
+                Title="Status"
+                Width="75px"
+                TextAlign=@ColumnTextAlign.Center>
+      <Template>
+        @{ var tenant = context as Tenant; }
+        @if(tenant!.Disabled)
+        {
+          <span style="color: red;">
+            <i class="fa-solid fa-circle-x"></i>
+          </span>
+        }
+        else
+        {
+          <span style="color: green;">
+            <i class="fa-solid fa-circle-check"></i>
+          </span>
+        }
+      </Template>
+    </GridColumn>
+    <GridColumn Field="Host" />
+    <GridColumn Field="Environment">
+      <EditorTemplate>
+        @{ var tenant = context as Tenant; }
+        <TelerikDropDownList @bind-Value=@tenant!.Environment Class="form-control"
+                             Data=@_environments />
+      </EditorTemplate>
+    </GridColumn>
+    <GridColumn Field="DatabaseName" Title="Database" />
+    <GridColumn Field="Created" DisplayFormat="{0:MMMM dd, yyyy}" Editable="false" />
+    <GridCommandColumn>
+      <div class="text-center">
+        <GridCommandButton Command="Save" Icon="save" ShowInEdit="true">Update</GridCommandButton>
+        <GridCommandButton Command="Cancel" Icon="cancel" ShowInEdit="true">Cancel</GridCommandButton>
+        <GridCommandButton Command="Edit" Icon="edit">Edit</GridCommandButton>
+        <GridCommandButton Command="Delete" Icon="delete">Delete</GridCommandButton>
+      </div>
+    </GridCommandColumn>
+  </GridColumns>
+</TelerikGrid>
+
+<TelerikWindow Modal=@true
+               Centered=@true
+               Width="500px"
+               Visible=@(newTenant != null)>
+  <WindowActions>
+    <WindowAction Name="Close" OnClick=@CloseNewTenant />
+  </WindowActions>
+  <WindowTitle>
+    <h2>Add Tenant</h2>
+  </WindowTitle>
+  <WindowContent>
+    <div class="row p-2">
+      <div class="col-3">
+        <label for="Host" class="form-label">Host</label>
+      </div>
+      <div class="col-9">
+        <TelerikTextBox @bind-Value=@newTenant!.Host Class="form-control" />
+      </div>
+      <div class="col-3">
+        <label for="Environment" class="form-label">Environment</label>
+      </div>
+      <div class="col-9">
+        <TelerikDropDownList @bind-Value=@newTenant.Environment Class="form-control"
+                             Data=@_environments />
+        @*<TelerikTextBox @bind-Value=@newTenant.Environment Class="form-control" />*@
+      </div>
+      <div class="col-3">
+        <label for="DatabaseName" class="form-label">Database Name</label>
+      </div>
+      <div class="col-9">
+        <TelerikTextBox @bind-Value=@newTenant.DatabaseName Class="form-control" />
+      </div>
+    </div>
+    <div class="row p-2">
+      <div class="col text-center">
+        <TelerikButton Primary=@true
+                       Title="Save"
+                       IconClass="fa-duotone fa-floppy-disk"
+                       OnClick=@SaveTenant>Save</TelerikButton>
+      </div>
+    </div>
+  </WindowContent>
+</TelerikWindow>
+
+<TelerikNotification @ref="notification"
+                     HorizontalPosition="NotificationHorizontalPosition.Center" />

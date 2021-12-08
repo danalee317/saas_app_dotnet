@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\saas\MultiFamilyPortal.SaaS\MultiFamilyPortal.SaaS.csproj" />
     <ProjectReference Include="..\MultiFamilyPortal.Abstractions\MultiFamilyPortal.Abstractions.csproj" />
   </ItemGroup>
 

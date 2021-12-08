@@ -2,51 +2,57 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.Data.Services;
 
 namespace MultiFamilyPortal.Data.Internals
 {
     public class DbContextStartupTask : IStartupTask
     {
-        private MFPContext _db { get; }
+        private IStartupContextHelper _contextHelper { get; }
 
-        public DbContextStartupTask(MFPContext db)
+        public DbContextStartupTask(IStartupContextHelper contextHelper)
         {
-            _db = db;
+            _contextHelper = contextHelper;
         }
 
         public async Task StartAsync()
         {
-            await SeedSettings();
-            await SeedUnderwritingGuidance();
+            await _contextHelper.RunDatabaseAction(SeedInternal);
         }
 
-        private async Task SeedUnderwritingGuidance()
+        private async Task SeedInternal(MFPContext db)
+        {
+            await SeedSettings(db);
+            await SeedUnderwritingGuidance(db);
+        }
+
+        private async Task SeedUnderwritingGuidance(MFPContext db)
         {
             foreach(var guidance in DefaultGuidance)
             {
-                if (await _db.UnderwritingGuidance.AnyAsync(x => string.IsNullOrEmpty(x.Market) && x.Category == guidance.Category))
+                if (await db.UnderwritingGuidance.AnyAsync(x => string.IsNullOrEmpty(x.Market) && x.Category == guidance.Category))
                     continue;
 
-                _db.UnderwritingGuidance.Add(guidance);
-                await _db.SaveChangesAsync();
+                db.UnderwritingGuidance.Add(guidance);
+                await db.SaveChangesAsync();
             }
         }
 
-        private async Task SeedSettings()
+        private async Task SeedSettings(MFPContext db)
         {
             var type = typeof(PortalSetting);
             var props = type.GetFields(BindingFlags.Static | BindingFlags.Public);
             foreach(var prop in props)
             {
-                if (await _db.Settings.AnyAsync(x => x.Key == prop.Name))
+                if (await db.Settings.AnyAsync(x => x.Key == prop.Name))
                     continue;
 
                 var defaultValueAttr = prop.GetCustomAttribute<DefaultValueAttribute>();
-                _db.Settings.Add(new Models.Setting {
+                db.Settings.Add(new Models.Setting {
                     Key = prop.Name,
                     Value = !string.IsNullOrEmpty(defaultValueAttr?.Value?.ToString()) ? defaultValueAttr.Value.ToString() : string.Empty,
                 });
-                await _db.SaveChangesAsync();
+                await db.SaveChangesAsync();
             }
         }
 

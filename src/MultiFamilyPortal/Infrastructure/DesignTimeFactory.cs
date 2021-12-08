@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Options;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.SaaS.Data;
+using MultiFamilyPortal.SaaS.Models;
+using MultiFamilyPortal.SaaS.TenantProviders;
 
 namespace MultiFamilyPortal.Infrastructure
 {
@@ -14,9 +17,8 @@ namespace MultiFamilyPortal.Infrastructure
         public MFPContext CreateDbContext(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            var connString = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services
-                .AddDbContext<MFPContext>(options => options.UseSqlServer(connString))
+                .AddDbContext<MFPContext>(options => { })
                 .AddIdentity<SiteUser, IdentityRole>(options =>
                 {
                     options.User.RequireUniqueEmail = true;
@@ -35,10 +37,16 @@ namespace MultiFamilyPortal.Infrastructure
             var storeOptions = app.Services.GetRequiredService<IOptions<OperationalStoreOptions>>();
 
             var options = new DbContextOptionsBuilder<MFPContext>()
-                .UseSqlServer(connString)
                 .Options;
-
-            return new MFPContext(options, storeOptions);
+            var settings = new DatabaseSettings();
+            builder.Configuration.Bind(settings);
+            var tenant = new Tenant
+            {
+                Created = DateTimeOffset.Now,
+                DatabaseName = "MultiFamilyPortal",
+                Host = "localhost:7009"
+            };
+            return new MFPContext(options, storeOptions, new StartupTenantProvider(tenant), settings);
         }
     }
 }

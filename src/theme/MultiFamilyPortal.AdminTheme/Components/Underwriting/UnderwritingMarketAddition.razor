@@ -16,6 +16,7 @@
           <TelerikAutoComplete @bind-Value=@_newMarket 
                                Class="form-control form-control-sm w-100" 
                                ClearButton="true"
+                               Enabled=@(!_editIntent)
                                Data=@_markets />
         </div>
       </div>
@@ -104,8 +105,34 @@
   </TelerikGrid>
 
   <div class="row my-3">
+    @if(_editIntent)
+    {
+      @if(_conformation == false)
+      {
+        <div class="col-11">
+          <button class="btn btn-danger" @onclick=@(()=> _conformation=true)>Remove</button>
+        </div>
+      }
+      else
+      {
+        <div class="col-9 align-self-center">
+          <div class="text-danger">Are you sure you want to do this?</div>
+        </div>
+         <div class="col-1 align-self-center">
+          <div class="text-danger" @onclick=@OnRemoveMarket>
+            <b class="text-decoration-underline" style="cursor: pointer;">Yes</b>
+          </div>
+        </div>
+         <div class="col-1 align-self-center">
+          <div class="text-success" @onclick=@(()=> _conformation=false)>
+            <b class="text-decoration-underline" style="cursor: pointer;">No</b>
+          </div>
+        </div>
+      }
+      
+    }
     <div class="col">
-      <button class="btn btn-primary" @onclick=@OnAddMarket>Save</button>
+      <button class="btn btn-primary" @onclick=@ProcessMarket>Save</button>
     </div>
   </div>
 

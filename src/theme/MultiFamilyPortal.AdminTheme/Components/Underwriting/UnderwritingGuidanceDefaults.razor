@@ -9,12 +9,26 @@
       <TelerikButton ButtonType=@ButtonType.Button
                      Primary=@true
                      IconClass="fa-duotone fa-copy"
-                     OnClick="@(() => _windowVisibility = !_windowVisibility)"
+                     OnClick="@OnAddGuidance"
                      Title="Add Market">Add Market</TelerikButton>
     </AuthorizedPolicy>
   </GridToolBar>
   <GridColumns>
     <GridColumn Field="Market" Groupable="true">
+      <GroupHeaderTemplate>
+        <div class="d-flex justify-content-between w-100">
+           <div>Market : @(context.Value ?? "Default")</div>
+           @if(context.Value != null)
+           {
+             <div>
+               <button class="btn btn-success btn-sm"
+                       @onclick=@(()=>EditAddGuidance(context.Value.ToString())) >
+                Edit
+               </button>
+             </div>
+           }
+        </div>
+      </GroupHeaderTemplate>
       <Template>
         @{ var guidance = context as Data.Models.UnderwritingGuidance; }
         @if(string.IsNullOrEmpty(guidance.Market))
@@ -53,13 +67,13 @@
   </GridColumns>
 </TelerikGrid>
 
-<TelerikWindow @bind-Visible="@_windowVisibility" 
-               Top="25px" 
-               Modal="true" 
+<TelerikWindow @bind-Visible="@_windowVisibility"
+               Top="25px"
+               Modal="true"
                Width="1200px"
                Height="800px">
   <WindowTitle>
-    <strong>Add Market</strong>
+    <strong>@(string.IsNullOrEmpty(_marketTitle)?"Add": "Edit") Market</strong>
   </WindowTitle>
   <WindowActions>
       <WindowAction Name="Minimize"></WindowAction>
@@ -67,7 +81,7 @@
       <WindowAction Name="Close"></WindowAction>
   </WindowActions>
     <WindowContent>
-      <UnderwritingMarketAddition Guidance="@(_guidance.Where(x => string.IsNullOrEmpty(x.Market)))"
+      <UnderwritingMarketAddition Guidance="@(_guidance.Where(x => x.Market == _marketTitle))"
                                   UpdateGuidance=@RefreshGuidance />
   </WindowContent>
 </TelerikWindow>

@@ -24,7 +24,15 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private PortalNotification notification;
         private readonly IEnumerable<CostType> _expenseTypes = Enum.GetValues<CostType>();
         private string _newMarket;
-        protected override async Task OnInitializedAsync() => await LoadMarkets();
+        private bool _editIntent = false;
+        private  bool _conformation = false;
+        protected override async Task OnInitializedAsync()
+        {
+            await LoadMarkets();
+            _newMarket = Guidance.FirstOrDefault().Market;
+            _editIntent = !string.IsNullOrEmpty(_newMarket);
+            _conformation = false;
+        }
 
         private async Task LoadMarkets()
         {
@@ -38,14 +46,22 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             }
         }
 
-        private async Task OnAddMarket()
+        private async Task ProcessMarket()
         {
             if (string.IsNullOrWhiteSpace(_newMarket))
-            { 
+            {
                 notification.ShowError("Market name is required.");
                 return;
             }
 
+            if (_editIntent)
+                await OnEditMarket();
+            else
+                await OnAddMarket();
+        }
+
+        private async Task OnAddMarket()
+        {
             try
             {
                 foreach (var market in Guidance)
@@ -53,6 +69,26 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
                     market.Market = _newMarket;
                     market.Id = Guid.Empty;
                     await _client.PostAsJsonAsync($"/api/admin/underwriting/guidance", market);
+                }
+
+                notification.ShowSuccess("Markets successfully added.");
+                _logger.LogInformation($"Markets added to guidance");
+                await UpdateGuidance.InvokeAsync();
+            }
+            catch (Exception ex)
+            {
+                notification.ShowError("An unknown error occurred while adding new market");
+                _logger.LogError(ex, "Error creating a new market");
+            }
+        }
+
+        private async Task OnEditMarket()
+        {   
+            try
+            {
+                foreach (var market in Guidance)
+                {
+                    await _client.PutAsJsonAsync($"/api/admin/underwriting/guidance/{market.Id}", market);
                 }
 
                 notification.ShowSuccess("Markets successfully updated.");
@@ -63,6 +99,27 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             {
                 notification.ShowError("An unknown error occurred while updating the market");
                 _logger.LogError(ex, "Error updating markets");
+            }
+        }
+
+        private async Task OnRemoveMarket()
+        {
+            try
+            {
+                foreach (var market in Guidance)
+                {
+                    await _client.DeleteAsync($"/api/admin/underwriting/guidance/{market.Id}");
+                }
+                
+                var message  = "Markets successfully deleted.";
+                notification.ShowSuccess(message);
+                _logger.LogInformation(message);
+                await UpdateGuidance.InvokeAsync();
+            }
+            catch (Exception ex)
+            {
+                notification.ShowError("An unknown error occurred while removing the market");
+                _logger.LogError(ex, "Error deleting markets");
             }
         }
     }

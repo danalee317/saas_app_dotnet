@@ -49,9 +49,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
         private async Task UpdateExpense(double v)
         {
-            Property.Ours.Where(x => x.Category == _selected.Category)
-                         .FirstOrDefault().Amount = v;
+            var target = Property.Ours.Where(x => x.Category == _selected.Category);
+            if (!target.Any())
+                return;
 
+            target.FirstOrDefault().Amount = v;
             await OnPropertyChanged.InvokeAsync();
         }
     }

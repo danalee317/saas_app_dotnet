@@ -20,7 +20,7 @@
                         <div class="col">
                             <UnderwritingInfoBar Title="Hold Period"
                                                  Color="#FFFF99"
-                                                 Value="X Years" /> <!--Sale Date - Purchase Date | Humanize to Time-->
+                                                 Value=@($"{Property.HoldYears} Year{(Property.HoldYears>1?"s":"")}")  />
                         </div>
                         <div class="col">
                             <UnderwritingInfoBar Title="Reversion Cap"
@@ -73,8 +73,8 @@
                         </div>
                         <div class="col">
                           <UnderwritingInfoBar Title="Desired Yield"
-                                               Color="salmon"
-                                               Value="XXX" />
+                                               Color="lightgreen"
+                                               Value=@Property.DesiredYield.ToString("P2") />
                         </div>
                         <div class="col">
                           <UnderwritingInfoBar Title="NPV"

@@ -18,6 +18,9 @@ public partial class UnderwritingSummary
 
     private ReactiveCommand<Unit, Unit> RefreshCommand;
     private CompositeDisposable _disposables = new CompositeDisposable();
+    private const string _lowerColor = "#FFFF99";
+    private const string _middleColor = "lightgreen";
+    private const string _higherColor = "salmon";
 
     protected override void OnInitialized()
     {
@@ -27,6 +30,10 @@ public partial class UnderwritingSummary
         Property.WhenAnyValue(x => x.SellerCashOnCash).Select(_ => Unit.Default).InvokeCommand(RefreshCommand).DisposeWith(_disposables);
     }
 
+    private string GetDebtCoverageColor() => _debtCoverageRatio < 1.2 ? _higherColor :
+        _debtCoverageRatio < 1.5 ? _lowerColor : _middleColor;
+    private string GetCoCColor() =>
+        _sellerCashOnCash < 0.17 ? _higherColor : _sellerCashOnCash < 1.12 ? _lowerColor : _middleColor;
     private async Task Refresh()
     {
         if (_capRate != Property.CapRate)

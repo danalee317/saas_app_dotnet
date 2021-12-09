@@ -143,7 +143,7 @@ namespace MultiFamilyPortal.Converters
                             value.AddSellerItems(sellerItems);
                             break;
                         case nameof(UnderwritingAnalysis.StartDate):
-                            value.StartDate = reader.GetDateTimeOffset();
+                            value.StartDate = DateTimeOffset.Parse(reader.GetString());
                             break;
                         case nameof(UnderwritingAnalysis.State):
                             value.State = reader.GetString();

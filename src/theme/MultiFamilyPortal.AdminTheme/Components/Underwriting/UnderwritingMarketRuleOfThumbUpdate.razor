@@ -53,9 +53,6 @@
         <div class="col-md-4 my-3">
           @_currentCost.ToString("C")
         </div>
-        <div class="col-md-4 my-3">
-            @((_currentCost/_intialCost).ToString("N1")) X Original
-        </div>
         <div class="col-md-8 my-3">
           <TelerikSlider Min=@_min
                          Max=@_max
@@ -76,7 +73,7 @@
                                  Format="C"
                                  Width="100%"/>
         </div>
-        <div class="col-12 my-1">
+        <div class="col-12 my-1 text-center">
           <button class="btn btn-primary" @onclick=@InnerUpdate>Update</button>
         </div>
       </div>

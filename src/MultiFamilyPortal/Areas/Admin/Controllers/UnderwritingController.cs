@@ -219,6 +219,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 City = property.City,
                 State = property.State,
                 Zip = property.Zip,
+                Vintage = property.Vintage,
                 Market = property.Market,
                 UnderwriterId = user.Id,
                 RentableSqFt = property.Units * 800,

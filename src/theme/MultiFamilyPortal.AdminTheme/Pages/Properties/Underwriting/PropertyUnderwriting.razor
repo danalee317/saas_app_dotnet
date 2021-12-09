@@ -8,23 +8,8 @@
 else
 {
   <Animation OptionsName="Page">
-    <h3>@Property.Name</h3>
-
-    <div class="row gt-3 mt-3 mb-4">
-      <div class="col-md-3 col-sm-6">
-        <CapRateGauge Property=@Property />
-      </div>
-      <div class="col-md-3 col-sm-6">
-        <CashOnCashGauge Property=@Property />
-      </div>
-      <div class="col-md-3 col-sm-6">
-        <DebtCoverageGauge Property=@Property />
-      </div>
-      <div class="col-md-3 col-sm-6">
-        <NetOperatingIncomeGauge Property=@Property />
-      </div>
-    </div>
-
+   <UnderwritingSummary Property=@Property/>
+   
     <div class="row my-2">
       <div class="col-md-3 col-sm-6 offset-md-9 offset-sm-6">
         <TelerikDropDownList Data=@AvailableStatus

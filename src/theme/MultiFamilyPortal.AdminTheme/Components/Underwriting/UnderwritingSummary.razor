@@ -1,0 +1,99 @@
+<div class="container">
+  <div class="row underwriting-summary-bar">
+    <div class="col-12">
+      <h1 class="text-center my-3 display-5">@Property.Name</h1>
+    </div>
+    <div class="col-12 bg-secondary">
+      <div class="row">
+        <div class="col-12 ">
+          <div class="row">
+            <div class="col">
+              <UnderwritingInfoBar Title="Start Date"
+                                   Color=@_lowerColor
+                                   Value=@Property.StartDate.ToString("MM/dd/yyyy") />
+            </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="Price"
+                                   Color=@_middleColor
+                                   Value=@(Property.PurchasePrice.ToString("C")) />
+            </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="Hold Period"
+                                   Color=@_lowerColor
+                                   Value=@($"{Property.HoldYears} {(Property.HoldYears == 1 ? "Year" : "Years")}") />
+            </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="Reversion Cap"
+                                   Color=@_lowerColor
+                                   Value="XXX" />
+            </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="Number of Units"
+                                   Color=@_lowerColor
+                                   Value=@Property.Units.ToString("N0") />
+            </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="Year Built"
+                                   Color=@_lowerColor
+                                   Value=@Property.Vintage.ToString("0000") />
+            </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="Total Square Ft"
+                                   Color=@_middleColor
+                                   Value=@Property.RentableSqFt.ToString("N0") />
+            </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="Ann. CoC Return"
+                                   Color=@_lowerColor
+                                   Value=@Property.CashOnCash.ToString("P") />
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="row">
+            <div class="col">
+              <UnderwritingInfoBar Title="Actual Cap Rate"
+                                   Color=@_middleColor
+                                   Value=@_capRate.ToString("P2") />
+            </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="Purchase DSCR"
+                                   Color=@GetDebtCoverageColor()
+                                   Value=@_debtCoverageRatio.ToString("N2") />
+            </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="Purchase CoC"
+                                   Color=@GetCoCColor()
+                                   Value=@_sellerCashOnCash.ToString("P2") />
+            </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="Reversion Value"
+                                   Color=@_higherColor
+                                   Value="XXX" />
+            </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="Desired Yield"
+                                   Color=@_middleColor
+                                   Value=@Property.DesiredYield.ToString("P2") />
+            </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="NPV"
+                                   Color=@_middleColor
+                                   Value="XXX" />
+            </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="IRR"
+                                   Color=@_higherColor
+                                   Value="XXX" />
+            </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="Total Ann. Return"
+                                   Color=@_middleColor
+                                   Value="XXX" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

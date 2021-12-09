@@ -241,6 +241,9 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
         public DateTimeOffset Timestamp { get; set; }
 
+        [Reactive]
+        public DateTimeOffset StartDate { get; set; }
+
         public string Name { get; set; }
 
         public string Underwriter { get; set; }

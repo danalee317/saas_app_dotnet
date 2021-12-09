@@ -142,6 +142,9 @@ namespace MultiFamilyPortal.Converters
                             var sellerItems = lineItemConverter.Read(ref reader, typeof(List<UnderwritingAnalysisLineItem>), options);
                             value.AddSellerItems(sellerItems);
                             break;
+                        case nameof(UnderwritingAnalysis.StartDate):
+                            value.StartDate = reader.GetDateTimeOffset();
+                            break;
                         case nameof(UnderwritingAnalysis.State):
                             value.State = reader.GetString();
                             break;
@@ -220,6 +223,7 @@ namespace MultiFamilyPortal.Converters
             WriteNumber(writer, nameof(UnderwritingAnalysis.RentableSqFt), value.RentableSqFt);
             WriteNumber(writer, nameof(UnderwritingAnalysis.SECAttorney), value.SECAttorney);
             WriteArray(writer, nameof(UnderwritingAnalysis.Sellers), value.Sellers, options);
+            Write(writer, nameof(UnderwritingAnalysis.StartDate), value.StartDate);
             Write(writer, nameof(UnderwritingAnalysis.State), value.State);
             Write(writer, nameof(UnderwritingAnalysis.Status), value.Status);
             WriteNumber(writer, nameof(UnderwritingAnalysis.StrikePrice), value.StrikePrice);

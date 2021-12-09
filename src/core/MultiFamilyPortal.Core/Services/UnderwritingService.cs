@@ -74,6 +74,7 @@ namespace MultiFamilyPortal.Services
                     PurchasePrice = x.PurchasePrice,
                     RentableSqFt = x.RentableSqFt,
                     SECAttorney = x.SECAttorney,
+                    StartDate = x.StartDate,
                     State = x.State,
                     Status = x.Status,
                     StrikePrice = x.StrikePrice,
@@ -492,6 +493,7 @@ namespace MultiFamilyPortal.Services
             property.PurchasePrice = analysis.PurchasePrice;
             property.RentableSqFt = analysis.RentableSqFt;
             property.SECAttorney = analysis.SECAttorney;
+            property.StartDate = analysis.StartDate;
             property.State = analysis.State;
             property.Status = analysis.Status;
             property.StrikePrice = analysis.StrikePrice;

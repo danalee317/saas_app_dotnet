@@ -2,226 +2,228 @@
 
 @if (SiteUser != null)
 {
+  <Animation OptionsName="Page">
   <div class="row">
-    <div class="col-md-2 text-center">
-      <Gravatar Email="@SiteUser.Email" Size="150" />
-      <br />
-      <h4 class="pt-2">@SiteUser.DisplayName</h4>
-      <div class="h-200 pt-3"></div>
-    </div>
-    <div class="col-md-8">
-      <TelerikTabStrip TabPosition="TabPosition.Top">
-        <TabStripTab>
-          <HeaderTemplate>
-            <i class="fa-duotone fa-user-circle"></i>&nbsp; My Profile
-          </HeaderTemplate>
-          <Content>
-            <div class="row">
-              <div class="col-6">
-                <div class="form-floating">
-                  <TelerikTextBox Class="form-control"
-                                  PlaceHolder="Enter your first name"
-                                  @bind-Value="@SiteUser.FirstName"
-                                  Width="100%" />
-                  <label for="FirstName" class="form-label">First Name</label>
-                </div>
-              </div>
-              <div class="col-6">
-                <div class="form-floating">
-                  <TelerikTextBox Class="form-control"
-                                  PlaceHolder="Enter your last name"
-                                  @bind-Value="@SiteUser.LastName"
-                                  Width="100%"/>
-
-                  <label for="LastName" class="form-label">Last Name</label>
-                </div>
-              </div>
+  <div class="col-md-2 text-center">
+    <Gravatar Email="@SiteUser.Email" Size="150" />
+    <br />
+    <h4 class="pt-2">@SiteUser.DisplayName</h4>
+    <div class="h-200 pt-3"></div>
+  </div>
+  <div class="col-md-8">
+  <TelerikTabStrip TabPosition="TabPosition.Top">
+    <TabStripTab>
+      <HeaderTemplate>
+        <i class="fa-duotone fa-user-circle"></i>&nbsp; My Profile
+      </HeaderTemplate>
+      <Content>
+        <div class="row">
+          <div class="col-6">
+            <div class="form-floating">
+              <TelerikTextBox Class="form-control"
+                              PlaceHolder="Enter your first name"
+                              @bind-Value="@SiteUser.FirstName"
+                              Width="100%" />
+              <label for="FirstName" class="form-label">First Name</label>
             </div>
-            <div class="row">
-              <div class="col-6">
-                <div class="form-floating">
-                  <TelerikTextBox Class="form-control"
-                                  PlaceHolder="Real Estate Guru"
-                                  @bind-Value="@SiteUser.Title"
-                                  Width="100%"/>
+          </div>
+          <div class="col-6">
+            <div class="form-floating">
+              <TelerikTextBox Class="form-control"
+                              PlaceHolder="Enter your last name"
+                              @bind-Value="@SiteUser.LastName"
+                              Width="100%"/>
 
-                  <label for="Title" class="form-label">Title</label>
-                </div>
-              </div>
-              <div class="col-6">
-                <div class="form-floating">
-                  <TelerikMaskedTextBox Class="form-control"
-                                  PlaceHolder="Enter your phone number"
-                                  Mask="(000) 000-0000"
-                                  @bind-Value="@SiteUser.PhoneNumber"
-                                  Width="100%"/>
-                  <label for="Phone" class="form-label">Phone</label>
-                </div>
-              </div>
-              @if(_siteUser)
-              {
-                <div class="col-12">
-                  <div class="form-group">
-                    <label>Bio</label>
-                    <TelerikEditor @bind-Value="@SiteUser.Bio"
-                                    Height="400px">
-                    </TelerikEditor>
-                  </div>
-                </div>
-              }
+              <label for="LastName" class="form-label">Last Name</label>
             </div>
-          </Content>
-        </TabStripTab>
-        @if(_siteUser)
-        {
-        <TabStripTab>
-          <HeaderTemplate>
-            <i class="fa-duotone fa-hashtag"></i>&nbsp; Social Media
-          </HeaderTemplate>
-          <Content>
-            <div class="row">
-              <div class="col-12">
-                <h3>Social Profiles</h3>
-              </div>
-            </div>
-            <div class="row">
-              @foreach(var socialLink in Links)
-              {
-                <div class="col-lg-6">
-                  <div class="form-row row p-2">
-                    <div class="col-sm-1">
-                      <i class="@socialLink.Icon fa-2x"></i>
-                    </div>
-                    <div class="col">
-                      <TelerikTextBox Class="form-control"
-                                      PlaceHolder="@socialLink.Placeholder"
-                                      Width="100%"
-                                      @bind-Value="socialLink.Value" />
-                    </div>
-                  </div>
-                </div>
-              }
-            </div>
-          </Content>
-        </TabStripTab>
-        }
-
-        <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
-          <TabStripTab>
-            <HeaderTemplate>
-              <i class="fa-duotone fa-bullseye-arrow"></i>&nbsp; Goals
-            </HeaderTemplate>
-            <Content>
-              <h4>Weekly Goals</h4>
-              <div class="row gt-3">
-                <label for="PropertiesUnderwritten" class="col-sm-2 col-form col-form-label">Properties Underwritten</label>
-                <div class="col-sm-4">
-                  <TelerikNumericTextBox @bind-Value=@Goals.PropertiesUnderwritten
-                                  Min="0"
-                                  Step="1"
-                                  Format="G"
-                                  Class="form-control" />
-                </div>
-
-                <label for="LOISubmitted" class="col-sm-2 col-form col-form-label">LOI's Submitted</label>
-                <div class="col-sm-4">
-                  <TelerikNumericTextBox @bind-Value=@Goals.LOISubmitted
-                                  Min="0"
-                                  Step="1"
-                                  Format="G"
-                                  Class="form-control" />
-                </div>
-
-                <label for="BrokersContacted" class="col-sm-2 col-form col-form-label">Brokers Contacted</label>
-                <div class="col-sm-4">
-                  <TelerikNumericTextBox @bind-Value=@Goals.BrokersContacted
-                                  Min="0"
-                                  Step="1"
-                                  Format="G"
-                                  Class="form-control" />
-                </div>
-
-                <label for="InvestorsContacted" class="col-sm-2 col-form col-form-label">Investors Contacted</label>
-                <div class="col-sm-4">
-                  <TelerikNumericTextBox @bind-Value=@Goals.InvestorsContacted
-                                  Min="0"
-                                  Step="1"
-                                  Format="G"
-                                  Class="form-control" />
-                </div>
-
-              </div>
-            </Content>
-          </TabStripTab>
-        </AuthorizedPolicy>
-
-        @if(SiteUser.LocalAccount)
-        {
-          <TabStripTab>
-            <HeaderTemplate>
-              <i class="fa-duotone fa-unlock-alt"></i>&nbsp; Account
-            </HeaderTemplate>
-            <Content>
-              <EditForm Model=@ChangePassword
-                        OnValidSubmit=@OnChangePassword>
-                <DataAnnotationsValidator />
-                <ServerSideValidator />
-                <ValidationSummary />
-                <div class="row gt-3 p-2">
-                  <div class="col-md-6 col-sm-12">
-                    <h3>Change Password</h3>
-                  </div>
-                </div>
-                <div class="row gt-3 p-2">
-                  <div class="col-md-6 col-sm-12">
-                    <div class="form-floating">
-                      <TelerikTextBox Class="form-control" Password="true" @bind-Value=@ChangePassword.CurrentPassword />
-                      <label for="CurrentPassword" class="form-label">Current Password</label>
-                    </div>
-                  </div>
-                </div>
-                <div class="row gt-3 p-2">
-                  <div class="col-md-6 col-sm-12">
-                    <div class="form-floating">
-                      <TelerikTextBox Class="form-control" Password="true" @bind-Value=@ChangePassword.Password />
-                      <label for="Password" class="form-label">New Password</label>
-                    </div>
-                  </div>
-                </div>
-                <div class="row gt-3 p-2">
-                  <div class="col-md-6 col-sm-12">
-                    <div class="form-floating">
-                      <TelerikTextBox Class="form-control" Password="true" @bind-Value=@ChangePassword.ConfirmPassword />
-                      <label for="ConfirmPassword" class="form-label">Confirm Password</label>
-                    </div>
-                  </div>
-                </div><div class="row gt-3 p-2">
-                  <div class="col-md-6 col-sm-12 text-center">
-                    <TelerikButton ButtonType=@ButtonType.Submit
-                                   Class="btn-secondary"
-                                   Title="ChangePassword">
-                      Change Password
-                    </TelerikButton>
-                  </div>
-                </div>
-              </EditForm>
-            </Content>
-          </TabStripTab>
-        }
-      </TelerikTabStrip>
-
-      <hr />
-
-      <div class="row">
-        <div class="col-4"></div>
-        <div class="col-4">
-          <div class="form-group">
-            <button @onclick="Update" class="btn btn-primary">Update</button>
           </div>
         </div>
+        <div class="row">
+          <div class="col-6">
+            <div class="form-floating">
+              <TelerikTextBox Class="form-control"
+                              PlaceHolder="Real Estate Guru"
+                              @bind-Value="@SiteUser.Title"
+                              Width="100%"/>
+
+              <label for="Title" class="form-label">Title</label>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-floating">
+              <TelerikMaskedTextBox Class="form-control"
+                                    PlaceHolder="Enter your phone number"
+                                    Mask="(000) 000-0000"
+                                    @bind-Value="@SiteUser.PhoneNumber"
+                                    Width="100%"/>
+              <label for="Phone" class="form-label">Phone</label>
+            </div>
+          </div>
+          @if(_siteUser)
+          {
+            <div class="col-12">
+              <div class="form-group">
+                <label>Bio</label>
+                <TelerikEditor @bind-Value="@SiteUser.Bio"
+                               Height="400px">
+                </TelerikEditor>
+              </div>
+            </div>
+          }
+        </div>
+      </Content>
+    </TabStripTab>
+    @if(_siteUser)
+    {
+      <TabStripTab>
+        <HeaderTemplate>
+          <i class="fa-duotone fa-hashtag"></i>&nbsp; Social Media
+        </HeaderTemplate>
+        <Content>
+          <div class="row">
+            <div class="col-12">
+              <h3>Social Profiles</h3>
+            </div>
+          </div>
+          <div class="row">
+            @foreach(var socialLink in Links)
+            {
+              <div class="col-lg-6">
+                <div class="form-row row p-2">
+                  <div class="col-sm-1">
+                    <i class="@socialLink.Icon fa-2x"></i>
+                  </div>
+                  <div class="col">
+                    <TelerikTextBox Class="form-control"
+                                    PlaceHolder="@socialLink.Placeholder"
+                                    Width="100%"
+                                    @bind-Value="socialLink.Value" />
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </Content>
+      </TabStripTab>
+    }
+
+    <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
+      <TabStripTab>
+        <HeaderTemplate>
+          <i class="fa-duotone fa-bullseye-arrow"></i>&nbsp; Goals
+        </HeaderTemplate>
+        <Content>
+          <h4>Weekly Goals</h4>
+          <div class="row gt-3">
+            <label for="PropertiesUnderwritten" class="col-sm-2 col-form col-form-label">Properties Underwritten</label>
+            <div class="col-sm-4">
+              <TelerikNumericTextBox @bind-Value=@Goals.PropertiesUnderwritten
+                                     Min="0"
+                                     Step="1"
+                                     Format="G"
+                                     Class="form-control" />
+            </div>
+
+            <label for="LOISubmitted" class="col-sm-2 col-form col-form-label">LOI's Submitted</label>
+            <div class="col-sm-4">
+              <TelerikNumericTextBox @bind-Value=@Goals.LOISubmitted
+                                     Min="0"
+                                     Step="1"
+                                     Format="G"
+                                     Class="form-control" />
+            </div>
+
+            <label for="BrokersContacted" class="col-sm-2 col-form col-form-label">Brokers Contacted</label>
+            <div class="col-sm-4">
+              <TelerikNumericTextBox @bind-Value=@Goals.BrokersContacted
+                                     Min="0"
+                                     Step="1"
+                                     Format="G"
+                                     Class="form-control" />
+            </div>
+
+            <label for="InvestorsContacted" class="col-sm-2 col-form col-form-label">Investors Contacted</label>
+            <div class="col-sm-4">
+              <TelerikNumericTextBox @bind-Value=@Goals.InvestorsContacted
+                                     Min="0"
+                                     Step="1"
+                                     Format="G"
+                                     Class="form-control" />
+            </div>
+
+          </div>
+        </Content>
+      </TabStripTab>
+    </AuthorizedPolicy>
+
+    @if(SiteUser.LocalAccount)
+    {
+      <TabStripTab>
+        <HeaderTemplate>
+          <i class="fa-duotone fa-unlock-alt"></i>&nbsp; Account
+        </HeaderTemplate>
+        <Content>
+          <EditForm Model=@ChangePassword
+                    OnValidSubmit=@OnChangePassword>
+            <DataAnnotationsValidator />
+            <ServerSideValidator />
+            <ValidationSummary />
+            <div class="row gt-3 p-2">
+              <div class="col-md-6 col-sm-12">
+                <h3>Change Password</h3>
+              </div>
+            </div>
+            <div class="row gt-3 p-2">
+              <div class="col-md-6 col-sm-12">
+                <div class="form-floating">
+                  <TelerikTextBox Class="form-control" Password="true" @bind-Value=@ChangePassword.CurrentPassword />
+                  <label for="CurrentPassword" class="form-label">Current Password</label>
+                </div>
+              </div>
+            </div>
+            <div class="row gt-3 p-2">
+              <div class="col-md-6 col-sm-12">
+                <div class="form-floating">
+                  <TelerikTextBox Class="form-control" Password="true" @bind-Value=@ChangePassword.Password />
+                  <label for="Password" class="form-label">New Password</label>
+                </div>
+              </div>
+            </div>
+            <div class="row gt-3 p-2">
+              <div class="col-md-6 col-sm-12">
+                <div class="form-floating">
+                  <TelerikTextBox Class="form-control" Password="true" @bind-Value=@ChangePassword.ConfirmPassword />
+                  <label for="ConfirmPassword" class="form-label">Confirm Password</label>
+                </div>
+              </div>
+            </div><div class="row gt-3 p-2">
+              <div class="col-md-6 col-sm-12 text-center">
+                <TelerikButton ButtonType=@ButtonType.Submit
+                               Class="btn-secondary"
+                               Title="ChangePassword">
+                  Change Password
+                </TelerikButton>
+              </div>
+            </div>
+          </EditForm>
+        </Content>
+      </TabStripTab>
+    }
+  </TelerikTabStrip>
+
+  <hr />
+
+  <div class="row">
+    <div class="col-4"></div>
+    <div class="col-4">
+      <div class="form-group">
+        <button @onclick="Update" class="btn btn-primary">Update</button>
       </div>
     </div>
   </div>
+  </div>
+  </div>
+  </Animation>
 }
 
 <PortalNotification @ref="notification" />

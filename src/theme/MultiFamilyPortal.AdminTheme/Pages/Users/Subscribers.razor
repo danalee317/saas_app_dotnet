@@ -1,25 +1,26 @@
 ﻿@page "/admin/subscribers"
 @using MultiFamilyPortal.Data.Models
+<Animation OptionsName="Page">
+  <h3>Subscribers</h3>
 
-<h3>Subscribers</h3>
+  <p>The following users have signed up to subscribe to notifications. They will be sent notifications for any news letters that you send out or any blog posts that you publish.</p>
 
-<p>The following users have signed up to subscribe to notifications. They will be sent notifications for any news letters that you send out or any blog posts that you publish.</p>
-
-<TelerikGrid Data=@_subscribers>
-  <GridColumns>
-    <GridColumn Field=@nameof(Subscriber.Email) Title=" ">
-      <Template>
-        @{ var subscriber = context as Subscriber; }
-        <div class="text-center">
-          <Gravatar Email=@subscriber.Email />
-        </div>
-      </Template>
-    </GridColumn>
-    <GridColumn Field=@nameof(Subscriber.Email) />
-    <GridColumn Field=@nameof(Subscriber.IsActive) />
-    <GridColumn Field=@nameof(Subscriber.City) />
-    <GridColumn Field=@nameof(Subscriber.Region) />
-    <GridColumn Field=@nameof(Subscriber.Country) />
-    <GridColumn Field=@nameof(Subscriber.Timestamp) DisplayFormat="{0:MMMM dd yyyy HH:mm}" />
-  </GridColumns>
-</TelerikGrid>
+  <TelerikGrid Data=@_subscribers>
+    <GridColumns>
+      <GridColumn Field=@nameof(Subscriber.Email) Title=" ">
+        <Template>
+          @{ var subscriber = context as Subscriber; }
+          <div class="text-center">
+            <Gravatar Email=@subscriber.Email />
+          </div>
+        </Template>
+      </GridColumn>
+      <GridColumn Field=@nameof(Subscriber.Email) />
+      <GridColumn Field=@nameof(Subscriber.IsActive) />
+      <GridColumn Field=@nameof(Subscriber.City) />
+      <GridColumn Field=@nameof(Subscriber.Region) />
+      <GridColumn Field=@nameof(Subscriber.Country) />
+      <GridColumn Field=@nameof(Subscriber.Timestamp) DisplayFormat="{0:MMMM dd yyyy HH:mm}" />
+    </GridColumns>
+  </TelerikGrid>
+</Animation>

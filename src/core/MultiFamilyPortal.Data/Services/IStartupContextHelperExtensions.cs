@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using MultiFamilyPortal.Data.Models;
 
 namespace MultiFamilyPortal.Data.Services
 {
@@ -10,7 +11,7 @@ namespace MultiFamilyPortal.Data.Services
         public static Task RunRoleManagerAction(this IStartupContextHelper contextHelper, Func<RoleManager<IdentityRole>, Task> action) =>
             contextHelper.RunRoleManagerAction((roleManager, tenant) => action(roleManager));
 
-        public static Task RunUserManagerAction(this IStartupContextHelper contextHelper, Func<UserManager<MFPContext>, Task> action) =>
+        public static Task RunUserManagerAction(this IStartupContextHelper contextHelper, Func<UserManager<SiteUser>, Task> action) =>
             contextHelper.RunUserManagerAction((userManager, tenant) => action(userManager));
     }
 }

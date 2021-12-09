@@ -1,20 +1,21 @@
 ﻿@page "/admin/settings"
 @using MultiFamilyPortal.AdminTheme.Components.Settings
-
-<TelerikTabStrip TabPosition=@TabPosition.Top >
-  <TabStripTab Title="Settings">
-    <PortalDbSettings />
-  </TabStripTab>
-  <TabStripTab Title="Highlighted Users">
-    <HighlightedUsers />
-  </TabStripTab>
-  <TabStripTab Title="Email Templates">
-    <EmailTemplates />
-  </TabStripTab>
-  <TabStripTab Title="Theme">
-    <SiteThemes />
-  </TabStripTab>
-  <TabStripTab Title="Branding">
-    <Branding />
-  </TabStripTab>
-</TelerikTabStrip>
+<Animation OptionsName="Page">
+  <TelerikTabStrip TabPosition=@TabPosition.Top >
+    <TabStripTab Title="Settings">
+      <PortalDbSettings />
+    </TabStripTab>
+    <TabStripTab Title="Highlighted Users">
+      <HighlightedUsers />
+    </TabStripTab>
+    <TabStripTab Title="Email Templates">
+      <EmailTemplates />
+    </TabStripTab>
+    <TabStripTab Title="Theme">
+      <SiteThemes />
+    </TabStripTab>
+    <TabStripTab Title="Branding">
+      <Branding />
+    </TabStripTab>
+  </TelerikTabStrip>
+</Animation>

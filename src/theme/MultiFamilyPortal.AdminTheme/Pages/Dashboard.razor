@@ -1,51 +1,51 @@
 ﻿@page "/admin"
 
 <SiteTitle Title="Dashboard" />
+<Animation OptionsName="Page">
+  <h3>Dashboard</h3>
 
-<h3>Dashboard</h3>
-
-<div class="row mt-3">
-  <div class="col">
-    <h4>Underwriting</h4>
+  <div class="row mt-3">
+    <div class="col">
+      <h4>Underwriting</h4>
+    </div>
   </div>
-</div>
 
-<div class="row">
-  <div class="col-md-4 col-sm-6">
-    <DashboardGauge Value=@Analytics.UnderwrittenLast7Days
-                    Expected=@Analytics.ExpectedUnderwrittenLast7Days
-                    Label="Last 7 Days"/>
-  </div>
-  <div class="col-md-4 col-sm-6">
-    <DashboardGauge Value=@Analytics.UnderwrittenLast30Days
-                    Expected=@Analytics.ExpectedUnderwrittenLast30Days
-                    Label="Last 30 Days" />
-  </div>
-  <div class="col-md-4 col-sm-6">
+  <div class="row">
+    <div class="col-md-4 col-sm-6">
+      <DashboardGauge Value=@Analytics.UnderwrittenLast7Days
+                      Expected=@Analytics.ExpectedUnderwrittenLast7Days
+                      Label="Last 7 Days" />
+    </div>
+    <div class="col-md-4 col-sm-6">
+      <DashboardGauge Value=@Analytics.UnderwrittenLast30Days
+                      Expected=@Analytics.ExpectedUnderwrittenLast30Days
+                      Label="Last 30 Days" />
+    </div>
+    <div class="col-md-4 col-sm-6">
 
+    </div>
   </div>
-</div>
 
-<div class="row mt-3">
-  <div class="col">
-    <h4>Activity</h4>
+  <div class="row mt-3">
+    <div class="col">
+      <h4>Activity</h4>
+    </div>
   </div>
-</div>
 
-<div class="row">
-  <div class="col-md-4 col-sm-6">
-    @*<DashboardGauge Value=@Analytics.UnderwrittenLast7Days
+  <div class="row">
+    <div class="col-md-4 col-sm-6">
+      @*<DashboardGauge Value=@Analytics.UnderwrittenLast7Days
                     Expected=@Analytics.ExpectedUnderwrittenLast7Days
                     Label="Last 7 Days"/>*@
-  </div>
-  <div class="col-md-4 col-sm-6">
-    @*<DashboardGauge Value=@Analytics.UnderwrittenLast30Days
+    </div>
+    <div class="col-md-4 col-sm-6">
+      @*<DashboardGauge Value=@Analytics.UnderwrittenLast30Days
                     Expected=@Analytics.ExpectedUnderwrittenLast30Days
                     Label="Last 30 Days" />*@
-  </div>
-  <div class="col-md-4">
+    </div>
+    <div class="col-md-4">
 
+    </div>
   </div>
-</div>
-
+</Animation>
 <PortalNotification @ref="notification" />

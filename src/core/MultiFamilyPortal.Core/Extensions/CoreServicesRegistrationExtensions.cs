@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Net.Http.Headers;
 using Azure.Storage.Blobs;
+using BlazorAnimation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
@@ -71,6 +72,14 @@ namespace MultiFamilyPortal.Extensions
                 options.SupportedUICultures = supportedCultures;
             });
 
+            services.Configure<AnimationOptions>("Page", options =>
+            {
+                options.Effect = Effect.FadeIn;
+                options.Speed = Speed.Fast;
+                options.Delay = TimeSpan.FromMilliseconds(100);
+                options.IterationCount = 1;
+            });
+
             services.AddRouting(options => options.LowercaseUrls = true);
 
             // Setup HttpClient for server side in a client side compatible fashion
@@ -80,7 +89,7 @@ namespace MultiFamilyPortal.Extensions
                 // Creating the URI helper needs to wait until the JS Runtime is initialized, so defer it.
                 var uriHelper = s.GetRequiredService<NavigationManager>();
                 var handler = s.GetRequiredService<BlazorAuthenticationHandler>();
-                var client =  new HttpClient(handler)
+                var client = new HttpClient(handler)
                 {
                     BaseAddress = new Uri(uriHelper.BaseUri)
                 };

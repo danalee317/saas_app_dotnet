@@ -3,132 +3,133 @@
 
 @if(Property is null)
 {
-    <TelerikLoader Type="LoaderType.ConvergingSpinner" />
+  <TelerikLoader Type="LoaderType.ConvergingSpinner" />
 }
 else
 {
-<h3>@Property.Name</h3>
+  <Animation OptionsName="Page">
+    <h3>@Property.Name</h3>
 
-<div class="row gt-3 mt-3 mb-4">
-  <div class="col-md-3 col-sm-6">
-    <CapRateGauge Property=@Property />
-  </div>
-  <div class="col-md-3 col-sm-6">
-    <CashOnCashGauge Property=@Property />
-  </div>
-  <div class="col-md-3 col-sm-6">
-    <DebtCoverageGauge Property=@Property />
-  </div>
-  <div class="col-md-3 col-sm-6">
-    <NetOperatingIncomeGauge Property=@Property />
-  </div>
-</div>
-
-<div class="row my-2">
-  <div class="col-md-3 col-sm-6 offset-md-9 offset-sm-6">
-    <TelerikDropDownList Data=@AvailableStatus
-                         @bind-Value=@Property.Status>
-      <ValueTemplate>
-        @context.Humanize(LetterCasing.Title)
-      </ValueTemplate>
-      <ItemTemplate>
-        @context.Humanize(LetterCasing.Title)
-      </ItemTemplate>
-    </TelerikDropDownList>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-12">
-    <TelerikWizard>
-      <WizardSettings >
-        <WizardStepperSettings Linear=@false />
-      </WizardSettings>
-      <WizardSteps>
-        <WizardStep Label="Property Info">
-          <Content>
-            <UnderwritingPropertyInfoTab Property=@Property />
-          </Content>
-        </WizardStep>
-        <WizardStep Label="Financials">
-          <Content>
-            <TelerikTabStrip TabPosition="TabPosition.Top">
-              <TabStripTab Title="Seller Info">
-                <UnderwritingSellerInfoTab Property=@Property />
-              </TabStripTab>
-              <TabStripTab Title="Our Info">
-                <UnderwritingOurInfoTab Property=@Property />
-              </TabStripTab>
-              <TabStripTab Title="Rule of Thumb">
-                <UnderwritingMarketRuleOfThumb Property=@Property />
-              </TabStripTab>
-            </TelerikTabStrip>
-          </Content>
-        </WizardStep>
-        <WizardStep Label="Closing">
-          <Content>
-            <TelerikTabStrip TabPosition="TabPosition.Top">
-              <TabStripTab Title="Mortgage">
-                <UnderwritingMortgagesTab Property=@Property />
-              </TabStripTab>
-              <TabStripTab Title="Closing Costs">
-                <UnderwritingClosingCostsTab Property=@Property />
-              </TabStripTab>
-              <TabStripTab Title="Summary">
-                <UnderwritingSummaryTab Property=@Property />
-              </TabStripTab>
-            </TelerikTabStrip>
-          </Content>
-        </WizardStep>
-        <WizardStep Label="Files/Notes">
-          <Content>
-            <TelerikTabStrip TabPosition="TabPosition.Top">
-              <TabStripTab Title="Bucketlist">
-                <UnderwritingBucketlistTab Property=@Property />
-              </TabStripTab>
-              <TabStripTab Title="Notes">
-                <UnderwritingNotesTab Property=@Property />
-              </TabStripTab>
-              <TabStripTab Title="Files">
-                <UnderwritingFilesTab Property=@Property />
-              </TabStripTab>
-            </TelerikTabStrip>
-          </Content>
-        </WizardStep>
-        <WizardStep Label="Rent Roll">
-          <Content>
-            <TelerikTabStrip TabPosition="TabPosition.Top">
-              <TabStripTab Title="Models">
-                <h2>Models</h2>
-              </TabStripTab>
-              <TabStripTab Title="Units">
-                <h2>Units</h2>
-              </TabStripTab>
-            </TelerikTabStrip>
-          </Content>
-        </WizardStep>
-      </WizardSteps>
-      
-    </TelerikWizard>
-  </div>
-</div>
-
-<AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
-  <div class="row text-center my-4">
-    <div class="col-md-2 offset-md-3 text-center">
-      <TelerikButton Title="Update"
-                     Primary="true"
-                     ButtonType=@ButtonType.Button
-                     OnClick=@OnUpdateProperty>
-        Update
-      </TelerikButton>
+    <div class="row gt-3 mt-3 mb-4">
+      <div class="col-md-3 col-sm-6">
+        <CapRateGauge Property=@Property />
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <CashOnCashGauge Property=@Property />
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <DebtCoverageGauge Property=@Property />
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <NetOperatingIncomeGauge Property=@Property />
+      </div>
     </div>
-    <div class="col-md-2 text-center">
-      <a class="btn btn-secondary" href="/api/admin/underwriting/property/exportUnderwriting/@propertyId" target="_blank">Download Underwriting</a>
-    </div>
-  </div>
-</AuthorizedPolicy>
 
+    <div class="row my-2">
+      <div class="col-md-3 col-sm-6 offset-md-9 offset-sm-6">
+        <TelerikDropDownList Data=@AvailableStatus
+                             @bind-Value=@Property.Status>
+          <ValueTemplate>
+            @context.Humanize(LetterCasing.Title)
+          </ValueTemplate>
+          <ItemTemplate>
+            @context.Humanize(LetterCasing.Title)
+          </ItemTemplate>
+        </TelerikDropDownList>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <TelerikWizard>
+          <WizardSettings >
+            <WizardStepperSettings Linear=@false />
+          </WizardSettings>
+          <WizardSteps>
+            <WizardStep Label="Property Info">
+              <Content>
+                <UnderwritingPropertyInfoTab Property=@Property />
+              </Content>
+            </WizardStep>
+            <WizardStep Label="Financials">
+              <Content>
+                <TelerikTabStrip TabPosition="TabPosition.Top">
+                  <TabStripTab Title="Seller Info">
+                    <UnderwritingSellerInfoTab Property=@Property />
+                  </TabStripTab>
+                  <TabStripTab Title="Our Info">
+                    <UnderwritingOurInfoTab Property=@Property />
+                  </TabStripTab>
+                  <TabStripTab Title="Rule of Thumb">
+                    <UnderwritingMarketRuleOfThumb Property=@Property />
+                  </TabStripTab>
+                </TelerikTabStrip>
+              </Content>
+            </WizardStep>
+            <WizardStep Label="Closing">
+              <Content>
+                <TelerikTabStrip TabPosition="TabPosition.Top">
+                  <TabStripTab Title="Mortgage">
+                    <UnderwritingMortgagesTab Property=@Property />
+                  </TabStripTab>
+                  <TabStripTab Title="Closing Costs">
+                    <UnderwritingClosingCostsTab Property=@Property />
+                  </TabStripTab>
+                  <TabStripTab Title="Summary">
+                    <UnderwritingSummaryTab Property=@Property />
+                  </TabStripTab>
+                </TelerikTabStrip>
+              </Content>
+            </WizardStep>
+            <WizardStep Label="Files/Notes">
+              <Content>
+                <TelerikTabStrip TabPosition="TabPosition.Top">
+                  <TabStripTab Title="Bucketlist">
+                    <UnderwritingBucketlistTab Property=@Property />
+                  </TabStripTab>
+                  <TabStripTab Title="Notes">
+                    <UnderwritingNotesTab Property=@Property />
+                  </TabStripTab>
+                  <TabStripTab Title="Files">
+                    <UnderwritingFilesTab Property=@Property />
+                  </TabStripTab>
+                </TelerikTabStrip>
+              </Content>
+            </WizardStep>
+            <WizardStep Label="Rent Roll">
+              <Content>
+                <TelerikTabStrip TabPosition="TabPosition.Top">
+                  <TabStripTab Title="Models">
+                    <h2>Models</h2>
+                  </TabStripTab>
+                  <TabStripTab Title="Units">
+                    <h2>Units</h2>
+                  </TabStripTab>
+                </TelerikTabStrip>
+              </Content>
+            </WizardStep>
+          </WizardSteps>
+
+        </TelerikWizard>
+      </div>
+    </div>
+
+    <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
+      <div class="row text-center my-4">
+        <div class="col-md-2 offset-md-3 text-center">
+          <TelerikButton Title="Update"
+                         Primary="true"
+                         ButtonType=@ButtonType.Button
+                         OnClick=@OnUpdateProperty>
+            Update
+          </TelerikButton>
+        </div>
+        <div class="col-md-2 text-center">
+          <a class="btn btn-secondary" href="/api/admin/underwriting/property/exportUnderwriting/@propertyId" target="_blank">Download Underwriting</a>
+        </div>
+      </div>
+    </AuthorizedPolicy>
+  </Animation>
 }
 
 <PortalNotification @ref="notification" />

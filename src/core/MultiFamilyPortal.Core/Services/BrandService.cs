@@ -79,7 +79,9 @@ namespace MultiFamilyPortal.Services
             bitmap.Encode(stream, type, 100);
 
             var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(name);
-            await _storage.PutAsync(filePath, stream, fileTypeInfo.MimeType, overwrite: true);
+
+            if(stream.Length > 0)
+                await _storage.PutAsync(filePath, stream, fileTypeInfo.MimeType, overwrite: true);
         }
 
         public async Task CreateBrandImage(IFormFile file, string name)

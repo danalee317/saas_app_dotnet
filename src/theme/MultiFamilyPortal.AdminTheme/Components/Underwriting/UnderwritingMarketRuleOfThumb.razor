@@ -85,77 +85,9 @@
   </GridColumns>
 </TelerikGrid>
 
-<TelerikWindow @bind-Visible=@showSelectedGuidance
-               Width="600px"
-               Modal=@true>
-  <WindowTitle>
-    <h3>Update Underwriting</h3>
-  </WindowTitle>
-  <WindowActions>
-    <WindowAction Name="Close" />
-  </WindowActions>
-  <WindowContent>
-    <div class="row gt-3">
-      <div class="col-md-12 my-3">
-        <strong>@_selected.Category.Humanize(LetterCasing.Title)</strong>
-      </div>
-      <div class="col-md-4 my-3">
-        Rule:
-      </div>
-      <div class="col-md-8 my-3">
-        @if(_selected.Type == Data.Models.CostType.PerDoor)
-        {
-          var min = _selected.Min * Property.Units;
-          var max = _selected.Max * Property.Units;
-          if(min == max)
-          {
-            <span>@max.ToString("C")</span>
-          }
-          else
-          {
-            <span>@min.ToString("C") - @max.ToString("C")</span>
-          }
-        }
-        else if(_selected.Type == Data.Models.CostType.PercentOfPurchase)
-        {
-          var total = _selected.Max * Property.PurchasePrice;
-          <span>@total.ToString("C")</span>
-        }
-        else
-        {
-          <span>@_selected.Max.ToString("C")</span>
-        }
-      </div>
-      <div class="col-md-4 my-3">
-        Current:
-      </div>
-      <div class="col-md-8 my-3">
-        @_currentCost.ToString("C")
-      </div>
-      <div class="col-md-8 my-3">
-        <TelerikSlider Min=@_min
-                       Max=@_max
-                       SmallStep=@_smallStep
-                       LargeStep=@_largeStep
-                       Width="100%"
-                       OnChange=@InnerUpdate
-                       @bind-Value=@_currentCost>
-          <LabelTemplate>
-            @if (context == _min || context == _max)
-            {
-              @context.ToString("C")
-            }
-          </LabelTemplate>
-        </TelerikSlider>
-      </div>
-      <div class="col-md-4 my-3">
-        <TelerikNumericTextBox @bind-Value=@_currentCost
-                               Format="C"
-                               OnChange=@InnerUpdate
-                               Width="100%" />
-      </div>
-    </div>
-  </WindowContent>
-</TelerikWindow>
+<UnderwritingMarketRuleOfThumbUpdate Show=@showSelectedGuidance
+                                     Property=@Property
+                                     Guidance=@_selected
+                                     UpdateCurrent=@UpdateExpense />
 
 <PortalNotification @ref="_notification" />

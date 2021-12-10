@@ -53,7 +53,8 @@ namespace MultiFamilyPortal.Extensions
                 services.AddScoped(p =>
                 {
                     var context = p.GetRequiredService<IHttpContextAccessor>();
-                    var container = context.HttpContext.Request.Host.Host;
+                    //var container = context.HttpContext.Request.Host.Host;
+                    var container = "DemoPortal";
 
                     return new BlobContainerClient(config.Storage.ConnectionString, container);
                 })

@@ -8973,7 +8973,7 @@ ul.wp-block-latest-posts.is-grid.alignwide {
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
-    background-image: url(../img/bg/21.jpg);
+    background-image: url(/theme/branding/resource?file=default-home);
     height: 100%;
     width: 48%;
     left: auto;
@@ -8988,7 +8988,7 @@ ul.wp-block-latest-posts.is-grid.alignwide {
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
-    background-image: url(../img/bg/21.jpg);
+    background-image: url(/theme/branding/resource?file=default-home);
     height: 100%;
     width: 48%;
     left: 0;

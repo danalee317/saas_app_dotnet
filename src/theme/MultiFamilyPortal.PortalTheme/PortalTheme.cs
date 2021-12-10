@@ -23,5 +23,7 @@ namespace MultiFamilyPortal.PortalTheme
             "https://avantipoint.blob.core.windows.net/theme/inspinia/2.9.4/js/plugins/pace/pace.min.js",
         };
         string IBodyClassProvider.Class { get; } = "gray-bg";
+
+        public ThemeResource[] Resources { get; } = Array.Empty<ThemeResource>();
     }
 }

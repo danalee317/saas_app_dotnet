@@ -7,6 +7,7 @@
             string path,
             Stream content,
             string contentType,
+            bool overwrite = false,
             CancellationToken cancellationToken = default);
 
         Task DeleteAsync(string path, CancellationToken cancellationToken = default);

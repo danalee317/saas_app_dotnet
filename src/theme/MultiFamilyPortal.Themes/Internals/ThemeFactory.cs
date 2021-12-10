@@ -33,7 +33,7 @@ namespace MultiFamilyPortal.Themes.Internals
             _configurationValidator = configurationValidator;
         }
 
-        private IPortalFrontendTheme GetFrontendTheme()
+        public IPortalFrontendTheme GetFrontendTheme()
         {
             var defaultTheme = _dbContext.SiteThemes.FirstOrDefault(x => x.IsDefault == true);
             return _themes.OfType<IPortalFrontendTheme>().FirstOrDefault(x => x.Name == defaultTheme.Id);

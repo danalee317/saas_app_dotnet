@@ -1,1 +1,2 @@
-﻿namespace MultiFamilyPortal.Themes{    public interface IPortalFrontendTheme : IPortalTheme    {    }}
+﻿namespace MultiFamilyPortal.Themes{    public interface IPortalFrontendTheme : IPortalTheme    {
+        ThemeResource[] Resources { get; }    }}

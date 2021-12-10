@@ -13,12 +13,10 @@ namespace MultiFamilyPortal.Controllers
     [ApiController]
     public class FavIconController : ControllerBase
     {
-        private IWebHostEnvironment _hostEnvironment { get; }
         private IBrandService _brand { get; }
 
-        public FavIconController(IWebHostEnvironment hostEnvironment, IBrandService brand)
+        public FavIconController(IBrandService brand)
         {
-            _hostEnvironment = hostEnvironment;
             _brand = brand;
         }
 
@@ -84,21 +82,16 @@ namespace MultiFamilyPortal.Controllers
 
         private async Task<IActionResult> GetImageAsync(string name)
         {
+            using var stream = await _brand.GetIcon(name);
+            if (stream is null || stream == Stream.Null)
+                return NotFound();
+
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            var data = memoryStream.ToArray();
+
             var typeInfo = FileTypeLookup.GetFileTypeInfo(name);
-            var savedPath = Path.Combine(_hostEnvironment.ContentRootPath, "App_Data", "Icons");
-
-            try
-            {
-                return File(System.IO.File.ReadAllBytes(Path.Combine(savedPath, name)), typeInfo.MimeType, name);
-            }
-            catch
-            {
-                Directory.CreateDirectory(savedPath);
-                var defaultFile = Path.Combine(_hostEnvironment.WebRootPath, "default-resources", "favicon", "default.png");
-                await _brand.CreateIcons(defaultFile,savedPath);
-            }
-
-             return File(System.IO.File.ReadAllBytes(Path.Combine(savedPath, name)), typeInfo.MimeType, name);
+            return File(data, typeInfo.MimeType, name);
         }
 
         private record WebManifest

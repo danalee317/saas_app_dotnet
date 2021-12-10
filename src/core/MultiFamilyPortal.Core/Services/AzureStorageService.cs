@@ -33,7 +33,7 @@ namespace MultiFamilyPortal.Services
             return Stream.Null;
         }
 
-        public async Task<StoragePutResult> PutAsync(string path, Stream content, string contentType, CancellationToken cancellationToken = default)
+        public async Task<StoragePutResult> PutAsync(string path, Stream content, string contentType, bool overwrite = false, CancellationToken cancellationToken = default)
         {
             var blob = _container.GetBlockBlobClient(path);
 
@@ -53,6 +53,12 @@ namespace MultiFamilyPortal.Services
             }
             catch (RequestFailedException e) when (e.IsAlreadyExistsException())
             {
+                if(overwrite)
+                {
+                    await blob.DeleteAsync();
+                    return await PutAsync(path, content, contentType, false, cancellationToken);
+                }
+
                 using var targetStream = await blob.OpenReadAsync(new BlobOpenReadOptions(true), cancellationToken);
                 content.Position = 0;
                 return content.Matches(targetStream)

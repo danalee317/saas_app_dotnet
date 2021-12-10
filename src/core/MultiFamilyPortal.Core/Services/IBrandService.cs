@@ -4,7 +4,11 @@ namespace MultiFamilyPortal.Services
 {
     public interface IBrandService
     {
-        Task CreateIcons(string SourcePath, string DestinationPath);
-        Task CreateImage(IFormFile file, string name, string path);
+        Task CreateDefaultIcons();
+        Task CreateIcons(Stream stream);
+        Task CreateBrandImage(IFormFile file, string name);
+
+        Task<Stream> GetIcon(string name);
+        Task<(Stream Stream, string MimeType, string FileName)> GetBrandImage(string name);
     }
 }

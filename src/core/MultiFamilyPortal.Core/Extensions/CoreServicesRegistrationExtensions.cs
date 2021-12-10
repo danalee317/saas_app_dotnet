@@ -30,6 +30,7 @@ namespace MultiFamilyPortal.Extensions
                 .AddScoped<IFormService, FormService>()
                 .AddScoped<ITimeZoneService, TimeZoneService>()
                 .AddScoped<ISiteInfo, SiteInfo>()
+                .AddScoped<IStartupTask, BrandStartupTask>()
                 .AddScoped<IBrandService, BrandService>()
                 .AddScoped<IUnderwritingService, UnderwritingService>();
 

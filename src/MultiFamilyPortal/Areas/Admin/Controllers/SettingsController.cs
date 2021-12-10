@@ -133,18 +133,16 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             {
                 try
                 {
-                    var physicalPath = imageName == "favicon" ? "Icons" : "Brands";
                     var fileName = imageName + Path.GetExtension(file.FileName);
-                    var filePath = Path.Combine(physicalPath, fileName);
 
                     if (imageName == "favicon")
                     {
                         using var stream = file.OpenReadStream();
-                        await brand.CreateIcons(stream, physicalPath);
+                        await brand.CreateIcons(stream);
                     }
                     else
                     {
-                        await brand.CreateImage(file, fileName, physicalPath);
+                        await brand.CreateBrandImage(file, fileName);
                     }
                 }
                 catch (Exception ex)

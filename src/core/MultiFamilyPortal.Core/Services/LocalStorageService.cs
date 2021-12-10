@@ -14,8 +14,13 @@ namespace MultiFamilyPortal.Services
 
         public Task DeleteAsync(string path, CancellationToken cancellationToken = default)
         {
-            var fullPath = Path.Combine(_basePath, path);
-            File.Delete(fullPath);
+            try
+            {
+                var fullPath = Path.Combine(_basePath, path);
+                File.Delete(fullPath);
+            }
+            finally
+            {}
             return Task.CompletedTask;
         }
 
@@ -26,12 +31,17 @@ namespace MultiFamilyPortal.Services
             return new MemoryStream(data);
         }
 
-        public async Task<StoragePutResult> PutAsync(string path, Stream content, string contentType, CancellationToken cancellationToken = default)
+        public async Task<StoragePutResult> PutAsync(string path, Stream content, string contentType, bool overwrite = false, CancellationToken cancellationToken = default)
         {
             var fullPath = Path.Combine(_basePath, path);
             var fileInfo = new FileInfo(fullPath);
             if (fileInfo.Exists)
-                return StoragePutResult.AlreadyExists;
+            {
+                if (overwrite)
+                    fileInfo.Delete();
+                else
+                    return StoragePutResult.AlreadyExists;
+            }
 
             fileInfo.Directory.Create();
             using var fileStream = fileInfo.OpenWrite();

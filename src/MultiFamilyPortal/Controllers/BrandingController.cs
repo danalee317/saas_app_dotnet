@@ -12,12 +12,12 @@ namespace MultiFamilyPortal.Controllers
     public class BrandingController : ControllerBase
     {
         private IWebHostEnvironment _env { get; }
-        private IStorageService _storage { get; }
+        private IBrandService _brand { get; }
 
-        public BrandingController(IWebHostEnvironment env, IStorageService storageService)
+        public BrandingController(IWebHostEnvironment env, IBrandService brand)
         {
             _env = env;
-            _storage = storageService;
+            _brand = brand;
         }
 
         [HttpGet("logo")]
@@ -49,10 +49,6 @@ namespace MultiFamilyPortal.Controllers
             var Jpg = $"{name}.jpg";
             var Png = $"{name}.png";
             var Svg = $"{name}.svg";
-            var savedPath =  "Brands";
-            var savedPng = Path.Combine(savedPath, Png);
-            var savedSvg = Path.Combine(savedPath, Svg);
-            var savedJpg = Path.Combine(savedPath, Jpg);
 
             if (string.IsNullOrEmpty(defaultFile))
                 defaultFile = Path.Combine(_env.WebRootPath, "default-resources", "logo");
@@ -61,14 +57,9 @@ namespace MultiFamilyPortal.Controllers
             var pngInfo = FileTypeLookup.GetFileTypeInfo(Png);
             var svgInfo = FileTypeLookup.GetFileTypeInfo(Svg);
 
-            if (await _storage.ExistsAsync(savedPng))
-                return File(await _storage.GetAsync(savedPng), pngInfo.MimeType, Png);
-
-            else if (await _storage.ExistsAsync(savedSvg))
-                return File(await _storage.GetAsync(savedSvg), svgInfo.MimeType, Svg);
-
-            else if (await _storage.ExistsAsync(savedJpg))
-                return File(await _storage.GetAsync(savedJpg), jpgInfo.MimeType, Jpg);
+            var brand = await _brand.GetBrandImage(name);
+            if(brand.Stream != Stream.Null)
+                return File(brand.Stream, brand.MimeType, brand.FileName);
 
             else if (redirect)
                 return Redirect(defaultFile);

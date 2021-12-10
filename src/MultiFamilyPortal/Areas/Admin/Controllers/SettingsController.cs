@@ -125,14 +125,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             return Ok();
         }
 
-        [HttpGet("branding")]
-        public async Task<IActionResult> GetBranding()
-        {
-            // We'll want to update colors and set the logo
-            throw new NotImplementedException();
-        }
-
-        [HttpPost("branding/{imageName}")]   
+        [HttpPost("branding/{imageName}")]
         public async Task<IActionResult> UpdateBrandingLogo(string imageName, [FromForm] IFormFile file, [FromServices] IWebHostEnvironment env, [FromServices] IBrandService brand, [FromServices] ILoggerFactory loggerFactory)
         {
             var logger = loggerFactory.CreateLogger<SettingsController>();
@@ -140,20 +133,18 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             {
                 try
                 {
-                    var physicalPath = Path.Combine(env.ContentRootPath, "App_Data", imageName == "favicon" ? "Icons" : "Brands");
+                    var physicalPath = imageName == "favicon" ? "Icons" : "Brands";
                     var fileName = imageName + Path.GetExtension(file.FileName);
                     var filePath = Path.Combine(physicalPath, fileName);
-                    Directory.CreateDirectory(physicalPath);
 
                     if (imageName == "favicon")
                     {
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                            await file.CopyToAsync(stream);
-                        await brand.CreateIcons(filePath,physicalPath);
+                        using var stream = file.OpenReadStream();
+                        await brand.CreateIcons(stream, physicalPath);
                     }
                     else
                     {
-                        await brand.CreateImage(file, imageName, physicalPath);
+                        await brand.CreateImage(file, fileName, physicalPath);
                     }
                 }
                 catch (Exception ex)

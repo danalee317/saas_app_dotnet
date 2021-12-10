@@ -232,17 +232,28 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 StrikePrice = 40000 * property.Units,
                 OfferPrice = 36000 * property.Units,
                 PurchasePrice = 37000 * property.Units,
-                GrossPotentialRent = 800 * property.Units,
+                GrossPotentialRent = property.Units * 800 * 12,
                 PropertyClass = PropertyClass.ClassB,
                 NeighborhoodClass = PropertyClass.ClassB,
                 StartDate = startDate,
                 DesiredYield = 0.1,
                 HoldYears = 5,
-                BucketList = new UnderwritingProspectPropertyBucketList()
             };
 
             await _dbContext.UnderwritingPropertyProspects.AddAsync(prospect);
             await _dbContext.SaveChangesAsync();
+
+            var bucketlist = new UnderwritingProspectPropertyBucketList
+            {
+                PropertyId = prospect.Id
+            };
+            await _dbContext.UnderwritingProspectPropertyBucketLists.AddAsync(bucketlist);
+            await _dbContext.SaveChangesAsync();
+
+            prospect.BucketListId = bucketlist.Id;
+            _dbContext.UnderwritingPropertyProspects.Update(prospect);
+            await _dbContext.SaveChangesAsync();
+
             await _dbContext.UnderwritingMortgages.AddAsync(new UnderwritingMortgage {
                 LoanAmount = prospect.PurchasePrice * prospect.LTV,
                 PropertyId = prospect.Id,

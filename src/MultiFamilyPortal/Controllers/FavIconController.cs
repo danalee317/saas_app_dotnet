@@ -15,11 +15,13 @@ namespace MultiFamilyPortal.Controllers
     {
         private IWebHostEnvironment _hostEnvironment { get; }
         private IBrandService _brand { get; }
+        private IStorageService _storage { get; }
 
-        public FavIconController(IWebHostEnvironment hostEnvironment, IBrandService brand)
+        public FavIconController(IWebHostEnvironment hostEnvironment, IBrandService brand, IStorageService storage)
         {
             _hostEnvironment = hostEnvironment;
             _brand = brand;
+            _storage = storage;
         }
 
         [HttpGet("/favicon.ico")]
@@ -85,20 +87,23 @@ namespace MultiFamilyPortal.Controllers
         private async Task<IActionResult> GetImageAsync(string name)
         {
             var typeInfo = FileTypeLookup.GetFileTypeInfo(name);
-            var savedPath = Path.Combine(_hostEnvironment.ContentRootPath, "App_Data", "Icons");
+            var savedPath = "Icons";
+            var filePath = Path.Combine("Icons", name);
+            using var stream = await _storage.GetAsync(filePath);
 
-            try
+            if (stream is null || stream == Stream.Null)
             {
-                return File(System.IO.File.ReadAllBytes(Path.Combine(savedPath, name)), typeInfo.MimeType, name);
-            }
-            catch
-            {
-                Directory.CreateDirectory(savedPath);
                 var defaultFile = Path.Combine(_hostEnvironment.WebRootPath, "default-resources", "favicon", "default.png");
-                await _brand.CreateIcons(defaultFile,savedPath);
+                using var defaultFileStream = System.IO.File.OpenRead(defaultFile);
+                await _brand.CreateIcons(defaultFileStream, savedPath);
+                return await GetImageAsync(name);
             }
 
-             return File(System.IO.File.ReadAllBytes(Path.Combine(savedPath, name)), typeInfo.MimeType, name);
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            var data = memoryStream.ToArray();
+
+            return File(data, typeInfo.MimeType, name);
         }
 
         private record WebManifest

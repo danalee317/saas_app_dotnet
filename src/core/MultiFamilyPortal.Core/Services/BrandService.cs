@@ -20,51 +20,52 @@ namespace MultiFamilyPortal.Services
    
 
         private ILogger<BrandService> _logger { get; }
+        private IStorageService _storageService { get; }
 
-        public BrandService(ILoggerFactory loggerFactory)
+        public BrandService(ILogger<BrandService> logger, IStorageService storageService)
         {
-            _logger = loggerFactory.CreateLogger<BrandService>();
+            _logger = logger;
+            _storageService = storageService;
         }
 
-        public Task CreateIcons(string inputPath, string outputPath)
+        public async Task CreateIcons(Stream stream, string outputPath)
         {
-            var fileInfo = new FileInfo(inputPath);
+            if (stream is null || stream == Stream.Null)
+                throw new ArgumentNullException(nameof(stream));
 
-            if (!fileInfo.Exists)
-            {
-                throw new System.IO.FileNotFoundException("Default icon not found", inputPath);
-            }
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            var data = memoryStream.ToArray();
 
             try
             {
                 foreach (var icon in _favicons)
-                    CreateFavicon(fileInfo, icon.Value, icon.Key, outputPath);
+                    await CreateFavicon(data, icon.Value, icon.Key, outputPath);
             }
             catch (System.Exception ex)
             {
                 _logger.LogError(ex.Message);
             }
-
-            return Task.CompletedTask;
         }
 
-        private void CreateFavicon(FileInfo file, int size, string name, string outputPath)
+        private async Task CreateFavicon(byte[] data, int size, string name, string outputPath)
         {
-            using var src = SKImage.FromEncodedData(System.IO.File.ReadAllBytes(file.FullName));
+            using var src = SKImage.FromEncodedData(data);
             var canvasMax = Math.Max(src.Width, src.Height);
 
             var info = new SKImageInfo(size, size, SKColorType.Rgba8888);
             using var output = SKImage.Create(info);
             src.ScalePixels(output.PeekPixels(), SKFilterQuality.High);
             var filePath = Path.Combine(outputPath, name);
-            if (File.Exists(filePath)) File.Delete(filePath);
-            
-            using (var stream = System.IO.File.Create(filePath))
-            {
-                var type = Path.GetExtension(name).ToLower() == ".ico" ? SKEncodedImageFormat.Ico : SKEncodedImageFormat.Png;
-                using var bitmap = SKBitmap.FromImage(output);
-                bitmap.Encode(stream, type, 100);
-            }
+
+            await _storageService.DeleteAsync(filePath);
+
+            using var stream = new MemoryStream();
+            var type = Path.GetExtension(name).ToLower() == ".ico" ? SKEncodedImageFormat.Ico : SKEncodedImageFormat.Png;
+            using var bitmap = SKBitmap.FromImage(output);
+            bitmap.Encode(stream, type, 100);
+            var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(name);
+            await _storageService.PutAsync(filePath, stream, fileTypeInfo.MimeType);
         }
 
         public async Task CreateImage(IFormFile file, string name, string path)
@@ -74,34 +75,40 @@ namespace MultiFamilyPortal.Services
                 Directory.CreateDirectory(path);
 
                 var fileExt = Path.GetExtension(file.FileName);
+                if (fileExt == ".jpeg")
+                    fileExt = ".jpg";
+                else if (!(fileExt == ".svg" || fileExt == ".png"))
+                    fileExt = ".png";
+
                 var fileName = name + fileExt;
                 var filePath = Path.Combine(path, fileName);
 
-                if (File.Exists(filePath)) File.Delete(filePath);
+                await _storageService.DeleteAsync(filePath);
 
                 switch (fileExt.ToLower())
                 {
                     case ".svg":
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                            await file.CopyToAsync(stream);
+                        using (var stream = file.OpenReadStream())
+                            await _storageService.PutAsync(filePath, stream, FileTypeLookup.GetFileTypeInfo("image.svg").MimeType);
                         break;
 
                     default:
+                        var format = fileExt == ".jpg" ? SKEncodedImageFormat.Jpeg : SKEncodedImageFormat.Png;
+                        using (var src = SKImage.FromEncodedData(file.OpenReadStream()))
                         {
-                            using var src = SKImage.FromEncodedData(file.OpenReadStream());
                             var canvasMax = Math.Max(src.Width, src.Height);
                             int size = canvasMax > 512 ? 512 : canvasMax;
                             var info = new SKImageInfo(size, size, SKColorType.Rgba8888);
                             using var output = SKImage.Create(info);
                             src.ScalePixels(output.PeekPixels(), SKFilterQuality.High);
 
-                            using (var stream = System.IO.File.Create(filePath))
-                            {
-                                using var bitmap = SKBitmap.FromImage(output);
-                                bitmap.Encode(stream, SKEncodedImageFormat.Png, 100);
-                            }
-                            break;
+                            using var stream = new MemoryStream();
+                            using var bitmap = SKBitmap.FromImage(output);
+                            bitmap.Encode(stream, format, 100);
+                            var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(fileName);
+                            await _storageService.PutAsync(filePath, stream, fileTypeInfo.MimeType);
                         }
+                        break;
                 }
             }
             catch (Exception ex)

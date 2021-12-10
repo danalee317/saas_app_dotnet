@@ -73,15 +73,18 @@ namespace MultiFamilyPortal.Services
             src.ScalePixels(output.PeekPixels(), SKFilterQuality.High);
             var filePath = Path.Combine(Icons, name);
 
-            using var stream = new MemoryStream();
             var type = Path.GetExtension(name).ToLower() == ".ico" ? SKEncodedImageFormat.Ico : SKEncodedImageFormat.Png;
             using var bitmap = SKBitmap.FromImage(output);
-            bitmap.Encode(stream, type, 100);
-
-            var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(name);
-
-            if(stream.Length > 0)
-                await _storage.PutAsync(filePath, stream, fileTypeInfo.MimeType, overwrite: true);
+            var skData = bitmap.Encode(type, 100);
+            if(skData != null)
+            {
+                using var skStream = skData.AsStream();
+                if (skStream.Length > 0)
+                {
+                    var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(name);
+                    await _storage.PutAsync(filePath, skStream, fileTypeInfo.MimeType, overwrite: true);
+                }
+            }
         }
 
         public async Task CreateBrandImage(IFormFile file, string name)

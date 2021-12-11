@@ -2,50 +2,57 @@
 
 <SiteTitle Title="Dashboard" />
 <Animation OptionsName="Page">
-  <h3>Dashboard</h3>
+  <div class="container">
+    <div class="row mb-3">
 
-  <div class="row mt-3">
-    <div class="col">
-      <h4>Underwriting</h4>
-    </div>
-  </div>
+      <div class="col-md-2 mb-3" style="height: 160px;">
+        <div class="bg-light text-dark h-100 text-center">
+          Analytics Component 1 #99
+        </div>
+      </div>
 
-  <div class="row">
-    <div class="col-md-4 col-sm-6">
-      <DashboardGauge Value=@Analytics.UnderwrittenLast7Days
-                      Expected=@Analytics.ExpectedUnderwrittenLast7Days
-                      Label="Last 7 Days" />
-    </div>
-    <div class="col-md-4 col-sm-6">
-      <DashboardGauge Value=@Analytics.UnderwrittenLast30Days
-                      Expected=@Analytics.ExpectedUnderwrittenLast30Days
-                      Label="Last 30 Days" />
-    </div>
-    <div class="col-md-4 col-sm-6">
+      <div class="col-md-2 mb-3" style="height: 160px;">
+        <div class="bg-light text-dark h-100 text-center">
+          Analytics Component 2 #99
+        </div>
+      </div>
 
-    </div>
-  </div>
+      <div class="col-md-4 mb-3" style="height: 160px;">
+        <div class="bg-light text-dark h-100 text-center">
+          Analytics Component 3 #99
+        </div>
+      </div>
 
-  <div class="row mt-3">
-    <div class="col">
-      <h4>Activity</h4>
+      <div class="col-md-4 mb-2" style="height: 160px;">
+        <div class="bg-light text-dark h-100 text-center">
+          User Activity (with pie chart) Component #99
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div class="row">
-    <div class="col-md-4 col-sm-6">
-      @*<DashboardGauge Value=@Analytics.UnderwrittenLast7Days
-                    Expected=@Analytics.ExpectedUnderwrittenLast7Days
-                    Label="Last 7 Days"/>*@
-    </div>
-    <div class="col-md-4 col-sm-6">
-      @*<DashboardGauge Value=@Analytics.UnderwrittenLast30Days
-                    Expected=@Analytics.ExpectedUnderwrittenLast30Days
-                    Label="Last 30 Days" />*@
-    </div>
-    <div class="col-md-4">
+    <div class="row mb-3">
+      <div class="col-md-8" style="height: 500px">
+        <div class="bg-light text-dark h-100 text-center">
+          Graph Component #98
+        </div>
+      </div>
 
+      <div class="col-md-4" style="height: 500px">
+        <div class="bg-light text-dark h-100 text-center">
+          Investor List Component #100
+        </div>
+      </div>
     </div>
+
+    <div class="row mb-5">
+      <div class="col-12">
+        <div class="bg-light text-dark h-100 text-center">
+          <div class="m-3 p-5">Other Components</div>
+        </div>
+      </div>
+    </div>
+    
   </div>
 </Animation>
+
 <PortalNotification @ref="notification" />

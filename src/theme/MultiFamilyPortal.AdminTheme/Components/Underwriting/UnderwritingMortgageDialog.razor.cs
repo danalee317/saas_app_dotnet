@@ -27,9 +27,9 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private bool showBalloon;
         private string SaveBtn => Update ? "Update" : "Save";
         private bool enableLoanAmountEdit => LoanType == UnderwritingLoanType.NewLoan;
-        
+
         private async Task SaveMortgage()
-        { 
+        {
             await OnSave.InvokeAsync(Mortgage);
         }
     }

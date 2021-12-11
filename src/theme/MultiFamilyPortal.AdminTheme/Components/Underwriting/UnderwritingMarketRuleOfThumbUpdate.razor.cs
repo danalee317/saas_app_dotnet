@@ -24,6 +24,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private double _max;
         private double _smallStep;
         private double _largeStep;
+        private bool _cleanCategory = true;
 
         protected override void OnParametersSet() => VerifyInfo();
 
@@ -50,6 +51,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
             var propertyExpenses = Property.Ours.Where(x => x.Category == Guidance.Category);
             _intialCost = propertyExpenses.Any() ? propertyExpenses.Sum(x => x.AnnualizedTotal) : _min;
+            _cleanCategory = propertyExpenses.Any()? propertyExpenses.Count() == 1 : false;
 
             if (_intialCost < _min)
                 _min *= 0.7;

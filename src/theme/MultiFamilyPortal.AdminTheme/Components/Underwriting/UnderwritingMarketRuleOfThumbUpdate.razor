@@ -74,7 +74,11 @@
                                  Width="100%"/>
         </div>
         <div class="col-12 my-1 text-center">
-          <button class="btn btn-primary" @onclick=@InnerUpdate>Update</button>
+          <button class="btn btn-primary" 
+                  @onclick=@InnerUpdate 
+                  disabled=@(!_cleanCategory)>
+                  Update
+          </button>
         </div>
       </div>
     </WindowContent>

@@ -14,7 +14,7 @@ namespace MultiFamilyPortal.CoreUI
         public double Value { get; set; }
 
         [Parameter]
-        public double Step { get; set; } = 5;
+        public double Step { get; set; } = 0.5;
 
         [Parameter]
         public double Min { get; set; } = 0;

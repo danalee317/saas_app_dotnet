@@ -12,6 +12,6 @@ namespace MultiFamilyPortal.Data.Services
             contextHelper.RunRoleManagerAction((roleManager, tenant) => action(roleManager));
 
         public static Task RunUserManagerAction(this IStartupContextHelper contextHelper, Func<UserManager<SiteUser>, Task> action) =>
-            contextHelper.RunUserManagerAction((userManager, tenant) => action(userManager));
+            contextHelper.RunUserManagerAction((userManager, tenant, services) => action(userManager));
     }
 }

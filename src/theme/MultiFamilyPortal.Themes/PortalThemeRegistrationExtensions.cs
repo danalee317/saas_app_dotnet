@@ -13,7 +13,8 @@ namespace MultiFamilyPortal.Themes
 
             if (!_registered)            {                services.AddScoped<IThemeFactory, ThemeFactory>()
                     .AddScoped<IStartupTask, ThemeStartupTask>()
-                    .AddSingleton<ISiteConfigurationValidator, SiteConfigurationValidator>();                _registered = true;            }
+                    .AddSingleton<TenantThemeCache>()
+                    .AddScoped<ISiteConfigurationValidator, SiteConfigurationValidator>();                _registered = true;            }
 
             // Avoid Registering twice
             if (services.Any(x => x.ServiceType == typeof(IPortalTheme) && x.ImplementationType == type))

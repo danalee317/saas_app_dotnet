@@ -13,14 +13,11 @@ namespace MultiFamilyPortal.Infrastructure
     {
         private IEnumerable<IPortalFrontendTheme> _themes { get; }
         private IStartupContextHelper _contextHelper { get; }
-        private ISiteConfigurationValidator _configurationValidator { get; }
         private IServiceProvider _serviceProvider { get; }
 
         public PortalStartup(IEnumerable<IPortalFrontendTheme> themes,
-            IStartupContextHelper contextHelper,
-            ISiteConfigurationValidator configurationValidator)
+            IStartupContextHelper contextHelper)
         {
-            _configurationValidator = configurationValidator;
             _contextHelper = contextHelper;
             _themes = themes;
         }
@@ -31,15 +28,13 @@ namespace MultiFamilyPortal.Infrastructure
             await SeedThemes();
             await SeedEmailTemplates();
             await SeedRoles();
-            await _contextHelper.RunUserManagerAction(async userManager =>
+
+            await _contextHelper.RunUserManagerAction(async (userManager, tenant, services) =>
             {
                 if (!await userManager.Users.AnyAsync())
                 {
-                    // TODO: Refactor this... this will cause all portals to go First Run if any of theme require it.
-                    //_configurationValidator.SetFirstRunTheme(new FirstRunTheme());
-
-                    // NOTE: If debugging be sure to uncomment the above line to get the FirstRunTheme.
-                    System.Diagnostics.Debugger.Break();
+                    var configurationValidator = services.GetRequiredService<ISiteConfigurationValidator>();
+                    configurationValidator.SetFirstRunTheme(new FirstRunTheme());
                 }
             });
         }
@@ -207,8 +202,6 @@ namespace MultiFamilyPortal.Infrastructure
                 });
             }
         }
-
-        
 
         private static string GetTemplate(string name)
         {

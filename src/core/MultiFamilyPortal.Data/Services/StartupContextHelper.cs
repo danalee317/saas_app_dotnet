@@ -63,7 +63,7 @@ namespace MultiFamilyPortal.Data.Services
             });
         }
 
-        public async Task RunUserManagerAction(Func<UserManager<SiteUser>, Tenant, Task> action)
+        public async Task RunUserManagerAction(Func<UserManager<SiteUser>, Tenant, IServiceProvider, Task> action)
         {
             await RunDatabaseActionInternal((services, db, tenant) =>
             {
@@ -76,7 +76,7 @@ namespace MultiFamilyPortal.Data.Services
                 var logger = services.GetService<ILogger<UserManager<SiteUser>>>();
                 var store = new UserStore<SiteUser, IdentityRole, MFPContext, string, IdentityUserClaim<string>, IdentityUserRole<string>, IdentityUserLogin<string>, IdentityUserToken<string>, IdentityRoleClaim<string>>(db, errors);
                 var userManager = new UserManager<SiteUser>(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger);
-                return action(userManager, tenant);
+                return action(userManager, tenant, services);
             });
         }
 

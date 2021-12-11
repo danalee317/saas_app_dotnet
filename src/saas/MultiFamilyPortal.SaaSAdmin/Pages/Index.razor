@@ -19,7 +19,7 @@
   <GridColumns>
     <GridColumn Field="Disabled"
                 Title="Status"
-                Width="75px"
+                Width="125px"
                 TextAlign=@ColumnTextAlign.Center>
       <Template>
         @{ var tenant = context as Tenant; }
@@ -41,7 +41,6 @@
         <TelerikSwitch @bind-Value=@tenant!.Disabled
                        OffLabel="Active"
                        OnLabel="Disabled" />
-        <span> @(tenant!.Disabled ? "Disabled" : "Active")</span>
       </EditorTemplate>
     </GridColumn>
     <GridColumn Field="Host" />

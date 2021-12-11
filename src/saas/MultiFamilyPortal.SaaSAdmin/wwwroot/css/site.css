@@ -60,3 +60,26 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.k-switch, .k-switch-container {
+  width: 100px;
+}
+
+.k-switch-label-on, .k-switch-label-off {
+  display: inline;
+}
+
+.k-switch-label-on {
+  left: 7px;
+  color: #ffffff;
+  text-transform: uppercase;
+  width: 100px;
+}
+
+.k-switch-label-off {
+  padding-left: 40px;
+  right: 5px;
+  color: #424242;
+  text-transform: uppercase;
+  width: 100px;
+}

@@ -93,11 +93,20 @@ namespace MultiFamilyPortal.SaaSAdmin.Pages
 
         private async Task OnUpdateTenant(GridCommandEventArgs args)
         {
-            var tenant = args.Item as Tenant;
-            if (tenant == null)
+            var updated = args.Item as Tenant;
+            if (updated == null)
                 return;
 
-            _context.Tenants.Update(tenant);
+            var existing = await _context.Tenants.FirstOrDefaultAsync(x => x.Id == updated.Id);
+
+            if (existing is null)
+                return;
+
+            existing.DatabaseName = updated.DatabaseName;
+            existing.Disabled = updated.Disabled;
+            existing.Environment = updated.Environment;
+
+            _context.Tenants.Update(existing);
             await _context.SaveChangesAsync();
             await UpdateTenants();
         }

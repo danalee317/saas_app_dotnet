@@ -4,6 +4,7 @@ using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Extensions;
 using MultiFamilyPortal.Infrastructure;
+using MultiFamilyPortal.SaaS.Extensions;
 using MultiFamilyPortal.Themes;
 
 namespace MultiFamilyPortal
@@ -50,6 +51,8 @@ namespace MultiFamilyPortal
                 // production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseMissingTenant();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

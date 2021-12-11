@@ -1,29 +1,35 @@
-﻿using System.Collections;
-using System.Reflection;
+﻿using System.Reflection;
 using Duende.IdentityServer.EntityFramework.Entities;
 using Duende.IdentityServer.EntityFramework.Extensions;
 using Duende.IdentityServer.EntityFramework.Interfaces;
 using Duende.IdentityServer.EntityFramework.Options;
-using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Options;
 using MultiFamilyPortal.Data.ModelConfiguration;
 using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.SaaS;
+using MultiFamilyPortal.SaaS.Data;
+using MultiFamilyPortal.SaaS.Models;
 
 namespace MultiFamilyPortal.Data
 {
-    public class MFPContext : IdentityDbContext<SiteUser, IdentityRole, string, IdentityUserClaim<string>, IdentityUserRole<string>, IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>, IMFPContext, IBlogContext, IPersistedGrantDbContext
+    public class MFPContext : IdentityDbContext<SiteUser, IdentityRole, string, IdentityUserClaim<string>, IdentityUserRole<string>, IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>, IMFPContext, IBlogContext, IPersistedGrantDbContext, IMultiTenantDbContext
     {
         private readonly IOptions<OperationalStoreOptions> _operationalStoreOptions;
+        private readonly ITenantProvider _tenantProvider;
+        private readonly DatabaseSettings _databaseSettings;
 
-        public MFPContext(DbContextOptions<MFPContext> options, IOptions<OperationalStoreOptions> operationalStoreOptions)
+        public MFPContext(DbContextOptions<MFPContext> options, IOptions<OperationalStoreOptions> operationalStoreOptions, ITenantProvider tenantProvider, DatabaseSettings settings)
             : base(options)
         {
             _operationalStoreOptions = operationalStoreOptions;
+            _tenantProvider = tenantProvider;
+            _databaseSettings = settings;
         }
+
+        public int TenantId => _tenantProvider.GetTenant()?.Id ?? 0;
 
         #region Blog
         public DbSet<Category> Categories { get; set; } = default!;
@@ -78,6 +84,11 @@ namespace MultiFamilyPortal.Data
         public DbSet<Key> Keys { get; set; }
 
         Task<int> IPersistedGrantDbContext.SaveChangesAsync() => SaveChangesAsync();
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            this.ConfigureForMultiTenant(optionsBuilder, _databaseSettings, _tenantProvider.GetTenant());
+        }
 
         private StoreOptions GetStoreOptions()
         {

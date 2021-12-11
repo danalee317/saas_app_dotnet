@@ -1,40 +1,42 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Reflection;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MultiFamilyPortal.FirstRun;
 using MultiFamilyPortal.CoreUI;
-using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.Data.Services;
+using MultiFamilyPortal.FirstRun;
 using MultiFamilyPortal.Themes;
-using System.Reflection;
 
 namespace MultiFamilyPortal.Infrastructure
 {
     public class PortalStartup : IStartupTask
     {
-        private UserManager<SiteUser> _userManager { get; }
-        private RoleManager<IdentityRole> _roleManager { get; }
         private IEnumerable<IPortalFrontendTheme> _themes { get; }
-        private IMFPContext _dbContext { get; }
-        private ISiteConfigurationValidator _configurationValidator { get; }
+        private IStartupContextHelper _contextHelper { get; }
+        private IServiceProvider _serviceProvider { get; }
 
-        public PortalStartup(UserManager<SiteUser> userManager, RoleManager<IdentityRole> roleManager, IEnumerable<IPortalFrontendTheme> themes, IMFPContext dbContext, ISiteConfigurationValidator configurationValidator)
+        public PortalStartup(IEnumerable<IPortalFrontendTheme> themes,
+            IStartupContextHelper contextHelper)
         {
-            _configurationValidator = configurationValidator;
-            _userManager = userManager;
-            _roleManager = roleManager;
-            _dbContext = dbContext;
+            _contextHelper = contextHelper;
             _themes = themes;
         }
+
         public async Task StartAsync()
         {
             await SeedSiteContent();
             await SeedThemes();
             await SeedEmailTemplates();
             await SeedRoles();
-            if(!await _userManager.Users.AnyAsync())
+
+            await _contextHelper.RunUserManagerAction(async (userManager, tenant, services) =>
             {
-                _configurationValidator.SetFirstRunTheme(new FirstRunTheme());
-            }
+                if (!await userManager.Users.AnyAsync())
+                {
+                    var configurationValidator = services.GetRequiredService<ISiteConfigurationValidator>();
+                    configurationValidator.SetFirstRunTheme(new FirstRunTheme());
+                }
+            });
         }
 
         private async Task SeedSiteContent()
@@ -61,41 +63,47 @@ namespace MultiFamilyPortal.Infrastructure
                 },
             };
 
-            foreach(var page in pages)
+            await _contextHelper.RunDatabaseAction(async db =>
             {
-                if(!await _dbContext.CustomContent.AnyAsync(x => x.Title == page.Title))
+                foreach (var page in pages)
                 {
-                    await _dbContext.CustomContent.AddAsync(page);
-                    await _dbContext.SaveChangesAsync();
+                    if (!await db.CustomContent.AnyAsync(x => x.Title == page.Title))
+                    {
+                        await db.CustomContent.AddAsync(page);
+                        await db.SaveChangesAsync();
+                    }
                 }
-            }
+            });
         }
 
         private async Task SeedThemes()
         {
             var defaultThemeName = nameof(PortalTheme.PortalTheme);
-            foreach (var theme in _themes)
+            await _contextHelper.RunDatabaseAction(async db =>
             {
-                if (!await _dbContext.SiteThemes.AnyAsync(x => x.Id == theme.Name))
+                foreach (var theme in _themes)
                 {
-                    var siteTheme = new SiteTheme
+                    if (!await db.SiteThemes.AnyAsync(x => x.Id == theme.Name))
                     {
-                        Id = theme.Name,
-                        IsDefault = theme.GetType().Name.Contains(defaultThemeName)
-                    };
-                    _dbContext.SiteThemes.Add(siteTheme);
-                    await _dbContext.SaveChangesAsync();
+                        var siteTheme = new SiteTheme
+                        {
+                            Id = theme.Name,
+                            IsDefault = theme.GetType().Name.Contains(defaultThemeName)
+                        };
+                        db.SiteThemes.Add(siteTheme);
+                        await db.SaveChangesAsync();
+                    }
                 }
-            }
 
-            if(!await _dbContext.SiteThemes.AnyAsync(x => x.IsDefault == true))
-            {
-                var theme = await _dbContext.SiteThemes
-                    .FirstOrDefaultAsync(x => x.Id == defaultThemeName);
-                theme.IsDefault = true;
-                _dbContext.SiteThemes.Update(theme);
-                await _dbContext.SaveChangesAsync();
-            }
+                if (!await db.SiteThemes.AnyAsync(x => x.IsDefault == true))
+                {
+                    var theme = await db.SiteThemes
+                        .FirstOrDefaultAsync(x => x.Id == defaultThemeName);
+                    theme.IsDefault = true;
+                    db.SiteThemes.Update(theme);
+                    await db.SaveChangesAsync();
+                }
+            });
         }
 
         private async Task SeedRoles()
@@ -103,13 +111,16 @@ namespace MultiFamilyPortal.Infrastructure
             var type = typeof(PortalRoles);
             var allRoles = type.GetFields(BindingFlags.Static | BindingFlags.Public).Select(x => x.Name);
 
-            foreach (var roleName in allRoles)
+            await _contextHelper.RunRoleManagerAction(async roleManager =>
             {
-                if (await _roleManager.RoleExistsAsync(roleName))
-                    continue;
+                foreach (var roleName in allRoles)
+                {
+                    if (await roleManager.RoleExistsAsync(roleName))
+                        continue;
 
-                await _roleManager.CreateAsync(new IdentityRole(roleName));
-            }
+                    await roleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            });
         }
 
         private async Task SeedEmailTemplates()
@@ -129,11 +140,14 @@ namespace MultiFamilyPortal.Infrastructure
             };
             foreach(var partial in defaultPartials)
             {
-                if(!await _dbContext.EmailPartialTemplates.AnyAsync(x => x.Key == partial.Key))
+                await _contextHelper.RunDatabaseAction(async db =>
                 {
-                    _dbContext.EmailPartialTemplates.Add(partial);
-                    await _dbContext.SaveChangesAsync();
-                }
+                    if (!await db.EmailPartialTemplates.AnyAsync(x => x.Key == partial.Key))
+                    {
+                        db.EmailPartialTemplates.Add(partial);
+                        await db.SaveChangesAsync();
+                    }
+                });
             }
 
             var defaultTemplates = new[]
@@ -178,11 +192,14 @@ namespace MultiFamilyPortal.Infrastructure
 
             foreach (var template in defaultTemplates)
             {
-                if (!await _dbContext.EmailTemplates.AnyAsync(x => x.Key == template.Key))
+                await _contextHelper.RunDatabaseAction(async db =>
                 {
-                    _dbContext.EmailTemplates.Add(template);
-                    await _dbContext.SaveChangesAsync();
-                }
+                    if (!await db.EmailTemplates.AnyAsync(x => x.Key == template.Key))
+                    {
+                        db.EmailTemplates.Add(template);
+                        await db.SaveChangesAsync();
+                    }
+                });
             }
         }
 

@@ -1,4 +1,4 @@
-﻿<CascadingWrapper Theme=@Theme>
+﻿<CascadingWrapper Theme=@Theme Tenant=@_tenant>
   <Router AppAssembly="@Assembly" AdditionalAssemblies=@_themeFactory.GetAdditionalAssemblies(Theme)>
     <Found Context="routeData">
       <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@Theme.Layout" />

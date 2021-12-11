@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MultiFamilyPortal.Configuration;
 using MultiFamilyPortal.Http;
+using MultiFamilyPortal.SaaS.Extensions;
 using MultiFamilyPortal.Services;
 using SendGrid;
 
@@ -20,6 +21,7 @@ namespace MultiFamilyPortal.Extensions
         public static IServiceCollection AddCorePortalServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddHttpContextAccessor()
+                .AddSaaSApplication(configuration)
                 .AddScoped<IAuthenticationService, AuthenticationService>()
                 .AddScoped<IBlogSubscriberService, BlogSubscriberService>()
                 .AddScoped<IBlogAdminService, BlogAdminService>()

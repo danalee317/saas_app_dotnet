@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using MultiFamilyPortal.SaaS.Models;
 
 namespace MultiFamilyPortal.Themes.Internals
 {
@@ -9,6 +10,9 @@ namespace MultiFamilyPortal.Themes.Internals
 
         [Parameter]
         public IPortalTheme Theme { get; set; } = default!;
+
+        [Parameter]
+        public Tenant Tenant { get; set; } = default!;
 
         [Inject]
         private ISiteInfo SiteInfo { get; set; } = default!;

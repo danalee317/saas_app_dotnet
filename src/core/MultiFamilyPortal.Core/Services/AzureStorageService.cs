@@ -3,29 +3,32 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs.Specialized;
 using MultiFamilyPortal.Extensions;
+using MultiFamilyPortal.SaaS;
 
 namespace MultiFamilyPortal.Services
 {
     internal class AzureStorageService : IStorageService
     {
         private readonly BlobContainerClient _container;
+        private readonly ITenantProvider _tenantProvider;
 
-        public AzureStorageService(BlobContainerClient container)
+        public AzureStorageService(BlobContainerClient container, ITenantProvider tenantProvider)
         {
             _container = container;
+            _tenantProvider = tenantProvider;
         }
 
         public async Task DeleteAsync(string path, CancellationToken cancellationToken = default)
         {
             await _container
-                .GetBlockBlobClient(path)
+                .GetBlockBlobClient(GetTenantPath(path))
                 .DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots, cancellationToken: cancellationToken);
         }
 
         public async Task<Stream> GetAsync(string path, CancellationToken cancellationToken = default)
         {
             var client = _container
-                .GetBlockBlobClient(path);
+                .GetBlockBlobClient(GetTenantPath(path));
 
             if (await client.ExistsAsync(cancellationToken))
                 return await client.OpenReadAsync(new BlobOpenReadOptions(false), cancellationToken);
@@ -35,7 +38,7 @@ namespace MultiFamilyPortal.Services
 
         public async Task<StoragePutResult> PutAsync(string path, Stream content, string contentType, bool overwrite = false, CancellationToken cancellationToken = default)
         {
-            var blob = _container.GetBlockBlobClient(path);
+            var blob = _container.GetBlockBlobClient(GetTenantPath(path));
 
             try
             {
@@ -65,6 +68,12 @@ namespace MultiFamilyPortal.Services
                     ? StoragePutResult.AlreadyExists
                     : StoragePutResult.Conflict;
             }
+        }
+
+        private string GetTenantPath(string path)
+        {
+            var tenant = _tenantProvider.GetTenant();
+            return Path.Combine(tenant.Host, path);
         }
     }
 }

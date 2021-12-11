@@ -1,17 +1,24 @@
-﻿namespace MultiFamilyPortal.Services
+﻿using Microsoft.Extensions.DependencyInjection;
+using MultiFamilyPortal.Data.Services;
+
+namespace MultiFamilyPortal.Services
 {
     internal class BrandStartupTask : IStartupTask
     {
-        private IBrandService _brand { get; }
+        private IStartupContextHelper _startup { get; }
 
-        public BrandStartupTask(IBrandService brand)
+        public BrandStartupTask(IStartupContextHelper startup)
         {
-            _brand = brand;
+            _startup = startup;
         }
 
         public async Task StartAsync()
         {
-            await _brand.CreateDefaultIcons();
+            await _startup.RunStartupTask((tenant, services) =>
+            {
+                var brand = services.GetRequiredService<IBrandService>();
+                return brand.CreateDefaultIcons();
+            });
         }
     }
 }

@@ -72,7 +72,7 @@
       <GridColumn Field="Date" TextAlign=@ColumnTextAlign.Center>
         <Template>
           @{ var activity = context as ActivityResponse; }
-          <PortalLocalizedTime Date=@activity.Timestamp />
+          <PortalLocalizedTime Date=@activity.Date Format="MMMM dd, yyyy"/>
         </Template>
       </GridColumn>
       <GridColumn Field="Total" TextAlign=@ColumnTextAlign.Center Width="100px" />

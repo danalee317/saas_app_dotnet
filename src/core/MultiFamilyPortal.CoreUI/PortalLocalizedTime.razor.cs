@@ -22,9 +22,6 @@ namespace MultiFamilyPortal.CoreUI
 
         protected override void OnInitialized()
         {
-            if (string.IsNullOrEmpty(_formattedString))
-                Format = DefaultFormat;
-
             _formattedString = Date.ToString(Format);
         }
 

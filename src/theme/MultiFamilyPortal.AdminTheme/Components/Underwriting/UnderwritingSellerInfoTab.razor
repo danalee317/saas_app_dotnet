@@ -18,35 +18,20 @@
 
   <label for="MarketVacancy" class="col-sm-2 col-form col-form-label">Market Vacancy</label>
   <div class="col-sm-4">
-    <TelerikNumericTextBox @bind-Value=@Property.MarketVacancy
-                    Min="0"
-                    Max="1"
-                    Step="0.01"
-                    Decimals="4"
-                    Format="P"
-                    Class="form-control" />
+    <PercentageInput @bind-Value=@Property.MarketVacancy
+                     Id="MarketVacancy" />
   </div>
 
   <label for="PhysicalVacancy" class="col-sm-2 col-form col-form-label">Physical Vacancy</label>
   <div class="col-sm-4">
-    <TelerikNumericTextBox @bind-Value=@Property.PhysicalVacancy
-                    Min="0"
-                    Max="1"
-                    Step="0.01"
-                    Decimals="4"
-                    Format="P"
-                    Class="form-control" />
+    <PercentageInput @bind-Value=@Property.PhysicalVacancy
+                     Id="PhysicalVacancy" />
   </div>
 
   <label for="Management" class="col-sm-2 col-form col-form-label">Management</label>
   <div class="col-sm-4">
-    <TelerikNumericTextBox @bind-Value=@Property.Management
-                    Min="0"
-                    Max="1"
-                    Step="0.01"
-                    Decimals="4"
-                    Format="P"
-                    Class="form-control" />
+    <PercentageInput @bind-Value=@Property.Management
+                     Id="Management"/>
   </div>
 </div>
 

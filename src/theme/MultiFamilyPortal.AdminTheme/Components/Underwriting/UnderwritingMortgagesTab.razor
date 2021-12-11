@@ -30,13 +30,8 @@
   {
     <label for="LTV" class="col-sm-2 col-form col-form-label">Loan to Value</label>
     <div class="col-sm-4">
-      <TelerikNumericTextBox @bind-Value=@Property.LTV
-                      Min="0"
-                      Max="1"
-                      Step="0.01"
-                      Decimals="4"
-                      Format="P"
-                      Class="form-control" />
+      <PercentageInput @bind-Value=@Property.LTV
+                       Id="LTV"/>
     </div>
   }
 </div>

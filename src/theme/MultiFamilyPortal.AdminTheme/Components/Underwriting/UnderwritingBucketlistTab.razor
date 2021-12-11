@@ -61,12 +61,8 @@
 
   <label for="MarketCapRate" class="col-sm-2 col-form col-form-label">Market Cap Rate</label>
   <div class="col-sm-4">
-    <TelerikNumericTextBox @bind-Value=@Property.BucketList.MarketCapRate
-                    Min="0"
-                    Max="1"
-                    Step="0.005"
-                    Format="P"
-                    Class="form-control" />
+    <PercentageInput @bind-Value=@Property.BucketList.MarketCapRate
+                     Id="MarketCapRate" />
   </div>
 </div>
 

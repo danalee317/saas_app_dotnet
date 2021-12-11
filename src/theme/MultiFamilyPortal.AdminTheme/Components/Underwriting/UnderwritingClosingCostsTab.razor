@@ -11,13 +11,8 @@
         Closing Costs
       </td>
       <td role="gridcell" class="px-2">
-        <TelerikNumericTextBox @bind-Value=@Property.ClosingCostPercent
-                                Min="0"
-                                Max="1"
-                                Step="0.01"
-                                Decimals="4"
-                                Format="P"
-                                Class="form-control" />
+        <PercentageInput @bind-Value=@Property.ClosingCostPercent
+                         Id="ClosingCosts" />
       </td>
       <td role="gridcell" class="px-2 text-center">
         @Property.ClosingCosts.ToString("C")
@@ -39,13 +34,8 @@
         Aquisition Fee
       </td>
       <td role="gridcell" class="px-2">
-        <TelerikNumericTextBox @bind-Value=@Property.AquisitionFeePercent
-                               Min="0"
-                               Max="1"
-                               Step="0.01"
-                               Decimals="4"
-                               Format="P"
-                               Class="form-control"/>
+        <PercentageInput @bind-Value=@Property.AquisitionFeePercent
+                         Id="AquisitionFee"/>
       </td>
       <td role="gridcell" class="px-2 text-center">
         @Property.AquisitionFee.ToString("C")

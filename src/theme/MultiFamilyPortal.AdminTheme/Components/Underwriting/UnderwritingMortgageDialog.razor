@@ -16,11 +16,8 @@
 
       <label for="InterestRate" class="col-sm-2 col-form-label">Interest Rate</label>
       <div class="col-sm-4">
-        <PercentageInput  @bind-Value=@Mortgage.InterestRate
-                          Min="0"
-                          Id="InterestRate"
-                          Max="100"
-                          Step="5"/>
+        <PercentageInput @bind-Value=@Mortgage.InterestRate
+                         Id="InterestRate" />
       </div>
 
       <label for="TermInYears" class="col-sm-2 col-form-label">Term (years)</label>
@@ -62,13 +59,8 @@
 
       <label for="Points" class="col-sm-2 col-form-label">Points</label>
       <div class="col-sm-4">
-        <TelerikNumericTextBox @bind-Value=@Mortgage.Points
-                        Format="P"
-                        Min="0"
-                        Max="1"
-                        Step="0.005"
-                        Decimals="4"
-                        Class="form-control" />
+        <PercentageInput @bind-Value=@Mortgage.Points
+                         Id="Points" />
       </div>
 
       <div class="col-sm-12 text-center">

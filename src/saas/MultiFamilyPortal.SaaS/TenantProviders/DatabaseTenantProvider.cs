@@ -45,7 +45,7 @@ namespace MultiFamilyPortal.SaaS.TenantProviders
                 return null;
             }
 
-            return GetTenant(_contextAccessor.HttpContext.Request.Host.Value);
+            return GetTenant(_contextAccessor.HttpContext.Request.Host.Host);
         }
 
         public Tenant GetTenant(string host)

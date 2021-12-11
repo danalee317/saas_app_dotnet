@@ -10,6 +10,7 @@ using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.SaaS.Data;
 using MultiFamilyPortal.SaaS.Models;
 using MultiFamilyPortal.SaaS.TenantProviders;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace MultiFamilyPortal.Data.Services
 {
@@ -33,17 +34,24 @@ namespace MultiFamilyPortal.Data.Services
 
         public async Task RunDatabaseAction(Func<MFPContext, Tenant, Task> action)
         {
+            using var scope = _services.CreateScope();
+            await RunDatabaseAction(action, scope);
+        }
+
+        private async Task RunDatabaseAction(Func<MFPContext, Tenant, Task> action, IServiceScope scope)
+        {
             var tenants = await _tenantContext.Tenants.AsNoTracking().ToArrayAsync();
-            var options = new DbContextOptionsBuilder<MFPContext>().Options;
             var settings = new DatabaseSettings();
             _configuration.Bind(settings);
-            var operationalStoreOptions = _services.GetRequiredService<IOptions<OperationalStoreOptions>>();
-            var tenantAccessor = _services.GetRequiredService<ITenantAccessor>();
+            var tenantAccessor = scope.ServiceProvider.GetRequiredService<ITenantAccessor>();
             foreach (var tenant in tenants)
             {
                 try
                 {
+                    var options = new DbContextOptionsBuilder<MFPContext>().Options;
+                    var operationalStoreOptions = scope.ServiceProvider.GetRequiredService<IOptions<OperationalStoreOptions>>();
                     tenantAccessor.Current = tenant;
+
                     using var db = new MFPContext(options, operationalStoreOptions, new StartupTenantProvider(tenant), settings);
                     await action(db, tenant);
                 }
@@ -56,26 +64,34 @@ namespace MultiFamilyPortal.Data.Services
 
         public async Task RunRoleManagerAction(Func<RoleManager<IdentityRole>, Tenant, Task> action)
         {
+            using var scope = _services.CreateScope();
             await RunDatabaseAction(async (db, tenant) =>
             {
-                //var roleManager = new RoleManager<IdentityRole>()
-            });
+                var store = scope.ServiceProvider.GetRequiredService<IRoleStore<IdentityRole>>();
+                var roleValidators = scope.ServiceProvider.GetServices<IRoleValidator<IdentityRole>>();
+                var lookupNormalizer = scope.ServiceProvider.GetRequiredService<ILookupNormalizer>();
+                var errorDescriber = scope.ServiceProvider.GetRequiredService<IdentityErrorDescriber>();
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<RoleManager<IdentityRole>>>();
+                var roleManager = new RoleManager<IdentityRole>(store, roleValidators, lookupNormalizer, errorDescriber, logger);
+                await action(roleManager, tenant);
+            }, scope);
         }
 
         public async Task RunUserManagerAction(Func<UserManager<SiteUser>, Tenant, Task> action)
         {
-            var errors = _services.GetService<IdentityErrorDescriber>();
-            var optionsAccessor = _services.GetRequiredService<IOptions<IdentityOptions>>();
-            var passwordHasher = _services.GetService<IPasswordHasher<SiteUser>>();
-            var userValidators = _services.GetServices<IUserValidator<SiteUser>>();
-            var passwordValidators = _services.GetServices<IPasswordValidator<SiteUser>>();
-            var keyNormalizer = _services.GetService<ILookupNormalizer>();
-            var logger = _services.GetService<ILogger<UserManager<SiteUser>>>();
+            using var scope = _services.CreateScope();
+            var errors = scope.ServiceProvider.GetService<IdentityErrorDescriber>();
+            var optionsAccessor = scope.ServiceProvider.GetRequiredService<IOptions<IdentityOptions>>();
+            var passwordHasher = scope.ServiceProvider.GetService<IPasswordHasher<SiteUser>>();
+            var userValidators = scope.ServiceProvider.GetServices<IUserValidator<SiteUser>>();
+            var passwordValidators = scope.ServiceProvider.GetServices<IPasswordValidator<SiteUser>>();
+            var keyNormalizer = scope.ServiceProvider.GetService<ILookupNormalizer>();
+            var logger = scope.ServiceProvider.GetService<ILogger<UserManager<SiteUser>>>();
 
             await RunDatabaseAction((db, tenant) =>
             {
                 var store = new UserStore<SiteUser, IdentityRole, MFPContext, string, IdentityUserClaim<string>, IdentityUserRole<string>, IdentityUserLogin<string>, IdentityUserToken<string>, IdentityRoleClaim<string>>(db, errors);
-                var userManager = new UserManager<SiteUser>(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, _services, logger);
+                var userManager = new UserManager<SiteUser>(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, scope.ServiceProvider, logger);
                 return action(userManager, tenant);
             });
         }

@@ -12,10 +12,7 @@
       </td>
       <td role="gridcell" class="px-2">
         <PercentageInput @bind-Value=@Property.ClosingCostPercent
-                         Min="0"
-                         Max="100"
-                         Step="5"
-                         Id="ClosingCosts"/>
+                         Id="ClosingCosts" />
       </td>
       <td role="gridcell" class="px-2 text-center">
         @Property.ClosingCosts.ToString("C")
@@ -38,9 +35,6 @@
       </td>
       <td role="gridcell" class="px-2">
         <PercentageInput @bind-Value=@Property.AquisitionFeePercent
-                         Min="0"
-                         Max="100"
-                         Step="5"
                          Id="AquisitionFee"/>
       </td>
       <td role="gridcell" class="px-2 text-center">

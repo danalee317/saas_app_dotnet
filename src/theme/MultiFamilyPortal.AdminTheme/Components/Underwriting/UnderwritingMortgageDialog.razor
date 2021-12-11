@@ -17,10 +17,7 @@
       <label for="InterestRate" class="col-sm-2 col-form-label">Interest Rate</label>
       <div class="col-sm-4">
         <PercentageInput @bind-Value=@Mortgage.InterestRate
-                         Min="0"
-                         Id="InterestRate"
-                         Max="100"
-                         Step="5"/>
+                         Id="InterestRate" />
       </div>
 
       <label for="TermInYears" class="col-sm-2 col-form-label">Term (years)</label>
@@ -63,10 +60,7 @@
       <label for="Points" class="col-sm-2 col-form-label">Points</label>
       <div class="col-sm-4">
         <PercentageInput @bind-Value=@Mortgage.Points
-                         Min="0"
-                         Max="100"
-                         Step="5"
-                         Id="Points"/>
+                         Id="Points" />
       </div>
 
       <div class="col-sm-12 text-center">

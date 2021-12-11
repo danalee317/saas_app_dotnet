@@ -14,13 +14,13 @@ namespace MultiFamilyPortal.CoreUI
         public double Value { get; set; }
 
         [Parameter]
-        public double Step { get; set; }
+        public double Step { get; set; } = 5;
 
         [Parameter]
-        public double Min { get; set; }
+        public double Min { get; set; } = 0;
 
         [Parameter]
-        public double Max { get; set; }
+        public double Max { get; set; } = 100;
 
         [Parameter]
         public EventCallback<double> ValueChanged { get; set; }

@@ -25,27 +25,18 @@ else
     <label for="MarketVacancy" class="col-sm-2 col-form col-form-label">Market Vacancy</label>
     <div class="col-sm-4">
       <PercentageInput @bind-Value=@Property.MarketVacancy
-                       Min="0"
-                       Max="100"
-                       Step="5"
                        Id="PercentageInput" />
     </div>
 
     <label for="PhysicalVacancy" class="col-sm-2 col-form col-form-label">Physical Vacancy</label>
     <div class="col-sm-4">
       <PercentageInput @bind-Value=@Property.PhysicalVacancy
-                       Min="0"
-                       Max="100"
-                       Step="5"
                        Id="PhysicalVacancy"/>
     </div>
 
     <label for="Management" class="col-sm-2 col-form col-form-label">Management</label>
     <div class="col-sm-4">
       <PercentageInput @bind-Value=@Property.Management
-                       Min="0"
-                       Max="100"
-                       Step="5"
                        Id="Management"/>
     </div>
   </div>

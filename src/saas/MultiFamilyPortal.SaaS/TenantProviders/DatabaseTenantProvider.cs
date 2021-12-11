@@ -14,11 +14,13 @@ namespace MultiFamilyPortal.SaaS.TenantProviders
         private IHttpContextAccessor _contextAccessor { get; }
         private IWebHostEnvironment _hostEnvironment { get; }
         private TenantCache _cache { get; }
+        private ITenantAccessor _tenant { get; }
 
         public DatabaseTenantProvider(TenantContext dbContext,
             ILogger<DatabaseTenantProvider> logger,
             IHttpContextAccessor contextAccessor,
             IWebHostEnvironment hostEnvironment,
+            ITenantAccessor tenant,
             TenantCache cache)
         {
             _dbContext = dbContext;
@@ -26,11 +28,15 @@ namespace MultiFamilyPortal.SaaS.TenantProviders
             _contextAccessor = contextAccessor;
             _cache = cache;
             _hostEnvironment = hostEnvironment;
+            _tenant = tenant;
         }
 
         public Tenant GetTenant()
         {
-            if (_contextAccessor.HttpContext is null)
+            if (_tenant.Current is not null)
+                return _tenant.Current;
+
+            else if (_contextAccessor.HttpContext is null)
             {
                 var st = new StackTrace();
                 var message = st.ToString();
@@ -44,23 +50,26 @@ namespace MultiFamilyPortal.SaaS.TenantProviders
 
         public Tenant GetTenant(string host)
         {
+            if (_tenant.Current is not null && _tenant.Current.Host == host)
+                return _tenant.Current;
+
             if (string.IsNullOrWhiteSpace(host))
             {
                 _logger.LogWarning("The host provided is null or empty.");
                 return null;
             }
 
-            var tenant = _cache.Get(host);
-            if(tenant is null)
+            _tenant.Current = _cache.Get(host);
+            if(_tenant is null)
             {
-                tenant = _dbContext.Tenants.FirstOrDefault(x => x.Host == host && x.Environment == _hostEnvironment.EnvironmentName);
-                if (tenant is null)
+                _tenant.Current = _dbContext.Tenants.FirstOrDefault(x => x.Host == host && x.Environment == _hostEnvironment.EnvironmentName);
+                if (_tenant is null)
                     _logger.LogWarning($"No tenant could be found for {host}");
                 else
-                    _cache.Add(host, tenant);
+                    _cache.Add(host, _tenant.Current);
             }
 
-            return tenant;
+            return _tenant.Current;
         }
     }
 }

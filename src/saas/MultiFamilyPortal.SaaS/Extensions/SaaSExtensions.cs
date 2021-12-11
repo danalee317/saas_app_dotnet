@@ -16,6 +16,7 @@ namespace MultiFamilyPortal.SaaS.Extensions
             return services.AddSingleton(settings)
                 .AddSaaSTenantDatabase(configuration)
                 .AddSingleton<TenantCache>()
+                .AddScoped<ITenantAccessor, TenantAccessor>()
                 .AddScoped<ITenantProvider, DatabaseTenantProvider>();
         }
 

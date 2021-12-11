@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\saas\MultiFamilyPortal.SaaS\MultiFamilyPortal.SaaS.csproj" />
     <ProjectReference Include="..\MultiFamilyPortal.Data\MultiFamilyPortal.Data.csproj" />
   </ItemGroup>
 

@@ -38,10 +38,12 @@ namespace MultiFamilyPortal.Data.Services
             var settings = new DatabaseSettings();
             _configuration.Bind(settings);
             var operationalStoreOptions = _services.GetRequiredService<IOptions<OperationalStoreOptions>>();
+            var tenantAccessor = _services.GetRequiredService<ITenantAccessor>();
             foreach (var tenant in tenants)
             {
                 try
                 {
+                    tenantAccessor.Current = tenant;
                     using var db = new MFPContext(options, operationalStoreOptions, new StartupTenantProvider(tenant), settings);
                     await action(db, tenant);
                 }

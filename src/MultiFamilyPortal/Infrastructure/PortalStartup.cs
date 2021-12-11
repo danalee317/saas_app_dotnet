@@ -24,6 +24,7 @@ namespace MultiFamilyPortal.Infrastructure
             _contextHelper = contextHelper;
             _themes = themes;
         }
+
         public async Task StartAsync()
         {
             await SeedSiteContent();

@@ -46,6 +46,35 @@ namespace MultiFamilyPortal.Extensions
 
         private static async Task RunMigrations(WebApplication app, IServiceProvider services)
         {
+#if DEBUG
+            using (var tenantDb = services.GetRequiredService<SaaS.Data.TenantContext>())
+            {
+                await tenantDb.Database.EnsureCreatedAsync();
+                if(!await tenantDb.Tenants.AnyAsync(x => x.Host == "localhost"))
+                {
+                    var hostEnvironment = services.GetRequiredService<IWebHostEnvironment>();
+                    await tenantDb.Tenants.AddAsync(new SaaS.Models.Tenant
+                    {
+                        Host = "localhost",
+                        Created = DateTimeOffset.Now,
+                        DatabaseName = "multifamilyportal",
+                        Environment = hostEnvironment.EnvironmentName,
+                    });
+                }
+
+                var dbSettings = services.GetRequiredService<SaaS.Data.DatabaseSettings>();
+                var connString = dbSettings.GetConnectionString();
+                if(!connString.Contains("{0}"))
+                {
+                    // Be sure to replace the Database Name or Initial Catalog with {0}
+                    // By default we have created a record expecting a database named multifamilyportal
+                    // Be sure that the database exists on the host. Any pending migrations will automatically
+                    // be applied.
+                    System.Diagnostics.Debugger.Break();
+                }
+            }
+#endif
+
             var contextHelper = services.GetRequiredService<IStartupContextHelper>();
             await contextHelper.RunDatabaseAction(async (db, tenant) =>
             {

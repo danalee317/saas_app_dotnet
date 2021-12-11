@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace MultiFamilyPortal.Data.Models
 {
@@ -17,6 +18,7 @@ namespace MultiFamilyPortal.Data.Models
 
         public SocialProvider SocialProvider { get; set; }
 
+        [JsonIgnore]
         public SiteUser User { get; set; }
 
         [NotMapped]

@@ -3,8 +3,10 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Authentication;
+using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.CoreUI;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos;
@@ -18,6 +20,9 @@ namespace MultiFamilyPortal.AdminTheme.Pages
         [Inject]
         private HttpClient _client { get; set; }
 
+        [Inject]
+        private ILogger<UserProfile> _logger { get; set; }
+
         [CascadingParameter]
         private ClaimsPrincipal _user { get; set; }
 
@@ -25,35 +30,66 @@ namespace MultiFamilyPortal.AdminTheme.Pages
 
         private SerializableUser SiteUser;
         private UnderwriterGoal Goals;
-        private IEnumerable<EditableLink> Links;
+        private ObservableRangeCollection<EditableLink> Links = new();
+        private TelerikTabStrip _myTabStrip;
         private PortalNotification notification;
         private ChangePasswordRequest ChangePassword = new();
 
         protected override async Task OnInitializedAsync()
         {
-            SiteUser = await _client.GetFromJsonAsync<SerializableUser>("/api/admin/userprofile");
-            Goals = SiteUser.Goals;
+            try
+            {
+                SiteUser = await _client.GetFromJsonAsync<SerializableUser>("/api/admin/userprofile");
 
-            var providers = await _client.GetFromJsonAsync<IEnumerable<SocialProvider>>("/api/admin/userprofile/social-providers");
+                if (SiteUser != null)
+                {
+                    Goals = SiteUser.Goals;
+                    var providers = await _client.GetFromJsonAsync<IEnumerable<SocialProvider>>("/api/admin/userprofile/social-providers");
 
-            Links = providers.Select(x => new EditableLink {
-                Icon = x.Icon,
-                Id = x.Id,
-                Name = x.Name,
-                Placeholder = x.Placeholder,
-                UriTemplate = x.UriTemplate,
-                Value = SiteUser.SocialLinks.FirstOrDefault(l => l.SocialProviderId == x.Id)?.Value
-            });
+                    Links.ReplaceRange(providers.Select(x => new EditableLink
+                    {
+                        Icon = x.Icon,
+                        Id = x.Id,
+                        Name = x.Name,
+                        Placeholder = x.Placeholder,
+                        UriTemplate = x.UriTemplate,
+                        Value = SiteUser.SocialLinks.FirstOrDefault(l => l.SocialProviderId == x.Id)?.Value
+                    }));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Failed to get data");
+            }
         }
 
         private async Task Update()
         {
-            using var response = await _client.PostAsJsonAsync("/api/admin/userprofile/update/profile", SiteUser);
+            try
+            {
+                if (_myTabStrip.ActiveTabIndex == 0)
+                {
+                    await _client.PostAsJsonAsync("api/admin/UserProfile/update/password", ChangePassword);
+                    notification.ShowSuccess("Profile Saved!");
+                }
+                else if (_myTabStrip.ActiveTabIndex == 1)
+                {
+                    List<SocialLink> links = Links.Select(l =>
+                        new SocialLink { SocialProviderId = l.Id, Value = l.Value, UserId = Guid.Empty.ToString() }).ToList();
+                    await _client.PostAsJsonAsync("api/admin/UserProfile/update/links", links);
+                }
+                else
+                {
+                    await _client.PostAsJsonAsync("api/admin/UserProfile/update/password", ChangePassword);
+                }
 
-            if (response.IsSuccessStatusCode)
                 notification.ShowSuccess("Profile Saved!");
-            else
-                notification.ShowWarning("Unexpected error occurred while saving the profile");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "failed to update user");
+                notification.ShowError("Unexpected error occurred while saving the profile");
+            }
         }
 
         private async Task OnChangePassword(EditContext context)

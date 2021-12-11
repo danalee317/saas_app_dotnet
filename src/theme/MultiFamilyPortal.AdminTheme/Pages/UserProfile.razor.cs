@@ -63,24 +63,23 @@ namespace MultiFamilyPortal.AdminTheme.Pages
             }
         }
 
-        private async Task Update()
+        private async Task UpdateAsync()
         {
             try
             {
                 if (_myTabStrip.ActiveTabIndex == 0)
                 {
-                    await _client.PostAsJsonAsync("api/admin/UserProfile/update/password", ChangePassword);
-                    notification.ShowSuccess("Profile Saved!");
+                     await _client.PostAsJsonAsync("/api/admin/userprofile/update/profile", SiteUser);
                 }
                 else if (_myTabStrip.ActiveTabIndex == 1)
                 {
                     List<SocialLink> links = Links.Select(l =>
-                        new SocialLink { SocialProviderId = l.Id, Value = l.Value, UserId = Guid.Empty.ToString() }).ToList();
+                        new SocialLink { SocialProviderId = l.Id, Value = l.Value, UserId = Guid.Empty.ToString()}).ToList();
                     await _client.PostAsJsonAsync("api/admin/UserProfile/update/links", links);
                 }
                 else
                 {
-                    await _client.PostAsJsonAsync("api/admin/UserProfile/update/password", ChangePassword);
+                    await _client.PostAsJsonAsync("api/admin/UserProfile/update/goals", Goals);
                 }
 
                 notification.ShowSuccess("Profile Saved!");
@@ -88,20 +87,13 @@ namespace MultiFamilyPortal.AdminTheme.Pages
             catch (Exception ex)
             {
                 _logger.LogError(ex, "failed to update user");
-                notification.ShowError("Unexpected error occurred while saving the profile");
+                notification.ShowError("Something went wrong!");
             }
         }
 
         private async Task OnChangePassword(EditContext context)
         {
             var model = context.Model as ChangePasswordRequest;
-
-            if (model.Password != model.ConfirmPassword)
-            {
-                notification.ShowError("The Password and Confirm Password Fields must match");
-                return;
-            }
-
             using var response = await _client.PostAsJsonAsync("/api/admin/userprofile/update/password", model);
 
             if (response.IsSuccessStatusCode)

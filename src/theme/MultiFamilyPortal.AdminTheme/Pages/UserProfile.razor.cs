@@ -28,6 +28,7 @@ namespace MultiFamilyPortal.AdminTheme.Pages
         private IEnumerable<EditableLink> Links;
         private PortalNotification notification;
         private ChangePasswordRequest ChangePassword = new();
+
         protected override async Task OnInitializedAsync()
         {
             SiteUser = await _client.GetFromJsonAsync<SerializableUser>("/api/admin/userprofile");
@@ -45,9 +46,14 @@ namespace MultiFamilyPortal.AdminTheme.Pages
             });
         }
 
-        private void Update()
+        private async Task Update()
         {
-            notification.ShowSuccess("Profile Saved!");
+            using var response = await _client.PostAsJsonAsync("/api/admin/userprofile/update/profile", SiteUser);
+
+            if (response.IsSuccessStatusCode)
+                notification.ShowSuccess("Profile Saved!");
+            else
+                notification.ShowWarning("Unexpected error occurred while saving the profile");
         }
 
         private async Task OnChangePassword(EditContext context)
@@ -55,7 +61,17 @@ namespace MultiFamilyPortal.AdminTheme.Pages
             var model = context.Model as ChangePasswordRequest;
 
             if (model.Password != model.ConfirmPassword)
-                System.Diagnostics.Debugger.Break();
+            {
+                notification.ShowError("The Password and Confirm Password Fields must match");
+                return;
+            }
+
+            using var response = await _client.PostAsJsonAsync("/api/admin/userprofile/update/password", model);
+
+            if (response.IsSuccessStatusCode)
+                notification.ShowSuccess("Password updated");
+            else
+                notification.ShowWarning("Could not update password");
         }
 
         private class EditableLink : SocialProvider

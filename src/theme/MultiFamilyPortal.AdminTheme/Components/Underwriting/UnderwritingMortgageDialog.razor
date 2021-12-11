@@ -14,14 +14,14 @@
                         Class="form-control" />
       </div>
 
-      <label for="InterestRate" class="col-sm-2 col-form-label">Interest Rate (%)</label>
+      <label for="InterestRate" class="col-sm-2 col-form-label">Interest Rate</label>
       <div class="col-sm-4">
-        <PercentageInput  Value=@Mortgage.InterestRate
+        <PercentageInput  @bind-Value=@Mortgage.InterestRate
                           Min="0"
                           Id="InterestRate"
                           Max="100"
                           Step="5"
-                          OnValueChanged=@ValueUpdated />
+                          Precision="3"/>
       </div>
 
       <label for="TermInYears" class="col-sm-2 col-form-label">Term (years)</label>

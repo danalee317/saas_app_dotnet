@@ -1,7 +1,7 @@
 <div class="w-100" id="percent-parent">
   <TelerikNumericTextBox @bind-Value=@Value
                          Id=@Id
-                         Format="N3"
+                         Format=@($"P{Precision}")
                          Min=@Min
                          Max=@Max
                          Step=@Step

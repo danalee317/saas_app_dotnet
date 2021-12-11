@@ -8,6 +8,9 @@ namespace MultiFamilyPortal.CoreUI
         public string Id { get; set; }
 
         [Parameter]
+        public int Precision { get; set; }
+
+        [Parameter]
         public double Value { get; set; }
 
         [Parameter]
@@ -20,12 +23,13 @@ namespace MultiFamilyPortal.CoreUI
         public double Max { get; set; }
 
         [Parameter]
-        public EventCallback<double> OnValueChanged { get; set; }
+        public EventCallback<double> ValueChanged { get; set; }
 
         private async Task HandleValueChangedAsync()
         {
-            Value /= 100;
-            await OnValueChanged.InvokeAsync(Value);
+            if (Value > 1)
+                Value /= 100;
+            await ValueChanged.InvokeAsync(Value);
         }
     }
 }

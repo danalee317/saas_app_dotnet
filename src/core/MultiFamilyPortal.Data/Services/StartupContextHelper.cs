@@ -10,89 +10,94 @@ using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.SaaS.Data;
 using MultiFamilyPortal.SaaS.Models;
 using MultiFamilyPortal.SaaS.TenantProviders;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace MultiFamilyPortal.Data.Services
 {
     internal class StartupContextHelper : IStartupContextHelper
     {
-        private TenantContext _tenantContext { get; }
         private IConfiguration _configuration { get; }
         private IServiceProvider _services { get; }
         private ILogger _logger { get; }
 
-        public StartupContextHelper(TenantContext tenantContext,
+        public StartupContextHelper(
             IConfiguration configuration,
             IServiceProvider serviceProvider,
             ILoggerFactory loggerFactory)
         {
-            _tenantContext = tenantContext;
             _configuration = configuration;
             _services = serviceProvider;
             _logger = loggerFactory.CreateLogger<StartupContextHelper>();
         }
 
-        public async Task RunDatabaseAction(Func<MFPContext, Tenant, Task> action)
+        public async Task RunStartupTask(Func<Tenant, IServiceProvider, Task> action)
         {
-            using var scope = _services.CreateScope();
-            await RunDatabaseAction(action, scope);
+            using var root = _services.CreateScope();
+            using var tenantContext = root.ServiceProvider.GetRequiredService<TenantContext>();
+            var tenants = await tenantContext.Tenants.AsNoTracking().ToArrayAsync();
+
+            foreach (var tenant in tenants)
+            {
+                var scope = _services.CreateScope();
+                var tenantAccessor = scope.ServiceProvider.GetRequiredService<ITenantAccessor>();
+                tenantAccessor.Current = tenant;
+                await action(tenant, scope.ServiceProvider);
+            }
         }
 
-        private async Task RunDatabaseAction(Func<MFPContext, Tenant, Task> action, IServiceScope scope)
+        public async Task RunDatabaseAction(Func<MFPContext, Tenant, Task> action)
         {
-            var tenants = await _tenantContext.Tenants.AsNoTracking().ToArrayAsync();
+            await RunDatabaseActionInternal((services, db, tenant) => action(db, tenant));
+        }
+
+        public async Task RunRoleManagerAction(Func<RoleManager<IdentityRole>, Tenant, Task> action)
+        {
+            await RunDatabaseActionInternal(async (services, db, tenant) =>
+            {
+                var store = services.GetRequiredService<IRoleStore<IdentityRole>>();
+                var roleValidators = services.GetServices<IRoleValidator<IdentityRole>>();
+                var lookupNormalizer = services.GetRequiredService<ILookupNormalizer>();
+                var errorDescriber = services.GetRequiredService<IdentityErrorDescriber>();
+                var logger = services.GetRequiredService<ILogger<RoleManager<IdentityRole>>>();
+                var roleManager = new RoleManager<IdentityRole>(store, roleValidators, lookupNormalizer, errorDescriber, logger);
+                await action(roleManager, tenant);
+            });
+        }
+
+        public async Task RunUserManagerAction(Func<UserManager<SiteUser>, Tenant, Task> action)
+        {
+            await RunDatabaseActionInternal((services, db, tenant) =>
+            {
+                var errors = services.GetService<IdentityErrorDescriber>();
+                var optionsAccessor = services.GetRequiredService<IOptions<IdentityOptions>>();
+                var passwordHasher = services.GetService<IPasswordHasher<SiteUser>>();
+                var userValidators = services.GetServices<IUserValidator<SiteUser>>();
+                var passwordValidators = services.GetServices<IPasswordValidator<SiteUser>>();
+                var keyNormalizer = services.GetService<ILookupNormalizer>();
+                var logger = services.GetService<ILogger<UserManager<SiteUser>>>();
+                var store = new UserStore<SiteUser, IdentityRole, MFPContext, string, IdentityUserClaim<string>, IdentityUserRole<string>, IdentityUserLogin<string>, IdentityUserToken<string>, IdentityRoleClaim<string>>(db, errors);
+                var userManager = new UserManager<SiteUser>(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger);
+                return action(userManager, tenant);
+            });
+        }
+
+        private async Task RunDatabaseActionInternal(Func<IServiceProvider, MFPContext, Tenant, Task> action)
+        {
             var settings = new DatabaseSettings();
             _configuration.Bind(settings);
-            var tenantAccessor = scope.ServiceProvider.GetRequiredService<ITenantAccessor>();
-            foreach (var tenant in tenants)
+            await RunStartupTask(async (tenant, services) =>
             {
                 try
                 {
                     var options = new DbContextOptionsBuilder<MFPContext>().Options;
-                    var operationalStoreOptions = scope.ServiceProvider.GetRequiredService<IOptions<OperationalStoreOptions>>();
-                    tenantAccessor.Current = tenant;
+                    var operationalStoreOptions = services.GetRequiredService<IOptions<OperationalStoreOptions>>();
 
                     using var db = new MFPContext(options, operationalStoreOptions, new StartupTenantProvider(tenant), settings);
-                    await action(db, tenant);
+                    await action(services, db, tenant);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, $"Error processing database action for Tenant {tenant.Host}");
                 }
-            }
-        }
-
-        public async Task RunRoleManagerAction(Func<RoleManager<IdentityRole>, Tenant, Task> action)
-        {
-            using var scope = _services.CreateScope();
-            await RunDatabaseAction(async (db, tenant) =>
-            {
-                var store = scope.ServiceProvider.GetRequiredService<IRoleStore<IdentityRole>>();
-                var roleValidators = scope.ServiceProvider.GetServices<IRoleValidator<IdentityRole>>();
-                var lookupNormalizer = scope.ServiceProvider.GetRequiredService<ILookupNormalizer>();
-                var errorDescriber = scope.ServiceProvider.GetRequiredService<IdentityErrorDescriber>();
-                var logger = scope.ServiceProvider.GetRequiredService<ILogger<RoleManager<IdentityRole>>>();
-                var roleManager = new RoleManager<IdentityRole>(store, roleValidators, lookupNormalizer, errorDescriber, logger);
-                await action(roleManager, tenant);
-            }, scope);
-        }
-
-        public async Task RunUserManagerAction(Func<UserManager<SiteUser>, Tenant, Task> action)
-        {
-            using var scope = _services.CreateScope();
-            var errors = scope.ServiceProvider.GetService<IdentityErrorDescriber>();
-            var optionsAccessor = scope.ServiceProvider.GetRequiredService<IOptions<IdentityOptions>>();
-            var passwordHasher = scope.ServiceProvider.GetService<IPasswordHasher<SiteUser>>();
-            var userValidators = scope.ServiceProvider.GetServices<IUserValidator<SiteUser>>();
-            var passwordValidators = scope.ServiceProvider.GetServices<IPasswordValidator<SiteUser>>();
-            var keyNormalizer = scope.ServiceProvider.GetService<ILookupNormalizer>();
-            var logger = scope.ServiceProvider.GetService<ILogger<UserManager<SiteUser>>>();
-
-            await RunDatabaseAction((db, tenant) =>
-            {
-                var store = new UserStore<SiteUser, IdentityRole, MFPContext, string, IdentityUserClaim<string>, IdentityUserRole<string>, IdentityUserLogin<string>, IdentityUserToken<string>, IdentityRoleClaim<string>>(db, errors);
-                var userManager = new UserManager<SiteUser>(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, scope.ServiceProvider, logger);
-                return action(userManager, tenant);
             });
         }
     }

@@ -15,7 +15,7 @@ namespace MultiFamilyPortal.SaaS
 
         public async Task Invoke(HttpContext httpContext, ITenantProvider provider)
         {
-            if (provider.GetTenant(httpContext.Request.Host.Value) == null)
+            if (provider.GetTenant(httpContext.Request.Host.Host) == null)
             {
                 httpContext.Response.Redirect(_missingTenantUrl);
                 return;

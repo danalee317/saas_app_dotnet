@@ -60,10 +60,10 @@ namespace MultiFamilyPortal.SaaS.TenantProviders
             }
 
             _tenant.Current = _cache.Get(host);
-            if(_tenant is null)
+            if(_tenant.Current is null)
             {
                 _tenant.Current = _dbContext.Tenants.FirstOrDefault(x => x.Host == host && x.Environment == _hostEnvironment.EnvironmentName);
-                if (_tenant is null)
+                if (_tenant.Current is null)
                     _logger.LogWarning($"No tenant could be found for {host}");
                 else
                     _cache.Add(host, _tenant.Current);

@@ -5,21 +5,21 @@ namespace MultiFamilyPortal.Services
 {
     internal class LocalStorageService : IStorageService
     {
-        private string _basePath { get; }
+        private string _contentRoot { get; }
+        private string _basePath  => Path.Combine(_contentRoot, "App_Data", _tenantProvider.GetTenant().Host, "files");
         private ITenantProvider _tenantProvider { get; }
 
         public LocalStorageService(IHostEnvironment environment, ITenantProvider tenantProvider)
         {
-            _basePath = Path.Combine(environment.ContentRootPath, "App_Data", "files");
+            _contentRoot = environment.ContentRootPath;
             _tenantProvider = tenantProvider;
-            Directory.CreateDirectory(_basePath);
         }
 
         public Task DeleteAsync(string path, CancellationToken cancellationToken = default)
         {
             try
             {
-                var fullPath = Path.Combine(_basePath, path);
+                var fullPath = GetFullPath(path);
                 File.Delete(fullPath);
             }
             finally
@@ -55,10 +55,9 @@ namespace MultiFamilyPortal.Services
 
         private string GetFullPath(string path)
         {
-            var tenant = _tenantProvider.GetTenant();
-            var dirPath = Path.Combine(_basePath, tenant.Host);
-            Directory.CreateDirectory(dirPath);
-            return Path.Combine(dirPath, path);
+            var root = _basePath;
+            Directory.CreateDirectory(root);
+            return Path.Combine(root, path);
         }
     }
 }

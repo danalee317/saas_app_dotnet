@@ -1,4 +1,7 @@
-using System.Reflection;using Microsoft.AspNetCore.Components;
+using System.Reflection;using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Components;
+using MultiFamilyPortal.SaaS;
+using MultiFamilyPortal.SaaS.Models;
 using MultiFamilyPortal.Themes.Internals;
 
 namespace MultiFamilyPortal.Themes
@@ -9,6 +12,20 @@ namespace MultiFamilyPortal.Themes
 
         [Inject]
         private IThemeFactory _themeFactory { get; set; } = default!;
+
+        [Inject]
+        private ITenantProvider _tenantProvider { get; set; } = default!;
+
+        [Inject]
+        private NavigationManager _navigationManager { get; set; } = default!;
+
         private IPortalTheme Theme => _themeFactory.GetCurrentTheme();
+        private Tenant _tenant;
+
+        protected override void OnInitialized()
+        {
+            var uri = new Uri(_navigationManager.BaseUri);
+            _tenant = _tenantProvider.GetTenant(uri.Host);
+        }
     }
 }

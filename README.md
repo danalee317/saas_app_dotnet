@@ -39,6 +39,32 @@ The MultiFamilyPortal expects a configuration as follows.
 
 The SaaS Admin portal only requires the Tenant Connection String.
 
+### Testing Multi Tenant Functionality
+
+In order to locally test the Multi Tenant Functionality, you must provide an updated `hosts` configuration on your local machine. For instance let's say that you want to test the following two demo tenants:
+
+- demoportal
+- acmeequities
+
+To do this you would provide an updated `hosts` configuration as follows:
+
+```
+127.0.0.1   demoportal
+127.0.0.1   acmeequities
+```
+
+#### On Mac
+
+You can edit the `hosts` file using the following command:
+
+```bash
+sudo nano /private/etc/hosts
+```
+
+#### On PC
+
+Open the file `C:\Windows\System32\drivers\etc\hosts` and edit the file. You may do this using Notepad or Visual Studio Code. Note that if you are using Notepad you will need to run Notepad as the Administrator. If you are using Visual Studio Code, when saving or "Auto Saving" you may be prompted to "Retry as Administrator". It will require elevated privileges to save the file.
+
 ## Limitations
 
 Currently the SaaS functionality is limited to only preparing the database for tenants at application startup and cannot prepare tenant databases from the SaaS Admin Portal or on Client Requests. This is intentional as the preparation process is expensive and should not be performed in the request pipeline. Additional work will likely need to be done to migrate this functionality to the SaaS Admin Portal.

@@ -45,7 +45,7 @@ else
                   <TabStripTab Title="Our Info">
                     <UnderwritingOurInfoTab Property=@Property />
                   </TabStripTab>
-                  <TabStripTab Title="Rule of Thumb">
+                  <TabStripTab Title="Rule of Thumb" Disabled=@(!Property.OurExpense.Any())>
                     <UnderwritingMarketRuleOfThumb Property=@Property />
                   </TabStripTab>
                 </TelerikTabStrip>

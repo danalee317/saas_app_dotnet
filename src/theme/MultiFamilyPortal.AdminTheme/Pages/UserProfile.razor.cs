@@ -65,30 +65,9 @@ namespace MultiFamilyPortal.AdminTheme.Pages
 
         private async Task UpdateAsync()
         {
-            try
-            {
-                if (_myTabStrip.ActiveTabIndex == 0)
-                {
-                     await _client.PostAsJsonAsync("/api/admin/userprofile/update/profile", SiteUser);
-                }
-                else if (_myTabStrip.ActiveTabIndex == 1)
-                {
-                    List<SocialLink> links = Links.Select(l =>
-                        new SocialLink { SocialProviderId = l.Id, Value = l.Value, UserId = Guid.Empty.ToString()}).ToList();
-                    await _client.PostAsJsonAsync("api/admin/UserProfile/update/links", links);
-                }
-                else
-                {
-                    await _client.PostAsJsonAsync("api/admin/UserProfile/update/goals", Goals);
-                }
-
-                notification.ShowSuccess("Profile Saved!");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "failed to update user");
-                notification.ShowError("Something went wrong!");
-            }
+            await UpdateUser();
+            await UpdateLinks();
+            await UpdateGoals();
         }
 
         private async Task OnChangePassword(EditContext context)
@@ -100,6 +79,56 @@ namespace MultiFamilyPortal.AdminTheme.Pages
                 notification.ShowSuccess("Password updated");
             else
                 notification.ShowWarning("Could not update password");
+        }
+
+        private async Task UpdateUser()
+        {
+            try
+            {
+                using var response = await _client.PostAsJsonAsync("/api/admin/userprofile/update/profile", SiteUser);
+
+                if (!response.IsSuccessStatusCode)
+                    notification.ShowWarning("Could not update profile");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to update user.");
+            }
+        }
+
+        private async Task UpdateLinks()
+        {
+            try
+            {
+                List<SocialLink> links = Links.Select(l =>
+                        new SocialLink { SocialProviderId = l.Id, Value = l.Value, UserId = Guid.Empty.ToString() }).ToList();
+
+                using var response = await _client.PostAsJsonAsync("api/admin/UserProfile/update/links", links);
+
+                if (!response.IsSuccessStatusCode)
+                    notification.ShowWarning("Could not update profile");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to update user social links.");
+            }
+        }
+
+        private async Task UpdateGoals()
+        {
+            try
+            {
+                using var response = await _client.PostAsJsonAsync("api/admin/UserProfile/update/goals", Goals);
+
+                if (response.IsSuccessStatusCode)
+                    notification.ShowSuccess("Profile updated");
+                else
+                    notification.ShowWarning("Could not update profile");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to update user goals.");
+            }
         }
 
         private class EditableLink : SocialProvider

@@ -8,7 +8,7 @@ namespace MultiFamilyPortal.CoreUI
         public string Id { get; set; }
 
         [Parameter]
-        public int Precision { get; set; } = 3;
+        public int Precision { get; set; } = 2;
 
         [Parameter]
         public double Value { get; set; }

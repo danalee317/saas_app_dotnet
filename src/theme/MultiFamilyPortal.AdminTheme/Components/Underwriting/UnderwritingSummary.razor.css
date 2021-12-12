@@ -3,6 +3,6 @@
 }
 
 .summary-section {
-  background-color: #2f4050;
+  background-color: var(--portal-menu-bg);
   padding-top: 3px;
 }

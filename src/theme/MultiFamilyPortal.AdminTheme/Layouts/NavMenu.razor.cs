@@ -1,47 +1,54 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
+using MultiFamilyPortal.Themes;
 
 namespace MultiFamilyPortal.AdminTheme.Layouts
 {
     public partial class NavMenu
     {
+        [Inject]
+        private NavigationManager _navigationManager { get; set; }
+
         [CascadingParameter]
-        private ISiteInfo SiteInfo { get; set; }
+        private ClaimsPrincipal User { get; set; }
+
+        [CascadingParameter]
+        private IPortalTheme Theme { get; set; }
+        private IMenuProvider MenuProvider => Theme as IMenuProvider;
+        private RootMenuOption _selected;
 
         private bool collapseNavMenu = true;
-        private bool showContentMenu = false;
-        private bool showPropertyMenu = false;
-        private bool showUsersMenu = false;
         private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+        protected override void OnInitialized()
+        {
+            _navigationManager.LocationChanged += OnLocationChanged;
+            var location = new Uri(_navigationManager.Uri);
+            UpdateSelectedOption(location.AbsolutePath);
+        }
+
+        private void OnLocationChanged(object sender, LocationChangedEventArgs e)
+        {
+            var location = new Uri(e.Location);
+            _selected = null;
+            if(MenuProvider is not null)
+            {
+                UpdateSelectedOption(location.AbsolutePath);
+            }
+        }
+
+        private void UpdateSelectedOption(string uri)
+        {
+            if (string.IsNullOrEmpty(uri))
+                return;
+
+            _selected = MenuProvider.Menu.FirstOrDefault(x => x.Link == uri || (x.Children is not null && x.Children.Any(c => uri.StartsWith(c.Link))));
+        }
+
         private void ToggleNavMenu()
         {
             collapseNavMenu = !collapseNavMenu;
-        }
-
-        private void ToggleContentMenu()
-        {
-            showContentMenu = !showContentMenu;
-            if (showContentMenu)
-                showPropertyMenu = showUsersMenu = false;
-
-            collapseNavMenu = false;
-        }
-
-        private void TogglePropertyMenu()
-        {
-            showPropertyMenu = !showPropertyMenu;
-            if (showPropertyMenu)
-                showContentMenu = showUsersMenu = false;
-
-            collapseNavMenu = false;
-        }
-
-        private void ToggleUsersMenu()
-        {
-            showUsersMenu = !showUsersMenu;
-            if (showUsersMenu)
-                showContentMenu = showPropertyMenu = false;
-
-            collapseNavMenu = false;
         }
     }
 }

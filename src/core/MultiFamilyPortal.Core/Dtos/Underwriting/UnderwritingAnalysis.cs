@@ -34,6 +34,11 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         private ObservableAsPropertyHelper<double> _closingCosts;
         private ObservableAsPropertyHelper<double> _aquisitionFee;
         private ObservableAsPropertyHelper<double> _costPerUnit;
+        private ObservableAsPropertyHelper<double> _reversion;
+        private ObservableAsPropertyHelper<double> _reversionCapRate;
+        private ObservableAsPropertyHelper<double> _netPresentValue;
+        private ObservableAsPropertyHelper<double> _initialRateOfReturn;
+        private ObservableAsPropertyHelper<double> _totalAnnualReturn;
 
         // Seller
         private ObservableAsPropertyHelper<double> _sellerIncome;
@@ -355,6 +360,26 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         public PropertyClass PropertyClass { get; set; }
 
         public PropertyClass NeighborhoodClass { get; set; }
+
+        [JsonIgnore]
+        [DisplayFormat(DataFormatString = "{0:P}")]
+        public double ReversionCapRate => _reversionCapRate?.Value ?? 0;
+
+        [JsonIgnore]
+        [DisplayFormat(DataFormatString = "{0:N0}")]
+        public double Reversion => _reversion?.Value ?? 0;
+
+        [JsonIgnore]
+        [DisplayFormat(DataFormatString = "{0:N0}")]
+        public double NetPresentValue => _netPresentValue?.Value ?? 0;
+
+        [JsonIgnore]
+        [DisplayFormat(DataFormatString = "{0:P}")]
+        public double InitialRateOfReturn => _initialRateOfReturn?.Value ?? 0;
+
+        [JsonIgnore]
+        [DisplayFormat(DataFormatString = "{0:P}")]
+        public double TotalAnnualReturn => _totalAnnualReturn?.Value ?? 0;
 
         [JsonIgnore]
         [DisplayFormat(DataFormatString = "{0:C}")]

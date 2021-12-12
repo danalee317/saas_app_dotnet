@@ -25,7 +25,7 @@
             <div class="col">
               <UnderwritingInfoBar Title="Reversion Cap"
                                    Color=@_lowerColor
-                                   Value="XXX" />
+                                   Value=@Property.ReversionCapRate.ToString("P") />
             </div>
             <div class="col">
               <UnderwritingInfoBar Title="Number of Units"
@@ -74,7 +74,7 @@
             <div class="col">
               <UnderwritingInfoBar Title="Reversion Value"
                                    Color=@_higherColor
-                                   Value="XXX" />
+                                   Value=@Property.Reversion.ToString("N0") />
             </div>
             <div class="col">
               <UnderwritingInfoBar Title="Desired Yield"
@@ -84,12 +84,12 @@
             <div class="col">
               <UnderwritingInfoBar Title="NPV"
                                    Color=@_middleColor
-                                   Value="XXX" />
+                                   Value=@Property.NetPresentValue.ToString("N0") />
             </div>
             <div class="col">
               <UnderwritingInfoBar Title="IRR"
                                    Color=@_higherColor
-                                   Value="XXX" />
+                                   Value=@Property.InitialRateOfReturn.ToString("P") />
             </div>
             <div class="col">
               <UnderwritingInfoBar Title="LTV"
@@ -99,7 +99,7 @@
              <div class="col">
               <UnderwritingInfoBar Title="Total Ann. Return"
                                    Color=@_middleColor
-                                   Value="XXX" />
+                                   Value=@Property.TotalAnnualReturn.ToString("P") />
             </div>
           </div>
         </div>

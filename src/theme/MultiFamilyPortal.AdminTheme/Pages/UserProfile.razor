@@ -11,51 +11,49 @@
     <div class="h-200 pt-3"></div>
   </div>
   <div class="col-md-8">
-  <TelerikTabStrip TabPosition="TabPosition.Top">
+  <TelerikTabStrip TabPosition="TabPosition.Top"  @ref="_myTabStrip">
     <TabStripTab>
       <HeaderTemplate>
         <i class="fa-duotone fa-user-circle"></i>&nbsp; My Profile
       </HeaderTemplate>
       <Content>
         <div class="row">
-          <div class="col-6">
+          <div class="col-6 mb-3">
             <div class="form-floating">
               <TelerikTextBox Class="form-control"
                               PlaceHolder="Enter your first name"
                               @bind-Value="@SiteUser.FirstName"
-                              Width="100%" />
+                              Id="FirstName" />
               <label for="FirstName" class="form-label">First Name</label>
             </div>
           </div>
-          <div class="col-6">
+          <div class="col-6 mb-3">
             <div class="form-floating">
               <TelerikTextBox Class="form-control"
                               PlaceHolder="Enter your last name"
                               @bind-Value="@SiteUser.LastName"
-                              Width="100%"/>
-
+                              Id="LastName" />
               <label for="LastName" class="form-label">Last Name</label>
             </div>
           </div>
         </div>
         <div class="row">
-          <div class="col-6">
+          <div class="col-6 mb-3">
             <div class="form-floating">
-              <TelerikTextBox Class="form-control"
+              <TelerikTextBox Class="form-control w-100"
                               PlaceHolder="Real Estate Guru"
                               @bind-Value="@SiteUser.Title"
-                              Width="100%"/>
-
+                              Id="Title" />
               <label for="Title" class="form-label">Title</label>
             </div>
           </div>
-          <div class="col-6">
+          <div class="col-6 mb-3">
             <div class="form-floating">
-              <TelerikMaskedTextBox Class="form-control"
+              <TelerikMaskedTextBox Class="form-control w-100 h-100"
                                     PlaceHolder="Enter your phone number"
                                     Mask="(000) 000-0000"
                                     @bind-Value="@SiteUser.PhoneNumber"
-                                    Width="100%"/>
+                                    Id ="Phone" />
               <label for="Phone" class="form-label">Phone</label>
             </div>
           </div>
@@ -94,10 +92,9 @@
                     <i class="@socialLink.Icon fa-2x"></i>
                   </div>
                   <div class="col">
-                    <TelerikTextBox Class="form-control"
+                    <TelerikTextBox Class="form-control w-100"
                                     PlaceHolder="@socialLink.Placeholder"
-                                    Width="100%"
-                                    @bind-Value="socialLink.Value" />
+                                    @bind-Value="@socialLink.Value" />
                   </div>
                 </div>
               </div>
@@ -167,7 +164,6 @@
                     OnValidSubmit=@OnChangePassword>
             <DataAnnotationsValidator />
             <ServerSideValidator />
-            <ValidationSummary />
             <div class="row gt-3 p-2">
               <div class="col-md-6 col-sm-12">
                 <h3>Change Password</h3>
@@ -176,24 +172,42 @@
             <div class="row gt-3 p-2">
               <div class="col-md-6 col-sm-12">
                 <div class="form-floating">
-                  <TelerikTextBox Class="form-control" Password="true" @bind-Value=@ChangePassword.CurrentPassword />
+                  <TelerikTextBox Class="form-control" 
+                                  Password="true" 
+                                  @bind-Value=@ChangePassword.CurrentPassword 
+                                  Id="CurrentPassword" />
                   <label for="CurrentPassword" class="form-label">Current Password</label>
+                  <small>  
+                    <ValidationMessage For="@(() => ChangePassword.CurrentPassword)" />
+                  </small>
                 </div>
               </div>
             </div>
             <div class="row gt-3 p-2">
               <div class="col-md-6 col-sm-12">
                 <div class="form-floating">
-                  <TelerikTextBox Class="form-control" Password="true" @bind-Value=@ChangePassword.Password />
+                  <TelerikTextBox Class="form-control" 
+                                  Password="true" 
+                                  @bind-Value=@ChangePassword.Password 
+                                  Id = "Password" />
                   <label for="Password" class="form-label">New Password</label>
+                  <small>  
+                    <ValidationMessage For="@(() => ChangePassword.Password)" />  
+                  </small>                               
                 </div>
               </div>
             </div>
             <div class="row gt-3 p-2">
               <div class="col-md-6 col-sm-12">
                 <div class="form-floating">
-                  <TelerikTextBox Class="form-control" Password="true" @bind-Value=@ChangePassword.ConfirmPassword />
+                  <TelerikTextBox Class="form-control" 
+                                  Password="true" 
+                                  @bind-Value=@ChangePassword.ConfirmPassword  
+                                  Id="ConfirmPassword" />
                   <label for="ConfirmPassword" class="form-label">Confirm Password</label>
+                  <small>  
+                    <ValidationMessage For="@(() => ChangePassword.ConfirmPassword)"/> 
+                  </small>   
                 </div>
               </div>
             </div><div class="row gt-3 p-2">
@@ -214,10 +228,9 @@
   <hr />
 
   <div class="row">
-    <div class="col-4"></div>
-    <div class="col-4">
-      <div class="form-group">
-        <button @onclick="Update" class="btn btn-primary">Update</button>
+    <div class="col-12">
+      <div class="text-center">
+        <button @onclick=@UpdateAsync class="btn btn-primary">Update</button>
       </div>
     </div>
   </div>

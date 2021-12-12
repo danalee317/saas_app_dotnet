@@ -12,6 +12,9 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         [Parameter]
         public UnderwritingAnalysis Property { get; set; }
 
+        [Parameter]
+        public EventCallback ExpensesUpdated { get; set; }
+
         [Inject]
         private HttpClient _client { get; set; }
 
@@ -113,6 +116,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
             Property.ReplaceOurItems(updatedItems);
             Items.ReplaceRange(updatedItems);
+            await ExpensesUpdated.InvokeAsync();
 
             Refreshing = false;
         }

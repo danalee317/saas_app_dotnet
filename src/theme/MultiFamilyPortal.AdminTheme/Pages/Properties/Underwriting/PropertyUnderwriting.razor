@@ -43,11 +43,14 @@ else
                     <UnderwritingSellerInfoTab Property=@Property />
                   </TabStripTab>
                   <TabStripTab Title="Pro Forma">
-                    <UnderwritingOurInfoTab Property=@Property />
+                    <UnderwritingOurInfoTab Property=@Property ExpensesUpdated=@OnExpensesUpdated />
                   </TabStripTab>
-                  <TabStripTab Title="Rule of Thumb" Disabled=@(!Property.OurExpense.Any())>
-                    <UnderwritingMarketRuleOfThumb Property=@Property />
-                  </TabStripTab>
+                  @if(Property.OurExpense.Any())
+                  {
+                    <TabStripTab Title="Rule of Thumb">
+                      <UnderwritingMarketRuleOfThumb Property=@Property />
+                    </TabStripTab>
+                  }
                 </TelerikTabStrip>
               </Content>
             </WizardStep>

@@ -33,6 +33,11 @@
                                    Value=@Property.Units.ToString("N0") />
             </div>
             <div class="col">
+              <UnderwritingInfoBar Title="Price Per Door"
+                                   Color=@_higherColor
+                                   Value=@Property.CostPerUnit.ToString("C") />
+            </div>
+            <div class="col">
               <UnderwritingInfoBar Title="Year Built"
                                    Color=@_lowerColor
                                    Value=@Property.Vintage.ToString("0000") />
@@ -87,6 +92,11 @@
                                    Value="XXX" />
             </div>
             <div class="col">
+              <UnderwritingInfoBar Title="LTV"
+                                   Color=@_lowerColor
+                                   Value=@Property.LTV.ToString("P2") />
+            </div>
+             <div class="col">
               <UnderwritingInfoBar Title="Total Ann. Return"
                                    Color=@_middleColor
                                    Value="XXX" />

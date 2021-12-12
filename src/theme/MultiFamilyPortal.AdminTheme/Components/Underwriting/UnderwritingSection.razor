@@ -25,20 +25,12 @@
       </div>
     </AuthorizedPolicy>
   </GridToolBar>
-  @*<GridAggregates>
-    <GridAggregate Field=@nameof(UnderwritingAnalysisLineItem.Category)>
-
-    </GridAggregate>
-  </GridAggregates>*@
   <GridColumns>
     <GridColumn Field="@(nameof(UnderwritingAnalysisLineItem.Category))"
                 TextAlign="ColumnTextAlign.Center"
                 Width="220px"
                 Visible=@false
                 Title="Category">
-@*      <Template>
-        
-      </Template>*@
       <GroupHeaderTemplate>
         @{ var category = (Data.Models.UnderwritingCategory)context.Value; }
         <span>@category.GetDisplayName()</span>
@@ -158,7 +150,7 @@
                            Primary="true"
                            Title="Save"
                            OnClick=@SaveNewLineItem>
-              Save
+              Add
             </TelerikButton>
           </div>
         </div>
@@ -241,5 +233,3 @@
 </AuthorizedPolicy>
 
 <PortalNotification @ref="notification" />
-
-

@@ -3,7 +3,7 @@
     <div class="col-12">
       <h1 class="text-center my-3 display-5">@Property.Name</h1>
     </div>
-    <div class="col-12 bg-secondary">
+    <div class="col-12 summary-section">
       <div class="row">
         <div class="col-12 ">
           <div class="row">
@@ -13,19 +13,14 @@
                                    Value=@Property.StartDate.ToString("MM/dd/yyyy") />
             </div>
             <div class="col">
-              <UnderwritingInfoBar Title="Price"
-                                   Color=@_middleColor
-                                   Value=@(Property.PurchasePrice.ToString("C")) />
-            </div>
-            <div class="col">
               <UnderwritingInfoBar Title="Hold Period"
                                    Color=@_lowerColor
                                    Value=@($"{Property.HoldYears} {(Property.HoldYears == 1 ? "Year" : "Years")}") />
             </div>
             <div class="col">
-              <UnderwritingInfoBar Title="Reversion Cap"
-                                   Color=@_lowerColor
-                                   Value="XXX" />
+              <UnderwritingInfoBar Title="Price"
+                                   Color=@_middleColor
+                                   Value=@(Property.PurchasePrice.ToString("C")) />
             </div>
             <div class="col">
               <UnderwritingInfoBar Title="Number of Units"
@@ -36,6 +31,11 @@
               <UnderwritingInfoBar Title="Price Per Door"
                                    Color=@_higherColor
                                    Value=@Property.CostPerUnit.ToString("C") />
+            </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="Reversion Cap"
+                                   Color=@_lowerColor
+                                   Value=@Property.ReversionCapRate.ToString("P") />
             </div>
             <div class="col">
               <UnderwritingInfoBar Title="Year Built"
@@ -72,34 +72,34 @@
                                    Value=@_sellerCashOnCash.ToString("P2") />
             </div>
             <div class="col">
-              <UnderwritingInfoBar Title="Reversion Value"
-                                   Color=@_higherColor
-                                   Value="XXX" />
-            </div>
-            <div class="col">
               <UnderwritingInfoBar Title="Desired Yield"
                                    Color=@_middleColor
                                    Value=@Property.DesiredYield.ToString("P2") />
-            </div>
-            <div class="col">
-              <UnderwritingInfoBar Title="NPV"
-                                   Color=@_middleColor
-                                   Value="XXX" />
-            </div>
-            <div class="col">
-              <UnderwritingInfoBar Title="IRR"
-                                   Color=@_higherColor
-                                   Value="XXX" />
             </div>
             <div class="col">
               <UnderwritingInfoBar Title="LTV"
                                    Color=@_lowerColor
                                    Value=@Property.LTV.ToString("P2") />
             </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="Reversion Value"
+                                   Color=@_higherColor
+                                   Value=@Property.Reversion.ToString("N0") />
+            </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="NPV"
+                                   Color=@_middleColor
+                                   Value=@Property.NetPresentValue.ToString("N0") />
+            </div>
+            <div class="col">
+              <UnderwritingInfoBar Title="IRR"
+                                   Color=@_higherColor
+                                   Value=@Property.InitialRateOfReturn.ToString("P") />
+            </div>
              <div class="col">
               <UnderwritingInfoBar Title="Total Ann. Return"
                                    Color=@_middleColor
-                                   Value="XXX" />
+                                   Value=@Property.TotalAnnualReturn.ToString("P") />
             </div>
           </div>
         </div>

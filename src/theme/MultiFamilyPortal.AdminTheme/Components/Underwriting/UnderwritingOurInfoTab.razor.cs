@@ -12,6 +12,9 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         [Parameter]
         public UnderwritingAnalysis Property { get; set; }
 
+        [Parameter]
+        public EventCallback ExpensesUpdated { get; set; }
+
         [Inject]
         private HttpClient _client { get; set; }
 
@@ -36,13 +39,14 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             var updatedItems = new List<UnderwritingAnalysisLineItem>();
             foreach (var category in allCategories)
             {
-                if(category == UnderwritingCategory.PhysicalVacancy)
+                if (category == UnderwritingCategory.PhysicalVacancy)
                 {
                     var vacancyRate = Math.Min(Property.PhysicalVacancy, Property.MarketVacancy);
                     if (vacancyRate < 0.05)
                         vacancyRate = 0.05;
 
-                    var vacancy = new UnderwritingAnalysisLineItem {
+                    var vacancy = new UnderwritingAnalysisLineItem
+                    {
                         Amount = vacancyRate * Property.GrossPotentialRent,
                         Category = category,
                         Description = category.GetDisplayName(),
@@ -51,15 +55,39 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
                     updatedItems.Add(vacancy);
                     continue;
                 }
-                else if(category == UnderwritingCategory.Management)
+                else if (category == UnderwritingCategory.Management)
                 {
-                    var management = new UnderwritingAnalysisLineItem {
+                    var management = new UnderwritingAnalysisLineItem
+                    {
                         Amount = Property.Management * Property.GrossPotentialRent,
                         Category = category,
                         Description = category.GetDisplayName(),
                         ExpenseType = ExpenseSheetType.T12
                     };
                     updatedItems.Add(management);
+                    continue;
+                }
+                else if (category == UnderwritingCategory.OtherIncomeBad)
+                {
+                    var sum = grouped.First(x => x.Key == category)
+                            .Sum(x => x.AnnualizedTotal);
+
+                    if(sum > 0)
+                    {
+                        var badIncome = new UnderwritingAnalysisLineItem
+                        {
+                            Amount = sum / 2,
+                            Category = category,
+                            Description = $"{category.GetDisplayName()} (1/2 of SIP)",
+                            ExpenseType = ExpenseSheetType.T12
+                        };
+                        updatedItems.Add(badIncome);
+                    }
+
+                    continue;
+                }
+                else if(category == UnderwritingCategory.OtherIncomeOneTime)
+                {
                     continue;
                 }
 
@@ -88,6 +116,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
             Property.ReplaceOurItems(updatedItems);
             Items.ReplaceRange(updatedItems);
+            await ExpensesUpdated.InvokeAsync();
 
             Refreshing = false;
         }

@@ -39,15 +39,18 @@ else
             <WizardStep Label="Financials">
               <Content>
                 <TelerikTabStrip TabPosition="TabPosition.Top">
-                  <TabStripTab Title="Seller Info">
+                  <TabStripTab Title="Stated In Place">
                     <UnderwritingSellerInfoTab Property=@Property />
                   </TabStripTab>
-                  <TabStripTab Title="Our Info">
-                    <UnderwritingOurInfoTab Property=@Property />
+                  <TabStripTab Title="Pro Forma">
+                    <UnderwritingOurInfoTab Property=@Property ExpensesUpdated=@OnExpensesUpdated />
                   </TabStripTab>
-                  <TabStripTab Title="Rule of Thumb" Disabled=@(!Property.OurExpense.Any())>
-                    <UnderwritingMarketRuleOfThumb Property=@Property />
-                  </TabStripTab>
+                  @if(Property.OurExpense.Any())
+                  {
+                    <TabStripTab Title="Rule of Thumb">
+                      <UnderwritingMarketRuleOfThumb Property=@Property />
+                    </TabStripTab>
+                  }
                 </TelerikTabStrip>
               </Content>
             </WizardStep>

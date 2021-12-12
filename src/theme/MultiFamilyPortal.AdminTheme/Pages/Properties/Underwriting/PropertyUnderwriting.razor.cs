@@ -1,3 +1,4 @@
+using System.Collections.Specialized;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
@@ -10,7 +11,7 @@ using MultiFamilyPortal.Dtos.Underwriting;
 namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
 {
     [Authorize(Policy = PortalPolicy.Underwriter)]
-    public partial class PropertyUnderwriting
+    public partial class PropertyUnderwriting : IDisposable
     {
         [Parameter]
         public Guid propertyId { get; set; }
@@ -22,6 +23,8 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
         private NavigationManager _navigationManager { get; set; }
 
         private UnderwritingAnalysis Property;
+        private bool _disposedValue;
+
         private PortalNotification notification { get; set; }
 
         private readonly IEnumerable<UnderwritingStatus> AvailableStatus = Enum.GetValues<UnderwritingStatus>();
@@ -30,6 +33,10 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
         {
             Property = await _client.GetFromJsonAsync<UnderwritingAnalysis>($"/api/admin/underwriting/property/{propertyId}");
             _navigationManager.LocationChanged += OnNavigating;
+            if(Property.OurExpense is INotifyCollectionChanged ncc)
+            {
+                ncc.CollectionChanged += OnCollectionChanged;
+            }
         }
 
         private void OnNavigating(object sender, LocationChangedEventArgs e)
@@ -40,9 +47,19 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
             //DbContext.SaveChanges();
         }
 
+        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            StateHasChanged();
+        }
+
         private void OnTabChanged()
         {
             //Property.Update();
+        }
+
+        private void OnExpensesUpdated()
+        {
+            StateHasChanged();
         }
 
         private async Task OnUpdateProperty()
@@ -58,6 +75,31 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
             {
                 notification.ShowWarning("An error occurred while trying to save the updated underwrting");
             }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                    _navigationManager.LocationChanged -= OnNavigating;
+                    if (Property.OurExpense is INotifyCollectionChanged ncc)
+                    {
+                        ncc.CollectionChanged -= OnCollectionChanged;
+                    }
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

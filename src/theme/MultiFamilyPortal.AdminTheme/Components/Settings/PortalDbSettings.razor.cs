@@ -1,24 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.JSInterop;
-using MultiFamilyPortal.CoreUI;
-using MultiFamilyPortal.AdminTheme.Components;
-using MultiFamilyPortal.AdminTheme.Models;
-using Telerik.Blazor;
-using Telerik.Blazor.Components;
-using Telerik.Blazor.Components.Editor;
-using MultiFamilyPortal.Collections;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Components;
+using MultiFamilyPortal.AdminTheme.Models;
+using MultiFamilyPortal.CoreUI;
 using MultiFamilyPortal.Data.Models;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Settings
@@ -28,17 +11,48 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
         [Inject]
         private HttpClient Client { get; set; }
 
-        private ObservableRangeCollection<Setting> SiteSettings { get; set; } = new();
+        private DbSettings Model;
+        private PortalNotification notification;
+
+        private int step;
+        private bool showPrevious => step > 0;
+        private bool showNext => step < 2;
+
         protected override async Task OnInitializedAsync()
         {
-            SiteSettings.ReplaceRange(await Client.GetFromJsonAsync<IEnumerable<Setting>>("/api/admin/settings"));
+            var settings = await Client.GetFromJsonAsync<IEnumerable<Setting>>("/api/admin/settings");
+            Model = new DbSettings(settings);
         }
 
-        private async Task UpdateSetting(GridCommandEventArgs args)
+        private void Next()
         {
-            var setting = args.Item as Setting;
-            await Client.PostAsJsonAsync($"/api/admin/settings/save/{setting.Key}", setting);
-            SiteSettings.ReplaceRange(await Client.GetFromJsonAsync<IEnumerable<Setting>>("/api/admin/settings"));
+            step++;
+        }
+
+        private void Previous()
+        {
+            if(step > 0)
+                step--;
+        }
+
+        private async Task UpdateSettings()
+        {
+            bool failed = false;
+            foreach(var setting in Model.UpdatedSettings())
+            {
+                using var result = await Client.PostAsJsonAsync($"/api/admin/settings/save/{setting.Key}", setting);
+                if(!result.IsSuccessStatusCode)
+                    failed = true;
+            }
+
+            if(failed)
+            {
+                notification.ShowWarning("Unable to save settings");
+            }
+            else
+            {
+                notification.ShowSuccess("Settings successfully updated");
+            }
         }
     }
 }

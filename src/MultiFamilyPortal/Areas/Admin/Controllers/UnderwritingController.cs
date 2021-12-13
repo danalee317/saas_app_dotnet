@@ -366,7 +366,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 {
                     Id = x.Id,
                     Description = x.Description,
-                    DownloadLink = host,
+                    DownloadLink = $"/api/files/property/{propertyId}/file/{x.Id}",
                     Icon = x.Icon,
                     Name = x.Name,
                     Timestamp = x.Timestamp,

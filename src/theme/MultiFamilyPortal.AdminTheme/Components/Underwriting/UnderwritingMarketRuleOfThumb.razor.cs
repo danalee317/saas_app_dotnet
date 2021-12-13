@@ -56,5 +56,10 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             target.FirstOrDefault().Amount = v;
             await OnPropertyChanged.InvokeAsync();
         }
+
+        private bool IsCleanExpense(UnderwritingGuidance guidance)
+        {
+            return Property.Ours.Count(x => x.Category == guidance.Category) == 1;
+        }
     }
 }

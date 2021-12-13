@@ -1,5 +1,17 @@
 @using Data.Models
-@if (Guidance.Type == Data.Models.CostType.PerDoor)
+@if (!Property.OurExpense.Any(x => x.Category == Guidance.Category))
+{
+  <span class="text-danger" id="icon" title="Missing Category">
+    <i class="fad fa-exclamation-triangle"></i>
+  </span>
+}
+else if (Property.OurExpense.Count(x => x.Category == Guidance.Category) > 1)
+{
+  <span class="text-danger" id="icon" title="Multiple Entries">
+    <i class="fad fa-exclamation-triangle"></i>
+  </span>
+}
+else if (Guidance.Type == CostType.PerDoor)
 {
   var min = Guidance.Min * Property.Units;
   var max = Guidance.Max * Property.Units;
@@ -47,7 +59,7 @@
     }
   }
 }
-else if (Guidance.Type == Data.Models.CostType.PercentOfPurchase)
+else if (Guidance.Type == CostType.PercentOfPurchase)
 {
   var total = Guidance.Max * Property.PurchasePrice;
   var totalTaxes = Property.OurExpense.Where(x => x.Category == UnderwritingCategory.Taxes).Sum(y =>

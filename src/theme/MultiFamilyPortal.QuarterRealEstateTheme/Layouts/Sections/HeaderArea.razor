@@ -109,13 +109,13 @@
                   }
                   else if(User.IsInRole(PortalRoles.Investor) || User.IsInRole(PortalRoles.Sponsor))
                   {
-                    <li><a href="/investor-portal">Investor Portal</a></li>
+                    <li><a @onclick=@InvestorPortal>Investor Portal</a></li>
                     <li><a href="/logout">Sign out</a></li>
                   }
                   else if(User.IsInRole(PortalRoles.BlogAuthor) || User.IsInRole(PortalRoles.Mentor) ||
                     User.IsInRole(PortalRoles.PortalAdministrator) || User.IsInRole(PortalRoles.Underwriter))
                   {
-                    <li><a href="/admin">Admin Portal</a></li>
+                    <li><a @onclick=@AdminPortal>Admin Portal</a></li>
                     <li><a href="/logout">Sign out</a></li>
                   }
                 </ul>

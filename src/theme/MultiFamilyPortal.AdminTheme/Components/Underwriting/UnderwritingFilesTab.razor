@@ -14,7 +14,7 @@
                 Width="60px">
       <Template>
         @{ var file = context as UnderwritingAnalysisFile; }
-        <i class="@file.Icon" aria-hidden="true"></i>
+        <i class="@file.Icon" aria-hidden="true" style="color: @FileTypeLookup.GetColorFromIcon(file.Icon);"></i>
       </Template>
     </GridColumn>
     <GridColumn Field=@nameof(UnderwritingAnalysisFile.Name) />

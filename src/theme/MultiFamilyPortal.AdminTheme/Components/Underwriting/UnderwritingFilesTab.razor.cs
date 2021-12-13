@@ -66,6 +66,13 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             await Update();
         }
 
+        private void OnPreview(GridCommandEventArgs args)
+        {
+            var file = args.Item as UnderwritingAnalysisFile;
+
+            // TODO: Implement Preview functionality
+        }
+
         private UnderwritingProspectFileType GetFileType() =>
             Enum.TryParse<UnderwritingProspectFileType>(selectedFileType.Pascalize(), true, out var result)
             ? result : UnderwritingProspectFileType.OfferMemorandum;

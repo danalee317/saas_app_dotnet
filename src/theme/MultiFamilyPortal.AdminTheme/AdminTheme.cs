@@ -24,6 +24,63 @@ namespace MultiFamilyPortal.AdminTheme
             },
             new RootMenuOption
             {
+                Title = "Activity Log",
+                IconClass = "fa-duotone fa-mobile",
+                Link = "/admin/activity-log",
+                Match = NavLinkMatch.All,
+                Policy = PortalPolicy.UnderwritingViewer
+            },
+            new RootMenuOption
+            {
+                Title = "Properties",
+                IconClass = "fa-duotone fa-city",
+                Policy = PortalPolicy.UnderwritingViewer,
+                Children = new []
+                {
+                    new ChildMenuOption
+                    {
+                        Title = "Underwriting",
+                        Link = "/admin/properties/underwriting"
+                    },
+                    new ChildMenuOption
+                    {
+                        Title = "Portfolio",
+                        Link = "/admin/properties/assets-under-management",
+                        Policy = PortalPolicy.Underwriter
+                    }
+                }
+            },
+            new RootMenuOption
+            {
+                Title = "Contacts",
+                IconClass = "fa-duotone fa-users",
+                Policy = PortalPolicy.Underwriter,
+                Children = new []
+                {
+                    new ChildMenuOption
+                    {
+                        Title = "Investors",
+                        Link = "/admin/investors",
+                        Match = NavLinkMatch.All
+                    },
+                    new ChildMenuOption
+                    {
+                        Title = "Prospects",
+                        Link = "/admin/investors-prospects",
+                        Match = NavLinkMatch.All
+                    },
+                }
+            },
+            new RootMenuOption
+            {
+                Title = "Profile",
+                IconClass = "fa-duotone fa-user",
+                Link = "/admin/user-profile",
+                Match = NavLinkMatch.All,
+                Policy = PortalPolicy.AdminPortalViewer,
+            },
+            new RootMenuOption
+            {
                 Title = "Content",
                 IconClass = "fa-duotone fa-pen-to-square",
                 Policy = PortalPolicy.Blogger,
@@ -49,80 +106,31 @@ namespace MultiFamilyPortal.AdminTheme
             },
             new RootMenuOption
             {
-                Title = "Activity Log",
-                IconClass = "fa-duotone fa-mobile",
-                Link = "/admin/activity-log",
-                Policy = PortalPolicy.UnderwritingViewer
-            },
-            new RootMenuOption
-            {
-                Title = "Properties",
-                IconClass = "fa-duotone fa-city",
-                Policy = PortalPolicy.UnderwritingViewer,
+                Title = "Admin",
+                IconClass = "fa-duotone fa-users-gear",
+                RequiredRole = PortalRoles.PortalAdministrator,
                 Children = new []
                 {
                     new ChildMenuOption
                     {
-                        Title = "Underwriting",
-                        Link = "/admin/properties/underwriting"
-                    },
-                    new ChildMenuOption
-                    {
-                        Title = "Portfolio",
-                        Link = "/admin/properties/assets-under-management",
-                        Policy = PortalPolicy.Underwriter
-                    }
-                }
-            },
-            new RootMenuOption
-            {
-                Title = "Users",
-                IconClass = "fa-duotone fa-users",
-                Policy = PortalPolicy.Underwriter,
-                Children = new []
-                {
-                    new ChildMenuOption
-                    {
-                        Title = "Investors",
-                        Link = "/admin/investors",
-                        Match = NavLinkMatch.All
-                    },
-                    new ChildMenuOption
-                    {
-                        Title = "Prospects",
-                        Link = "/admin/prospects",
-                        Match = NavLinkMatch.All
-                    },
-                    new ChildMenuOption
-                    {
-                        Title = "Website Users",
+                        Title = "Users",
                         Link = "/admin/users",
-                        Match = NavLinkMatch.All,
-                        RequiredRole = PortalRoles.PortalAdministrator
+                        Match = NavLinkMatch.All
                     },
                     new ChildMenuOption
                     {
                         Title = "Subscribers",
                         Link = "/admin/subscribers",
-                        Match = NavLinkMatch.All,
-                        RequiredRole = PortalRoles.PortalAdministrator
+                        Match = NavLinkMatch.All
+                    },
+                    new ChildMenuOption
+                    {
+                        Title = "Settings",
+                        Link = "/admin/settings",
+                        Match = NavLinkMatch.All
                     }
                 }
             },
-            new RootMenuOption
-            {
-                Title = "Profile",
-                IconClass = "fa-duotone fa-user",
-                Link = "/admin/user-profile",
-                Policy = PortalPolicy.AdminPortalViewer,
-            },
-            new RootMenuOption
-            {
-                Title = "Settings",
-                IconClass = "fa-duotone fa-cogs",
-                Link = "/admin/settings",
-                RequiredRole = PortalRoles.PortalAdministrator
-            }
         };
     }
 }

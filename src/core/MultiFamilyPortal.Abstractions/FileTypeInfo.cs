@@ -9,5 +9,7 @@
         public string MimeType { get; init; } = default!;
 
         public string Icon { get; init; } = default!;
+
+        public string Color { get; init; } = default!;
     }
 }

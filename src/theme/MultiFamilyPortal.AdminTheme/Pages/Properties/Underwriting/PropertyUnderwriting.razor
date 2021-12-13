@@ -8,7 +8,7 @@
 else
 {
   <Animation OptionsName="Page">
-   <UnderwritingSummary Property=@Property/>
+   <UnderwritingSummary Property=@Property />
    
     <div class="row my-2">
       <div class="col-md-3 col-sm-6 offset-md-9 offset-sm-6">
@@ -26,8 +26,8 @@ else
 
     <div class="row">
       <div class="col-12">
-        <TelerikWizard>
-          <WizardSettings >
+        <TelerikWizard ShowPager=@false @bind-Value=@currentIndex>
+          <WizardSettings>
             <WizardStepperSettings Linear=@false />
           </WizardSettings>
           <WizardSteps>
@@ -97,26 +97,28 @@ else
               </Content>
             </WizardStep>
           </WizardSteps>
-
+          <WizardButtons>
+            @if(showPrevious)
+            {
+              <TelerikButton ButtonType="ButtonType.Button" OnClick=@Previous>Previous</TelerikButton>
+            }
+            @if(showNext)
+            {
+              <TelerikButton ButtonType="ButtonType.Button" Primary="true" OnClick=@Next>Next</TelerikButton>
+            }
+            <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
+              <TelerikButton Title="Update"
+                             Primary="true"
+                             ButtonType=@ButtonType.Button
+                             OnClick=@OnUpdateProperty>
+                Update
+              </TelerikButton>
+              <a class="btn btn-secondary" href="/api/admin/underwriting/property/exportUnderwriting/@propertyId" target="_blank">Download Underwriting</a>
+            </AuthorizedPolicy>
+          </WizardButtons>
         </TelerikWizard>
       </div>
     </div>
-
-    <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
-      <div class="row text-center my-4">
-        <div class="col-md-2 offset-md-3 text-center">
-          <TelerikButton Title="Update"
-                         Primary="true"
-                         ButtonType=@ButtonType.Button
-                         OnClick=@OnUpdateProperty>
-            Update
-          </TelerikButton>
-        </div>
-        <div class="col-md-2 text-center">
-          <a class="btn btn-secondary" href="/api/admin/underwriting/property/exportUnderwriting/@propertyId" target="_blank">Download Underwriting</a>
-        </div>
-      </div>
-    </AuthorizedPolicy>
   </Animation>
 }
 

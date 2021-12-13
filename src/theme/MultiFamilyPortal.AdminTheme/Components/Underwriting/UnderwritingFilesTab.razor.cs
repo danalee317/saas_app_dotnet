@@ -2,8 +2,10 @@ using System.Net.Http.Json;
 using Humanizer;
 using Microsoft.AspNetCore.Components;
 using MultiFamilyPortal.Collections;
+using MultiFamilyPortal.CoreUI;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
+using Telerik.Blazor.Components;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 {
@@ -25,6 +27,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private string selectedFileType = UnderwritingProspectFileType.OfferMemorandum.Humanize(LetterCasing.Title);
         private string description;
         private bool showUploadFile;
+        private PortalNotification notification;
 
         protected override async Task OnInitializedAsync()
         {
@@ -48,6 +51,26 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         {
             var files = await _client.GetFromJsonAsync<IEnumerable<UnderwritingAnalysisFile>>($"/api/admin/underwriting/files/{Property.Id}");
             _files.ReplaceRange(files.OrderByDescending(x => x.Timestamp));
+        }
+
+        private async Task OnDelete(GridCommandEventArgs args)
+        {
+            var file = args.Item as UnderwritingAnalysisFile;
+            if (file is null)
+                return;
+
+            using var result = await _client.DeleteAsync($"/api/admin/underwriting/files/{Property.Id}/file/{file.Id}");
+            if (result.StatusCode == System.Net.HttpStatusCode.OK || result.StatusCode == System.Net.HttpStatusCode.NotFound)
+                notification.ShowSuccess($"File '{file.Name}' has been successfully deleted.");
+
+            await Update();
+        }
+
+        private void OnPreview(GridCommandEventArgs args)
+        {
+            var file = args.Item as UnderwritingAnalysisFile;
+
+            // TODO: Implement Preview functionality
         }
 
         private UnderwritingProspectFileType GetFileType() =>

@@ -24,6 +24,9 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
 
         private UnderwritingAnalysis Property;
         private bool _disposedValue;
+        private int currentIndex = 0;
+        private bool showPrevious => currentIndex > 0;
+        private bool showNext => currentIndex < 4;
 
         private PortalNotification notification { get; set; }
 
@@ -51,6 +54,10 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
         {
             StateHasChanged();
         }
+
+        private void Next() => currentIndex++;
+
+        private void Previous() => currentIndex--;
 
         private void OnTabChanged()
         {

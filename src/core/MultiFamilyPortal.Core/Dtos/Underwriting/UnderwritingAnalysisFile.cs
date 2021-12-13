@@ -8,6 +8,8 @@ namespace MultiFamilyPortal.Dtos.Underwriting
     [JsonConverter(typeof(ReactiveObjectConverter<UnderwritingAnalysisFile>))]
     public class UnderwritingAnalysisFile : ReactiveObject
     {
+        public Guid Id { get; set; }
+
         [Reactive]
         public string Icon { get; set; }
 

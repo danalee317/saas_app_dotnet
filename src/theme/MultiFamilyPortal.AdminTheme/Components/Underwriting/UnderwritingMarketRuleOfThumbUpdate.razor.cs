@@ -26,7 +26,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private double _largeStep;
 
         protected override void OnParametersSet() => VerifyInfo();
-        
+
         private void VerifyInfo()
         {
             if (Guidance == null)

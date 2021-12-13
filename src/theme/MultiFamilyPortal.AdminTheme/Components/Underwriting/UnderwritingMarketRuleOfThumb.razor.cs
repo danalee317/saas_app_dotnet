@@ -59,8 +59,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
         private bool IsCleanExpense(UnderwritingGuidance guidance)
         {
-            var propertyExpenses = Property.Ours.Where(x => x.Category == guidance.Category);
-            return propertyExpenses.Any() && propertyExpenses.Count() == 1;
+            return Property.Ours.Count(x => x.Category == guidance.Category) == 1;
         }
     }
 }

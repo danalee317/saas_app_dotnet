@@ -10,5 +10,12 @@ namespace MultiFamilyPortal.QuarterRealEstateTheme.Layouts.Sections
 
         [CascadingParameter]
         public ClaimsPrincipal User { get; set; } = default !;
+
+        [Inject]
+        public NavigationManager _navigationManager { get; set; }
+
+        private void AdminPortal() => _navigationManager.NavigateTo("/admin", true);
+
+        private void InvestorPortal() => _navigationManager.NavigateTo("investor-portal", true);
     }
 }

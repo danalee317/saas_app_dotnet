@@ -13,9 +13,12 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
     public class SettingsController : ControllerBase
     {
         private IMFPContext _dbContext { get; }
-        public SettingsController(IMFPContext dbContext)
+        private ILogger _logger { get; }
+
+        public SettingsController(IMFPContext dbContext, ILogger<SettingsController> logger)
         {
             _dbContext = dbContext;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -126,15 +129,12 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         }
 
         [HttpPost("branding/{imageName}")]
-        public async Task<IActionResult> UpdateBrandingLogo(string imageName, [FromForm] IFormFile file, [FromServices] IWebHostEnvironment env, [FromServices] IBrandService brand, [FromServices] ILoggerFactory loggerFactory)
+        public async Task<IActionResult> UpdateBrandingLogo(string imageName, [FromForm] IFormFile file, [FromServices] IWebHostEnvironment env, [FromServices] IBrandService brand)
         {
-            var logger = loggerFactory.CreateLogger<SettingsController>();
             if (file.Length > 0)
             {
                 try
                 {
-                    var fileName = imageName + Path.GetExtension(file.FileName);
-
                     if (imageName == "favicon")
                     {
                         using var stream = file.OpenReadStream();
@@ -142,18 +142,18 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     }
                     else
                     {
-                        await brand.CreateBrandImage(file, fileName);
+                        await brand.CreateBrandImage(file, imageName);
                     }
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError(ex, "Error uploading logo");
+                    _logger.LogError(ex, "Error uploading logo");
                     return BadRequest(ex.Message);
                 }
             }
             else
             {
-                logger.LogWarning("No file uploaded");
+                _logger.LogWarning("No file uploaded");
                 return BadRequest("No file was uploaded.");
             }
 

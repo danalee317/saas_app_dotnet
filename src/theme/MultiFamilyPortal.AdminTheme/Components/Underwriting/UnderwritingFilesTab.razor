@@ -1,4 +1,6 @@
-﻿<TelerikGrid Data=@_files>
+<TelerikGrid Data=@_files
+             ConfirmDelete=@true
+             OnDelete=@OnDelete>
   <GridToolBar>
     <div class="float-right">
       <TelerikButton ButtonType=@ButtonType.Button
@@ -20,10 +22,15 @@
     <GridColumn Field=@nameof(UnderwritingAnalysisFile.Name) />
     <GridColumn Field=@nameof(UnderwritingAnalysisFile.Description) />
     <GridCommandColumn>
-      @{ var file = context as UnderwritingAnalysisFile; }
-      <a href="@file.DownloadLink" target="_blank" class="btn btn-secondary text-center">
-        <i class="fa-duotone fa-download"></i> Download
-      </a>
+      <div class="text-center">
+        @{ var file = context as UnderwritingAnalysisFile; }
+        <a href="@file.DownloadLink" target="_blank" class="btn btn-secondary text-center">
+          <span style="color: #FFFFFF;">
+            <i class="fa-duotone fa-download"></i> Download
+          </span>
+        </a>
+        <GridCommandButton Command="Delete" Title="Delete" Icon="delete">Delete</GridCommandButton>
+      </div>
     </GridCommandColumn>
   </GridColumns>
 </TelerikGrid>
@@ -64,3 +71,5 @@
 </TelerikUpload>
   </WindowContent>
 </TelerikWindow>
+
+<PortalNotification @ref="notification" />

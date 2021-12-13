@@ -364,6 +364,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 .Where(x => x.PropertyId == propertyId)
                 .Select(x => new UnderwritingAnalysisFile
                 {
+                    Id = x.Id,
                     Description = x.Description,
                     DownloadLink = host,
                     Icon = x.Icon,
@@ -373,6 +374,22 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 .ToArrayAsync();
 
             return Ok(files);
+        }
+
+        [HttpDelete("files/{propertyId:guid}/file/{fileId:guid}")]
+        public async Task<IActionResult> Delete(Guid propertyId, Guid fileId, [FromServices]IStorageService storage)
+        {
+            var file = await _dbContext.UnderwritingProspectFiles.FirstOrDefaultAsync(x => x.PropertyId == propertyId && x.Id == fileId);
+            if(file != null)
+            {
+                _dbContext.UnderwritingProspectFiles.Remove(file);
+                await _dbContext.SaveChangesAsync();
+                var path = Path.Combine("underwriting", $"{propertyId}", $"{fileId}{Path.GetExtension(file.Name)}");
+                await storage.DeleteAsync(path);
+                return Ok();
+            }
+
+            return NotFound();
         }
 
         [HttpPost("upload/save/{id:guid}")]

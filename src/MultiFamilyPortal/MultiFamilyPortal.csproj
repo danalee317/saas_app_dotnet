@@ -21,7 +21,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.0" />
-    <PackageReference Include="vCardLib.dll" Version="3.0.3" />
+    <PackageReference Include="vCardLib.dll" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>

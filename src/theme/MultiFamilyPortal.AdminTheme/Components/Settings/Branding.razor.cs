@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using MultiFamilyPortal.Collections;
+using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.Themes.Internals;
 using Telerik.Blazor;
 using Telerik.Blazor.Components;
+using Telerik.DataSource;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Settings
 {
@@ -13,18 +17,93 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
         [Inject]
         private ILogger<Branding> Logger { get; set; }
 
+        [Inject]
+        private IThemeFactory ThemeFactory { get; set; }
+
         private Logo _selected;
+        private TelerikGrid<Logo> grid;
         private readonly List<string> AllowedFileTypes = new() { ".png", ".svg", ".jpeg",".jpg" };
         public string LogoUrl(string name) => ToAbsoluteUrl($"branding/{name}");
         private bool showWindow = false;
-        private  readonly IEnumerable<Logo> _logos = new[]
+        private readonly ObservableRangeCollection<Logo> _logos = new ObservableRangeCollection<Logo>();
+        private readonly IEnumerable<Logo> _globalLogos = new[]
         {
-            new Logo { DisplayName = "Browser Icon", Href = "/apple-touch-icon.png", Name = "favicon" },
-            new Logo { DisplayName = "Default Logo", Href = "/theme/branding/logo", Name = "logo" },
-            new Logo { DisplayName = "Dark Theme Logo", Href = "/theme/branding/logo-dark", Name = "logo-dark" },
-            new Logo { DisplayName = "Default Logo - Horizontal", Href = "/theme/branding/logo-side", Name = "logo-side" },
-            new Logo { DisplayName = "Dark Theme Logo - Horizontal", Href = "/theme/branding/logo-dark-side", Name = "logo-dark-side" },
+            new Logo
+            {
+                Type = "Global",
+                DisplayName = "Browser Icon",
+                Href = "/apple-touch-icon.png",
+                Name = "favicon",
+                Size = "1024 x 1024"
+            },
+            new Logo
+            {
+                Type = "Global",
+                DisplayName = "Default Logo",
+                Href = "/theme/branding/logo",
+                Name = "logo",
+                Size = "1024 x 1024"
+            },
+            new Logo
+            {
+                Type = "Global",
+                DisplayName = "Dark Theme Logo",
+                Href = "/theme/branding/logo-dark",
+                Name = "logo-dark",
+                Size = "1024 x 1024"
+            },
+            new Logo
+            {
+                Type = "Global",
+                DisplayName = "Default Logo - Horizontal",
+                Href = "/theme/branding/logo-side",
+                Name = "logo-side",
+                Size = "512 x 1024"
+            },
+            new Logo
+            {
+                Type = "Global",
+                DisplayName = "Dark Theme Logo - Horizontal",
+                Href = "/theme/branding/logo-dark-side",
+                Name = "logo-dark-side",
+                Size = "512 x 1024"
+            },
         };
+
+        protected override void OnInitialized()
+        {
+            _logos.Clear();
+            _logos.AddRange(_globalLogos);
+            var theme = ThemeFactory.GetFrontendTheme();
+            if(theme.Resources is not null && theme.Resources.Any())
+            {
+                _logos.AddRange(theme.Resources.Select(x => new Logo
+                {
+                    Type = "Theme",
+                    DisplayName = x.Name,
+                    Href = $"/theme/branding/resource?file={x.Name}",
+                    Name = x.Name,
+                    Size = $"{x.Height} x {x.Width}"
+                }));
+            }
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                var desiredState = new GridState<Logo>
+                {
+                    GroupDescriptors = new[] {
+                        new GroupDescriptor {
+                            Member = nameof(Logo.Type),
+                            MemberType = typeof(string)
+                        }
+                    }
+                };
+                await grid.SetState(desiredState);
+            }
+        }
 
         private string ToAbsoluteUrl(string url) => $"{_client.BaseAddress}api/admin/settings/{url}";
 
@@ -46,11 +125,15 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
 
         private record Logo
         {
+            public string Type { get; init; }
+
             public string Href { get; init; }
 
             public string DisplayName { get; init; }
 
             public string Name { get; init; }
+
+            public string Size { get; init; }
         }
     }
 }

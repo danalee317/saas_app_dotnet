@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Net.Http.Headers;
 using Azure.Storage.Blobs;
 using BlazorAnimation;
@@ -54,9 +54,9 @@ namespace MultiFamilyPortal.Extensions
             {
                 services.AddScoped(p =>
                 {
-                    var context = p.GetRequiredService<IHttpContextAccessor>();
-                    //var container = context.HttpContext.Request.Host.Host;
-                    var container = "DemoPortal";
+                    var container = config.Storage.Container;
+                    if (string.IsNullOrEmpty(container))
+                        container = "tenants";
 
                     return new BlobContainerClient(config.Storage.ConnectionString, container);
                 })

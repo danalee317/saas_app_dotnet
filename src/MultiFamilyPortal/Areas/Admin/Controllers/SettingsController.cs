@@ -7,9 +7,10 @@ using MultiFamilyPortal.Services;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     [Authorize(Roles = PortalRoles.PortalAdministrator)]
     [ApiController]
-    [Route("/api/admin/settings")]
+    [Route("/api/[area]/[controller]")]
     public class SettingsController : ControllerBase
     {
         private IMFPContext _dbContext { get; }

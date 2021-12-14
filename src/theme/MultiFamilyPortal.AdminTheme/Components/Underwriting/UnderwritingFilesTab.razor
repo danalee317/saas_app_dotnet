@@ -2,12 +2,14 @@
              ConfirmDelete=@true
              OnDelete=@OnDelete>
   <GridToolBar>
-    <div class="float-right">
-      <TelerikButton ButtonType=@ButtonType.Button
-                     Primary=@true
-                     IconClass="fa-duotone fa-plus"
-                     OnClick=@(() => showUploadFile = true)>Upload File</TelerikButton>
-    </div>
+    <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
+      <div class="float-right">
+        <TelerikButton ButtonType=@ButtonType.Button
+                       Primary=@true
+                       IconClass="fa-duotone fa-plus"
+                       OnClick=@(() => showUploadFile = true)>Upload File</TelerikButton>
+      </div>
+    </AuthorizedPolicy>
   </GridToolBar>
   <GridColumns>
     <GridColumn Field=@nameof(UnderwritingAnalysisFile.Icon)
@@ -30,7 +32,9 @@
             <i class="fa-duotone fa-download"></i> Download
           </span>
         </a>
-        <GridCommandButton Command="Delete" Title="Delete" Icon="delete">Delete</GridCommandButton>
+        <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
+          <GridCommandButton Command="Delete" Title="Delete" Icon="delete">Delete</GridCommandButton>
+        </AuthorizedPolicy>
       </div>
     </GridCommandColumn>
   </GridColumns>

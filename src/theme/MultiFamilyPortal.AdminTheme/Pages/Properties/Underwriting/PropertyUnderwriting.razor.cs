@@ -10,7 +10,7 @@ using MultiFamilyPortal.Dtos.Underwriting;
 
 namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
 {
-    [Authorize(Policy = PortalPolicy.Underwriter)]
+    [Authorize(Policy = PortalPolicy.UnderwritingViewer)]
     public partial class PropertyUnderwriting : IDisposable
     {
         [Parameter]

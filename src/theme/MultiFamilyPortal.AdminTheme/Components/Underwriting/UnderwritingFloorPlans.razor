@@ -1,0 +1,51 @@
+<TelerikGrid Data="@FloorPlans" Height="600px" Sortable="true" Resizable="true" Reorderable="true">
+  <GridToolBar>
+    <div class="badge rounded-pill bg-warning text-dark">
+      10 remaining out of 100
+    </div>
+    <span class="k-toolbar-spacer"></span>
+    <GridCommandButton Command="MyToolbarCommand" Icon="add" OnClick=@OnAddFloor>
+      Add Floor
+    </GridCommandButton>
+  </GridToolBar>
+  <GridColumns>
+    <GridColumn Field="@(nameof(FloorPlan.Name))" Title="Name" Width="30%" />
+    <GridColumn Field="@(nameof(FloorPlan.Bed))" Title="Bed" Width="80px" />
+    <GridColumn Field="@(nameof(FloorPlan.Bath))" Title="Bath" Width="80px" />
+    <GridColumn Field="@(nameof(FloorPlan.SquareFt))" Title="Sqft" Width="100px" />
+    <GridColumn Field="@(nameof(FloorPlan.Upgraded))" Title="Upgraded" Width="100px">
+      <Template>
+        @{
+          var truth = context as FloorPlan;
+          <span>@(truth.Upgraded ? "Yes" : "No")</span>
+        }
+      </Template>
+    </GridColumn>
+    <GridColumn Field="@(nameof(FloorPlan.Units))" Title="Units" Width="80px"/>
+    <GridColumn Field="@(nameof(FloorPlan.Rent))" Title="Rent">
+      <Template>
+        @{
+          var truth = context as FloorPlan;
+          <span>@(truth.Rent.ToString("N2"))</span>
+        }
+      </Template>
+    </GridColumn>
+    <GridColumn Field="@(nameof(FloorPlan.MarketRent))" Title="Market Rent">
+      <Template>
+        @{
+          var truth = context as FloorPlan;
+          <span>@(truth.MarketRent.ToString("N2"))</span>
+        }
+      </Template>
+    </GridColumn>
+    <GridCommandColumn>
+      <div class="text-center">
+        <GridCommandButton Command="MyOwnCommand" Icon="edit" ShowInEdit="false" OnClick=@OnEditFloor>
+          Edit
+        </GridCommandButton>
+      </div>
+    </GridCommandColumn>
+  </GridColumns>
+</TelerikGrid>
+
+<UnderwritingFloorPlansControls ShowWindow=@_showModel />

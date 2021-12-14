@@ -1,10 +1,13 @@
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
+using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.Data.Models;
 
 namespace MultiFamilyPortal.AdminTheme.Pages.Users
 {
+    [Authorize(Policy = PortalPolicy.Underwriter)]
     public partial class InvestorProspects
     {
         [Inject]
@@ -13,7 +16,7 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Users
         private readonly ObservableRangeCollection<InvestorProspect> _data = new ();
         protected override async Task OnInitializedAsync()
         {
-            _data.ReplaceRange(await _client.GetFromJsonAsync<IEnumerable<InvestorProspect>>("/api/admin/users/investors/prospects"));
+            _data.ReplaceRange(await _client.GetFromJsonAsync<IEnumerable<InvestorProspect>>("/api/admin/contacts/investors/prospects"));
         }
     }
 }

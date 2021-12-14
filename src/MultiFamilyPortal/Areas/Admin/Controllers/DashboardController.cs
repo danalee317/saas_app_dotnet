@@ -8,9 +8,10 @@ using MultiFamilyPortal.Data.Models;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     [Authorize(Policy = PortalPolicy.AdminPortalViewer)]
     [ApiController]
-    [Route("/api/admin/[controller]")]
+    [Route("/api/[area]/[controller]")]
     public class DashboardController : ControllerBase
     {
         private IMFPContext _dbContext { get; }

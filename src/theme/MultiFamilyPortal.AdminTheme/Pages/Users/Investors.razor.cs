@@ -17,7 +17,7 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Users
 
         protected override async Task OnInitializedAsync()
         {
-            _data.ReplaceRange(await _client.GetFromJsonAsync<IEnumerable<UserAccountResponse>>("/api/admin/users/investors"));
+            _data.ReplaceRange(await _client.GetFromJsonAsync<IEnumerable<UserAccountResponse>>("/api/admin/contacts/investors"));
         }
     }
 }

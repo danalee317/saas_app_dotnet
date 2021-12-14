@@ -16,9 +16,10 @@ using MultiFamilyPortal.Services;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     [Authorize(Policy = PortalPolicy.UnderwritingViewer)]
     [ApiController]
-    [Route("/api/admin/underwriting")]
+    [Route("/api/[area]/[controller]")]
     public class UnderwritingController : ControllerBase
     {
         private IMFPContext _dbContext { get; }

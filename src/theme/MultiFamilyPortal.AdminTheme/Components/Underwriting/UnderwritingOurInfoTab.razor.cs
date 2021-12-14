@@ -69,6 +69,9 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
                 }
                 else if (category == UnderwritingCategory.OtherIncomeBad)
                 {
+                    if (!grouped.Any(x => x.Key == category))
+                        continue;
+
                     var sum = grouped.First(x => x.Key == category)
                             .Sum(x => x.AnnualizedTotal);
 

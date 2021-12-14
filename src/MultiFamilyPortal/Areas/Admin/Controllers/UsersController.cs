@@ -105,14 +105,18 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateUser([FromBody]CreateUserRequest request, [FromServices] IEmailService emailSender, [FromServices] ITemplateProvider templateProvider)
         {
-            if (await _userManager.Users.AnyAsync(x => x.Email == request.Email) || !ModelState.IsValid)
+            if (await _userManager.Users.AnyAsync(x => x.Email == request.Email))
             {
                 return BadRequest();
+            }
+            else if (!ModelState.IsValid || !(request.Roles?.Any() ?? false))
+            {
+                return NoContent();
             }
 
             var user = new SiteUser(request.Email)
             {
-                Email = request.Email.Trim(),
+                Email = request.Email.Trim().ToLowerInvariant(),
                 EmailConfirmed = true,
                 FirstName = request.FirstName.Trim(),
                 LastName = request.LastName.Trim(),

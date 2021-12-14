@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Reflection;
 using System.Security.Claims;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
@@ -18,7 +19,11 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Users
         public Users()
         {
             var type = typeof(PortalRoles);
-            _roles = type.GetFields(BindingFlags.Static | BindingFlags.Public).Select(x => x.Name);
+            _roles = type.GetFields(BindingFlags.Static | BindingFlags.Public).Select(x => new SelectableRole
+            {
+                Display = x.Name.Humanize(LetterCasing.Title),
+                Role = x.Name
+            });
         }
 
         [Inject]
@@ -32,7 +37,7 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Users
 
         private PortalNotification notification { get; set; }
 
-        private readonly IEnumerable<string> _roles;
+        private readonly IEnumerable<SelectableRole> _roles;
         private readonly ObservableRangeCollection<UserAccountResponse> _data = new ObservableRangeCollection<UserAccountResponse>();
         private CreateUserRequest _createUser;
         private CreateUserRequest _editUser;
@@ -47,6 +52,14 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Users
             _createUser = new CreateUserRequest();
         }
 
+        private bool CanCreateNewUser()
+        {
+            if (_createUser is null || string.IsNullOrEmpty(_createUser.Email) || string.IsNullOrEmpty(_createUser.FirstName) || string.IsNullOrEmpty(_createUser.LastName) || !(_createUser.Roles?.Any() ?? false))
+                return false;
+
+            return true;
+        }
+
         private async Task OnCreateNewUser()
         {
             try
@@ -58,8 +71,6 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Users
                 switch(response.StatusCode)
                 {
                     case HttpStatusCode.BadRequest:
-                        notification.ShowWarning("The user already exists");
-                        break;
                     case HttpStatusCode.NoContent:
                         notification.ShowError("Failed to create user");
                         break;
@@ -153,6 +164,13 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Users
             }
 
             _editUser = null;
+        }
+
+        public class SelectableRole
+        {
+            public string Display { get; set; }
+
+            public string Role { get; set; }
         }
     }
 }

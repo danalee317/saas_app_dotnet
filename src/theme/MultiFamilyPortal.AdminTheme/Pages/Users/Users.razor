@@ -93,12 +93,10 @@
         <div class="col-12 form-group">
           <TelerikMultiSelect Data=@_roles
                               @bind-Value=@_createUser.Roles
+                              TextField=@nameof(SelectableRole.Display)
+                              ValueField=@nameof(SelectableRole.Role)
                               Class="form-control"
-                              Placeholder="Roles">
-            <ItemTemplate>
-              @context.Humanize(LetterCasing.Title)
-            </ItemTemplate>
-          </TelerikMultiSelect>
+                              Placeholder="Roles" />
         </div>
       </div>
       <div class="row px-3 py-1">
@@ -120,7 +118,11 @@
         </div>
       </div>
       <div class="row text-center p-3">
-        <TelerikButton Title="Create User" Primary="true" IconClass="fa-duotone fa-plus" OnClick=@OnCreateNewUser>Create User</TelerikButton>
+        <TelerikButton Title="Create User"
+                       Primary="true"
+                       IconClass="fa-duotone fa-plus"
+                       Enabled=@CanCreateNewUser()
+                       OnClick=@OnCreateNewUser>Create User</TelerikButton>
       </div>
     </WindowContent>
   </TelerikWindow>
@@ -137,17 +139,19 @@
     <WindowContent>
       <div class="row px-3 py-1">
         <div class="col-12 form-group">
-          <TelerikMultiSelect Data=@_roles @bind-Value=@_editUser.Roles
+          <TelerikMultiSelect Data=@_roles
+                              @bind-Value=@_editUser.Roles
+                              TextField=@nameof(SelectableRole.Display)
+                              ValueField=@nameof(SelectableRole.Role)
                               Class="form-control"
-                              Placeholder="Roles">
-            <ItemTemplate>
-              @context.Humanize(LetterCasing.Title)
-            </ItemTemplate>
-          </TelerikMultiSelect>
+                              Placeholder="Roles" />
         </div>
       </div>
       <div class="row text-center p-3">
-        <TelerikButton Title="Update User" Primary="true" IconClass="fa-duotone fa-plus" OnClick=@UpdateUser>Update User</TelerikButton>
+        <TelerikButton Title="Update User"
+                       Primary="true"
+                       IconClass="fa-duotone fa-plus"
+                       OnClick=@UpdateUser>Update User</TelerikButton>
       </div>
     </WindowContent>
   </TelerikWindow>

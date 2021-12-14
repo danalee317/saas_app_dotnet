@@ -102,7 +102,7 @@ namespace MultiFamilyPortal.Controllers
                 Language = "en-US",
                 EmailAddresses = new List<EmailAddress>
                 {
-                    new EmailAddress{ Email = profile.Email, Type = EmailType.Work }
+                    new EmailAddress{ Value = profile.Email, Type = EmailAddressType.Work }
                 },
                 GivenName = profile.FirstName,
                 FamilyName = profile.LastName,

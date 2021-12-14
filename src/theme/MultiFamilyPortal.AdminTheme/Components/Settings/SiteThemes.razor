@@ -1,7 +1,7 @@
 ﻿<TelerikGrid Data=@_themes>
   <GridColumns>
-    <GridColumn Field=@nameof(Data.Models.SiteTheme.Id) />
-    <GridColumn Field=@nameof(Data.Models.SiteTheme.IsDefault)>
+    <GridColumn Field=@nameof(Data.Models.SiteTheme.Id) Title="Name" />
+    <GridColumn Field=@nameof(Data.Models.SiteTheme.IsDefault) Title="Default Theme">
       <Template>
         @{ var template = context as Data.Models.SiteTheme; }
         @if(template.IsDefault)

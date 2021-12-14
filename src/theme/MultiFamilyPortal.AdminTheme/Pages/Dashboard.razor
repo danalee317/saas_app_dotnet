@@ -3,55 +3,61 @@
 <SiteTitle Title="Dashboard" />
 <Animation OptionsName="Page">
   <div class="container">
-    <div class="row mb-3">
+    @if (true)
+    {
+      <ComingSoon />
+    }
+    else
+    {
+      <div class="row mb-3">
 
-      <div class="col-md-2 mb-3" style="height: 160px;">
-        <div class="bg-light text-dark h-100 text-center">
-          Analytics Component 1 #99
+        <div class="col-md-2 mb-3" style="height: 160px;">
+          <div class="bg-light text-dark h-100 text-center">
+            Analytics Component 1 #99
+          </div>
+        </div>
+
+        <div class="col-md-2 mb-3" style="height: 160px;">
+          <div class="bg-light text-dark h-100 text-center">
+            Analytics Component 2 #99
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-3" style="height: 160px;">
+          <div class="bg-light text-dark h-100 text-center">
+            Analytics Component 3 #99
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-2" style="height: 160px;">
+          <div class="bg-light text-dark h-100 text-center">
+            User Activity (with pie chart) Component #99
+          </div>
         </div>
       </div>
 
-      <div class="col-md-2 mb-3" style="height: 160px;">
-        <div class="bg-light text-dark h-100 text-center">
-          Analytics Component 2 #99
+      <div class="row mb-3">
+        <div class="col-md-8" style="height: 500px">
+          <div class="bg-light text-dark h-100 text-center">
+            Graph Component #98
+          </div>
+        </div>
+
+        <div class="col-md-4" style="height: 500px">
+          <div class="bg-light text-dark h-100 text-center">
+            Investor List Component #100
+          </div>
         </div>
       </div>
 
-      <div class="col-md-4 mb-3" style="height: 160px;">
-        <div class="bg-light text-dark h-100 text-center">
-          Analytics Component 3 #99
-        </div>
-      </div>
-
-      <div class="col-md-4 mb-2" style="height: 160px;">
-        <div class="bg-light text-dark h-100 text-center">
-          User Activity (with pie chart) Component #99
-        </div>
-      </div>
-    </div>
-
-    <div class="row mb-3">
-      <div class="col-md-8" style="height: 500px">
-        <div class="bg-light text-dark h-100 text-center">
-          Graph Component #98
-        </div>
-      </div>
-
-      <div class="col-md-4" style="height: 500px">
-        <div class="bg-light text-dark h-100 text-center">
-          Investor List Component #100
-        </div>
-      </div>
-    </div>
-
-    <div class="row mb-5">
+      <div class="row mb-5">
       <div class="col-12">
         <div class="bg-light text-dark h-100 text-center">
           <div class="m-3 p-5">Other Components</div>
         </div>
       </div>
     </div>
-    
+    }
   </div>
 </Animation>
 

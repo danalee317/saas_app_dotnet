@@ -86,14 +86,21 @@ else
             </WizardStep>
             <WizardStep Label="Rent Roll">
               <Content>
-                <TelerikTabStrip TabPosition="TabPosition.Top">
-                  <TabStripTab Title="Models">
-                    <h2>Models</h2>
-                  </TabStripTab>
-                  <TabStripTab Title="Units">
-                    <h2>Units</h2>
-                  </TabStripTab>
-                </TelerikTabStrip>
+                @if(true)
+                {
+                  <ComingSoon />
+                } 
+                else
+                {
+                  <TelerikTabStrip TabPosition="TabPosition.Top">
+                    <TabStripTab Title="Models">
+                      <h2>Models</h2>
+                    </TabStripTab>
+                    <TabStripTab Title="Units">
+                      <h2>Units</h2>
+                    </TabStripTab>
+                  </TelerikTabStrip>
+                }
               </Content>
             </WizardStep>
           </WizardSteps>

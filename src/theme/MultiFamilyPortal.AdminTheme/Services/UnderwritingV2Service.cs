@@ -1,6 +1,5 @@
 ﻿using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
-using MultiFamilyPortal.Extensions;
 using Telerik.Windows.Documents.Spreadsheet.FormatProviders.OpenXml.Xlsx;
 using Telerik.Windows.Documents.Spreadsheet.Model;
 
@@ -12,9 +11,8 @@ namespace MultiFamilyPortal.AdminTheme.Services
         private const string AquisitionFirstYear = "Year 1 Projection - NF";
         private const string Assumption = "Assumption";
         private const string AssumptionFirstYear = "Year 1 Project - Assume";
-        
 
-        public static byte[] GenerateUnderwritingSpreadsheet(UnderwritingAnalysis analysis)
+        public static byte[] GenerateUnderwritingSpreadsheet(UnderwritingAnalysis analysis, IEnumerable<UnderwritingAnalysisFile> files)
         {
             var formatProvider = new XlsxFormatProvider();
             var workbook = formatProvider.LoadWorkbook("underwriting-v2.xlsx");
@@ -40,6 +38,7 @@ namespace MultiFamilyPortal.AdminTheme.Services
 
             workbook.AddNotes(analysis);
             workbook.UpdateCoachingForm(analysis);
+            workbook.AddFiles(files);
 
             workbook.ActiveSheet = financials;
             return formatProvider.ExportAsByteArray(workbook);
@@ -52,7 +51,7 @@ namespace MultiFamilyPortal.AdminTheme.Services
                 .SetValue("F14", analysis.PhysicalVacancy)
                 .SetValue("F15", analysis.Ours.Sum(UnderwritingCategory.ConsessionsNonPayment) * factor)
                 .SetValue("F17", analysis.Ours.Sum(UnderwritingCategory.UtilityReimbursement) * factor)
-                .SetValue("F18", analysis.Ours.Sum(UnderwritingCategory.OtherIncome) * factor);
+                .SetValue("F18", analysis.Ours.Sum(UnderwritingCategory.OtherIncome, UnderwritingCategory.OtherIncomeBad) * factor);
 
             sheet.SetValue("F22", analysis.Ours.Sum(UnderwritingCategory.Taxes) * factor)
                 .SetValue("F23", analysis.Ours.Sum(UnderwritingCategory.Insurance) * factor)
@@ -86,13 +85,13 @@ namespace MultiFamilyPortal.AdminTheme.Services
                 .SetValue("C59", vacancy)
                 .SetValue("D60", analysis.Ours.Sum(UnderwritingCategory.ConsessionsNonPayment))
                 .SetValue("D62", analysis.Ours.Sum(UnderwritingCategory.UtilityReimbursement))
-                .SetValue("D63", analysis.Ours.Sum(UnderwritingCategory.OtherIncome));
+                .SetValue("D63", analysis.Ours.Sum(UnderwritingCategory.OtherIncome, UnderwritingCategory.OtherIncomeBad));
 
             sheet.SetValue("F58", analysis.Sellers.Sum(UnderwritingCategory.GrossScheduledRent))
                 .SetValue("F59", analysis.Sellers.Sum(UnderwritingCategory.PhysicalVacancy))
                 .SetValue("F60", analysis.Sellers.Sum(UnderwritingCategory.ConsessionsNonPayment))
                 .SetValue("F62", analysis.Sellers.Sum(UnderwritingCategory.UtilityReimbursement))
-                .SetValue("F63", analysis.Sellers.Sum(UnderwritingCategory.OtherIncome));
+                .SetValue("F63", analysis.Sellers.Sum(UnderwritingCategory.OtherIncome, UnderwritingCategory.OtherIncomeBad, UnderwritingCategory.OtherIncomeOneTime));
 
             sheet.SetValue("D67", analysis.Ours.Sum(UnderwritingCategory.Taxes))
                 .SetValue("D68", analysis.Ours.Sum(UnderwritingCategory.Insurance))

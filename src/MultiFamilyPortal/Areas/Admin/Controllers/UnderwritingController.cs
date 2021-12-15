@@ -1,7 +1,9 @@
 using System.Data;
 using System.IO.Compression;
 using System.Net.Http.Headers;
+using System.Net.Mime;
 using System.Security.Claims;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -288,20 +290,18 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
 
             var fileName = $"{property.Name}.zip";
-            byte[] zipData = Array.Empty<byte>();
-            using (var fileStream = new MemoryStream())
-            using (var archive = new ZipArchive(fileStream, ZipArchiveMode.Create))
-            {
-                var v1Data = UnderwritingService.GenerateUnderwritingSpreadsheet(property);
-                archive.AddFile($"{property.Name}.xlsx", v1Data);
+            var files = await GetAnalysisFiles(propertyId);
+            var rootArchive = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            Directory.CreateDirectory(rootArchive);
 
-                var v2Data = UnderwritingV2Service.GenerateUnderwritingSpreadsheet(property);
-                archive.AddFile($"{property.Name}-v2.xlsx", v2Data);
-                zipData = fileStream.ToArray();
-            }
+            var v1Data = UnderwritingService.GenerateUnderwritingSpreadsheet(property, files);
+            System.IO.File.WriteAllBytes(Path.Combine(rootArchive, $"{property.Name}.xlsx"), v1Data);
+            var v2Data = UnderwritingV2Service.GenerateUnderwritingSpreadsheet(property, files);
+            System.IO.File.WriteAllBytes(Path.Combine(rootArchive, $"{property.Name}-v2.xlsx"), v2Data);
+            var filePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.zip");
+            ZipFile.CreateFromDirectory(rootArchive, filePath, CompressionLevel.Fastest, false);
 
-            var info = FileTypeLookup.GetFileTypeInfo(fileName);
-            return File(zipData, info.MimeType, fileName);
+            return File(System.IO.File.ReadAllBytes(filePath), MediaTypeNames.Application.Zip, fileName);
         }
 
         [HttpGet("property/{propertyId:guid}")]
@@ -360,19 +360,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         [HttpGet("files/{propertyId:guid}")]
         public async Task<IActionResult> GetFiles(Guid propertyId)
         {
-            var host = $"{Request.Scheme}://{Request.Host}";
-            var files = await _dbContext.UnderwritingProspectFiles
-                .Where(x => x.PropertyId == propertyId)
-                .Select(x => new UnderwritingAnalysisFile
-                {
-                    Id = x.Id,
-                    Description = x.Description,
-                    DownloadLink = $"/api/files/property/{propertyId}/file/{x.Id}",
-                    Icon = x.Icon,
-                    Name = x.Name,
-                    Timestamp = x.Timestamp,
-                })
-                .ToArrayAsync();
+            var files = await GetAnalysisFiles(propertyId);
 
             return Ok(files);
         }
@@ -482,6 +470,24 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
 
             // Return an empty string message in this case
             return new EmptyResult();
+        }
+
+        private async Task<IEnumerable<UnderwritingAnalysisFile>> GetAnalysisFiles(Guid propertyId)
+        {
+            var host = $"{Request.Scheme}://{Request.Host}";
+            return await _dbContext.UnderwritingProspectFiles
+                .Where(x => x.PropertyId == propertyId)
+                .Select(x => new UnderwritingAnalysisFile
+                {
+                    Id = x.Id,
+                    Type = x.Type.Humanize(LetterCasing.Title),
+                    Description = x.Description,
+                    DownloadLink = $"{host}/api/files/property/{propertyId}/file/{x.Id}",
+                    Icon = x.Icon,
+                    Name = x.Name,
+                    Timestamp = x.Timestamp,
+                })
+                .ToArrayAsync();
         }
 
         private static bool IsMarket(string guidanceMarket, string subjectMarket)

@@ -21,6 +21,25 @@ namespace MultiFamilyPortal.AdminTheme.Services
             return formatProvider.Import(Assembly.GetManifestResourceStream(resourceId));
         }
 
+        public static void AddFiles(this Workbook workbook, IEnumerable<UnderwritingAnalysisFile> files)
+        {
+            if (files is null || !files.Any())
+                return;
+
+            var sheet = workbook.GetWorksheet("Files");
+            for(int i = 0; i < files.Count(); i++)
+            {
+                var row = i + 2;
+                var typeIndex = new CellIndex(row, 0);
+                var descriptionIndex = new CellIndex(row, 1);
+                var linkIndex = new CellIndex(row, 2);
+                var file = files.ElementAt(i);
+                sheet.Cells[typeIndex].SetValueAsText(file.Type);
+                sheet.Cells[descriptionIndex].SetValueAsText(file.Description);
+                sheet.Cells[linkIndex].SetValue(file.DownloadLink);
+            }
+        }
+
         public static byte[] ExportAsByteArray(this XlsxFormatProvider formatProvider, Workbook workbook)
         {
             using var output = new MemoryStream();
@@ -28,9 +47,9 @@ namespace MultiFamilyPortal.AdminTheme.Services
             return output.ToArray();
         }
 
-        public static double Sum(this IEnumerable<UnderwritingAnalysisLineItem> lineItems, UnderwritingCategory category)
+        public static double Sum(this IEnumerable<UnderwritingAnalysisLineItem> lineItems, params UnderwritingCategory[] categories)
         {
-            return lineItems.Where(x => x.Category == category)
+            return lineItems.Where(x => categories.Any(c => c == x.Category))
                 .Sum(x => x.AnnualizedTotal);
         }
 

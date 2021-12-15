@@ -19,6 +19,7 @@ namespace MultiFamilyPortal.AdminTheme.Layouts
         private RootMenuOption _selected;
 
         private bool collapseNavMenu = true;
+        private bool collapseSubMenu = true;
         private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
         protected override void OnInitialized()
@@ -43,7 +44,23 @@ namespace MultiFamilyPortal.AdminTheme.Layouts
             if (string.IsNullOrEmpty(uri))
                 return;
 
-            _selected = MenuProvider.Menu.FirstOrDefault(x => x.Link == uri || (x.Children is not null && x.Children.Any(c => uri.StartsWith(c.Link))));
+            var selected = MenuProvider.Menu.FirstOrDefault(x => x.Link == uri || (x.Children is not null && x.Children.Any(c => uri.StartsWith(c.Link))));
+
+            if (selected != null)
+                SetOption(selected);
+        }
+
+        private void SetOption(RootMenuOption option)
+        {
+            if(!(option.Children is null || !option.Children.Any()))
+            {
+                if (option == _selected)
+                    collapseSubMenu = !collapseSubMenu;
+                else
+                    collapseSubMenu = false;
+            }
+
+            _selected = option;
         }
 
         private void ToggleNavMenu()

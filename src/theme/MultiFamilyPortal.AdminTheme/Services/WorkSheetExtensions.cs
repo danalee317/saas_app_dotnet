@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text.RegularExpressions;
 using Humanizer;
 using MultiFamilyPortal.Data.Models;
@@ -19,6 +19,25 @@ namespace MultiFamilyPortal.AdminTheme.Services
         {
             var resourceId = Assembly.GetManifestResourceNames().FirstOrDefault(x => x.EndsWith(name));
             return formatProvider.Import(Assembly.GetManifestResourceStream(resourceId));
+        }
+
+        public static void AddFiles(this Workbook workbook, IEnumerable<UnderwritingAnalysisFile> files)
+        {
+            if (files is null || !files.Any())
+                return;
+
+            var sheet = workbook.GetWorksheet("Files");
+            for(int i = 0; i < files.Count(); i++)
+            {
+                var row = i + 2;
+                var typeIndex = new CellIndex(row, 0);
+                var descriptionIndex = new CellIndex(row, 1);
+                var linkIndex = new CellIndex(row, 2);
+                var file = files.ElementAt(i);
+                sheet.Cells[typeIndex].SetValueAsText(file.Type);
+                sheet.Cells[descriptionIndex].SetValueAsText(file.Description);
+                sheet.Cells[linkIndex].SetValue(file.DownloadLink);
+            }
         }
 
         public static byte[] ExportAsByteArray(this XlsxFormatProvider formatProvider, Workbook workbook)

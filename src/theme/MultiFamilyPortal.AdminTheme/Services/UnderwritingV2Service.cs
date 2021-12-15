@@ -1,6 +1,5 @@
-using MultiFamilyPortal.Data.Models;
+﻿using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
-using MultiFamilyPortal.Extensions;
 using Telerik.Windows.Documents.Spreadsheet.FormatProviders.OpenXml.Xlsx;
 using Telerik.Windows.Documents.Spreadsheet.Model;
 
@@ -12,9 +11,8 @@ namespace MultiFamilyPortal.AdminTheme.Services
         private const string AquisitionFirstYear = "Year 1 Projection - NF";
         private const string Assumption = "Assumption";
         private const string AssumptionFirstYear = "Year 1 Project - Assume";
-        
 
-        public static byte[] GenerateUnderwritingSpreadsheet(UnderwritingAnalysis analysis)
+        public static byte[] GenerateUnderwritingSpreadsheet(UnderwritingAnalysis analysis, IEnumerable<UnderwritingAnalysisFile> files)
         {
             var formatProvider = new XlsxFormatProvider();
             var workbook = formatProvider.LoadWorkbook("underwriting-v2.xlsx");
@@ -40,6 +38,7 @@ namespace MultiFamilyPortal.AdminTheme.Services
 
             workbook.AddNotes(analysis);
             workbook.UpdateCoachingForm(analysis);
+            workbook.AddFiles(files);
 
             workbook.ActiveSheet = financials;
             return formatProvider.ExportAsByteArray(workbook);

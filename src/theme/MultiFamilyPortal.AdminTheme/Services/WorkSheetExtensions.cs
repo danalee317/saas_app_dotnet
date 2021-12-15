@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using Humanizer;
 using MultiFamilyPortal.Data.Models;
@@ -28,9 +28,9 @@ namespace MultiFamilyPortal.AdminTheme.Services
             return output.ToArray();
         }
 
-        public static double Sum(this IEnumerable<UnderwritingAnalysisLineItem> lineItems, UnderwritingCategory category)
+        public static double Sum(this IEnumerable<UnderwritingAnalysisLineItem> lineItems, params UnderwritingCategory[] categories)
         {
-            return lineItems.Where(x => x.Category == category)
+            return lineItems.Where(x => categories.Any(c => c == x.Category))
                 .Sum(x => x.AnnualizedTotal);
         }
 

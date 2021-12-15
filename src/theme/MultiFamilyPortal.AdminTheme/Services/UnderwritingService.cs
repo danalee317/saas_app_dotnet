@@ -1,4 +1,4 @@
-﻿using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
 using MultiFamilyPortal.Extensions;
 using Telerik.Windows.Documents.Spreadsheet.FormatProviders.OpenXml.Xlsx;
@@ -50,7 +50,7 @@ namespace MultiFamilyPortal.AdminTheme.Services
                 .SetValue("F14", analysis.PhysicalVacancy)
                 .SetValue("F15", analysis.Ours.Sum(UnderwritingCategory.ConsessionsNonPayment) * factor)
                 .SetValue("F17", analysis.Ours.Sum(UnderwritingCategory.UtilityReimbursement) * factor)
-                .SetValue("F18", analysis.Ours.Sum(UnderwritingCategory.OtherIncome) * factor);
+                .SetValue("F18", analysis.Ours.Sum(UnderwritingCategory.OtherIncome, UnderwritingCategory.OtherIncomeBad) * factor);
 
             sheet.SetValue("F22", analysis.Ours.Sum(UnderwritingCategory.Taxes) * factor)
                 .SetValue("F23", analysis.Ours.Sum(UnderwritingCategory.Insurance) * factor)
@@ -84,13 +84,13 @@ namespace MultiFamilyPortal.AdminTheme.Services
                 .SetValue("C14", vacancy)
                 .SetValue("D15", analysis.Ours.Sum(UnderwritingCategory.ConsessionsNonPayment))
                 .SetValue("D17", analysis.Ours.Sum(UnderwritingCategory.UtilityReimbursement))
-                .SetValue("D18", analysis.Ours.Sum(UnderwritingCategory.OtherIncome));
+                .SetValue("D18", analysis.Ours.Sum(UnderwritingCategory.OtherIncome, UnderwritingCategory.OtherIncomeBad));
 
             sheet.SetValue("F13", analysis.Sellers.Sum(UnderwritingCategory.GrossScheduledRent))
                 .SetValue("F14", analysis.Sellers.Sum(UnderwritingCategory.PhysicalVacancy))
                 .SetValue("F15", analysis.Sellers.Sum(UnderwritingCategory.ConsessionsNonPayment))
                 .SetValue("F17", analysis.Sellers.Sum(UnderwritingCategory.UtilityReimbursement))
-                .SetValue("F18", analysis.Sellers.Sum(UnderwritingCategory.OtherIncome));
+                .SetValue("F18", analysis.Sellers.Sum(UnderwritingCategory.OtherIncome, UnderwritingCategory.OtherIncomeBad, UnderwritingCategory.OtherIncomeOneTime));
 
             sheet.SetValue("D22", analysis.Ours.Sum(UnderwritingCategory.Taxes))
                 .SetValue("D23", analysis.Ours.Sum(UnderwritingCategory.Insurance))

@@ -24,19 +24,20 @@
         @if(rootItem.Children?.Any() ?? false)
         {
           <li class="nav-item" id="@(_selected == rootItem ? "sideline" : "")">
-            <a class="nav-link px-3" role="button" @onclick=@(() => _selected = rootItem)>
+            <a class="nav-link px-3" role="button" @onclick=@(() => SetOption(rootItem))>
               <i class="@rootItem.IconClass" aria-hidden="true"></i>&nbsp;&nbsp;@rootItem.Title
               <span class="w-75"></span>
               @if(_selected == rootItem)
               {
-                <span><i class="fas fa-chevron-down"></i></span>
+                var icon = collapseSubMenu ? "right" : "down";
+                <span><i class="fas fa-chevron-@icon"></i></span>
               }
               else
               {
                 <span> <i class="fas fa-chevron-right"></i></span>
               }
             </a>
-            @if(_selected == rootItem)
+            @if(_selected == rootItem && !collapseSubMenu)
             {
               <ul>
                 @foreach(var childItem in rootItem.Children)

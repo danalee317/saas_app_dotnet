@@ -2,6 +2,7 @@ using System.Data;
 using System.IO.Compression;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -360,19 +361,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         [HttpGet("files/{propertyId:guid}")]
         public async Task<IActionResult> GetFiles(Guid propertyId)
         {
-            var host = $"{Request.Scheme}://{Request.Host}";
-            var files = await _dbContext.UnderwritingProspectFiles
-                .Where(x => x.PropertyId == propertyId)
-                .Select(x => new UnderwritingAnalysisFile
-                {
-                    Id = x.Id,
-                    Description = x.Description,
-                    DownloadLink = $"/api/files/property/{propertyId}/file/{x.Id}",
-                    Icon = x.Icon,
-                    Name = x.Name,
-                    Timestamp = x.Timestamp,
-                })
-                .ToArrayAsync();
+            var files = await GetAnalysisFiles(propertyId);
 
             return Ok(files);
         }
@@ -482,6 +471,24 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
 
             // Return an empty string message in this case
             return new EmptyResult();
+        }
+
+        private async Task<IEnumerable<UnderwritingAnalysisFile>> GetAnalysisFiles(Guid propertyId)
+        {
+            var host = $"{Request.Scheme}://{Request.Host}";
+            return await _dbContext.UnderwritingProspectFiles
+                .Where(x => x.PropertyId == propertyId)
+                .Select(x => new UnderwritingAnalysisFile
+                {
+                    Id = x.Id,
+                    Type = x.Type.Humanize(LetterCasing.Title),
+                    Description = x.Description,
+                    DownloadLink = $"{host}/api/files/property/{propertyId}/file/{x.Id}",
+                    Icon = x.Icon,
+                    Name = x.Name,
+                    Timestamp = x.Timestamp,
+                })
+                .ToArrayAsync();
         }
 
         private static bool IsMarket(string guidanceMarket, string subjectMarket)

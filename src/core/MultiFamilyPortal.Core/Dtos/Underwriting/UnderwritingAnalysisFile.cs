@@ -14,6 +14,9 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         public string Icon { get; set; }
 
         [Reactive]
+        public string Type { get; set; }
+
+        [Reactive]
         public string Name { get; set; }
 
         [Reactive]

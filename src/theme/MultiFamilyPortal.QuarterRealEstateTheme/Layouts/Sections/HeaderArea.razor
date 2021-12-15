@@ -115,7 +115,7 @@
                   else if(User.IsInRole(PortalRoles.BlogAuthor) || User.IsInRole(PortalRoles.Mentor) ||
                     User.IsInRole(PortalRoles.PortalAdministrator) || User.IsInRole(PortalRoles.Underwriter))
                   {
-                    <li><a @onclick=@AdminPortal>Admin Portal</a></li>
+                    <li><a style="cursor: pointer;" @onclick=@AdminPortal>Admin Portal</a></li>
                     <li><a href="/logout">Sign out</a></li>
                   }
                 </ul>

@@ -32,7 +32,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
             {
                 Type = "Global",
                 DisplayName = "Browser Icon",
-                Href = "/apple-touch-icon.png",
+                Href = "/apple-touch-icon.png?",
                 Name = "favicon",
                 Size = "1024 x 1024"
             },
@@ -40,7 +40,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
             {
                 Type = "Global",
                 DisplayName = "Default Logo",
-                Href = "/theme/branding/logo",
+                Href = "/theme/branding/logo?",
                 Name = "logo",
                 Size = "1024 x 1024"
             },
@@ -48,7 +48,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
             {
                 Type = "Global",
                 DisplayName = "Dark Theme Logo",
-                Href = "/theme/branding/logo-dark",
+                Href = "/theme/branding/logo-dark?",
                 Name = "logo-dark",
                 Size = "1024 x 1024"
             },
@@ -56,7 +56,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
             {
                 Type = "Global",
                 DisplayName = "Default Logo - Horizontal",
-                Href = "/theme/branding/logo-side",
+                Href = "/theme/branding/logo-side?",
                 Name = "logo-side",
                 Size = "512 x 1024"
             },
@@ -64,7 +64,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
             {
                 Type = "Global",
                 DisplayName = "Dark Theme Logo - Horizontal",
-                Href = "/theme/branding/logo-dark-side",
+                Href = "/theme/branding/logo-dark-side?",
                 Name = "logo-dark-side",
                 Size = "512 x 1024"
             },
@@ -81,7 +81,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
                 {
                     Type = "Theme",
                     DisplayName = x.Name,
-                    Href = $"/theme/branding/resource?file={x.Name}",
+                    Href = $"/theme/branding/resource?file={x.Name}&",
                     Name = x.Name,
                     Size = $"{x.Height} x {x.Width}"
                 }));
@@ -118,7 +118,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
             if (e.Operation == UploadOperationType.Upload)
             {
                 showWindow = false;
-                await InvokeAsync(StateHasChanged);
             }
             else Logger.LogWarning("Upload failure");
         }

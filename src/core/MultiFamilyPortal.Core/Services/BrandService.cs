@@ -39,23 +39,31 @@ namespace MultiFamilyPortal.Services
                 return;
 
             var defaultFile = Path.Combine(_hostEnvironment.WebRootPath, "default-resources", "favicon", "default.png");
-            using var defaultFileStream = File.OpenRead(defaultFile);
-            await CreateIcons(defaultFileStream);
+            await using var defaultFileStream = File.OpenRead(defaultFile);
+            await CreateIcons(defaultFileStream, defaultFile);
         }
 
-        public async Task CreateIcons(Stream stream)
+        public async Task CreateIcons(Stream stream, string name)
         {
             if (stream is null || stream == Stream.Null)
                 throw new ArgumentNullException(nameof(stream));
 
-            using var memoryStream = new MemoryStream();
+            await using var memoryStream = new MemoryStream();
             await stream.CopyToAsync(memoryStream);
             var data = memoryStream.ToArray();
 
             try
             {
-                foreach (var icon in _favicons)
-                    await CreateFavicon(data, icon.Value, icon.Key);
+                if (Path.GetExtension(name).ToLower() != ".svg")
+                {
+                    foreach (var icon in _favicons)
+                        await CreateFavicon(data, icon.Value, icon.Key);
+                }
+                else
+                {
+                    foreach (var icon in _favicons)
+                        await CreateSVGFavicon(data, icon.Value, icon.Key);
+                }
             }
             catch (Exception ex)
             {
@@ -66,23 +74,51 @@ namespace MultiFamilyPortal.Services
         private async Task CreateFavicon(byte[] data, int size, string name)
         {
             using var src = SKImage.FromEncodedData(data);
-            var canvasMax = Math.Max(src.Width, src.Height);
 
             var info = new SKImageInfo(size, size, SKColorType.Rgba8888);
             using var output = SKImage.Create(info);
             src.ScalePixels(output.PeekPixels(), SKFilterQuality.High);
-            var filePath = Path.Combine(Icons, name);
+            string filePath = Path.Combine(Icons, name);
 
             var type = Path.GetExtension(name).ToLower() == ".ico" ? SKEncodedImageFormat.Ico : SKEncodedImageFormat.Png;
             using var bitmap = SKBitmap.FromImage(output);
             var skData = bitmap.Encode(type, 100);
             if(skData != null)
             {
-                using var skStream = skData.AsStream();
+                await using var skStream = skData.AsStream();
                 if (skStream.Length > 0)
                 {
                     var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(name);
-                    await _storage.PutAsync(filePath, skStream, fileTypeInfo.MimeType, overwrite: true);
+                    await _storage.PutAsync(filePath, skStream, fileTypeInfo.MimeType, true);
+                }
+            }
+        }
+
+        private async Task CreateSVGFavicon(byte[] data, int size, string name)
+        {
+            var type = Path.GetExtension(name).ToLower() == ".ico" ? SKEncodedImageFormat.Ico : SKEncodedImageFormat.Png;
+            string filePath = Path.Combine(Icons, name);
+            await using var stream = new MemoryStream(data);
+
+            var svg = new SkiaSharp.Extended.Svg.SKSvg
+            {
+                PixelsPerInch = 0,
+                ThrowOnUnsupportedElement = false
+            };
+            var pict = svg.Load(stream);
+            var canvasMax  = new SKSizeI(size,size);
+
+            var matrix = SKMatrix.MakeScale(1,1);
+            var img = SKImage.FromPicture(pict,canvasMax ,matrix);
+
+            var skData = img.Encode(type,100);
+            if (skData != null)
+            { await using var skStream = skData.AsStream();
+                _logger.LogWarning("Stream length : "+ skStream.Length);
+                if (skStream.Length > 0)
+                {
+                    var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(name);
+                    await _storage.PutAsync(filePath, skStream, fileTypeInfo.MimeType, true);
                 }
             }
         }
@@ -103,8 +139,8 @@ namespace MultiFamilyPortal.Services
                 switch (fileExt.ToLower())
                 {
                     case ".svg":
-                        using (var stream = file.OpenReadStream())
-                            await _storage.PutAsync(filePath, stream, FileTypeLookup.GetFileTypeInfo("image.svg").MimeType, overwrite: true);
+                        await using (var stream = file.OpenReadStream())
+                            await _storage.PutAsync(filePath, stream, FileTypeLookup.GetFileTypeInfo("image.svg").MimeType, true);
                         break;
 
                     default:

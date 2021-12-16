@@ -18,7 +18,7 @@
       <GroupHeaderTemplate>
         <div class="d-flex justify-content-between w-100">
            <div>Market : @(context.Value ?? "Default")</div>
-           @if(context.Value != null)
+           @if(_editable)
            {
              <div>
                <button class="btn btn-success btn-sm"

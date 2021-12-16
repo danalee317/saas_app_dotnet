@@ -1,6 +1,8 @@
 using System.Net.Http.Json;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.Data.Models;
 using Telerik.Blazor.Components;
@@ -15,6 +17,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
         [Inject]
         private ILogger<UnderwritingGuidanceDefaults> _logger { get; set; }
+
+        [CascadingParameter]
+        private ClaimsPrincipal _user { get; set; }
+
+        private bool _editable;
         private readonly ObservableRangeCollection<UnderwritingGuidance> _guidance = new();
         private TelerikGrid<UnderwritingGuidance> grid;
         private bool _windowVisibility { get; set; }
@@ -23,6 +30,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         {
             try
             {
+                _editable = _user.IsAuthorizedInPolicy(PortalPolicy.Underwriter);
                 _guidance.ReplaceRange(await _client.GetFromJsonAsync<IEnumerable<UnderwritingGuidance>>("/api/admin/underwriting/guidance"));
             }
             catch (Exception ex)

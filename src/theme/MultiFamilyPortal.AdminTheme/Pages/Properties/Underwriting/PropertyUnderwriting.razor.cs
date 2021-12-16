@@ -1,5 +1,6 @@
 using System.Collections.Specialized;
 using System.Net.Http.Json;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
@@ -22,6 +23,9 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
         [Inject]
         private NavigationManager _navigationManager { get; set; }
 
+        [CascadingParameter]
+        private ClaimsPrincipal _user { get; set; }
+
         private UnderwritingAnalysis Property;
         private bool _disposedValue;
         private int currentIndex = 0;
@@ -29,11 +33,13 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
         private bool showNext => currentIndex < 4;
 
         private PortalNotification notification { get; set; }
+        private bool _editable;
 
         private readonly IEnumerable<UnderwritingStatus> AvailableStatus = Enum.GetValues<UnderwritingStatus>();
 
         protected override async Task OnInitializedAsync()
         {
+            _editable = _user.IsAuthorizedInPolicy(PortalPolicy.Underwriter);
             Property = await _client.GetFromJsonAsync<UnderwritingAnalysis>($"/api/admin/underwriting/property/{propertyId}");
             _navigationManager.LocationChanged += OnNavigating;
             if(Property.OurExpense is INotifyCollectionChanged ncc)

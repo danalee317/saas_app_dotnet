@@ -79,15 +79,15 @@
     </GridColumn>
     <GridCommandColumn>
       <div class="text-center">
-        @{
-           var guidance = context as UnderwritingGuidance;
-           <GridCommandButton Primary=@true
-                              Title="Update Underwriting"
-                              Enabled="@IsCleanExpense(guidance)"
-                              OnClick=@ShowUpdateUnderwriting>
+        @{ var guidance = context as UnderwritingGuidance; }
+        <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
+          <GridCommandButton Primary=@true
+                             Title="Update Underwriting"
+                             Enabled=@IsCleanExpense(guidance)
+                             OnClick=@ShowUpdateUnderwriting>
              Update Underwriting
            </GridCommandButton>
-        }
+        </AuthorizedPolicy>
       </div>
     </GridCommandColumn>
   </GridColumns>

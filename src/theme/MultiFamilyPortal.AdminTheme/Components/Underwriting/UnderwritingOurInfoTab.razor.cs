@@ -1,5 +1,7 @@
 using System.Net.Http.Json;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
+using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
@@ -18,9 +20,19 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         [Inject]
         private HttpClient _client { get; set; }
 
+        [CascadingParameter]
+        private ClaimsPrincipal _user { get; set; }
+
+        private bool _editable;
+
         private bool Refreshing;
 
         private readonly ObservableRangeCollection<UnderwritingAnalysisLineItem> Items = new ();
+
+        protected override void OnInitialized()
+        {
+            _editable = _user.IsAuthorizedInPolicy(PortalPolicy.Underwriter);
+        }
 
         protected override void OnParametersSet()
         {

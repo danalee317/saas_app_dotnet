@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
+using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.Dtos.Underwriting;
 using Telerik.Blazor.Components;
@@ -10,14 +12,19 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         [Parameter]
         public UnderwritingAnalysis Property { get; set; }
 
+        [CascadingParameter]
+        private ClaimsPrincipal _user { get; set; }
+
         private ObservableRangeCollection<UnderwritingAnalysisMortgage> Mortgages = new ObservableRangeCollection<UnderwritingAnalysisMortgage>();
 
         private UnderwritingAnalysisMortgage AddMortgage;
         private UnderwritingAnalysisMortgage EditMortgage;
         private bool showBalloon;
+        private bool _editable;
 
         protected override void OnInitialized()
         {
+            _editable = _user.IsAuthorizedInPolicy(PortalPolicy.Underwriter);
             Mortgages.ReplaceRange(Property.Mortgages);
         }
 

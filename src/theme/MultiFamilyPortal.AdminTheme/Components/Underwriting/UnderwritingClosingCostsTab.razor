@@ -12,6 +12,7 @@
       </td>
       <td role="gridcell" class="px-2">
         <PercentageInput @bind-Value=@Property.ClosingCostPercent
+                         Enabled=@_editable
                          Id="ClosingCosts" />
       </td>
       <td role="gridcell" class="px-2 text-center">
@@ -35,6 +36,7 @@
       </td>
       <td role="gridcell" class="px-2">
         <PercentageInput @bind-Value=@Property.AquisitionFeePercent
+                         Enabled=@_editable
                          Id="AquisitionFee"/>
       </td>
       <td role="gridcell" class="px-2 text-center">
@@ -50,6 +52,7 @@
       </td>
       <td role="gridcell" class="px-2 text-center">
         <TelerikNumericTextBox @bind-Value=@Property.DeferredMaintenance
+                               Enabled=@_editable
                                Min="0"
                                Step="1000"
                                Format="C" />
@@ -64,6 +67,7 @@
       </td>
       <td role="gridcell" class="px-2 text-center">
         <TelerikNumericTextBox @bind-Value=@Property.SECAttorney
+                               Enabled=@_editable
                                Min="0"
                                Step="1000"
                                Format="C" />
@@ -78,6 +82,7 @@
       </td>
       <td role="gridcell" class="px-2 text-center">
         <TelerikNumericTextBox @bind-Value=@Property.ClosingCostMiscellaneous
+                               Enabled=@_editable
                                Min="0"
                                Step="1000"
                                Format="C" />

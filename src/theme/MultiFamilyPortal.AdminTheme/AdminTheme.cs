@@ -59,6 +59,12 @@ namespace MultiFamilyPortal.AdminTheme
                 {
                     new ChildMenuOption
                     {
+                        Title = "All Contacts",
+                        Link = "/admin/contacts",
+                        Match = NavLinkMatch.All,
+                    },
+                    new ChildMenuOption
+                    {
                         Title = "Investors",
                         Link = "/admin/investors",
                         Match = NavLinkMatch.All

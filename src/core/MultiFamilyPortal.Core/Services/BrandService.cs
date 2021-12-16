@@ -51,54 +51,51 @@ namespace MultiFamilyPortal.Services
             await using var memoryStream = new MemoryStream();
             await stream.CopyToAsync(memoryStream);
             var data = memoryStream.ToArray();
+            var isSvg = Path.GetExtension(name).ToLower() == ".svg";
 
-            try
+            foreach (var icon in _favicons)
             {
-                if (Path.GetExtension(name).ToLower() != ".svg")
+                try
                 {
-                    foreach (var icon in _favicons)
-                        await CreateFavicon(data, icon.Value, icon.Key);
+                    using var output = isSvg ?
+                        ResizeSvgImage(data, icon.Value) :
+                        ResizePngImage(data, icon.Value);
+                    string filePath = Path.Combine(Icons, icon.Key);
+
+                    var type = Path.GetExtension(icon.Key).ToLower() == ".ico" ? SKEncodedImageFormat.Ico : SKEncodedImageFormat.Png;
+                    using var bitmap = SKBitmap.FromImage(output);
+                    var skData = bitmap.Encode(type, 100);
+                    if (skData != null)
+                    {
+                        await using var skStream = skData.AsStream();
+                        if (skStream.Length > 0)
+                        {
+                            var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(icon.Key);
+                            await _storage.PutAsync(filePath, skStream, fileTypeInfo.MimeType, true);
+                        }
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    foreach (var icon in _favicons)
-                        await CreateSVGFavicon(data, icon.Value, icon.Key);
+                    _logger.LogError(ex, ex.Message);
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
             }
         }
 
-        private async Task CreateFavicon(byte[] data, int size, string name)
+        private SKImage ResizePngImage(byte[] data, int size)
         {
-            using var src = SKImage.FromEncodedData(data);
+            var src = SKImage.FromEncodedData(data);
 
             var info = new SKImageInfo(size, size, SKColorType.Rgba8888);
             using var output = SKImage.Create(info);
             src.ScalePixels(output.PeekPixels(), SKFilterQuality.High);
-            string filePath = Path.Combine(Icons, name);
 
-            var type = Path.GetExtension(name).ToLower() == ".ico" ? SKEncodedImageFormat.Ico : SKEncodedImageFormat.Png;
-            using var bitmap = SKBitmap.FromImage(output);
-            var skData = bitmap.Encode(type, 100);
-            if(skData != null)
-            {
-                await using var skStream = skData.AsStream();
-                if (skStream.Length > 0)
-                {
-                    var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(name);
-                    await _storage.PutAsync(filePath, skStream, fileTypeInfo.MimeType, true);
-                }
-            }
+            return src;
         }
 
-        private async Task CreateSVGFavicon(byte[] data, int size, string name)
+        private SKImage ResizeSvgImage(byte[] data, int size)
         {
-            var type = Path.GetExtension(name).ToLower() == ".ico" ? SKEncodedImageFormat.Ico : SKEncodedImageFormat.Png;
-            string filePath = Path.Combine(Icons, name);
-            await using var stream = new MemoryStream(data);
+            using var stream = new MemoryStream(data);
 
             var svg = new SkiaSharp.Extended.Svg.SKSvg
             {
@@ -106,21 +103,10 @@ namespace MultiFamilyPortal.Services
                 ThrowOnUnsupportedElement = false
             };
             var pict = svg.Load(stream);
-            var canvasMax  = new SKSizeI(size,size);
+            var canvasMax = new SKSizeI(size, size);
 
-            var matrix = SKMatrix.MakeScale(1,1);
-            var img = SKImage.FromPicture(pict,canvasMax ,matrix);
-
-            var skData = img.Encode(type,100);
-            if (skData != null)
-            { await using var skStream = skData.AsStream();
-                _logger.LogWarning("Stream length : "+ skStream.Length);
-                if (skStream.Length > 0)
-                {
-                    var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(name);
-                    await _storage.PutAsync(filePath, skStream, fileTypeInfo.MimeType, true);
-                }
-            }
+            var matrix = SKMatrix.CreateScale(1, 1);
+            return SKImage.FromPicture(pict, canvasMax, matrix);
         }
 
         public async Task CreateBrandImage(IFormFile file, string name)
@@ -223,20 +209,5 @@ namespace MultiFamilyPortal.Services
 
             return (Stream.Null, string.Empty, string.Empty);
         }
-
-        //private (byte[] FileContents, int Height, int Width) Resize(byte[] fileContents, int maxWidth, int maxHeight, SKFilterQuality quality = SKFilterQuality.Medium)
-        //{
-        //    using MemoryStream ms = new MemoryStream(fileContents);
-        //    using SKBitmap sourceBitmap = SKBitmap.Decode(ms);
-
-        //    int height = Math.Min(maxHeight, sourceBitmap.Height);
-        //    int width = Math.Min(maxWidth, sourceBitmap.Width);
-
-        //    using SKBitmap scaledBitmap = sourceBitmap.Resize(new SKImageInfo(width, height), quality);
-        //    using SKImage scaledImage = SKImage.FromBitmap(scaledBitmap);
-        //    using SKData data = scaledImage.Encode();
-
-        //    return (data.ToArray(), height, width);
-        //}
     }
 }

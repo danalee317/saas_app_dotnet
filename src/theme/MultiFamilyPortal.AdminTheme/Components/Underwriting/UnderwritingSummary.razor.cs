@@ -33,7 +33,7 @@ public partial class UnderwritingSummary
     private string GetDebtCoverageColor() => _debtCoverageRatio < 1.2 ? _higherColor :
         _debtCoverageRatio < 1.5 ? _lowerColor : _middleColor;
     private string GetCoCColor() =>
-        _sellerCashOnCash < 0.17 ? _higherColor : _sellerCashOnCash < 1.12 ? _lowerColor : _middleColor;
+        _sellerCashOnCash < 0.10 ? _higherColor : (_sellerCashOnCash >= .10 && _sellerCashOnCash <= .12) ? _lowerColor : _middleColor;
     private async Task Refresh()
     {
         if (_capRate != Property.CapRate)

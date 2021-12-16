@@ -23,6 +23,9 @@ namespace MultiFamilyPortal.CoreUI
         public double Max { get; set; } = 100;
 
         [Parameter]
+        public bool Enabled { get; set; } = true;
+
+        [Parameter]
         public EventCallback<double> ValueChanged { get; set; }
 
         private async Task HandleValueChangedAsync()

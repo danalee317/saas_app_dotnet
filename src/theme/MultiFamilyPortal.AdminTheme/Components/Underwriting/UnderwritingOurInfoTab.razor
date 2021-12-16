@@ -10,6 +10,7 @@ else
       <TelerikNumericTextBox @bind-Value=@Property.Units
                       Min="2"
                       Max="1500"
+                      Enabled=@_editable
                       Class="form-control" />
     </div>
 
@@ -19,24 +20,28 @@ else
                       Min="0"
                       Step="1000"
                       Format="C"
+                      Enabled=@_editable
                       Class="form-control" />
     </div>
 
     <label for="MarketVacancy" class="col-sm-2 col-form col-form-label">Market Vacancy</label>
     <div class="col-sm-4">
       <PercentageInput @bind-Value=@Property.MarketVacancy
+                       Enabled=@_editable
                        Id="PercentageInput" />
     </div>
 
     <label for="PhysicalVacancy" class="col-sm-2 col-form col-form-label">Physical Vacancy</label>
     <div class="col-sm-4">
       <PercentageInput @bind-Value=@Property.PhysicalVacancy
+                       Enabled=@_editable
                        Id="PhysicalVacancy"/>
     </div>
 
     <label for="Management" class="col-sm-2 col-form col-form-label">Management</label>
     <div class="col-sm-4">
       <PercentageInput @bind-Value=@Property.Management
+                       Enabled=@_editable
                        Id="Management"/>
     </div>
   </div>

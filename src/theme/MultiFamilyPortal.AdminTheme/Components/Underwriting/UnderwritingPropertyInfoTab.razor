@@ -2,6 +2,7 @@
   <label for="name" class="col-sm-2 col-form-label">Property Name <span style="color:red">*</span></label>
   <div class="col-sm-10">
     <TelerikTextBox @bind-Value=@Property.Name
+                    Enabled=@_editable
                     Class="form-control" />
   </div>
 </div>
@@ -9,6 +10,7 @@
   <label for="address" class="col-sm-2 col-form-label">Address</label>
   <div class="col-sm-10">
     <TelerikTextBox @bind-Value=@Property.Address
+                    Enabled=@_editable
                     Class="form-control"
                     PlaceHolder="Address" />
   </div>
@@ -17,16 +19,19 @@
   <div class="col-sm-2"></div>
   <div class="col-sm-5">
     <TelerikTextBox @bind-Value=@Property.City
+                    Enabled=@_editable
                     Class="form-control mt-2"
                     PlaceHolder="City" />
   </div>
   <div class="col-sm">
     <TelerikTextBox @bind-Value=@Property.State
+                    Enabled=@_editable
                     Class="form-control mt-2"
                     PlaceHolder="State" />
   </div>
   <div class="col-sm">
     <TelerikTextBox @bind-Value=@Property.Zip
+                    Enabled=@_editable
                     Class="form-control mt-2"
                     PlaceHolder="Zip" />
   </div>
@@ -35,6 +40,7 @@
   <label for="address" class="col-sm-2 col-form-label">Market</label>
   <div class="col-sm-10">
     <TelerikAutoComplete @bind-Value=@Property.Market
+                    Enabled=@_editable
                     Class="form-control"
                     ClearButton="true"
                     Data=@_markets />
@@ -49,6 +55,7 @@
     <TelerikNumericTextBox @bind-Value=@Property.Units
                     Min="2"
                     Max="1500"
+                    Enabled=@_editable
                     Class="form-control" />
   </div>
 
@@ -57,6 +64,7 @@
     <TelerikNumericTextBox @bind-Value=@Property.Vintage
                     Min="1900"
                     Max="@DateTime.Now.Year"
+                    Enabled=@_editable
                     Class="form-control" />
   </div>
 
@@ -65,6 +73,7 @@
     <TelerikNumericTextBox @bind-Value=@Property.RentableSqFt
                     Min="0"
                     Format="G"
+                    Enabled=@_editable
                     Class="form-control" />
   </div>
 
@@ -74,24 +83,28 @@
                     Min="0"
                     Step="1000"
                     Format="C"
+                    Enabled=@_editable
                     Class="form-control" />
   </div>
 
   <label for="MarketVacancy" class="col-sm-2 col-form col-form-label">Market Vacancy</label>
   <div class="col-sm-4">
     <PercentageInput @bind-Value=@Property.MarketVacancy
+                     Enabled=@_editable
                      Id="MarketVacancy" />
   </div>
 
   <label for="PhysicalVacancy" class="col-sm-2 col-form col-form-label">Physical Vacancy</label>
   <div class="col-sm-4">
     <PercentageInput @bind-Value=@Property.PhysicalVacancy
+                     Enabled=@_editable
                      Id="PhysicalVacancy"/>
   </div>
 
   <label for="Management" class="col-sm-2 col-form col-form-label">Management</label>
   <div class="col-sm-4">
     <PercentageInput @bind-Value=@Property.Management
+                     Enabled=@_editable
                      Id="Management"/>
   </div>
 
@@ -101,6 +114,7 @@
                     Min="0"
                     Step="1000"
                     Format="C"
+                    Enabled=@_editable
                     Class="form-control" />
   </div>
 
@@ -108,7 +122,12 @@
   <div class="col-sm-4">
     <TelerikDropDownList Data=@CostTypes
                          @bind-Value=@Property.CapXType
+                         Enabled=@_editable
                          Class="form-control">
+      <ValueTemplate>
+        @{ var value = (Data.Models.CostType)context; }
+        @value.Humanize(LetterCasing.Title)
+      </ValueTemplate>
       <ItemTemplate>
         @{ var value = (Data.Models.CostType)context; }
         @value.Humanize(LetterCasing.Title)
@@ -123,6 +142,7 @@
   <label for="DesiredYield" class="col-sm-2 col-form col-form-label">Desired Yield</label>
   <div class="col-sm-4">
     <PercentageInput @bind-Value=@Property.DesiredYield
+                     Enabled=@_editable
                      Id="DesiredYield" />
   </div>
   <label for="HoldYears" class="col-sm-2 col-form col-form-label">Hold Period (Yrs)</label>
@@ -130,6 +150,7 @@
     <TelerikNumericTextBox @bind-Value=@Property.HoldYears
                     Min="0"
                     Max="50"
+                    Enabled=@_editable
                     Class="form-control" />
   </div>
 </div>
@@ -143,6 +164,7 @@
                     Min="0"
                     Step="1000"
                     Format="C"
+                    Enabled=@_editable
                     Class="form-control" />
   </div>
 
@@ -152,6 +174,7 @@
                     Min="0"
                     Step="1000"
                     Format="C"
+                    Enabled=@_editable
                     Class="form-control" />
   </div>
 
@@ -161,6 +184,7 @@
                     Min="0"
                     Step="1000"
                     Format="C"
+                    Enabled=@_editable
                     Class="form-control" />
   </div>
 
@@ -170,6 +194,7 @@
                     Min="0"
                     Step="1000"
                     Format="C"
+                    Enabled=@_editable
                     Class="form-control" />
   </div>
 </div>
@@ -181,6 +206,7 @@
   <label for="ClosingCosts" class="col-sm-2 col-form col-form-label">Closing Costs</label>
   <div class="col-sm-4">
     <PercentageInput @bind-Value=@Property.ClosingCostPercent
+                     Enabled=@_editable
                      Id="ClosingCosts" />
   </div>
 
@@ -190,6 +216,7 @@
                     Min="0"
                     Step="1000"
                     Format="C"
+                    Enabled=@_editable
                     Class="form-control" />
   </div>
 
@@ -199,6 +226,7 @@
                     Min="0"
                     Step="1000"
                     Format="C"
+                    Enabled=@_editable
                     Class="form-control" />
   </div>
 
@@ -208,12 +236,14 @@
                     Min="0"
                     Step="1000"
                     Format="C"
+                    Enabled=@_editable
                     Class="form-control" />
   </div>
 
   <label for="AquisitionFeePercent" class="col-sm-2 col-form col-form-label">Aquisition Fee</label>
   <div class="col-sm-4">
     <PercentageInput @bind-Value=@Property.AquisitionFeePercent
+                     Enabled=@_editable
                      Id="AquisitionFeePercent" />
   </div>
 
@@ -223,7 +253,12 @@
   <div class="col-sm-4">
     <TelerikDropDownList Data=@UnderwritingLoanTypes
                          @bind-Value=@Property.LoanType
+                         Enabled=@_editable
                          Class="form-control">
+      <ValueTemplate>
+        @{ var value = (Data.Models.UnderwritingLoanType)context; }
+        @value.Humanize(LetterCasing.Title)
+      </ValueTemplate>
       <ItemTemplate>
         @{ var value = (Data.Models.UnderwritingLoanType)context; }
         @value.Humanize(LetterCasing.Title)
@@ -236,6 +271,7 @@
     <label for="LTV" class="col-sm-2 col-form col-form-label">Loan to Value</label>
     <div class="col-sm-4">
       <PercentageInput @bind-Value=@Property.LTV
+                       Enabled=@_editable
                        Id="LTV" />
     </div>
   }

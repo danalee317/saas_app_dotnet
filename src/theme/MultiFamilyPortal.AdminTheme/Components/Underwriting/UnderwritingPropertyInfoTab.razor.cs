@@ -1,5 +1,7 @@
 using System.Net.Http.Json;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
+using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.CoreUI;
 using MultiFamilyPortal.Data.Models;
@@ -15,6 +17,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         [Inject]
         private HttpClient _client { get; set; }
 
+        [CascadingParameter]
+        private ClaimsPrincipal _user { get; set; }
+
+        private bool _editable;
+
         private PortalNotification notification { get; set; }
 
         private readonly ObservableRangeCollection<string> _markets = new ();
@@ -27,6 +34,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         {
             try
             {
+                _editable = _user.IsAuthorizedInPolicy(PortalPolicy.Underwriter);
                 _markets.ReplaceRange(await _client.GetFromJsonAsync<IEnumerable<string>>("/api/admin/underwriting/markets"));
             }
             catch (Exception ex)

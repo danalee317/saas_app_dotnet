@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
+using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
 
@@ -8,6 +10,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
     {
         [Parameter]
         public UnderwritingAnalysis Property { get; set; }
+
+        [CascadingParameter]
+        private ClaimsPrincipal _user { get; set; }
+
+        private bool _editable;
 
         // Note: Seller notation simply refers to using the numbers provided by the seller
         // from the Sellers column in the Property. Our refers to the numbers from our underwriting
@@ -28,6 +35,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
         private double ourEquityPartnerCoC => ourEquityPartnerCF / Property.Raise;
         private double sellerEquityPartnerCoC => sellerEquityPartnerCF / Property.Raise;
+
+        protected override void OnInitialized()
+        {
+            _editable = _user.IsAuthorizedInPolicy(PortalPolicy.Underwriter);
+        }
 
         protected override void OnParametersSet()
         {

@@ -13,7 +13,8 @@ else
     <div class="row my-2">
       <div class="col-md-3 col-sm-6 offset-md-9 offset-sm-6">
         <TelerikDropDownList Data=@AvailableStatus
-                             @bind-Value=@Property.Status>
+                             @bind-Value=@Property.Status
+                             Enabled=@_editable>
           <ValueTemplate>
             @context.Humanize(LetterCasing.Title)
           </ValueTemplate>

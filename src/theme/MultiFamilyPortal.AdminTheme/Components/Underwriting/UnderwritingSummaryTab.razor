@@ -82,8 +82,9 @@
     <td class="py-2"><strong>Our Equity of CF</strong></td>
     <td class="py-2">@ourEquityCF.ToString("C")</td>
     <td>
-      <TelerikNumericTextBox @bind-Value=@Property.OurEquityOfCF
-                             Format="P" />
+      <PercentageInput @bind-Value=@Property.OurEquityOfCF
+                       Enabled=@_editable
+                       Id="OurEquityOfCF" />
     </td>
     <td class="py-2">@sellerCashFlow.ToString("C")</td>
   </tr>

@@ -116,7 +116,7 @@ namespace MultiFamilyPortal.Services
                 var fileExt = Path.GetExtension(file.FileName);
                 if (fileExt == ".jpeg")
                     fileExt = ".jpg";
-                else if (!(fileExt == ".svg" || fileExt == ".png"))
+                else if (!(fileExt is ".svg" or ".png"))
                     fileExt = ".png";
 
                 var fileName = name + fileExt;
@@ -140,7 +140,15 @@ namespace MultiFamilyPortal.Services
                                 scale = 1024 / (max == src.Height ? src.Height : src.Width);
                             }
 
-                            var info = new SKImageInfo(src.Width * scale, src.Height * scale, SKColorType.Rgba8888);
+                            int width = src.Width * scale;
+                            int height = src.Height * scale;
+                            if (width == 0 || height == 0)
+                            {
+                                width = src.Width;
+                                height = src.Height;
+                            }
+
+                            var info = new SKImageInfo(width, height, SKColorType.Rgba8888);
                             using var output = SKImage.Create(info);
                             src.ScalePixels(output.PeekPixels(), SKFilterQuality.High);
 

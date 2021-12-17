@@ -22,10 +22,10 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
 
         private Logo _selected;
         private TelerikGrid<Logo> grid;
-        private readonly List<string> AllowedFileTypes = new() { ".png", ".svg", ".jpeg",".jpg" };
+        private readonly List<string> _allowedFileTypes = new() { ".png", ".svg", ".jpeg",".jpg" };
         public string LogoUrl(string name) => ToAbsoluteUrl($"branding/{name}");
-        private bool showWindow = false;
-        private readonly ObservableRangeCollection<Logo> _logos = new ObservableRangeCollection<Logo>();
+        private bool _showWindow = false;
+        private readonly ObservableRangeCollection<Logo> _logos = new();
         private readonly IEnumerable<Logo> _globalLogos = new[]
         {
             new Logo
@@ -67,7 +67,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
                 Href = "/theme/branding/logo-dark-side?",
                 Name = "logo-dark-side",
                 Size = "512 x 1024"
-            },
+            }
         };
 
         protected override void OnInitialized()
@@ -110,14 +110,14 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
         private void UpdateLogo(GridCommandEventArgs args)
         {
             _selected = args.Item as Logo;
-            showWindow = true;
+            _showWindow = true;
         }
 
         private async Task OnSuccessHandler(UploadSuccessEventArgs e)
         {
             if (e.Operation == UploadOperationType.Upload)
             {
-                showWindow = false;
+                _showWindow = false;
             }
             else Logger.LogWarning("Upload failure");
         }

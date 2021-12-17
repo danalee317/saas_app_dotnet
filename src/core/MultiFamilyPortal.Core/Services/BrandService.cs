@@ -145,10 +145,16 @@ namespace MultiFamilyPortal.Services
                             src.ScalePixels(output.PeekPixels(), SKFilterQuality.High);
 
                             using var bitmap = SKBitmap.FromImage(output);
-                            using var data = bitmap.Encode(format, 100);
-                            using var stream = data.AsStream();
-                            var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(fileName);
-                            await _storage.PutAsync(filePath, stream, fileTypeInfo.MimeType, overwrite: true);
+                            var skData = bitmap.Encode(format, 100);
+                            if(skData != null)
+                            {
+                                await using var skStream = skData.AsStream();
+                                if (skStream.Length > 0)
+                                {
+                                    var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(fileName);
+                                    await _storage.PutAsync(filePath, skStream, fileTypeInfo.MimeType, true);
+                                }
+                            }
                         }
                         break;
                 }

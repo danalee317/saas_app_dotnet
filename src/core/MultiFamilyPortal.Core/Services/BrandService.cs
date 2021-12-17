@@ -111,15 +111,20 @@ namespace MultiFamilyPortal.Services
                         var format = fileExt == ".jpg" ? SKEncodedImageFormat.Jpeg : SKEncodedImageFormat.Png;
                         using (var src = SKImage.FromEncodedData(file.OpenReadStream()))
                         {
-                            var canvasMax = Math.Max(src.Width, src.Height);
-                            int size = canvasMax > 512 ? 512 : canvasMax;
-                            var info = new SKImageInfo(size, size, SKColorType.Rgba8888);
+                            var scale = 1;
+                            var max = Math.Max(src.Height, src.Width);
+                            if (max > 1024)
+                            {
+                                scale = 1024 / (max == src.Height ? src.Height : src.Width);
+                            }
+
+                            var info = new SKImageInfo(src.Width * scale, src.Height * scale, SKColorType.Rgba8888);
                             using var output = SKImage.Create(info);
                             src.ScalePixels(output.PeekPixels(), SKFilterQuality.High);
 
-                            using var stream = new MemoryStream();
                             using var bitmap = SKBitmap.FromImage(output);
-                            bitmap.Encode(stream, format, 100);
+                            using var data = bitmap.Encode(format, 100);
+                            using var stream = data.AsStream();
                             var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(fileName);
                             await _storage.PutAsync(filePath, stream, fileTypeInfo.MimeType, overwrite: true);
                         }

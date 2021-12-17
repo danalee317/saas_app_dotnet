@@ -1,11 +1,11 @@
 ﻿#if DEBUG
-using Duende.IdentityServer.EntityFramework.Options;
+using System.Text.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Options;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.SaaS;
 using MultiFamilyPortal.SaaS.Data;
 using MultiFamilyPortal.SaaS.Models;
 using MultiFamilyPortal.SaaS.TenantProviders;
@@ -14,11 +14,26 @@ namespace MultiFamilyPortal.Infrastructure
 {
     public class DesignTimeFactory : IDesignTimeDbContextFactory<MFPContext>
     {
+        private const string DesignTimeConnectionString = "Server=(localdb)\\mssqllocaldb;Database={0};Trusted_Connection=True;MultipleActiveResultSets=true";
         public MFPContext CreateDbContext(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
-            builder.Services
-                .AddDbContext<MFPContext>(options => { })
+            var services = new ServiceCollection();
+            var configuration = new ConfigurationBuilder()
+                .AddJsonStream(ConfigurationStream())
+                .Build();
+            var tenant = new Tenant
+            {
+                Created = DateTimeOffset.Now,
+                DatabaseName = "MultiFamilyPortal",
+                Host = "localhost:7009"
+            };
+
+            services
+                .AddSingleton<IConfiguration>(configuration)
+                .AddSingleton(configuration.Get<DatabaseSettings>())
+                .AddSingleton<ITenantProvider>(new StartupTenantProvider(tenant))
+                .AddDbContext<MFPContext>(options =>
+                    options.UseSqlServer(string.Format(DesignTimeConnectionString, tenant.DatabaseName)))
                 .AddIdentity<SiteUser, IdentityRole>(options =>
                 {
                     options.User.RequireUniqueEmail = true;
@@ -33,20 +48,25 @@ namespace MultiFamilyPortal.Infrastructure
                 })
                 .AddEntityFrameworkStores<MFPContext>()
                 .AddDefaultTokenProviders();
-            var app = builder.Build();
-            var storeOptions = app.Services.GetRequiredService<IOptions<OperationalStoreOptions>>();
 
-            var options = new DbContextOptionsBuilder<MFPContext>()
-                .Options;
-            var settings = new DatabaseSettings();
-            builder.Configuration.Bind(settings);
-            var tenant = new Tenant
+            var provider = services.BuildServiceProvider();
+            var scope = provider.CreateScope();
+            return scope.ServiceProvider.GetRequiredService<MFPContext>();
+        }
+
+        private static Stream ConfigurationStream()
+        {
+            var settings = new
             {
-                Created = DateTimeOffset.Now,
-                DatabaseName = "MultiFamilyPortal",
-                Host = "localhost:7009"
+                ConnectionStrings = new Dictionary<string, string>
+                {
+                    { "DefaultConnection", DesignTimeConnectionString },
+                    { "TenantConnection", string.Format(DesignTimeConnectionString, "TenantAdmin") }
+                }
             };
-            return new MFPContext(options, storeOptions, new StartupTenantProvider(tenant), settings);
+
+            var data = JsonSerializer.SerializeToUtf8Bytes(settings);
+            return new MemoryStream(data);
         }
     }
 }

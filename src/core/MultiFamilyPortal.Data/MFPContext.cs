@@ -135,16 +135,16 @@ namespace MultiFamilyPortal.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-        //this.GetService<IPersonalDataProtector>();
-        base.OnModelCreating(builder);
+            //this.GetService<IPersonalDataProtector>();
+            base.OnModelCreating(builder);
 
-        //var dbContextServices = GetProperty("ContextServices");
-        //var serviceProvider = GetProperty<IServiceProvider>("InternalServiceProvider", dbContextServices);
-        //var resolvedServices = GetProperty<IDictionary>("ResolvedServices", serviceProvider);
-        //var generic = resolvedServices.Cast<KeyValuePair<object, object>>();
-        //var dataProtector = generic.Select(x => x.Value).FirstOrDefault(x => typeof(IPersonalDataProtector).IsAssignableFrom(x.GetType()));
-        //var baseContext = (IdentityUserContext<SiteUser, string, IdentityUserClaim<string>, IdentityUserLogin<string>, IdentityUserToken<string>>)this;
-        //    var pdp = baseContext.GetService<IPersonalDataProtector>();
+            //var dbContextServices = GetProperty("ContextServices");
+            //var serviceProvider = GetProperty<IServiceProvider>("InternalServiceProvider", dbContextServices);
+            //var resolvedServices = GetProperty<IDictionary>("ResolvedServices", serviceProvider);
+            //var generic = resolvedServices.Cast<KeyValuePair<object, object>>();
+            //var dataProtector = generic.Select(x => x.Value).FirstOrDefault(x => typeof(IPersonalDataProtector).IsAssignableFrom(x.GetType()));
+            //var baseContext = (IdentityUserContext<SiteUser, string, IdentityUserClaim<string>, IdentityUserLogin<string>, IdentityUserToken<string>>)this;
+            //    var pdp = baseContext.GetService<IPersonalDataProtector>();
             builder.ConfigureIdentityModels(GetStoreOptions());
             builder.ConfigurePersistedGrantContext(_operationalStoreOptions.Value);
             builder.ConfigureBlogModels();

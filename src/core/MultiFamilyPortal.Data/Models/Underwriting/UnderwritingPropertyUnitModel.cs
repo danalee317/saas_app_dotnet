@@ -17,6 +17,12 @@ namespace MultiFamilyPortal.Data.Models
 
         public double MarketRent { get; set; }
 
+        public double CurrentRent { get; set; }
+
+        public bool Upgraded { get; set; }
+
+        public int TotalUnits { get; set; }
+
         public UnderwritingProspectProperty Property { get; set; }
 
         public virtual ICollection<UnderwritingPropertyUnit> Units { get; set; }

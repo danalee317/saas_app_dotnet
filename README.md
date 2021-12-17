@@ -68,3 +68,14 @@ Open the file `C:\Windows\System32\drivers\etc\hosts` and edit the file. You may
 ## Limitations
 
 Currently the SaaS functionality is limited to only preparing the database for tenants at application startup and cannot prepare tenant databases from the SaaS Admin Portal or on Client Requests. This is intentional as the preparation process is expensive and should not be performed in the request pipeline. Additional work will likely need to be done to migrate this functionality to the SaaS Admin Portal.
+
+## Database Migrations
+
+Due to the complexity of the Multi-Tenant structure, Database Migrations are not supported directly with the `dotnet ef` cli tool. In order to perform a database migration, the override in the MFPContext for OnConfiguring must be temporarily removed. By removing this the DesignTimeFactory can specify a mock connection string and the tool can perform the migration.
+
+```cs
+protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+{
+    this.ConfigureForMultiTenant(optionsBuilder, _databaseSettings, _tenantProvider.GetTenant());
+}
+```

@@ -110,8 +110,11 @@ namespace MultiFamilyPortal.Services
                 {
                     Baths = m.Baths,
                     Beds = m.Beds,
+                    CurrentRent = m.CurrentRent,
                     MarketRent = m.MarketRent,
                     Name = m.Name,
+                    TotalUnits = m.TotalUnits,
+                    Upgraded = m.Upgraded,
                     Units = m.Units.Select(u => new UnderwritingAnalysisUnit
                     {
                         AtWill = u.AtWill,
@@ -368,10 +371,13 @@ namespace MultiFamilyPortal.Services
                 {
                     var unitModel = new UnderwritingPropertyUnitModel
                     {
+                        Name = model.Name,
                         Baths = model.Baths,
                         Beds = model.Beds,
                         MarketRent = model.MarketRent,
-                        Name = model.Name,
+                        CurrentRent = model.CurrentRent,
+                        Upgraded = model.Upgraded,
+                        TotalUnits = model.TotalUnits,
                         PropertyId = propertyId,
                     };
                     await _dbContext.AddAsync(unitModel);

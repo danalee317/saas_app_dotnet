@@ -22,7 +22,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
 
         private Logo _selected;
         private TelerikGrid<Logo> grid;
-        private readonly List<string> AllowedFileTypes = new() { ".png", ".svg", ".jpeg",".jpg" };
+        private readonly List<string> AllowedFileTypes = new() { ".png", ".jpeg",".jpg" };
         public string LogoUrl(string name) => ToAbsoluteUrl($"branding/{name}");
         private bool showWindow = false;
         private readonly ObservableRangeCollection<Logo> _logos = new ObservableRangeCollection<Logo>();

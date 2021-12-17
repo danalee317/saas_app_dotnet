@@ -126,7 +126,7 @@ namespace MultiFamilyPortal.Services
                 {
                     case ".svg":
                         await using (var stream = file.OpenReadStream())
-                            await _storage.PutAsync(filePath, stream, FileTypeLookup.GetFileTypeInfo("image.svg").MimeType, true);
+                            await _storage.PutAsync(filePath, stream, FileTypeLookup.GetFileTypeInfo(fileName).MimeType, true);
                         break;
 
                     default:

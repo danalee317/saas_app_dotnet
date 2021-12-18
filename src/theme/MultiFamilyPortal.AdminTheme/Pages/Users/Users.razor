@@ -1,159 +1,18 @@
 ﻿@page "/admin/users"
+@using MultiFamilyPortal.AdminTheme.Components.Users
+
 <Animation OptionsName="Page">
-  <h3>Users</h3>
-
-  <TelerikGrid Data=@_data
-               ConfirmDelete="true"
-               OnDelete="DeleteUser"
-               EnableLoaderContainer="true">
-    <GridToolBar>
-      <GridCommandButton Command="CustomAdd" Title="Add" IconClass="fa-duotone fa-plus" Primary="true" OnClick=@OnAddUser>Add</GridCommandButton>
-    </GridToolBar>
-    <GridColumns>
-      <GridColumn Field="Email" Title=" ">
-        <Template>
-          @{ var user = context as UserAccountResponse; }
-          <div class="text-center">
-            <Gravatar Email=@user.Email/>
-          </div>
-        </Template>
-      </GridColumn>
-      <GridColumn Field=@(nameof(UserAccountResponse.FirstName)) Title="First"/>
-      <GridColumn Field=@(nameof(UserAccountResponse.LastName)) Title="Last"/>
-      <GridColumn Field=@(nameof(UserAccountResponse.Email))/>
-      <GridColumn Field=@(nameof(UserAccountResponse.Phone))>
-        <Template>
-          @{ var user = context as UserAccountResponse; }
-          @user.Phone.ToPhoneNumberMask()
-        </Template>
-      </GridColumn>
-      <GridColumn Field=@(nameof(UserAccountResponse.Roles))>
-        <Template>
-          @{ var user = context as UserAccountResponse; }
-          <ul>
-            @foreach(var role in user.Roles)
-            {
-              <li>@role.Humanize(LetterCasing.Title)</li>
-            }
-          </ul>
-        </Template>
-      </GridColumn>
-      <GridCommandColumn>
-        @{ var user = context as UserAccountResponse; }
-        @if(user.Email != User.FindFirstValue(ClaimTypes.Email))
-        {
-          <GridCommandButton Command="Custom" OnClick=@OnEditUser Title="Edit Roles">Edit Roles</GridCommandButton>
-          @if(user.LocalAccount)
-          {
-            <GridCommandButton Command="Custom" Enabled=@false Title="Reset Password">Reset Password</GridCommandButton>
-          }
-          <GridCommandButton Command="Delete" Icon="delete" Title="Delete">Delete</GridCommandButton>
-        }
-      </GridCommandColumn>
-    </GridColumns>
-  </TelerikGrid>
-
-  <TelerikWindow Visible="@(_createUser != null)"
-                 Modal="true"
-                 Width="650px">
-    <WindowTitle>
-      New User
-    </WindowTitle>
-    <WindowActions>
-      <WindowAction Name="Close" OnClick="() => _createUser = null"/>
-    </WindowActions>
-    <WindowContent>
-      <div class="row px-3 py-1">
-        <div class="col-12 form-floating">
-          <TelerikTextBox @bind-Value=@_createUser.FirstName Class="form-control"/>
-          <label for="FirstName" class="form-label">First Name</label>
-        </div>
-      </div>
-      <div class="row px-3 py-1">
-        <div class="col-12 form-floating">
-          <TelerikTextBox @bind-Value=@_createUser.LastName Class="form-control"/>
-          <label for="LastName" class="form-label">Last Name</label>
-        </div>
-      </div>
-      <div class="row px-3 py-1">
-        <div class="col-12 form-floating">
-          <TelerikTextBox @bind-Value=@_createUser.Email Class="form-control"/>
-          <label for="Email" class="form-label">Email</label>
-        </div>
-      </div>
-      <div class="row px-3 py-1">
-        <div class="col-12 form-floating">
-          <TelerikMaskedTextBox @bind-Value=@_createUser.Phone
-                                Mask="(000) 000-0000"
-                                Class="form-control"/>
-          <label for="Phone" class="form-label">Phone</label>
-        </div>
-      </div>
-      <div class="row px-3 py-1">
-        <div class="col-12 form-group">
-          <TelerikMultiSelect Data=@_roles
-                              @bind-Value=@_createUser.Roles
-                              TextField=@nameof(SelectableRole.Display)
-                              ValueField=@nameof(SelectableRole.Role)
-                              Class="form-control"
-                              Placeholder="Roles" />
-        </div>
-      </div>
-      <div class="row px-3 py-1">
-        <div class="col-12 form-group">
-          <TelerikSwitch @bind-Value=@_createUser.UseLocalAccount
-                         OffLabel="Use Google / Microsoft Account"
-                         OnLabel="Use Local Account"/>
-          <label for="UseLocalAccount" class="form-label">
-            &nbsp;&nbsp;
-            @if(_createUser.UseLocalAccount)
-            {
-              <span>Use Local Account</span>
-            }
-            else
-            {
-              <span>Use Google / Microsoft Account</span>
-            }
-          </label>
-        </div>
-      </div>
-      <div class="row text-center p-3">
-        <TelerikButton Title="Create User"
-                       Primary="true"
-                       IconClass="fa-duotone fa-plus"
-                       Enabled=@CanCreateNewUser()
-                       OnClick=@OnCreateNewUser>Create User</TelerikButton>
-      </div>
-    </WindowContent>
-  </TelerikWindow>
-
-  <TelerikWindow Visible="@(_editUser != null)"
-                 Modal="true"
-                 Width="650px">
-    <WindowTitle>
-      Edit @_editUser.FirstName's Roles
-    </WindowTitle>
-    <WindowActions>
-      <WindowAction Name="Close" OnClick="() => _editUser = null"/>
-    </WindowActions>
-    <WindowContent>
-      <div class="row px-3 py-1">
-        <div class="col-12 form-group">
-          <TelerikMultiSelect Data=@_roles
-                              @bind-Value=@_editUser.Roles
-                              TextField=@nameof(SelectableRole.Display)
-                              ValueField=@nameof(SelectableRole.Role)
-                              Class="form-control"
-                              Placeholder="Roles" />
-        </div>
-      </div>
-      <div class="row text-center p-3">
-        <TelerikButton Title="Update User"
-                       Primary="true"
-                       IconClass="fa-duotone fa-plus"
-                       OnClick=@UpdateUser>Update User</TelerikButton>
-      </div>
-    </WindowContent>
-  </TelerikWindow>
+  <TelerikTabStrip>
+    <TabStripTab Title="Internal Users">
+      <UserList AllowEditing=@true
+                Model=@_internalUsers
+                Roles=@_roles
+                OnUpdated=@RefreshUsers />
+    </TabStripTab>
+    <TabStripTab Title="External Users">
+      <UserList Model=@_externalUsers
+                Roles=@_roles />
+    </TabStripTab>
+  </TelerikTabStrip>
 </Animation>
-<PortalNotification @ref="notification" />
+

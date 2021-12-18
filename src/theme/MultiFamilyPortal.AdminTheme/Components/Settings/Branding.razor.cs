@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.Collections;
-using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Themes.Internals;
 using Telerik.Blazor;
 using Telerik.Blazor.Components;
@@ -113,13 +112,12 @@ namespace MultiFamilyPortal.AdminTheme.Components.Settings
             _showWindow = true;
         }
 
-        private async Task OnSuccessHandler(UploadSuccessEventArgs e)
+        private void OnSuccessHandler(UploadSuccessEventArgs e)
         {
             if (e.Operation == UploadOperationType.Upload)
-            {
                 _showWindow = false;
-            }
-            else Logger.LogWarning("Upload failure");
+            else 
+                Logger.LogWarning("Upload failure");
         }
 
         private record Logo

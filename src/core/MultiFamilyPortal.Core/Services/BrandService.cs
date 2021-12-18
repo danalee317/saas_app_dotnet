@@ -19,7 +19,7 @@ namespace MultiFamilyPortal.Services
              { "android-chrome-192x192.png", 128 },
              { "android-chrome-288x288.png", 288 },
              { "android-chrome-512x512.png", 512 },
-             { "apple-touch-icon.png", 180 },
+             { "apple-touch-icon.png", 180 }
         };
 
         private ILogger<BrandService> _logger { get; }
@@ -65,14 +65,13 @@ namespace MultiFamilyPortal.Services
                     var type = Path.GetExtension(icon.Key).ToLower() == ".ico" ? SKEncodedImageFormat.Ico : SKEncodedImageFormat.Png;
                     using var bitmap = SKBitmap.FromImage(output);
                     var skData = bitmap.Encode(type, 100);
-                    if (skData != null)
+
+                    if (!skData.IsEmpty)
                     {
                         await using var skStream = skData.AsStream();
-                        if (skStream.Length > 0)
-                        {
-                            var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(icon.Key);
-                            await _storage.PutAsync(filePath, skStream, fileTypeInfo.MimeType, true);
-                        }
+                        var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(icon.Key);
+                        await _storage.PutAsync(filePath, skStream, fileTypeInfo.MimeType, true);
+                        skData.Dispose();
                     }
                 }
                 catch (Exception ex)
@@ -154,14 +153,13 @@ namespace MultiFamilyPortal.Services
 
                             using var bitmap = SKBitmap.FromImage(output);
                             var skData = bitmap.Encode(format, 100);
-                            if(skData != null)
+
+                            if (!skData.IsEmpty)
                             {
                                 await using var skStream = skData.AsStream();
-                                if (skStream.Length > 0)
-                                {
-                                    var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(fileName);
-                                    await _storage.PutAsync(filePath, skStream, fileTypeInfo.MimeType, true);
-                                }
+                                var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(fileName);
+                                await _storage.PutAsync(filePath, skStream, fileTypeInfo.MimeType, true);
+                                skData.Dispose();
                             }
                         }
                         break;

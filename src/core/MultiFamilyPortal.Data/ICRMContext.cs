@@ -15,5 +15,7 @@ namespace MultiFamilyPortal.Data
         DbSet<CRMContactReminder> CrmContactReminders { get; }
         DbSet<CRMContactRole> CrmContactRoles { get; }
         DbSet<CRMNotableDate> CrmNotableDates { get; }
+
+        DbSet<InvestorProspect> InvestorProspects { get; }
     }
 }

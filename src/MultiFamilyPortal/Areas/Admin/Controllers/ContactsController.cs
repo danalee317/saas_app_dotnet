@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultiFamilyPortal.AdminTheme.Models;
@@ -13,14 +13,13 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
     [Route("/api/[area]/[controller]")]
     public class ContactsController : ControllerBase
     {
-        private IMFPContext _dbContext { get; }
+        private ICRMContext _dbContext { get; }
 
-        public ContactsController(IMFPContext dbContext)
+        public ContactsController(ICRMContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        [Authorize(Policy = PortalPolicy.Underwriter)]
         [HttpGet("investors")]
         public async Task<IActionResult> Investors()
         {

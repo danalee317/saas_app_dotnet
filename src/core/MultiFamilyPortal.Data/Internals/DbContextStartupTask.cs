@@ -42,7 +42,7 @@ namespace MultiFamilyPortal.Data.Internals
                     {
                         var roleName = contact.Company == "RE Mentor" ? TrainingSupport : SoftwareVendor;
                         var role = await db.CrmContactRoles.FirstOrDefaultAsync(x => x.Name == roleName);
-                        contact.Roles.Add(role);
+                        contact.Roles = new[] { role };
                         await db.CrmContacts.AddAsync(contact);
                         await db.SaveChangesAsync();
                     }

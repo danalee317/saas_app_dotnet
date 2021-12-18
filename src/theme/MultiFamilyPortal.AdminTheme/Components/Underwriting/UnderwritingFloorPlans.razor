@@ -1,46 +1,43 @@
 <TelerikGrid Data="@FloorPlans" Height="600px" Sortable="true" Resizable="true" Reorderable="true">
   <GridToolBar>
-    <div class="badge rounded-pill bg-warning text-dark">
-      10 remaining out of 100
-    </div>
     <span class="k-toolbar-spacer"></span>
-    <GridCommandButton Command="MyToolbarCommand" Icon="add" OnClick=@OnAddFloor>
+    <GridCommandButton Command="MyToolbarCommand" Icon="add" OnClick="@OnAddFloor">
       Add Floor
     </GridCommandButton>
   </GridToolBar>
   <GridColumns>
-    <GridColumn Field="@(nameof(FloorPlan.Name))" Title="Name" Width="30%" />
-    <GridColumn Field="@(nameof(FloorPlan.Bed))" Title="Bed" Width="80px" />
-    <GridColumn Field="@(nameof(FloorPlan.Bath))" Title="Bath" Width="80px" />
-    <GridColumn Field="@(nameof(FloorPlan.SquareFt))" Title="Sqft" Width="100px" />
-    <GridColumn Field="@(nameof(FloorPlan.Upgraded))" Title="Upgraded" Width="100px">
+    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Name))" Title="Name" Width="30%" />
+    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Beds))" Title="Bed" Width="80px" />
+    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Baths))" Title="Bath" Width="80px" />
+    @*<GridColumn Field="@(nameof(UnderwritingAnalysisModel.SquareFt))" Title="Sqft" Width="100px" /> *@
+    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Upgraded))" Title="Upgraded" Width="100px">
       <Template>
         @{
-          var truth = context as FloorPlan;
+          var truth = context as UnderwritingAnalysisModel;
           <span>@(truth.Upgraded ? "Yes" : "No")</span>
         }
       </Template>
     </GridColumn>
-    <GridColumn Field="@(nameof(FloorPlan.Units))" Title="Units" Width="80px"/>
-    <GridColumn Field="@(nameof(FloorPlan.Rent))" Title="Rent">
+    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Units))" Title="Units" Width="80px"/>
+    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.CurrentRent))" Title="Rent">
       <Template>
         @{
-          var truth = context as FloorPlan;
-          <span>@(truth.Rent.ToString("N2"))</span>
+          var truth = context as UnderwritingAnalysisModel;
+          <span>@(truth.AverageRent.ToString("N2"))</span>
         }
       </Template>
     </GridColumn>
-    <GridColumn Field="@(nameof(FloorPlan.MarketRent))" Title="Market Rent">
+    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.MarketRent))" Title="Market Rent">
       <Template>
         @{
-          var truth = context as FloorPlan;
+          var truth = context as UnderwritingAnalysisModel;
           <span>@(truth.MarketRent.ToString("N2"))</span>
         }
       </Template>
     </GridColumn>
     <GridCommandColumn>
       <div class="text-center">
-        <GridCommandButton Command="MyOwnCommand" Icon="edit" ShowInEdit="false" OnClick=@OnEditFloor>
+        <GridCommandButton Command="MyOwnCommand" Icon="edit" ShowInEdit="false" OnClick="@OnEditFloor">
           Edit
         </GridCommandButton>
       </div>
@@ -48,4 +45,6 @@
   </GridColumns>
 </TelerikGrid>
 
-<UnderwritingFloorPlansControls ShowWindow=@_showModel />
+<UnderwritingFloorPlansControls ShowWindow="@_showModel"
+                                IsNew="@_isNew"
+                                FloorPlan="@_floorPlan"/>

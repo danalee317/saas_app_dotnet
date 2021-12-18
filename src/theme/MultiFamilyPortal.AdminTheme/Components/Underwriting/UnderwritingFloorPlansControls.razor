@@ -1,6 +1,6 @@
-<TelerikWindow @bind-Visible="@ShowWindow" Modal=@true Height="600px" Width="600px">
+<TelerikWindow @bind-Visible="@ShowWindow" Modal=@true Height="590px" Width="600px">
   <WindowTitle>
-    <strong>The Title</strong>
+    <strong>@(IsNew?"Add": "Edit") Floor Plan</strong>
   </WindowTitle>
   <WindowActions>
     <WindowAction Name="Close"></WindowAction>
@@ -12,7 +12,9 @@
           <label for="floor-name" class="form-label mt-4">Name</label>
         </div>
         <div class="col-9 my-3">
-          <TelerikTextBox class="form-control w-100 mx-2" id="floor-name"/>
+          <TelerikTextBox  Id="floor-name"
+                           Class="form-control w-100 mx-2"
+                           @bind-Value="@FloorPlan.Name"/>
         </div>
         <div class="col-3 my-3">
           <label for="floor-beds" class="form-label my-3">Beds</label>
@@ -21,7 +23,8 @@
           <TelerikNumericTextBox  Class="form-control w-100"
                                   Min="1"
                                   Id="floor-beds"
-                                  Step="1" />
+                                  Step="1"
+                                  @bind-Value="@FloorPlan.Beds"/>
         </div>
         <div class="col-3 my-3">
           <label for="floor-baths" class="form-label my-3">Baths</label>
@@ -30,7 +33,8 @@
           <TelerikNumericTextBox  Class="form-control w-100"
                                   Min="1"
                                   Id="floor-baths"
-                                  Step="1" />
+                                  Step="1"
+                                  @bind-Value="@FloorPlan.Baths"/>
         </div>
         <div class="col-3 my-3">
           <label for="floor-sqft" class="form-label my-3">Sqft</label>
@@ -45,40 +49,65 @@
           <label for="floor-upgrade" class="form-label my-3">Upgraded</label>
         </div>
         <div class="col-3 my-3">
-          <TelerikSwitch  Id="floor-upgrade"/>
+          <TelerikSwitch  Id="floor-upgrade"
+                          Class="mt-3 mx-2"
+                          @bind-Value="@FloorPlan.Upgraded"/>
         </div>
       </div>
       <hr />
       <div class="row">
-        <div class="col-3 my-3">
+        <div class="col-3 my-2">
           <label for="floor-avgrent" class="form-label my-3">Average Rent</label>
         </div>
-        <div class="col-3 my-3">
+        <div class="col-9 my-2">
           <TelerikNumericTextBox  Class="form-control w-100"
                                   Min="100"
                                   Id="floor-avgrent"
-                                  Step="5" />
+                                  Step="5"
+                                  Format="C"
+                                  @bind-Value="@FloorPlan.CurrentRent"/>
         </div>
-        <div class="col-3 my-3">
+        <div class="col-3 my-2">
           <label for="floor-mktrent" class="form-label my-3">Market Rent</label>
         </div>
-        <div class="col-3 my-3">
+        <div class="col-9 my-2">
           <TelerikNumericTextBox  Class="form-control w-100"
                                   Min="100"
                                   Id="floor-mktrent"
-                                  Step="5" />
+                                  Step="5"
+                                  Format="C"
+                                  @bind-Value="@FloorPlan.MarketRent"/>
         </div>
       </div>
-      <div class="row mt-3">
+      <div class="row my-3">
         <div class="col-md-3 offset-md-2">
-          <button>
-            Clear/Remove
+        @if (IsNew)
+        {
+          <button class="btn btn-secondary w-100" @onclick="@ClearCurrent">
+            Clear
           </button>
+        }
+        else
+        {
+          <button class="btn btn-danger w-100" @onclick="@DeleteFloorAsync">
+            Remove
+          </button>
+        }
+
         </div>
         <div class="col-md-3 offset-md-2">
-          <button>
-            Add/Save
-          </button>
+            @if (IsNew)
+            {
+              <button class="btn btn-primary w-100" @onclick="AddFloorAsync">
+                Add
+              </button>
+            }
+            else
+            {
+              <button class="btn btn-success w-100" @onclick="@EditFloorAsync">
+                Save
+              </button>
+            }
         </div>
       </div>
     </div>

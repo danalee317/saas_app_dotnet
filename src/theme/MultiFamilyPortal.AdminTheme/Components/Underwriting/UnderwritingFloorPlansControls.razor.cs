@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.CoreUI;
+using MultiFamilyPortal.Dtos.Underwriting;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 {
@@ -12,7 +13,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         [Parameter]
         public bool ShowWindow { get; set; }
 
-        // Accept an object paramter
+        [Parameter]
+        public bool IsNew { get; set; }
+
+        [Parameter]
+        public UnderwritingAnalysisModel FloorPlan { get; set; }
 
         private PortalNotification _notification;
 
@@ -34,6 +39,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private void ClearCurrent()
         {
             // Could be called by addFloor or button
+            FloorPlan = new UnderwritingAnalysisModel();
         }
 
         private void VerifyInfo()

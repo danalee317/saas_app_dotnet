@@ -1,61 +1,54 @@
+using Microsoft.AspNetCore.Components;
+using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.Dtos.Underwriting;
+using Telerik.Blazor.Components;
+
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 {
     public partial class UnderwritingFloorPlans
     {
-        private bool _showModel { get; set; }
+        [Parameter]
+        public UnderwritingAnalysis Property { get; set; }
+
+        private bool _showModel = false;
+        private bool _isNew = false;
         private int _totalUnits = 0;
         private int _numberOfUnits = 0;
-        public IEnumerable<FloorPlan> FloorPlans = Enumerable.Range(1, 10).Select(x => new FloorPlan
-        {
-            Id = new Guid(),
-            Name = "name " + x,
-            Bed = new Random().Next(1, x),
-            Bath = new Random().Next(1, x),
-            SquareFt = new Random().Next(100, x * 100),
-            Upgraded = new Random().Next(1, x) == x,
-            Units = new Random().Next(1, x),
-            Rent = new Random().Next(1000, x * 1000),
-            MarketRent = new Random().Next(1000, x * 1000)
-        });
+        private UnderwritingAnalysisModel _floorPlan = new();
+        private IEnumerable<UnderwritingAnalysisModel> FloorPlans = Array.Empty<UnderwritingAnalysisModel>();
 
-        protected override Task OnInitializedAsync()
+        protected override void OnParametersSet()
         {
             _showModel = false;
+            _isNew = false;
             GetFloorsAsync();
-            // count current
-            // count total
-            return base.OnInitializedAsync();
+            if (FloorPlans == null)
+                return;
+
+            _numberOfUnits = FloorPlans.Sum(x => x.TotalUnits);
+            _totalUnits = Property.Units;
         }
 
         private void GetFloorsAsync()
         {
-            // TODO : Get floors specific underwriting
-            
+            FloorPlans = Array.Empty<UnderwritingAnalysisModel>();
+            FloorPlans = Property.Models;
         }
 
         private void OnAddFloor()
         {
             // TODO : Add new Floor support
-             _showModel = true;
-        }
-
-        private void OnEditFloor()
-        {
-            // TODO : Update Edit existing floor
+            _floorPlan = new UnderwritingAnalysisModel();
+            _isNew = true;
             _showModel = true;
         }
 
-        public class FloorPlan
+        private void OnEditFloor(GridCommandEventArgs args)
         {
-            public Guid Id { get; set; }
-            public string Name { get; set; }
-            public int Bed { get; set; }
-            public int Bath { get; set; }
-            public int SquareFt { get; set; }
-            public bool Upgraded { get; set; }
-            public int Units { get; set; }
-            public int Rent { get; set; }
-            public int MarketRent { get; set; }
+            // TODO : Update Edit existing floor
+            _floorPlan = args.Item as UnderwritingAnalysisModel;
+            _isNew = false;
+            _showModel = true;
         }
     }
 }

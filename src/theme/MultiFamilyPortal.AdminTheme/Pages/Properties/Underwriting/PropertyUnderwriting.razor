@@ -9,7 +9,7 @@ else
 {
   <Animation OptionsName="Page">
    <UnderwritingSummary Property=@Property />
-   
+
     <div class="row my-2">
       <div class="col-md-3 col-sm-6 offset-md-9 offset-sm-6">
         <TelerikDropDownList Data=@AvailableStatus
@@ -89,7 +89,7 @@ else
               <Content>
                <TelerikTabStrip TabPosition="TabPosition.Top">
                   <TabStripTab Title="Floor Plans">
-                    <UnderwritingFloorPlans />
+                    <UnderwritingFloorPlans Property=@Property />
                   </TabStripTab>
                   <TabStripTab Title="Units">
                     <h2>Units</h2>

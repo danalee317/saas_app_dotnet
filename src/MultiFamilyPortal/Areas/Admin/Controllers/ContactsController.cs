@@ -101,5 +101,21 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
 
             return Ok();
         }
+
+        [HttpDelete("crm-role/delete/{id:guid}")]
+        public async Task<IActionResult> DeleteCrmRole(Guid id)
+        {
+            if (id == default)
+                return BadRequest();
+
+            var role = await _dbContext.CrmContactRoles.FirstOrDefaultAsync(x => x.Id == id && x.SystemDefined == false);
+            if (role is null)
+                return Ok();
+
+            _dbContext.CrmContactRoles.Remove(role);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }

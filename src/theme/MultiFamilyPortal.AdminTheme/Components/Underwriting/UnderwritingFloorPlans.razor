@@ -1,4 +1,4 @@
-<TelerikGrid Data="@FloorPlans" Height="600px" Sortable="true" Resizable="true" Reorderable="true">
+<TelerikGrid Data="@_floorPlans" Height="600px" Sortable="true" Resizable="true" Reorderable="true">
   <GridToolBar>
     <span class="k-toolbar-spacer"></span>
     <GridCommandButton Command="MyToolbarCommand" Icon="add" OnClick="@OnAddFloor">
@@ -19,15 +19,15 @@
       </Template>
     </GridColumn>
     <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Units))" Title="Units" Width="80px"/>
-    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.CurrentRent))" Title="Rent">
+    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.CurrentRent))" Title="Rent (£)">
       <Template>
         @{
           var truth = context as UnderwritingAnalysisModel;
-          <span>@(truth.AverageRent.ToString("N2"))</span>
+          <span>@(truth.CurrentRent.ToString("N2"))</span>
         }
       </Template>
     </GridColumn>
-    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.MarketRent))" Title="Market Rent">
+    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.MarketRent))" Title="Market Rent (£)">
       <Template>
         @{
           var truth = context as UnderwritingAnalysisModel;
@@ -47,4 +47,6 @@
 
 <UnderwritingFloorPlansControls ShowWindow="@_showModel"
                                 IsNew="@_isNew"
-                                FloorPlan="@_floorPlan"/>
+                                FloorPlan="@_floorPlan"
+                                Property="@Property" 
+                                FloorPlanChanged=@InformSuperParent/>

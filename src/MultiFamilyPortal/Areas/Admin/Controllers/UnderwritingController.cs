@@ -1,4 +1,3 @@
-using System.Data;
 using System.IO.Compression;
 using System.Net.Http.Headers;
 using System.Net.Mime;
@@ -13,7 +12,6 @@ using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
-using MultiFamilyPortal.Extensions;
 using MultiFamilyPortal.Services;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
@@ -71,7 +69,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     Status = x.Status,
                     Underwriter = x.Underwriter.DisplayName,
                     UnderwriterEmail = x.Underwriter.Email,
-                    Units = x.Units,
+                    Units = x.Units
                 }).ToArrayAsync();
                 return Ok(response.OrderByDescending(x => x.Created));
             }
@@ -240,7 +238,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 NeighborhoodClass = PropertyClass.ClassB,
                 StartDate = startDate,
                 DesiredYield = 0.1,
-                HoldYears = 5,
+                HoldYears = 5
             };
 
             await _dbContext.UnderwritingPropertyProspects.AddAsync(prospect);
@@ -485,7 +483,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     DownloadLink = $"{host}/api/files/property/{propertyId}/file/{x.Id}",
                     Icon = x.Icon,
                     Name = x.Name,
-                    Timestamp = x.Timestamp,
+                    Timestamp = x.Timestamp
                 })
                 .ToArrayAsync();
         }

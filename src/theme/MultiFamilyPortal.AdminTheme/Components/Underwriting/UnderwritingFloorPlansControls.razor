@@ -63,7 +63,7 @@
           <TelerikNumericTextBox  Class="form-control w-100"
                                   Min="100"
                                   Id="floor-avgrent"
-                                  Step="5"
+                                  Step="50"
                                   Format="C"
                                   @bind-Value="@FloorPlan.CurrentRent"/>
         </div>
@@ -74,7 +74,7 @@
           <TelerikNumericTextBox  Class="form-control w-100"
                                   Min="100"
                                   Id="floor-mktrent"
-                                  Step="5"
+                                  Step="50"
                                   Format="C"
                                   @bind-Value="@FloorPlan.MarketRent"/>
         </div>
@@ -114,5 +114,3 @@
   </WindowContent>
 
 </TelerikWindow>
-
-<PortalNotification @ref="_notification" />

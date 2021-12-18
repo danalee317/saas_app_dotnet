@@ -105,7 +105,7 @@ namespace MultiFamilyPortal.Services
             }
 
             var unitModels = await _dbContext.UnderwritingPropertyUnitModels
-                .Where(x => x.PropertyId != propertyId)
+                .Where(x => x.PropertyId == propertyId)
                 .Select(m => new UnderwritingAnalysisModel
                 {
                     Baths = m.Baths,
@@ -128,7 +128,7 @@ namespace MultiFamilyPortal.Services
                             Rent = l.Rent,
                             Type = l.Type
                         }).ToList()
-                    }).ToList(),
+                    }).ToList()
                 }).ToListAsync();
             property.Models = unitModels;
 
@@ -160,6 +160,7 @@ namespace MultiFamilyPortal.Services
             var property = await _dbContext.UnderwritingPropertyProspects
                 .Include(x => x.BucketList)
                 .Include(x => x.Notes)
+                .Include(x => x.Models)
                 .FirstOrDefaultAsync(x => x.Id == propertyId);
 
 
@@ -371,14 +372,14 @@ namespace MultiFamilyPortal.Services
                 {
                     var unitModel = new UnderwritingPropertyUnitModel
                     {
-                        Name = model.Name,
+                        Name = model.Name.Trim(),
                         Baths = model.Baths,
                         Beds = model.Beds,
                         MarketRent = model.MarketRent,
                         CurrentRent = model.CurrentRent,
                         Upgraded = model.Upgraded,
                         TotalUnits = model.TotalUnits,
-                        PropertyId = propertyId,
+                        PropertyId = propertyId
                     };
                     await _dbContext.AddAsync(unitModel);
                     await _dbContext.SaveChangesAsync();

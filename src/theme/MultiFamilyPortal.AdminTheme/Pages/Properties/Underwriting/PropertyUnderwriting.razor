@@ -89,7 +89,7 @@ else
               <Content>
                <TelerikTabStrip TabPosition="TabPosition.Top">
                   <TabStripTab Title="Floor Plans">
-                    <UnderwritingFloorPlans Property=@Property />
+                    <UnderwritingFloorPlans Property=@Property OnPropertyChanged=@OnUpdateProperty/>
                   </TabStripTab>
                   <TabStripTab Title="Units">
                     <h2>Units</h2>

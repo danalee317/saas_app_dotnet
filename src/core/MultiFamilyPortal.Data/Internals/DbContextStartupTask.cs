@@ -8,6 +8,10 @@ namespace MultiFamilyPortal.Data.Internals
 {
     public class DbContextStartupTask : IStartupTask
     {
+        private const string REMentor = "RE Mentor";
+        private const string TrainingSupport = "Training & Support";
+        private const string SoftwareVendor = "Software Vendor";
+
         private IStartupContextHelper _contextHelper { get; }
 
         public DbContextStartupTask(IStartupContextHelper contextHelper)
@@ -24,6 +28,38 @@ namespace MultiFamilyPortal.Data.Internals
         {
             await SeedSettings(db);
             await SeedUnderwritingGuidance(db);
+            await SeedCrmRoles(db);
+            await SeedDefaultContacts(db);
+        }
+
+        private async Task SeedDefaultContacts(ICRMContext db)
+        {
+            if(!await db.CrmContacts.AnyAsync())
+            {
+                foreach(var contact in DefaultCrmContacts)
+                {
+                    if(!await db.CrmContacts.AnyAsync(x => x.FirstName == contact.FirstName && x.LastName == contact.LastName))
+                    {
+                        var roleName = contact.Company == "RE Mentor" ? TrainingSupport : SoftwareVendor;
+                        var role = await db.CrmContactRoles.FirstOrDefaultAsync(x => x.Name == roleName);
+                        contact.Roles = new[] { role };
+                        await db.CrmContacts.AddAsync(contact);
+                        await db.SaveChangesAsync();
+                    }
+                }
+            }
+        }
+
+        private async Task SeedCrmRoles(ICRMContext db)
+        {
+            foreach(var role in DefaultCrmRoles)
+            {
+                if(!await db.CrmContactRoles.AnyAsync(x => x.Name == role.Name))
+                {
+                    await db.CrmContactRoles.AddAsync(role);
+                    await db.SaveChangesAsync();
+                }
+            }
         }
 
         private async Task SeedUnderwritingGuidance(MFPContext db)
@@ -55,6 +91,200 @@ namespace MultiFamilyPortal.Data.Internals
                 await db.SaveChangesAsync();
             }
         }
+
+        public static readonly IEnumerable<CRMContact> DefaultCrmContacts = new[]
+        {
+            new CRMContact
+            {
+                FirstName = "Dan",
+                LastName = "Siegel",
+                Company = "AvantiPoint",
+                Title = "CEO",
+                Emails = new []
+                {
+                    new CRMContactEmail
+                    {
+                        Email = "dsiegel@avantipoint.com",
+                        Primary = true,
+                        Type = CRMContactEmailType.Work
+                    }
+                },
+                Logs = new []
+                {
+                    new CRMContactLog
+                    {
+                        Notes = "Welcome to the MultiFamily Business Portal. If you run into any trouble or have any questions please reach out any time."
+                    }
+                }
+            },
+            new CRMContact
+            {
+                FirstName = "Jeannie",
+                LastName = "Orlowski",
+                Company = REMentor,
+                Title = "Investor Relations / Coach",
+                Emails = new []
+                {
+                    new CRMContactEmail
+                    {
+                        Email = "jeannie@rementor.com",
+                        Primary = true,
+                        Type = CRMContactEmailType.Work
+                    }
+                },
+                Phones = new []
+                {
+                    new CRMContactPhone
+                    {
+                        Number = "7819825724",
+                        Primary = true,
+                        Type = CRMContactPhoneType.Work
+                    }
+                },
+            },
+            new CRMContact
+            {
+                FirstName = "Jermaine",
+                LastName = "Evans",
+                Company = REMentor,
+                Title = "Coaching Coordinator",
+                Emails = new []
+                {
+                    new CRMContactEmail
+                    {
+                        Email = "jevans@rementor.com",
+                        Primary = true,
+                        Type = CRMContactEmailType.Work
+                    }
+                },
+                Phones = new []
+                {
+                    new CRMContactPhone
+                    {
+                        Number = "7819825711",
+                        Primary = true,
+                        Type = CRMContactPhoneType.Work
+                    }
+                }
+            },
+        };
+
+        private static readonly IEnumerable<CRMContactRole> DefaultCrmRoles = new[]
+        {
+            new CRMContactRole
+            {
+                Name = "Real Estate Broker",
+                CoreTeam = true,
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "Loan Broker",
+                CoreTeam = true,
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "Direct Lender",
+                CoreTeam = true,
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "Hard Money Lender",
+                CoreTeam = true,
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "Investor",
+                CoreTeam = true,
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "Sponsor",
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "Mentor",
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "Insurance Agent",
+                CoreTeam = true,
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "Property Manager",
+                CoreTeam = true,
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "Attorney",
+                CoreTeam = true,
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "Property Inspector",
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "Pool Maintenance",
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "Lawn Maintenance",
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "General Contractor",
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "HVAC",
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "Electrician",
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "Plumber",
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "Local Government",
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = "Economic Development",
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = TrainingSupport,
+                SystemDefined = true,
+            },
+            new CRMContactRole
+            {
+                Name = SoftwareVendor,
+                SystemDefined = true,
+            }
+        };
 
         private static readonly IEnumerable<UnderwritingGuidance> DefaultGuidance = new[]
         {

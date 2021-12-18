@@ -11,11 +11,10 @@ using MultiFamilyPortal.Data.ModelConfiguration;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.SaaS;
 using MultiFamilyPortal.SaaS.Data;
-using MultiFamilyPortal.SaaS.Models;
 
 namespace MultiFamilyPortal.Data
 {
-    public class MFPContext : IdentityDbContext<SiteUser, IdentityRole, string, IdentityUserClaim<string>, IdentityUserRole<string>, IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>, IMFPContext, IBlogContext, IPersistedGrantDbContext, IMultiTenantDbContext
+    public class MFPContext : IdentityDbContext<SiteUser, IdentityRole, string, IdentityUserClaim<string>, IdentityUserRole<string>, IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>, ICRMContext, IMFPContext, IBlogContext, IPersistedGrantDbContext, IMultiTenantDbContext
     {
         private readonly IOptions<OperationalStoreOptions> _operationalStoreOptions;
         private readonly ITenantProvider _tenantProvider;
@@ -78,6 +77,19 @@ namespace MultiFamilyPortal.Data
         public DbSet<EmailPreferences> EmailPreferences { get; set; } = default!;
         #endregion
 
+        #region CRM Contacts
+
+        public DbSet<CRMContact> CrmContacts { get; set; }
+        public DbSet<CRMContactAddress> CrmContactAddresses { get; set; }
+        public DbSet<CRMContactEmail> CrmContactEmails { get; set; }
+        public DbSet<CRMContactLog> CrmContactLogs { get; set; }
+        public DbSet<CRMContactMarket> CrmContactMarkets { get; set; }
+        public DbSet<CRMContactPhone> CrmContactPhones { get; set; }
+        public DbSet<CRMContactReminder> CrmContactReminders { get; set; }
+        public DbSet<CRMContactRole> CrmContactRoles { get; set; }
+        public DbSet<CRMNotableDate> CrmNotableDates { get; set; }
+
+        #endregion CRM Contacts
 
         public DbSet<PersistedGrant> PersistedGrants { get; set; }
         public DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; }
@@ -108,49 +120,17 @@ namespace MultiFamilyPortal.Data
             return null;
         }
 
-        //private T GetProperty<T>(string name, object instance = null) =>
-        //    (T)GetProperty(name, instance);
-
-        //private object GetProperty(string name, object instance = null)
-        //{
-        //    if (instance is null)
-        //        instance = this;
-
-        //    var type = instance.GetType();
-
-        //    while(type != null)
-        //    {
-        //        var property = type.GetRuntimeProperties().FirstOrDefault(x => x.Name == name);
-        //        if(property is null)
-        //        {
-        //            type = type.BaseType;
-        //            continue;
-        //        }
-
-        //        return property.GetValue(instance);
-        //    }
-
-        //    return default;
-        //}
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            //this.GetService<IPersonalDataProtector>();
             base.OnModelCreating(builder);
 
-            //var dbContextServices = GetProperty("ContextServices");
-            //var serviceProvider = GetProperty<IServiceProvider>("InternalServiceProvider", dbContextServices);
-            //var resolvedServices = GetProperty<IDictionary>("ResolvedServices", serviceProvider);
-            //var generic = resolvedServices.Cast<KeyValuePair<object, object>>();
-            //var dataProtector = generic.Select(x => x.Value).FirstOrDefault(x => typeof(IPersonalDataProtector).IsAssignableFrom(x.GetType()));
-            //var baseContext = (IdentityUserContext<SiteUser, string, IdentityUserClaim<string>, IdentityUserLogin<string>, IdentityUserToken<string>>)this;
-            //    var pdp = baseContext.GetService<IPersonalDataProtector>();
             builder.ConfigureIdentityModels(GetStoreOptions());
             builder.ConfigurePersistedGrantContext(_operationalStoreOptions.Value);
             builder.ConfigureBlogModels();
             builder.ConfigureSocialProviders();
             builder.ConfigureEmailTemplates();
             builder.ConfigureUnderwriting();
+            builder.ConfigureCrmModels();
 
             builder.Entity<AssetParner>()
                 .HasKey(x => new { x.PartnerId, x.AssetId });

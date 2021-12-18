@@ -16,6 +16,7 @@ namespace MultiFamilyPortal
             services.AddScoped<IStartupTask, DbContextStartupTask>();
             services.AddTransient<IBlogContext>(sp => sp.GetRequiredService<MFPContext>());
             services.AddTransient<IMFPContext>(sp => sp.GetRequiredService<MFPContext>());
+            services.AddTransient<ICRMContext>(sp => sp.GetRequiredService<MFPContext>());
             services.AddTransient<IStartupContextHelper, StartupContextHelper>();
 
             services.AddSaaSApplication(configuration);

@@ -19,7 +19,7 @@ namespace MultiFamilyPortal.Services
              { "android-chrome-192x192.png", 128 },
              { "android-chrome-288x288.png", 288 },
              { "android-chrome-512x512.png", 512 },
-             { "apple-touch-icon.png", 180 }
+             { "apple-touch-icon.png", 180 },
         };
 
         private ILogger<BrandService> _logger { get; }

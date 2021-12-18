@@ -14,8 +14,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
         private bool _showModel = false;
         private bool _isNew = false;
-        private int _totalUnits = 0;
-        private int _numberOfUnits = 0;
         private UnderwritingAnalysisModel _floorPlan = new();
         private IEnumerable<UnderwritingAnalysisModel> _floorPlans = Array.Empty<UnderwritingAnalysisModel>();
 
@@ -26,9 +24,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             GetFloorsAsync();
             if (_floorPlans == null)
                 return;
-
-            _numberOfUnits = _floorPlans.Sum(x => x.TotalUnits);
-            _totalUnits = Property.Units;
         }
 
         private void GetFloorsAsync()

@@ -128,7 +128,7 @@ namespace MultiFamilyPortal.Services
                             Rent = l.Rent,
                             Type = l.Type
                         }).ToList()
-                    }).ToList()
+                    }).ToList(),
                 }).ToListAsync();
             property.Models = unitModels;
 

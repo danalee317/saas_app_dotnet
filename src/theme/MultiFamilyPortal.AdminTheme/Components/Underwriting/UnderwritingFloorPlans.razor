@@ -6,7 +6,7 @@
     </GridCommandButton>
   </GridToolBar>
   <GridColumns>
-    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Name))" Title="Name" Width="30%" />
+    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Name))" Title="Name" Width="25%" />
     <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Beds))" Title="Bed" Width="80px" />
     <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Baths))" Title="Bath" Width="80px" />
     @*<GridColumn Field="@(nameof(UnderwritingAnalysisModel.SquareFt))" Title="Sqft" Width="100px" /> *@
@@ -19,7 +19,7 @@
       </Template>
     </GridColumn>
     <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Units))" Title="Units" Width="80px"/>
-    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.CurrentRent))" Title="Rent (£)">
+    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.CurrentRent))" Title="Current Rent ($)">
       <Template>
         @{
           var truth = context as UnderwritingAnalysisModel;
@@ -27,7 +27,15 @@
         }
       </Template>
     </GridColumn>
-    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.MarketRent))" Title="Market Rent (£)">
+     <GridColumn Field="@(nameof(UnderwritingAnalysisModel.MarketRent))" Title="Average Rent ($)">
+      <Template>
+        @{
+          var truth = context as UnderwritingAnalysisModel;
+          <span>@(truth.AverageRent.ToString("N2"))</span>
+        }
+      </Template>
+    </GridColumn>
+    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.MarketRent))" Title="Market Rent ($)">
       <Template>
         @{
           var truth = context as UnderwritingAnalysisModel;

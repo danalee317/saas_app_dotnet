@@ -69,7 +69,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     Status = x.Status,
                     Underwriter = x.Underwriter.DisplayName,
                     UnderwriterEmail = x.Underwriter.Email,
-                    Units = x.Units
+                    Units = x.Units,
                 }).ToArrayAsync();
                 return Ok(response.OrderByDescending(x => x.Created));
             }

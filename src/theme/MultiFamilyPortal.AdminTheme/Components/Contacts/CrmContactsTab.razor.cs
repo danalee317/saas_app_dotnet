@@ -26,7 +26,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
         private async Task UpdateContacts()
         {
             var contacts = await _client.GetFromJsonAsync<IEnumerable<CRMContact>>("/api/admin/contacts/crm-contacts");
-            _contacts.ReplaceRange(contacts);
+            _contacts.ReplaceRange(contacts.OrderBy(x => x.LastName));
         }
 
         private void AddNewContact()

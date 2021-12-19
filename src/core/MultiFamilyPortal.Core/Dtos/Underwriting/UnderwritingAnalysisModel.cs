@@ -29,6 +29,9 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         [Reactive]
         public int TotalUnits { get; set; }
 
+        [Reactive]
+        public double Area { get; set; }
+
         [JsonIgnore]
         public double AverageRent => Units is null ? 0 :
             Units.Where(x => x.Rent > 0).Sum(x => x.Rent);

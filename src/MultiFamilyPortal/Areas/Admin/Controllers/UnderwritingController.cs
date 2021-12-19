@@ -1,4 +1,3 @@
-using System.Data;
 using System.IO.Compression;
 using System.Net.Http.Headers;
 using System.Net.Mime;
@@ -13,7 +12,6 @@ using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
-using MultiFamilyPortal.Extensions;
 using MultiFamilyPortal.Services;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
@@ -277,7 +275,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     State = x.State,
                     Underwriter = x.Underwriter.DisplayName,
                     UnderwriterEmail = x.Underwriter.Email,
-                    Units = x.Units
+                    Units = x.Units,
                 })
                 .FirstOrDefaultAsync(x => x.Id == prospect.Id);
 

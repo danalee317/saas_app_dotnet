@@ -1,4 +1,8 @@
-<TelerikWindow @bind-Visible="@ShowWindow" Modal=@true Height="590px" Width="600px">
+<TelerikWindow @bind-Visible="@ShowWindow" 
+               Modal="true" 
+               Centered="true"
+               Height="665px" 
+               Width="600px">
   <WindowTitle>
     <strong>@(IsNew?"Add": "Edit") Floor Plan</strong>
   </WindowTitle>
@@ -56,6 +60,17 @@
       </div>
       <hr />
       <div class="row">
+        <div class="col-3 my-2">
+          <label for="floor-avgrent" class="form-label my-3">Units</label>
+        </div>
+        <div class="col-9 my-2">
+          <TelerikNumericTextBox  Class="form-control w-100"
+                                  Min="1"
+                                  Max=@(Property.Units - (Property.Models==null ? 0 : Property.Models.Sum(x => x.TotalUnits)))
+                                  Id="floor-avgrent"
+                                  Step="1"
+                                  @bind-Value="@FloorPlan.TotalUnits"/>
+        </div>
         <div class="col-3 my-2">
           <label for="floor-avgrent" class="form-label my-3">Current Rent</label>
         </div>

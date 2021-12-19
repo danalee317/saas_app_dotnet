@@ -238,7 +238,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 NeighborhoodClass = PropertyClass.ClassB,
                 StartDate = startDate,
                 DesiredYield = 0.1,
-                HoldYears = 5
+                HoldYears = 5,
             };
 
             await _dbContext.UnderwritingPropertyProspects.AddAsync(prospect);
@@ -275,7 +275,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     State = x.State,
                     Underwriter = x.Underwriter.DisplayName,
                     UnderwriterEmail = x.Underwriter.Email,
-                    Units = x.Units
+                    Units = x.Units,
                 })
                 .FirstOrDefaultAsync(x => x.Id == prospect.Id);
 
@@ -483,7 +483,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     DownloadLink = $"{host}/api/files/property/{propertyId}/file/{x.Id}",
                     Icon = x.Icon,
                     Name = x.Name,
-                    Timestamp = x.Timestamp
+                    Timestamp = x.Timestamp,
                 })
                 .ToArrayAsync();
         }

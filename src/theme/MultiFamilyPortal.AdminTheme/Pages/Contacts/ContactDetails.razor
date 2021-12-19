@@ -1,0 +1,66 @@
+﻿@page "/admin/contacts/detail/{id:guid}"
+@using MultiFamilyPortal.AdminTheme.Components.Contacts
+
+<SiteTitle Title="Contact Details" />
+
+<Animation Class="Page">
+  <div class="row gt-3 pt-2 pb-3">
+    <div class="col-md-12">
+      <span class="clickable" @onclick=@OnNavigateBack>
+        <i class="fa-duotone fa-chevron-left"></i>&nbsp;&nbsp;Back
+      </span>
+    </div>
+  </div>
+  <TelerikTabStrip>
+    <TabStripTab>
+      <HeaderTemplate>
+        <span>
+          <i class="fa-duotone fa-address-card"></i> Contact Info
+        </span>
+      </HeaderTemplate>
+      <Content>
+        <CrmContactInfoTab Contact=@_contact />
+      </Content>
+    </TabStripTab>
+    <TabStripTab>
+      <HeaderTemplate>
+        <span>
+          <i class="fa-duotone fa-list"></i> Contact Log
+        </span>
+      </HeaderTemplate>
+      <Content>
+        <CrmContactLogTab Contact=@_contact />
+      </Content>
+    </TabStripTab>
+    <TabStripTab>
+      <HeaderTemplate>
+        <span>
+          <i class="fa-duotone fa-party-horn"></i> Notable Dates
+        </span>
+      </HeaderTemplate>
+      <Content>
+        <CrmContactNotableDatesTab Contact=@_contact />
+      </Content>
+    </TabStripTab>
+    <TabStripTab>
+      <HeaderTemplate>
+        <span>
+          <i class="fa-duotone fa-alarm-clock"></i> Reminders
+        </span>
+      </HeaderTemplate>
+      <Content>
+        <CrmContactRemindersTab Contact=@_contact />
+      </Content>
+    </TabStripTab>
+    <TabStripTab>
+      <HeaderTemplate>
+        <span>
+          <i class="fa-duotone fa-city"></i> Markets
+        </span>
+      </HeaderTemplate>
+      <Content>
+        <CrmContactMarketsTab Contact=@_contact />
+      </Content>
+    </TabStripTab>
+  </TelerikTabStrip>
+</Animation>

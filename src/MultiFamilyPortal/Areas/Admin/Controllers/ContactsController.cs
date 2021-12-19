@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultiFamilyPortal.AdminTheme.Models;
@@ -128,6 +128,21 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 .ToArrayAsync();
 
             return Ok(contacts);
+        }
+
+        [HttpGet("crm-contact/{id:guid}")]
+        public async Task<IActionResult> GetCrmContact(Guid id)
+        {
+            var contact = await _dbContext.CrmContacts
+                .Include(x => x.Addresses)
+                .Include(x => x.Emails)
+                .Include(x => x.Logs)
+                .Include(x => x.Markets)
+                .Include(x => x.Phones)
+                .Include(x => x.Roles)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            return Ok(contact);
         }
     }
 }

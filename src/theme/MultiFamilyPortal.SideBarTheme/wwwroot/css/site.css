@@ -121,3 +121,6 @@ img.logo {
   background-color: transparent !important;
 }
 
+.clickable {
+  cursor: pointer;
+}

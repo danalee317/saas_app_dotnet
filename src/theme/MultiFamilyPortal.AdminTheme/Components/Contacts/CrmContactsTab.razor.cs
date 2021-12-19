@@ -44,7 +44,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
 
         private void ShowContactDetails(CRMContact contact)
         {
-            _navigationManager.NavigateTo($"details/{contact.Id}");
+            _navigationManager.NavigateTo($"/admin/contacts/detail/{contact.Id}");
         }
     }
 }

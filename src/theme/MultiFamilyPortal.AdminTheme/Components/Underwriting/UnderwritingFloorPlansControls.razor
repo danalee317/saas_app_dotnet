@@ -66,7 +66,7 @@
         <div class="col-9 my-2">
           <TelerikNumericTextBox  Class="form-control w-100"
                                   Min="1"
-                                  Max=@(Property.Units - (Property.Models==null ? 0 : Property.Models.Sum(x => x.TotalUnits)))
+                                  Max=@(Property.Units - (Property.Models == null ? 0 : Property.Models.Sum(x => x.TotalUnits)))
                                   Id="floor-avgrent"
                                   Step="1"
                                   @bind-Value="@FloorPlan.TotalUnits"/>

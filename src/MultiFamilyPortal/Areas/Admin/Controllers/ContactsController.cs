@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultiFamilyPortal.AdminTheme.Models;
@@ -116,6 +116,18 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             await _dbContext.SaveChangesAsync();
 
             return Ok();
+        }
+
+        [HttpGet("crm-contacts")]
+        public async Task<IActionResult> GetCrmContacts()
+        {
+            var contacts = await _dbContext.CrmContacts
+                .Include(x => x.Emails)
+                .Include(x => x.Phones)
+                .Include(x => x.Roles)
+                .ToArrayAsync();
+
+            return Ok(contacts);
         }
     }
 }

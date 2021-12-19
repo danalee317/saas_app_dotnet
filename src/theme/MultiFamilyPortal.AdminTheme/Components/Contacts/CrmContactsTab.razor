@@ -1,0 +1,29 @@
+﻿<Animation OptionsName="Page">
+  <div class="row gt-3 mt-2 mb-3">
+    <div class="col-md-3">
+      <span @onclick=@(() => _showList = true) style="color: @(_showList ? string.Empty : "var(--bs-primary)");">
+        <i class="fa-duotone fa-table-list"></i> List
+      </span> |
+      <span @onclick=@(() => _showList = false) style="color: @(_showList ? "var(--bs-primary)" : string.Empty);">
+        <i class="fa-duotone fa-address-card"></i> Cards
+      </span>
+    </div>
+  </div>
+
+  @if(_newContact != null)
+  {
+    
+  }
+  else @if(_showList)
+  {
+    <CrmContactList Contacts=@_contacts
+                    AddContact=@AddNewContact
+                    ShowContactDetails=@ShowContactDetails />
+  }
+  else
+  {
+    <CrmContactCardList Contacts=@_contacts
+                        AddContact=@AddNewContact
+                        ShowContactDetails=@ShowContactDetails />
+  }
+</Animation>

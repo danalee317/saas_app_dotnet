@@ -1,0 +1,94 @@
+﻿<div class="row gt-3 mt-2">
+  <label for="Prefix" class="col-md-2">Prefix</label>
+  <div class="col-md-4 form-group">
+    <TelerikTextBox @bind-Value=@Contact.Prefix
+                    Class="form-control" />
+  </div>
+</div>
+<div class="row gt-3 mt-2">
+  <label for="FirstName" class="col-md-2">First Name</label>
+  <div class="col-md-4 form-group">
+    <TelerikTextBox @bind-Value=@Contact.FirstName
+                    Class="form-control" />
+  </div>
+  <label for="LastName" class="col-md-2">Last Name</label>
+  <div class="col-md-4 form-group">
+    <TelerikTextBox @bind-Value=@Contact.LastName
+                    Class="form-control" />
+  </div>
+</div>
+<div class="row gt-3 mt-2 mb-3">
+  <label for="Suffix" class="col-md-2">Suffix</label>
+  <div class="col-md-4 form-group">
+    <TelerikTextBox @bind-Value=@Contact.Suffix
+                    Class="form-control" />
+  </div>
+  <label for="Dob" class="col-md-2">Birthday</label>
+  <div class="col-md-4 form-group">
+    <TelerikDatePicker @bind-Value=@Contact.DoB
+                       Class="form-control"
+                       Max=@DateTime.Now
+                       Min=@DateTime.Now.AddYears(-125)
+                       Format="MM/dd/yyyy"
+                       Placeholder="Date of Birth" />
+  </div>
+</div>
+
+<hr />
+
+<div class="row gt-3 mt-2">
+  <label for="Company" class="col-md-2">Company</label>
+  <div class="col-md-4 form-group">
+    <TelerikTextBox @bind-Value=@Contact.Company
+                    Class="form-control" />
+  </div>
+  <label for="Title" class="col-md-2">Title</label>
+  <div class="col-md-4 form-group">
+    <TelerikTextBox @bind-Value=@Contact.Title
+                    Class="form-control" />
+  </div>
+</div>
+<div class="row gt-3 mt-2 mb-3">
+  <label for="LicenseNumber" class="col-md-2">License Number</label>
+  <div class="col-md-4 form-group">
+    <TelerikTextBox @bind-Value=@Contact.LicenseNumber
+                    Class="form-control" />
+  </div>
+</div>
+
+<hr />
+
+<!-- Phones -->
+
+<LoaderContainer Context=@Contact>
+  <CrmContactPhoneList Contact="@Contact" />
+</LoaderContainer>
+
+<hr />
+
+<!-- Emails -->
+<LoaderContainer Context=@Contact>
+  <CrmContactEmailList Contact=@Contact />
+</LoaderContainer>
+
+<hr />
+
+<!-- Contact Types -->
+
+<div class="row gt-3 mt-2 mb-3">
+  <div class="col-md-2 align-middle">
+    <span>Contact Type(s)</span>
+  </div>
+  <div class="col-md-4 form-group">
+    <LoaderContainer Context=@_allRoles>
+      <TelerikMultiSelect Value=@_roles
+                          ValueChanged=@OnRolesUpdated
+                          TValue="Guid"
+                          TItem="Data.Models.CRMContactRole"
+                          Data=@_allRoles
+                          TextField="Name"
+                          ValueField="Id"
+                          Class="form-control" />
+    </LoaderContainer>
+  </div>
+</div>

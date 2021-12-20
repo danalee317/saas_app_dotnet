@@ -1,0 +1,87 @@
+﻿@page "/admin/contacts/detail/{id:guid}"
+@using MultiFamilyPortal.AdminTheme.Components.Contacts
+
+<SiteTitle Title="Contact Details" />
+
+<Animation Class="Page">
+  <div class="row gt-3 pt-2 pb-3">
+    <div class="col-md-12">
+      <span class="clickable" @onclick=@OnNavigateBack>
+        <i class="fa-duotone fa-chevron-left"></i>&nbsp;&nbsp;Back
+      </span>
+    </div>
+  </div>
+  <TelerikTabStrip>
+    <TabStripTab>
+      <HeaderTemplate>
+        <span>
+          <i class="fa-duotone fa-address-card"></i> Contact Info
+        </span>
+      </HeaderTemplate>
+      <Content>
+        <LoaderContainer Context=@_contact>
+          <CrmContactInfoTab Contact=@_contact />
+        </LoaderContainer>
+      </Content>
+    </TabStripTab>
+    <TabStripTab>
+      <HeaderTemplate>
+        <span>
+          <i class="fa-duotone fa-list"></i> Contact Log
+        </span>
+      </HeaderTemplate>
+      <Content>
+        <LoaderContainer Context=@_contact>
+          <CrmContactLogTab Contact=@_contact />
+        </LoaderContainer>
+      </Content>
+    </TabStripTab>
+    <TabStripTab>
+      <HeaderTemplate>
+        <span>
+          <i class="fa-duotone fa-party-horn"></i> Notable Dates
+        </span>
+      </HeaderTemplate>
+      <Content>
+        <LoaderContainer Context=@_contact>
+          <CrmContactNotableDatesTab Contact=@_contact />
+        </LoaderContainer>
+      </Content>
+    </TabStripTab>
+    <TabStripTab>
+      <HeaderTemplate>
+        <span>
+          <i class="fa-duotone fa-alarm-clock"></i> Reminders
+        </span>
+      </HeaderTemplate>
+      <Content>
+        <LoaderContainer Context=@_contact>
+          <CrmContactRemindersTab Contact=@_contact />
+        </LoaderContainer>
+      </Content>
+    </TabStripTab>
+    <TabStripTab>
+      <HeaderTemplate>
+        <span>
+          <i class="fa-duotone fa-city"></i> Markets
+        </span>
+      </HeaderTemplate>
+      <Content>
+        <LoaderContainer Context=@_contact>
+          <CrmContactMarketsTab Contact=@_contact />
+        </LoaderContainer>
+      </Content>
+    </TabStripTab>
+  </TelerikTabStrip>
+
+  <div class="row gt-3 mt-3 mb-5">
+    <div class="col-md-12 text-center">
+      <TelerikButton Primary=@true
+                     Title="Save Changes"
+                     IconClass="fa-duotone fa-floppy-disk"
+                     OnClick=@OnSaveChanges>Save Changes</TelerikButton>
+    </div>
+  </div>
+</Animation>
+
+<PortalNotification @ref="_notification" />

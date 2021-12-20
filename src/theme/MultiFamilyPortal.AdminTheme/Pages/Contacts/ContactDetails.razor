@@ -19,7 +19,9 @@
         </span>
       </HeaderTemplate>
       <Content>
-        <CrmContactInfoTab Contact=@_contact />
+        <LoaderContainer Context=@_contact>
+          <CrmContactInfoTab Contact=@_contact />
+        </LoaderContainer>
       </Content>
     </TabStripTab>
     <TabStripTab>
@@ -29,7 +31,9 @@
         </span>
       </HeaderTemplate>
       <Content>
-        <CrmContactLogTab Contact=@_contact />
+        <LoaderContainer Context=@_contact>
+          <CrmContactLogTab Contact=@_contact />
+        </LoaderContainer>
       </Content>
     </TabStripTab>
     <TabStripTab>
@@ -39,7 +43,9 @@
         </span>
       </HeaderTemplate>
       <Content>
-        <CrmContactNotableDatesTab Contact=@_contact />
+        <LoaderContainer Context=@_contact>
+          <CrmContactNotableDatesTab Contact=@_contact />
+        </LoaderContainer>
       </Content>
     </TabStripTab>
     <TabStripTab>
@@ -49,7 +55,9 @@
         </span>
       </HeaderTemplate>
       <Content>
-        <CrmContactRemindersTab Contact=@_contact />
+        <LoaderContainer Context=@_contact>
+          <CrmContactRemindersTab Contact=@_contact />
+        </LoaderContainer>
       </Content>
     </TabStripTab>
     <TabStripTab>
@@ -59,7 +67,9 @@
         </span>
       </HeaderTemplate>
       <Content>
-        <CrmContactMarketsTab Contact=@_contact />
+        <LoaderContainer Context=@_contact>
+          <CrmContactMarketsTab Contact=@_contact />
+        </LoaderContainer>
       </Content>
     </TabStripTab>
   </TelerikTabStrip>

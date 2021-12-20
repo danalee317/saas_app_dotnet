@@ -14,7 +14,7 @@
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.10.0" />
     <PackageReference Include="BlazorAnimation" Version="2.1.0" />
-    <PackageReference Include="DynamicData" Version="7.4.3" />
+    <PackageReference Include="DynamicData" Version="7.4.9" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="ReactiveUI.Fody" Version="17.1.9" />
     <PackageReference Include="UAParser" Version="3.1.47" />

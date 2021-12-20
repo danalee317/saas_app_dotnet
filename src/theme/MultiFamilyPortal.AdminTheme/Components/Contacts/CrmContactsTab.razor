@@ -15,7 +15,8 @@
 
   @if(_newContact != null)
   {
-    <CrmCreateContact @bind-Contact=@_newContact />
+    <CrmCreateContact Contact=@_newContact
+                      ContactChanged=@OnNewContactSaved />
   }
   else @if(_showList)
   {

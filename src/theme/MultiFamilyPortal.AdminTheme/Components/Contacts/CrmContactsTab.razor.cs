@@ -42,6 +42,12 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
             };
         }
 
+        private async Task OnNewContactSaved(CRMContact contact)
+        {
+            _newContact = contact;
+            await UpdateContacts();
+        }
+
         private void ShowContactDetails(CRMContact contact)
         {
             _navigationManager.NavigateTo($"/admin/contacts/detail/{contact.Id}");

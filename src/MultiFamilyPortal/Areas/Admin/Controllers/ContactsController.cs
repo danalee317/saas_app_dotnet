@@ -144,5 +144,104 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
 
             return Ok(contact);
         }
+
+        [HttpPost("crm-contact/create")]
+        public async Task<IActionResult> CreateCrmContact([Bind("Prefix", "FirstName", "MiddleName", "LastName", "Suffix", "Company", "Title", "DoB", "LicenseNumber", "Roles", "Addresses", "Emails", "Phones")]CRMContact newContact)
+        {
+            var contact = new CRMContact
+            {
+                Prefix = newContact.Prefix,
+                FirstName = newContact.FirstName,
+                MiddleName = newContact.MiddleName,
+                LastName = newContact.LastName,
+                Suffix = newContact.Suffix,
+                Company = newContact.Company,
+                Title = newContact.Title,
+                LicenseNumber = newContact.LicenseNumber,
+            };
+
+            await _dbContext.CrmContacts.AddAsync(contact);
+            await _dbContext.SaveChangesAsync();
+
+            contact = await _dbContext.CrmContacts
+                .Include(x => x.Addresses)
+                .Include(x => x.Emails)
+                .Include(x => x.Phones)
+                .Include(x => x.Roles)
+                .FirstOrDefaultAsync(x => x.Id == contact.Id);
+
+            if(newContact?.Addresses?.Any() ?? false)
+            {
+                foreach(var address in newContact.Addresses)
+                {
+                    address.ContactId = contact.Id;
+                    contact.Addresses.Add(address);
+                }
+
+                _dbContext.Update(contact);
+                await _dbContext.SaveChangesAsync();
+            }
+
+            if (newContact?.Emails?.Any() ?? false)
+            {
+                var tempEmails = newContact.Emails.ToArray();
+                foreach (var email in tempEmails)
+                {
+                    if (string.IsNullOrEmpty(email?.Email))
+                        continue;
+
+                    email.ContactId = contact.Id;
+                    if (newContact.Emails.Count == 1)
+                        email.Primary = true;
+                    else if (!newContact.Emails.Any(x => x.Primary == true) && email.Email == newContact.Emails.First().Email)
+                        email.Primary = true;
+                    email.Email = email.Email.Trim().ToLowerInvariant();
+
+                    contact.Emails.Add(email);
+                }
+
+                _dbContext.Update(contact);
+                await _dbContext.SaveChangesAsync();
+            }
+
+            if (newContact?.Phones?.Any() ?? false)
+            {
+                var tempPhones = newContact.Phones.ToArray();
+                foreach (var phone in tempPhones)
+                {
+                    if (string.IsNullOrEmpty(phone?.Number))
+                        continue;
+
+                    phone.ContactId = contact.Id;
+                    if (newContact.Phones.Count == 1)
+                        phone.Primary = true;
+                    else if (!newContact.Phones.Any(x => x.Primary == true) && phone.Number == newContact.Phones.First().Number)
+                        phone.Primary = true;
+
+                    contact.Phones.Add(phone);
+                }
+
+                _dbContext.Update(contact);
+                await _dbContext.SaveChangesAsync();
+            }
+
+            if (newContact?.Roles?.Any() ?? false)
+            {
+                foreach (var role in newContact.Roles)
+                {
+                    var dbRole = await _dbContext.CrmContactRoles.FirstOrDefaultAsync(x => x.Id == role.Id);
+                    if (dbRole != null)
+                        contact.Roles.Add(dbRole);
+                }
+
+                if (contact.Roles.Any())
+                {
+                    _dbContext.Update(contact);
+                    await _dbContext.SaveChangesAsync();
+                }
+            }
+
+            return StatusCode(201);
+        }
     }
 }

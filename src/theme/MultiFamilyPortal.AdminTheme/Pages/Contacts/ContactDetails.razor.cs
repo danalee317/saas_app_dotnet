@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
+using MultiFamilyPortal.CoreUI;
 using MultiFamilyPortal.Data.Models;
 
 namespace MultiFamilyPortal.AdminTheme.Pages.Contacts
@@ -17,8 +18,14 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Contacts
 
         private CRMContact _contact;
         private bool _showMarketInfo;
+        private PortalNotification _notification;
 
         protected override async Task OnInitializedAsync()
+        {
+            await UpdateContact();
+        }
+
+        private async Task UpdateContact()
         {
             _contact = await _client.GetFromJsonAsync<CRMContact>($"/api/admin/contacts/crm-contact/{id}");
         }
@@ -26,6 +33,18 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Contacts
         private void OnNavigateBack()
         {
             _navigationManager.NavigateTo("/admin/contacts");
+        }
+
+        private async Task OnSaveChanges()
+        {
+            using var response = await _client.PutAsJsonAsync($"/api/admin/contacts/crm-contact/update/{id}", _contact);
+
+            if (response.IsSuccessStatusCode)
+                _notification.ShowSuccess("Contact has been successfully updated.");
+            else
+                _notification.ShowWarning("Unable to save changes");
+
+            await UpdateContact();
         }
     }
 }

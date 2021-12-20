@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultiFamilyPortal.AdminTheme.Models;
@@ -158,6 +159,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 Company = newContact.Company,
                 Title = newContact.Title,
                 LicenseNumber = newContact.LicenseNumber,
+                DoB = newContact.DoB,
             };
 
             await _dbContext.CrmContacts.AddAsync(contact);
@@ -242,6 +244,237 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             }
 
             return StatusCode(201);
+        }
+
+        [HttpPut("crm-contact/update/{id:guid}")]
+        public async Task<IActionResult> UpdateCrmContact(Guid id, CRMContact updatedContact)
+        {
+            if (id != updatedContact.Id)
+                return BadRequest();
+
+            var contact = await _dbContext.CrmContacts
+                .Include(x => x.Addresses)
+                .Include(x => x.Emails)
+                .Include(x => x.Phones)
+                .Include(x => x.Logs)
+                .Include(x => x.Markets)
+                .Include(x => x.Reminders)
+                .Include(x => x.Roles)
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (contact is null)
+                return NotFound();
+
+            contact.Prefix = updatedContact.Prefix?.Trim();
+            contact.FirstName = updatedContact.FirstName?.Trim();
+            contact.MiddleName = updatedContact.MiddleName?.Trim();
+            contact.LastName = updatedContact.LastName?.Trim();
+            contact.Suffix = updatedContact.Suffix?.Trim();
+            contact.Company = updatedContact.Company?.Trim();
+            contact.Title = updatedContact.Title?.Trim();
+            contact.LicenseNumber = updatedContact.LicenseNumber?.Trim();
+            contact.DoB = updatedContact.DoB;
+            contact.MarketNotes = updatedContact.MarketNotes?.Trim();
+
+            if(!contact.Roles.All(x => updatedContact.Roles.Any(r => r.Id == x.Id)))
+            {
+                contact.Roles.Clear();
+                foreach(var role in updatedContact.Roles)
+                {
+                    if (role.Id == default)
+                        continue;
+
+                    var dbRole = await _dbContext.CrmContactRoles.FirstOrDefaultAsync(x => x.Id == role.Id);
+                    if(dbRole is not null)
+                    {
+                        contact.Roles.Add(dbRole);
+                    }
+                }
+            }
+
+            if (updatedContact.Addresses?.Any() ?? false)
+            {
+                if (updatedContact.Addresses.Count(x => x.Primary == true) != 1)
+                {
+                    var address = updatedContact.Addresses.FirstOrDefault();
+                    if (address is not null)
+                        address.Primary = true;
+                }
+
+                var newAddresses = updatedContact.Addresses.Where(x => x.Id == default);
+                var existingAddresses = updatedContact.Addresses.Where(x => x.Id != default);
+                var deletedAddresses = contact.Addresses.Where(x => !updatedContact.Addresses.Any(e => e.Id == x.Id));
+
+                if (deletedAddresses?.Any() ?? false)
+                {
+                    _dbContext.CrmContactAddresses.RemoveRange(deletedAddresses);
+                }
+
+                foreach (var updated in existingAddresses)
+                {
+                    var address = contact.Addresses.FirstOrDefault(x => x.Id == updated.Id);
+                    if (address is null)
+                        continue;
+
+                    address.Address1 = updated.Address1;
+                    address.Address2 = updated.Address2;
+                    address.City = updated.City;
+                    address.State = updated.State;
+                    address.PostalCode = updated.PostalCode;
+                    address.Type = updated.Type;
+                    address.Primary = updated.Primary;
+                    _dbContext.CrmContactAddresses.Update(address);
+                }
+
+                foreach (var added in newAddresses)
+                {
+                    var newAddress = new CRMContactAddress
+                    {
+                        ContactId = contact.Id,
+                        Address1 = added.Address1,
+                        Address2 = added.Address2,
+                        City = added.City,
+                        State = added.State,
+                        PostalCode = added.PostalCode,
+                        Primary = added.Primary,
+                        Type = added.Type
+                    };
+                    await _dbContext.CrmContactAddresses.AddAsync(newAddress);
+                }
+            }
+
+            if (updatedContact.Emails?.Any() ?? false)
+            {
+                if(updatedContact.Emails.Count(x => x.Primary == true) != 1)
+                {
+                    var email = updatedContact.Emails.FirstOrDefault();
+                    if (email is not null)
+                        email.Primary = true;
+                }
+
+                var newEmails = updatedContact.Emails.Where(x => x.Id == default);
+                var existingEmails = updatedContact.Emails.Where(x => x.Id != default);
+                var deletedEmails = contact.Emails.Where(x => !updatedContact.Emails.Any(e => e.Id == x.Id));
+
+                if(deletedEmails?.Any() ?? false)
+                {
+                    _dbContext.CrmContactEmails.RemoveRange(deletedEmails);
+                }
+
+                foreach(var updated in existingEmails)
+                {
+                    var email = contact.Emails.FirstOrDefault(x => x.Id == updated.Id);
+                    if (email is null)
+                        continue;
+
+                    email.Email = updated.Email.Trim().ToLowerInvariant();
+                    email.Type = updated.Type;
+                    email.Primary = updated.Primary;
+                    _dbContext.CrmContactEmails.Update(email);
+                }
+
+                foreach(var added in newEmails)
+                {
+                    var sanitizedEmail = added.Email.Trim().ToLowerInvariant();
+                    if (await _dbContext.CrmContactEmails.AnyAsync(x => x.ContactId == contact.Id && x.Email == sanitizedEmail))
+                        continue;
+
+                    var newEmail = new CRMContactEmail
+                    {
+                        ContactId = contact.Id,
+                        Email = sanitizedEmail,
+                        Primary = added.Primary,
+                        Type = added.Type
+                    };
+                    await _dbContext.CrmContactEmails.AddAsync(newEmail);
+                }
+            }
+
+            if (updatedContact.Phones?.Any() ?? false)
+            {
+                if (updatedContact.Phones.Count(x => x.Primary == true) != 1)
+                {
+                    var phone = updatedContact.Phones.FirstOrDefault();
+                    if (phone is not null)
+                        phone.Primary = true;
+                }
+
+                var newPhones = updatedContact.Phones.Where(x => x.Id == default);
+                var existingPhones = updatedContact.Phones.Where(x => x.Id != default);
+                var deletedPhones = contact.Phones.Where(x => !updatedContact.Phones.Any(e => e.Id == x.Id));
+
+                if (deletedPhones?.Any() ?? false)
+                {
+                    _dbContext.CrmContactPhones.RemoveRange(deletedPhones);
+                }
+
+                foreach (var updated in existingPhones)
+                {
+                    var phone = contact.Phones.FirstOrDefault(x => x.Id == updated.Id);
+                    if (phone is null)
+                        continue;
+
+                    phone.Number = updated.Number;
+                    phone.Type = updated.Type;
+                    phone.Primary = updated.Primary;
+                    _dbContext.CrmContactPhones.Update(phone);
+                }
+
+                foreach (var added in newPhones)
+                {
+                    if (await _dbContext.CrmContactPhones.AnyAsync(x => x.ContactId == contact.Id && x.Number == added.Number))
+                        continue;
+
+                    var newPhone = new CRMContactPhone
+                    {
+                        ContactId = contact.Id,
+                        Number = added.Number,
+                        Primary = added.Primary,
+                        Type = added.Type
+                    };
+                    await _dbContext.CrmContactPhones.AddAsync(newPhone);
+                }
+            }
+
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (updatedContact.Logs?.Any() ?? false)
+            {
+                var newLogs = updatedContact.Logs.Where(x => x.Id == default);
+                var existingLogs = updatedContact.Logs.Where(x => x.Id != default);
+                
+                //var deletedLogs = contact.Logs.Where(x => x.UserId == userId && updatedContact.Logs.Any(e => e.Id == x.Id));
+
+                //if (deletedLogs?.Any() ?? false)
+                //{
+                //    _dbContext.CrmContactLogs.RemoveRange(deletedLogs);
+                //}
+
+                foreach (var updated in existingLogs)
+                {
+                    // TODO: Do we lock this after a certain amount of time?
+                    var log = contact.Logs.FirstOrDefault(x => x.UserId == userId && x.Id == updated.Id);
+                    if (log is null)
+                        continue;
+
+                    log.Notes = updated.Notes;
+                    _dbContext.CrmContactLogs.Update(log);
+                }
+
+                //foreach (var added in newLogs)
+                //{
+                //    var newLog = new CRMContactLog
+                //    {
+                //        ContactId = contact.Id,
+                //        UserId = userId,
+                //        Notes = updated.Notes
+                //    };
+                //    await _dbContext.CrmContactLogs.AddAsync(newLog);
+                //}
+            }
+
+            _dbContext.CrmContacts.Update(contact);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }

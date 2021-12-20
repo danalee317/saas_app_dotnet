@@ -105,5 +105,7 @@ namespace MultiFamilyPortal.Data.Models
         public virtual ICollection<UnderwritingPropertyUnitModel> Models { get; set; }
 
         public virtual ICollection<UnderwritingProspectFile> Files { get; set; }
+
+        public virtual ICollection<UnderwritingProspectPropertyIncomeForecast> Forecast { get; set; }
     }
 }

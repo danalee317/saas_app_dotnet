@@ -60,18 +60,15 @@ namespace MultiFamilyPortal.Services
             try
             {
                 var msg = MailHelper.CreateSingleEmail(from, to, template.Subject, template.PlainText, template.Html);
-
-#if DEBUG
-                System.Diagnostics.Debugger.Break();
-                await Task.CompletedTask;
-#else
                 var response = await _client.SendEmailAsync(msg);
 
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                if (response.StatusCode != System.Net.HttpStatusCode.Accepted)
                 {
+                    _logger.LogWarning($"Email to: '{to}' regarding - '{template.Subject}' was not successful.");
+                    var body = await response.Body.ReadAsStringAsync();
+                    _logger.LogWarning($"{response.StatusCode} ({(int)response.StatusCode}) - {body}");
                     throw new Exception($"Sendgrid responded with an unexpected response code {response.StatusCode}");
                 }
-#endif
 
                 return true;
             }

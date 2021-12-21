@@ -8,7 +8,6 @@ using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.FirstRun.Models;
 using MultiFamilyPortal.Services;
 using MultiFamilyPortal.Themes;
-using SendGrid.Helpers.Mail;
 
 namespace MultiFamilyPortal.FirstRun.Pages
 {
@@ -210,7 +209,7 @@ namespace MultiFamilyPortal.FirstRun.Pages
                     Year = DateTime.Now.Year
                 };
                 var template = await _templateProvider.GetTemplate(PortalTemplate.ContactMessage, model);
-                var emailAddress = new EmailAddress(user.Email, user.DisplayName);
+                var emailAddress = new MailAddress(user.Email, user.DisplayName);
                 await _emailService.SendAsync(emailAddress, template);
 
                 _siteValidator.SetFirstRunTheme(null);

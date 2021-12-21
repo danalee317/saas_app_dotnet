@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Net.Mail;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,6 @@ using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos;
 using MultiFamilyPortal.Services;
-using SendGrid.Helpers.Mail;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
 {
@@ -201,7 +201,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             };
             var templateResult = await templateProvider.GetTemplate(PortalTemplate.ContactMessage, notification);
 
-            var emailAddress = new EmailAddress(user.Email, user.DisplayName);
+            var emailAddress = new MailAddress(user.Email, user.DisplayName);
             await emailService.SendAsync(emailAddress, templateResult);
 
             return Ok(result);

@@ -1,21 +1,18 @@
+using System.Net.Mail;
 using HandlebarsDotNet;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.Data;
-using MultiFamilyPortal.Data.Models;
-using MultiFamilyPortal.Dtos;
-using SendGrid;
-using SendGrid.Helpers.Mail;
+using PostmarkDotNet;
 
 namespace MultiFamilyPortal.Services
 {
     internal class EmailService : IEmailService
     {
         private ILogger<EmailService> _logger { get; }
-        private ISendGridClient _client { get; }
+        private PostmarkClient _client { get; }
         private IMFPContext _context { get; }
 
-        public EmailService(ISendGridClient client, IMFPContext context, ILoggerFactory loggerFactory)
+        public EmailService(PostmarkClient client, IMFPContext context, ILoggerFactory loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<EmailService>();
             _client = client;
@@ -28,53 +25,59 @@ namespace MultiFamilyPortal.Services
             var fromEmailName = await _context.GetSettingAsync<string>(PortalSetting.NotificationEmailFrom);
             var toEmail = await _context.GetSettingAsync<string>(PortalSetting.ContactEmail);
 
-            return await SendAsync(new EmailAddress(fromEmail, fromEmailName), new EmailAddress(toEmail, fromEmailName), template);
+            return await SendAsync(new MailAddress(fromEmail, fromEmailName), new MailAddress (toEmail, fromEmailName), template);
         }
 
         public async Task<bool> SendAsync(string to, TemplateResult template)
         {
             var fromEmail = await _context.GetSettingAsync<string>(PortalSetting.NotificationEmail);
             var fromEmailName = await _context.GetSettingAsync<string>(PortalSetting.NotificationEmailFrom);
-            var fromAddress = new EmailAddress(fromEmail, fromEmailName);
-            var toAddress = new EmailAddress(to);
+            var fromAddress = new MailAddress(fromEmail, fromEmailName);
+            var toAddress = new MailAddress(to);
             return await SendAsync(fromAddress, toAddress, template);
         }
 
-        public async Task<bool> SendAsync(EmailAddress to, TemplateResult template)
+        public async Task<bool> SendAsync(MailAddress to, TemplateResult template)
         {
             var fromEmail = await _context.GetSettingAsync<string>(PortalSetting.NotificationEmail);
             var fromEmailName = await _context.GetSettingAsync<string>(PortalSetting.NotificationEmailFrom);
-            var fromAddress = new EmailAddress(fromEmail, fromEmailName);
+            var fromAddress = new MailAddress(fromEmail, fromEmailName);
             return await SendAsync(fromAddress, to, template);
         }
 
         public async Task<bool> SendAsync(string from, string to, TemplateResult template)
         {
-            var fromAddress = new EmailAddress(from);
-            var toAddress = new EmailAddress(to);
+            var fromAddress = new MailAddress(from);
+            var toAddress = new MailAddress(to);
             return await SendAsync(fromAddress, toAddress, template);
         }
 
-        public async Task<bool> SendAsync(EmailAddress from, EmailAddress to, TemplateResult template)
+        public async Task<bool> SendAsync(MailAddress from, MailAddress to, TemplateResult template)
         {
             try
             {
-                var msg = MailHelper.CreateSingleEmail(from, to, template.Subject, template.PlainText, template.Html);
-                var response = await _client.SendEmailAsync(msg);
+                using var message = new MailMessage(from, to)
+                {
+                    Body = template.Html,
+                    BodyEncoding = System.Text.Encoding.Default,
+                    IsBodyHtml = true,
+                    Subject = template.Subject,
+                };
 
-                if (response.StatusCode != System.Net.HttpStatusCode.Accepted)
+                var response = await _client.SendMessageAsync(from.ToString(), to.ToString(), template.Subject, template.PlainText, template.Html);
+
+                if (response.Status != PostmarkStatus.Success)
                 {
                     _logger.LogWarning($"Email to: '{to}' regarding - '{template.Subject}' was not successful.");
-                    var body = await response.Body.ReadAsStringAsync();
-                    _logger.LogWarning($"{response.StatusCode} ({(int)response.StatusCode}) - {body}");
-                    throw new Exception($"Sendgrid responded with an unexpected response code {response.StatusCode}");
+                    _logger.LogWarning($"Postmark responded with an unexpected response code {response.Status} - Error Code: {response.ErrorCode} - Message: {response.Message}");
+                    throw new Exception($"Postmark responded with an unexpected response code {response.Status} - Error Code: {response.ErrorCode} - Message: {response.Message}");
                 }
 
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error sending email: {to.Email} for regarding - {template.Subject}");
+                _logger.LogError(ex, $"Error sending email: {to} for regarding - {template.Subject}");
             }
 
             return false;

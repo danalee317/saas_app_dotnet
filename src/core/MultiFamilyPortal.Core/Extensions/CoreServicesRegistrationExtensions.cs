@@ -12,7 +12,7 @@ using MultiFamilyPortal.Configuration;
 using MultiFamilyPortal.Http;
 using MultiFamilyPortal.SaaS.Extensions;
 using MultiFamilyPortal.Services;
-using SendGrid;
+using PostmarkDotNet;
 
 namespace MultiFamilyPortal.Extensions
 {
@@ -41,9 +41,9 @@ namespace MultiFamilyPortal.Extensions
 
             services.AddSingleton(config.Captcha);
 
-            services.AddTransient<ISendGridClient>(sp =>
+            services.AddTransient<PostmarkClient>(sp =>
             {
-                return new SendGridClient(config.SendGridKey);
+                return new PostmarkClient(config.PostmarkApiKey);
             });
 
             if (string.IsNullOrEmpty(config?.Storage?.ConnectionString))

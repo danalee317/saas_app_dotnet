@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Net.Mail;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos;
 using MultiFamilyPortal.Services;
-using SendGrid.Helpers.Mail;
 
 namespace MultiFamilyPortal.Controllers
 {
@@ -81,7 +81,7 @@ namespace MultiFamilyPortal.Controllers
                 Year = DateTime.Now.Year
             };
             var userMessage = await _templateProvider.GetTemplate(PortalTemplate.ContactMessage, userNotification);
-            var emailAddress = new EmailAddress(form.Email, $"{form.FirstName} {form.LastName}".Trim());
+            var emailAddress = new MailAddress(form.Email, $"{form.FirstName} {form.LastName}".Trim());
             await _emailService.SendAsync(emailAddress, userMessage);
 
             return Ok(new FormResult
@@ -149,7 +149,7 @@ namespace MultiFamilyPortal.Controllers
                 Year = DateTime.Now.Year
             };
             var investorMessage = await _templateProvider.GetTemplate(PortalTemplate.ContactMessage, investorInquiryNotification);
-            var emailAddress = new EmailAddress(form.Email, $"{form.FirstName} {form.LastName}".Trim());
+            var emailAddress = new MailAddress(form.Email, $"{form.FirstName} {form.LastName}".Trim());
             await _emailService.SendAsync(emailAddress, investorMessage);
 
             return Ok(new FormResult

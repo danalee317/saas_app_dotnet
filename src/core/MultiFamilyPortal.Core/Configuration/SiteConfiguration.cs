@@ -2,7 +2,7 @@
 {
     internal class SiteConfiguration
     {
-        public string SendGridKey { get; set; }
+        public string PostmarkApiKey { get; set; }
 
         public GoogleCaptchaOptions Captcha { get; set; }
 

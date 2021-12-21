@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Net.Mail;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos;
-using SendGrid.Helpers.Mail;
 
 namespace MultiFamilyPortal.Services
 {
@@ -61,7 +61,7 @@ namespace MultiFamilyPortal.Services
             try
             {
                 var templateResult = await _templateProvider.GetTemplate(PortalTemplate.BlogSubscriberNotification, author);
-                var to = new EmailAddress(author.Email, author.AuthorName);
+                var to = new MailAddress(author.Email, author.AuthorName);
                 await _emailService.SendAsync(to, templateResult);
             }
             catch (Exception ex)
@@ -90,7 +90,7 @@ namespace MultiFamilyPortal.Services
                     };
 
                     var templateResult = await _templateProvider.GetTemplate(PortalTemplate.BlogSubscriberNotification, notification);
-                    var to = new EmailAddress(notification.Email);
+                    var to = new MailAddress(notification.Email);
 
                     if (await _emailService.SendAsync(to, templateResult))
                     {
@@ -115,7 +115,7 @@ namespace MultiFamilyPortal.Services
 
         public async Task<SubscriberResult> CommentNotificationEmail(CommentNotification commentNotification)
         {
-            var to = new EmailAddress(commentNotification.PostAuthorEmail, commentNotification.PostAuthorName);
+            var to = new MailAddress(commentNotification.PostAuthorEmail, commentNotification.PostAuthorName);
             var text = $@"{commentNotification.CommenterName} Commented on the blog :{commentNotification.PostTitle}
 Time: {commentNotification.CommentedOn}
 

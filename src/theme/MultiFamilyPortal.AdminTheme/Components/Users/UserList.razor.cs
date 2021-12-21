@@ -1,33 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using BlazorAnimation;
-using System.Net.Http;
-using System.Security.Claims;
-using Humanizer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.JSInterop;
-using MultiFamilyPortal.AdminTheme.Components;
-using MultiFamilyPortal.AdminTheme.Models;
-using MultiFamilyPortal.Authentication;
-using MultiFamilyPortal.CoreUI;
-using MultiFamilyPortal.Dtos.Underwriting;
-using MultiFamilyPortal.Extensions;
-using MultiFamilyPortal.SideBarTheme.Components;
-using Telerik.Blazor;
-using Telerik.Blazor.Components;
-using Telerik.Blazor.Components.Editor;
-using Telerik.Blazor.Components.Upload;
-using Microsoft.Extensions.Logging;
 using System.Net;
-using System.Collections.Specialized;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
+using MultiFamilyPortal.AdminTheme.Models;
+using MultiFamilyPortal.CoreUI;
+using Telerik.Blazor.Components;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Users
 {
@@ -87,7 +64,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Users
                 {
                     case HttpStatusCode.NoContent:
                         notification.ShowSuccess("The user was deleted successfully");
-                        await OnInitializedAsync();
+                        await OnUpdated.InvokeAsync();
                         break;
                     case HttpStatusCode.NotFound:
                         notification.ShowWarning("The user was not found");

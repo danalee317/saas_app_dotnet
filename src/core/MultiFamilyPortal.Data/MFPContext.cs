@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Duende.IdentityServer.EntityFramework.Entities;
 using Duende.IdentityServer.EntityFramework.Extensions;
 using Duende.IdentityServer.EntityFramework.Interfaces;
@@ -69,6 +69,8 @@ namespace MultiFamilyPortal.Data
         public DbSet<UnderwritingPropertyUnitLedger> UnderwritingPropertyUnitsLedger { get; set; } = default!;
         public DbSet<UnderwritingProspectFile> UnderwritingProspectFiles { get; set; } = default!;
         public DbSet<UnderwritingProspectPropertyBucketList> UnderwritingProspectPropertyBucketLists { get; set; } = default!;
+
+        public DbSet<UnderwritingProspectPropertyIncomeForecast> UnderwritingProspectPropertyIncomeForecasts { get; set; } = default!;
         #endregion
 
         #region Investors

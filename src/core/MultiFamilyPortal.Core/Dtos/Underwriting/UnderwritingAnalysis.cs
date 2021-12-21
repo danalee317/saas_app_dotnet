@@ -16,6 +16,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
     [JsonConverter(typeof(UnderwritingAnalysisConverter))]
     public class UnderwritingAnalysis : ReactiveObject, IDisposable
     {
+        public static object locker = new object();
         private readonly CompositeDisposable _disposable;
         private ReadOnlyObservableCollection<UnderwritingAnalysisLineItem> _sellersLineItems;
         private ReadOnlyObservableCollection<UnderwritingAnalysisLineItem> _sellersIncomeItems;
@@ -240,6 +241,12 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .Throttle(TimeSpan.FromSeconds(1))
                 .InvokeCommand(_calculateLoanAmount)
                 .DisposeWith(_disposable);
+
+            _updateIncomeForecast = ReactiveCommand.Create(OnUpdateIncomeForecast);
+            this.WhenAnyValue(x => x.HoldYears, x => x.IncomeForecast, (h, i) => Unit.Default)
+                .Throttle(TimeSpan.FromMilliseconds(100))
+                .InvokeCommand(_updateIncomeForecast)
+                .DisposeWith(_disposable);
         }
 
         public Guid Id { get; set; }
@@ -457,10 +464,12 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         public List<UnderwritingAnalysisNote> Notes { get; set; }
         public List<UnderwritingAnalysisModel> Models { get; set; }
         public List<UnderwritingAnalysisCapitalImprovement> CapitalImprovements { get; set; }
+        public List<UnderwritingAnalysisIncomeForecast> IncomeForecast { get; set; }
 
         private ReactiveCommand<Unit, Unit> _downpaymentCommand;
         private ReactiveCommand<Unit, Unit> _calculateVacancyAndManagement;
         private ReactiveCommand<Unit, Unit> _calculateLoanAmount;
+        private ReactiveCommand<Unit, Unit> _updateIncomeForecast;
         private bool _disposedValue;
 
         public void AddMortgage(UnderwritingAnalysisMortgage mortgage)
@@ -635,6 +644,31 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 return 0;
 
             return income - expenses;
+        }
+
+        private void OnUpdateIncomeForecast()
+        {
+            if (IncomeForecast is null)
+                IncomeForecast = new List<UnderwritingAnalysisIncomeForecast>();
+
+            if(IncomeForecast.Count != HoldYears + 1)
+            {
+                var temp = IncomeForecast.ToArray();
+                lock(locker)
+                {
+                    IncomeForecast.Clear();
+                    for (int i = 0; i < HoldYears + 1; i++)
+                    {
+                        var forecast = temp.FirstOrDefault(x => x.Year == i);
+                        IncomeForecast.Insert(i, forecast ?? new UnderwritingAnalysisIncomeForecast
+                        {
+                            Year = i,
+                        });
+                    }
+
+
+                }
+            }
         }
 
         private static double CalculateCapRate(double noi, double purchasePrice)

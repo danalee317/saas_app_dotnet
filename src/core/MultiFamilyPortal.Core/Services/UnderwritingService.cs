@@ -50,6 +50,18 @@ namespace MultiFamilyPortal.Services
                     GrossPotentialRent = x.GrossPotentialRent,
                     HoldYears = x.HoldYears,
                     Id = x.Id,
+                    IncomeForecast = x.Forecast.Select(f => new UnderwritingAnalysisIncomeForecast
+                    {
+                        FixedIncreaseOnRemainingUnits = f.FixedIncreaseOnRemainingUnits,
+                        IncreaseType = f.IncreaseType,
+                        OtherIncomePercent = f.OtherIncomePercent,
+                        OtherLossesPercent = f.OtherLossesPercent,
+                        PerUnitIncrease = f.PerUnitIncrease,
+                        UnitsAppliedTo = f.UnitsAppliedTo,
+                        UtilityIncreases = f.UtilityIncreases,
+                        Vacancy = f.Vacancy,
+                        Year = f.Year
+                    }).ToList(),
                     LoanType = x.LoanType,
                     LTV = x.LTV,
                     Management = x.Management,
@@ -86,6 +98,23 @@ namespace MultiFamilyPortal.Services
                     Zip = x.Zip,
                 })
                 .FirstOrDefaultAsync(x => x.Id == propertyId);
+
+            if (property.IncomeForecast is null)
+                property.IncomeForecast = new List<UnderwritingAnalysisIncomeForecast>();
+
+            if(property.IncomeForecast.Count != property.HoldYears + 1)
+            {
+                var temp = property.IncomeForecast.ToArray();
+                property.IncomeForecast.Clear();
+                for(var i = 0; i < property.HoldYears + 1; i++)
+                {
+                    var year = temp.FirstOrDefault(x => x.Year == i) ?? new UnderwritingAnalysisIncomeForecast
+                    {
+                        Year = i
+                    };
+                    property.IncomeForecast.Add(year);
+                }
+            }
 
             var mortgages = await _dbContext.UnderwritingMortgages.Where(x => x.PropertyId == property.Id)
                 .Select(m => new UnderwritingAnalysisMortgage
@@ -161,8 +190,9 @@ namespace MultiFamilyPortal.Services
                 .Include(x => x.BucketList)
                 .Include(x => x.Notes)
                 .Include(x => x.Models)
+                .Include(x => x.CapitalImprovements)
+                .Include(x => x.Forecast)
                 .FirstOrDefaultAsync(x => x.Id == propertyId);
-
 
             await UpdateBucketlist(property, analysis);
             await UpdateCapitalImprovements(propertyId, analysis);
@@ -171,8 +201,41 @@ namespace MultiFamilyPortal.Services
             await UpdateNotes(propertyId, analysis, property, email);
             await UpdateUnitModelsAndRentRoll(propertyId, analysis);
             await UpdateProspectProperty(propertyId, analysis);
+            await UpdateIncomeForecast(propertyId, analysis);
 
             return await GetUnderwritingAnalysis(propertyId);
+        }
+
+        private async Task UpdateIncomeForecast(Guid propertyId, UnderwritingAnalysis analysis)
+        {
+            if (analysis.HoldYears < 0)
+                analysis.HoldYears = 0;
+
+            var expectedResults = analysis.HoldYears + 1;
+
+            var existing = await _dbContext.UnderwritingProspectPropertyIncomeForecasts.Where(x => x.ProspectId == propertyId).ToListAsync();
+            _dbContext.UnderwritingProspectPropertyIncomeForecasts.RemoveRange(existing);
+            await _dbContext.SaveChangesAsync();
+            for(var i = 0; i < expectedResults; i++)
+            {
+                var analysisForecast = analysis.IncomeForecast.FirstOrDefault(x => x.Year == i);
+
+                await _dbContext.UnderwritingProspectPropertyIncomeForecasts.AddAsync(new UnderwritingProspectPropertyIncomeForecast
+                {
+                    FixedIncreaseOnRemainingUnits = analysisForecast?.FixedIncreaseOnRemainingUnits ?? 0,
+                    IncreaseType = analysisForecast?.IncreaseType ?? 0,
+                    OtherIncomePercent = analysisForecast?.OtherIncomePercent ?? 0,
+                    OtherLossesPercent = analysisForecast?.OtherLossesPercent ?? 0,
+                    PerUnitIncrease = analysisForecast?.PerUnitIncrease ?? 0,
+                    ProspectId = propertyId,
+                    UnitsAppliedTo = analysisForecast?.UnitsAppliedTo ?? 0,
+                    UtilityIncreases = analysisForecast?.UtilityIncreases ?? 0,
+                    Vacancy = analysisForecast?.Vacancy ?? 0,
+                    Year = i,
+                });
+            }
+
+            await _dbContext.SaveChangesAsync();
         }
 
         private async Task UpdateLineItems(Guid propertyId, UnderwritingAnalysis analysis)

@@ -40,11 +40,11 @@ namespace MultiFamilyPortal.Converters
                             break;
                         case nameof(UnderwritingAnalysis.BucketList):
                             var bucketListConverter = options.GetConverter<UnderwritingAnalysisBucketList>();
-                            value.BucketList = bucketListConverter.Read(ref reader, typeToConvert, options);
+                            value.BucketList = bucketListConverter.Read(ref reader, typeof(UnderwritingAnalysisBucketList), options);
                             break;
                         case nameof(UnderwritingAnalysis.CapitalImprovements):
                             var capitalImprovementsConverter = options.GetConverter<List<UnderwritingAnalysisCapitalImprovement>>();
-                            value.CapitalImprovements = capitalImprovementsConverter.Read(ref reader, typeToConvert, options);
+                            value.CapitalImprovements = capitalImprovementsConverter.Read(ref reader, typeof(List<UnderwritingAnalysisCapitalImprovement>), options);
                             break;
                         case nameof(UnderwritingAnalysis.CapX):
                             value.CapX = reader.GetDouble();
@@ -78,6 +78,10 @@ namespace MultiFamilyPortal.Converters
                             break;
                         case nameof(UnderwritingAnalysis.Id):
                             value.Id = reader.GetGuid();
+                            break;
+                        case nameof(UnderwritingAnalysis.IncomeForecast):
+                            var incomeForecastConverter = options.GetConverter<List<UnderwritingAnalysisIncomeForecast>>();
+                            value.IncomeForecast = incomeForecastConverter.Read(ref reader, typeof(List<UnderwritingAnalysisIncomeForecast>), options);
                             break;
                         case nameof(UnderwritingAnalysis.LoanType):
                             value.LoanType = reader.GetEnum<UnderwritingLoanType>();
@@ -204,6 +208,7 @@ namespace MultiFamilyPortal.Converters
             WriteNumber(writer, nameof(UnderwritingAnalysis.GrossPotentialRent), value.GrossPotentialRent);
             WriteNumber(writer, nameof(UnderwritingAnalysis.HoldYears), value.HoldYears);
             Write(writer, nameof(UnderwritingAnalysis.Id), value.Id);
+            WriteArray(writer, nameof(UnderwritingAnalysis.IncomeForecast), value.IncomeForecast, options);
             Write(writer, nameof(UnderwritingAnalysis.LoanType), value.LoanType);
             WriteNumber(writer, nameof(UnderwritingAnalysis.LTV), value.LTV);
             WriteNumber(writer, nameof(UnderwritingAnalysis.Management), value.Management);

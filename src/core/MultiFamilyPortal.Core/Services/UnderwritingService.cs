@@ -164,8 +164,11 @@ namespace MultiFamilyPortal.Services
                     Units = m.Units.Select(u => new UnderwritingAnalysisUnit
                     {
                         AtWill = u.AtWill,
+                        Renter = u.Renter,
                         Balance = u.Balance,
+                        Rent = u.Rent,
                         DepositOnHand = u.DepositOnHand,
+                        Unit = u.Unit,
                         LeaseEnd = u.LeaseEnd,
                         LeaseStart = u.LeaseStart,
                         Ledger = u.Ledger.Select(l => new UnderwritingAnalysisUnitLedgerItem
@@ -207,6 +210,7 @@ namespace MultiFamilyPortal.Services
                 .Include(x => x.DealAnalysis)
                 .Include(x => x.Notes)
                 .Include(x => x.Models)
+                .ThenInclude(y => y.Units)
                 .Include(x => x.CapitalImprovements)
                 .Include(x => x.Forecast)
                 .FirstOrDefaultAsync(x => x.Id == propertyId);
@@ -437,7 +441,7 @@ namespace MultiFamilyPortal.Services
         {
             var existingUnits = await _dbContext.UnderwritingPropertyUnitModels
                 .Include(x => x.Units)
-                    .ThenInclude(x => x.Ledger)
+                .ThenInclude(x => x.Ledger)
                 .ToArrayAsync();
 
             if (existingUnits?.Any() ?? false)

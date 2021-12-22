@@ -1,0 +1,24 @@
+<TelerikGrid Data="@_rollUnits" 
+             Height="600px" 
+             Sortable="true" 
+             Pageable="true" 
+             Resizable="true" 
+             Reorderable="true">
+  <GridColumns>
+    <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.Unit))" Title="Apartment Name" />
+    <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.Renter))" Title="Tenant Name" Width="15%" />
+    <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.Rent))" Title="Floor Plan" /> @*This needs to match to floor plan*@
+    <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.Rent))" Title="Monthly Rent ($)" />
+    <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.Balance))" Title="Balance ($)" />
+    <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.DepositOnHand))" Title="Cash at Hand ($)" />
+    <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.LeaseStart))" Title="Lease Start" />
+    <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.LeaseEnd))" Title="Lease End" />
+    <GridCommandColumn>
+      <div class="text-center">
+        <GridCommandButton Command="MyOwnCommand" Icon="edit" ShowInEdit="false">
+          Edit
+        </GridCommandButton>
+      </div>
+    </GridCommandColumn>
+  </GridColumns>
+</TelerikGrid>

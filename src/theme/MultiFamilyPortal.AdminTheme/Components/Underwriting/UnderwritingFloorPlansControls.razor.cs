@@ -6,9 +6,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
     public partial class UnderwritingFloorPlansControls
     {
         [Parameter]
-        public bool ShowWindow { get; set; }
-
-        [Parameter]
         public bool IsNew { get; set; }
 
         [Parameter]

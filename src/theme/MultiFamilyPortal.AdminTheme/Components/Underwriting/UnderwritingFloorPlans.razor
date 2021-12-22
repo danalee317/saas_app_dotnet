@@ -1,4 +1,8 @@
-<TelerikGrid Data="@_floorPlans" Height="600px" Sortable="true" Resizable="true" Reorderable="true">
+<TelerikGrid Data="@_floorPlans" 
+             Height="600px" 
+             Sortable="true" 
+             Resizable="true" 
+             Reorderable="true">
   <GridToolBar>
     <span class="k-toolbar-spacer"></span>
     <GridCommandButton Command="MyToolbarCommand" Icon="add" OnClick="@OnAddFloor">
@@ -60,8 +64,8 @@
   </GridColumns>
 </TelerikGrid>
 
-<UnderwritingFloorPlansControls ShowWindow="@_showModel"
-                                IsNew="@_isNew"
-                                FloorPlan="@_floorPlan"
-                                Property="@Property" 
-                                FloorPlanChanged=@InformSuperParent/>
+<UnderwritingFloorPlansEdit ShowWindow="@_showModel"
+                            IsNew="@_isNew"
+                            FloorPlan="@_floorPlan"
+                            Property="@Property" 
+                            FloorPlanChanged=@InformSuperParent/>

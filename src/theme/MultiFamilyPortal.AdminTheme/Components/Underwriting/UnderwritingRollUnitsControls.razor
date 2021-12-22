@@ -1,0 +1,79 @@
+<div class="row">
+  <div class="col-2 my-auto">
+    <label for="unit-name" class="form-label">Apartment</label>
+  </div>
+  <div class="col-10 my-3">
+   <TelerikTextBox  Id="unit-name"
+                    Class="form-control w-100 mx-2"
+                    @bind-Value=@Unit.Unit/>
+  </div>
+  <div class="col-2 my-auto">
+    <label for="unit-tenant" class="form-label mt-4">Tenant</label>
+  </div>
+  <div class="col-10 my-3">
+    <TelerikTextBox  Id="unit-name"
+                     Class="form-control w-100 mx-2"
+                     @bind-Value=@Unit.Renter/>
+  </div>
+  <hr />
+  <div class="col-2 my-auto">
+    <label for="unit-start-date" class="form-label">Lease Start</label>
+  </div>
+  <div class="col-4 my-3">
+    <TelerikDatePicker  Id="unit-start-date"
+                        Class="form-control w-100"
+                        @bind-Value=@Unit.LeaseStart/>
+  </div>
+  <div class="col-2 my-auto">
+    <label for="unit-end-date" class="form-label">Lease End</label>
+  </div>
+  <div class="col-4 my-3">
+   <TelerikDatePicker  Id="unit-end-date"
+                        Class="form-control w-100"
+                        @bind-Value=@Unit.LeaseEnd/>
+  </div>
+  <div class="col-2 my-auto">
+    <label for="unit-cash-at-hand" class="form-label">Paid</label>
+  </div>
+  <div class="col-4 my-3">
+     <TelerikNumericTextBox  Class="form-control w-100"
+                             Min="100"
+                             Id="unit-cash-at-hand"
+                             Step="50"
+                             Format="C"
+                             @bind-Value=@Unit.DepositOnHand/>
+  </div>
+  <div class="col-2 my-auto">
+    <label for="unit-monthly" class="form-label">At will</label>
+  </div>
+  <div class="col-4 my-3 text-end">
+   <TelerikSwitch  Id="unit-monthly"
+                   Class="mt-3 me-2"
+                   @bind-Value=@Unit.AtWill/>
+  </div>
+  <div class="col-2 my-auto">
+    <label for="unit-single-rent" class="form-label my-auto">Rent</label>
+  </div>
+  <div class="col-4 my-3">
+     <TelerikNumericTextBox  Class="form-control w-100"
+                             Min="100"
+                             Id="unit-single-rent"
+                             Step="50"
+                             Format="C"
+                             @bind-Value=@Unit.Rent/>
+  </div>
+  <div class="col-2 my-auto">
+    <label for="unit-balance class="form-label">Balance</label>
+  </div>
+  <div class="col-4 my-3">
+     <TelerikNumericTextBox  Class="form-control w-100"
+                             Id="unit-balance"
+                             Step="50"
+                             Format="C"
+                             @bind-Value=@Unit.Balance/>
+
+  </div>
+  <div class="col-12 text-center my-3">
+    <button class="btn btn-success" id="unit-save" @onclick=@UpdateUnit>Save</button>
+  </div>
+</div>

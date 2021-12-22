@@ -55,12 +55,11 @@ else
                         IconClass="fa-duotone fa-list">
               <Content>
                <TelerikTabStrip TabPosition="TabPosition.Top">
-                  <TabStripTab Title="Floor Plans">
+                  <TabStripTab Title="Models">
                     <UnderwritingFloorPlans Property=@Property OnPropertyChanged=@OnUpdateProperty/>
                   </TabStripTab>
                   <TabStripTab Title="Units">
-                    <h2>Units</h2>
-                    <ComingSoon />
+                    <UnderwritingRollUnits Property=@Property/>
                   </TabStripTab>
                 </TelerikTabStrip>
               </Content>

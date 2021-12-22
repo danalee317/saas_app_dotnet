@@ -1,0 +1,35 @@
+<TelerikWindow @bind-Visible="@ShowWindow" 
+               Modal="true" 
+               Centered="true" 
+               Height=@(IsNew ? "665px":"725px") Width="600px">
+  <WindowTitle>
+    <strong>@(IsNew?"Add": "Edit") Floor Plan</strong>
+  </WindowTitle>
+  <WindowActions>
+    <WindowAction Name="Close"></WindowAction>
+  </WindowActions>
+  <WindowContent>
+    @if (IsNew)
+    {
+      <UnderwritingFloorPlansControls IsNew="@IsNew"
+                                      FloorPlan="@FloorPlan"
+                                      Property="@Property" 
+                                      FloorPlanChanged=@PropertyUpdated/>
+    }
+    else
+    {
+      <TelerikTabStrip TabPosition="TabPosition.Top">
+        <TabStripTab Title="Floor Plans">
+            <UnderwritingFloorPlansControls IsNew="@IsNew"
+                                            FloorPlan="@FloorPlan" 
+                                            Property="@Property" 
+                                            FloorPlanChanged=@PropertyUpdated/>
+        </TabStripTab>
+        <TabStripTab Title="Roll Units">
+          <UnderwritingUnitsAddition FloorPlan="@FloorPlan" UpdateModel=@PropertyUpdated/>
+        </TabStripTab>
+      </TelerikTabStrip>
+    }
+  </WindowContent>
+
+</TelerikWindow>

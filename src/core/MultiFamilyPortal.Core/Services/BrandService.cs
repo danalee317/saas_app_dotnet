@@ -83,7 +83,7 @@ namespace MultiFamilyPortal.Services
 
         private SKImage ResizePngImage(byte[] data, int size)
         {
-            var src = SKImage.FromEncodedData(data);
+            using var src = SKImage.FromEncodedData(data);
 
             var info = new SKImageInfo(size, size, SKColorType.Rgba8888);
             var output = SKImage.Create(info);
@@ -132,20 +132,13 @@ namespace MultiFamilyPortal.Services
                         var format = fileExt == ".jpg" ? SKEncodedImageFormat.Jpeg : SKEncodedImageFormat.Png;
                         using (var src = SKImage.FromEncodedData(file.OpenReadStream()))
                         {
-                            var scale = 1;
                             var max = Math.Max(src.Height, src.Width);
-                            if (max > 1024)
-                            {
-                                scale = 1024 / (max == src.Height ? src.Height : src.Width);
-                            }
-
+                            var scale = max > 1024 ? 1024 / max : 1;
+                           
                             int width = src.Width * scale;
                             int height = src.Height * scale;
                             if (width == 0 || height == 0)
-                            {
-                                width = src.Width;
-                                height = src.Height;
-                            }
+                                throw new Exception("Invalid image size");
 
                             var info = new SKImageInfo(width, height, SKColorType.Rgba8888);
                             using var output = SKImage.Create(info);

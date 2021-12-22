@@ -62,9 +62,7 @@
             <div class="col-12">
               <div class="form-group">
                 <label>Bio</label>
-                <TelerikEditor @bind-Value="@SiteUser.Bio"
-                               Height="400px">
-                </TelerikEditor>
+                <PortalWysiwyg @bind-Value=@SiteUser.Bio />
               </div>
             </div>
           }

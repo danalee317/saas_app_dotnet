@@ -12,7 +12,7 @@ namespace MultiFamilyPortal.Services
 
         private readonly Dictionary<string, int> _favicons = new ()
         {
-             { "favicon.ico", 16 },
+            // { "favicon.ico", 16 },
              { "favicon-16x16.png", 16 },
              { "favicon-32x32.png", 32 },
              { "favicon-96x96.png", 96 },
@@ -66,7 +66,7 @@ namespace MultiFamilyPortal.Services
                     using var bitmap = SKBitmap.FromImage(output);
                     var skData = bitmap.Encode(type, 100);
 
-                    if (!skData.IsEmpty)
+                    if (skData is not null)
                     {
                         await using var skStream = skData.AsStream();
                         var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(icon.Key);
@@ -86,10 +86,10 @@ namespace MultiFamilyPortal.Services
             var src = SKImage.FromEncodedData(data);
 
             var info = new SKImageInfo(size, size, SKColorType.Rgba8888);
-            using var output = SKImage.Create(info);
+            var output = SKImage.Create(info);
             src.ScalePixels(output.PeekPixels(), SKFilterQuality.High);
 
-            return src;
+            return output;
         }
 
         private SKImage ResizeSvgImage(byte[] data, int size)
@@ -154,7 +154,7 @@ namespace MultiFamilyPortal.Services
                             using var bitmap = SKBitmap.FromImage(output);
                             var skData = bitmap.Encode(format, 100);
 
-                            if (!skData.IsEmpty)
+                            if (skData is not null)
                             {
                                 await using var skStream = skData.AsStream();
                                 var fileTypeInfo = FileTypeLookup.GetFileTypeInfo(fileName);

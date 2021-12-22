@@ -1,0 +1,18 @@
+﻿<PortalErrorBoundary>
+  <LoaderContainer Context=@Property>
+    <TelerikTabStrip TabPosition="TabPosition.Top">
+      <TabStripTab Title="Stated In Place">
+        <UnderwritingSellerInfoTab Property=@Property />
+      </TabStripTab>
+      <TabStripTab Title="Pro Forma">
+        <UnderwritingOurInfoTab Property=@Property ExpensesUpdated=@OnExpensesUpdated />
+      </TabStripTab>
+      @if(Property.OurExpense.Any())
+      {
+        <TabStripTab Title="Rule of Thumb">
+          <UnderwritingMarketRuleOfThumb Property=@Property />
+        </TabStripTab>
+      }
+    </TelerikTabStrip>
+  </LoaderContainer>
+</PortalErrorBoundary>

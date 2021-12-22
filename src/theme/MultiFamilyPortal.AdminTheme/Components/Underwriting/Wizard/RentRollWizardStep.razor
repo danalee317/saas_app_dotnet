@@ -1,0 +1,13 @@
+﻿<PortalErrorBoundary>
+  <LoaderContainer Context=@Property>
+    <TelerikTabStrip TabPosition="TabPosition.Top">
+      <TabStripTab Title="Floor Plans">
+        <UnderwritingFloorPlans Property=@Property OnPropertyChanged=@OnUpdateProperty/>
+      </TabStripTab>
+      <TabStripTab Title="Units">
+        <h2>Units</h2>
+        <ComingSoon />
+      </TabStripTab>
+    </TelerikTabStrip>
+  </LoaderContainer>
+</PortalErrorBoundary>

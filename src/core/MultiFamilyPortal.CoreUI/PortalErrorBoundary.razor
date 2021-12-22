@@ -1,0 +1,9 @@
+﻿<ErrorBoundary @ref="errorBoundary">
+  <ChildContent>
+    @ChildContent
+  </ChildContent>
+  <ErrorContent>
+    <p class="errorUI">Whoops... that shouldn't have happened</p>
+    <TelerikButton Primary=@true Title="Refresh" OnClick=@RecoverFromError>Refresh</TelerikButton>
+  </ErrorContent>
+</ErrorBoundary>

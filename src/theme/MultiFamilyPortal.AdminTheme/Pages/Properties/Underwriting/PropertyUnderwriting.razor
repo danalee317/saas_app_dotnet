@@ -1,5 +1,6 @@
-﻿@page "/admin/underwriting/property/{propertyId:guid}"
+@page "/admin/underwriting/property/{propertyId:guid}"
 @using MultiFamilyPortal.AdminTheme.Components.Underwriting
+@using MultiFamilyPortal.AdminTheme.Components.Underwriting.Wizard
 
 @if(Property is null)
 {
@@ -35,58 +36,25 @@ else
             <WizardStep Label="Property Info"
                         IconClass="fa-duotone fa-city">
               <Content>
-                <UnderwritingPropertyInfoTab Property=@Property />
+                <PropertyInfoWizardStep Property=@Property />
               </Content>
             </WizardStep>
             <WizardStep Label="Financials"
                         IconClass="fa-duotone fa-money-bills">
               <Content>
-                <TelerikTabStrip TabPosition="TabPosition.Top">
-                  <TabStripTab Title="Stated In Place">
-                    <UnderwritingSellerInfoTab Property=@Property />
-                  </TabStripTab>
-                  <TabStripTab Title="Pro Forma">
-                    <UnderwritingOurInfoTab Property=@Property ExpensesUpdated=@OnExpensesUpdated />
-                  </TabStripTab>
-                  @if(Property.OurExpense.Any())
-                  {
-                    <TabStripTab Title="Rule of Thumb">
-                      <UnderwritingMarketRuleOfThumb Property=@Property />
-                    </TabStripTab>
-                  }
-                </TelerikTabStrip>
+                <FinancialsWizardStep Property=@Property ExpensesUpdated=@OnExpensesUpdated />
               </Content>
             </WizardStep>
             <WizardStep Label="Closing"
                         IconClass="fa-duotone fa-piggy-bank">
               <Content>
-                <TelerikTabStrip TabPosition="TabPosition.Top">
-                  <TabStripTab Title="Mortgage">
-                    <UnderwritingMortgagesTab Property=@Property />
-                  </TabStripTab>
-                  <TabStripTab Title="Closing Costs">
-                    <UnderwritingClosingCostsTab Property=@Property />
-                  </TabStripTab>
-                  <TabStripTab Title="Summary">
-                    <UnderwritingSummaryTab Property=@Property />
-                  </TabStripTab>
-                </TelerikTabStrip>
+                <ClosingWizardStep Property=@Property />
               </Content>
             </WizardStep>
             <WizardStep Label="Files/Notes"
                         IconClass="fa-duotone fa-notes">
               <Content>
-                <TelerikTabStrip TabPosition="TabPosition.Top">
-                  <TabStripTab Title="Bucketlist">
-                    <UnderwritingBucketlistTab Property=@Property />
-                  </TabStripTab>
-                  <TabStripTab Title="Notes">
-                    <UnderwritingNotesTab Property=@Property />
-                  </TabStripTab>
-                  <TabStripTab Title="Files">
-                    <UnderwritingFilesTab Property=@Property />
-                  </TabStripTab>
-                </TelerikTabStrip>
+                <FilesNotesWizardStep Property=@Property />
               </Content>
             </WizardStep>
             <WizardStep Label="Rent Roll"

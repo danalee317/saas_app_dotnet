@@ -29,14 +29,11 @@ namespace MultiFamilyPortal.AdminTheme.Services
             var sheet = workbook.GetWorksheet("Files");
             for(int i = 0; i < files.Count(); i++)
             {
-                var row = i + 2;
-                var typeIndex = new CellIndex(row, 0);
-                var descriptionIndex = new CellIndex(row, 1);
-                var linkIndex = new CellIndex(row, 2);
+                var row = i + 3;
                 var file = files.ElementAt(i);
-                sheet.Cells[typeIndex].SetValueAsText(file.Type);
-                sheet.Cells[descriptionIndex].SetValueAsText(file.Description);
-                sheet.Cells[linkIndex].SetValue(file.DownloadLink);
+                sheet.SetValue($"A{row}", file.Type)
+                     .SetValue($"B{row}", file.Description)
+                     .SetHyperlink($"C{row}", file.Name, file.DownloadLink);
             }
         }
 
@@ -56,6 +53,14 @@ namespace MultiFamilyPortal.AdminTheme.Services
         public static Worksheet GetWorksheet(this Workbook workbook, string name)
         {
             return workbook.Sheets.OfType<Worksheet>().FirstOrDefault(x => x.Name == name);
+        }
+
+        public static Worksheet SetHyperlink(this Worksheet sheet, string cellName, string displayName, string link)
+        {
+            var linkInfo = HyperlinkInfo.CreateHyperlink(link, displayName);
+            var cellIndex = GetCellIndex(cellName);
+            sheet.Hyperlinks.Add(cellIndex, linkInfo);
+            return sheet.SetValue(cellName, displayName);
         }
 
         public static Worksheet SetValue(this Worksheet sheet, string cellName, string value)

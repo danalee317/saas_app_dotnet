@@ -51,6 +51,9 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
         private void OnNavigating(object sender, LocationChangedEventArgs e)
         {
             _navigationManager.LocationChanged -= OnNavigating;
+            //Property.Update();
+            //DbContext.Update(Property);
+            //DbContext.SaveChanges();
         }
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -62,6 +65,11 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
 
         private void Previous() => currentIndex--;
 
+        private void OnTabChanged()
+        {
+            //Property.Update();
+        }
+
         private void OnExpensesUpdated()
         {
             StateHasChanged();
@@ -69,6 +77,7 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
 
         private async Task OnUpdateProperty()
         {
+            // TODO : find out why units is received in end point as null
             using var response = await _client.PostAsJsonAsync<UnderwritingAnalysis>($"/api/admin/underwriting/update/{propertyId}", Property);
 
             if(response.IsSuccessStatusCode)

@@ -37,10 +37,10 @@
         <td>
           <TelerikMaskedTextBox @bind-Value=@phone.Number
                                 Mask="+1 (###) ###-####"
-                                Class="form-control" />
+                                Width="100%" />
         </td>
         <td>
-          <span class="clickable" @onclick=@(() => OnDeletePhone(phone))>
+          <span class="clickable-button" @onclick=@(() => OnDeletePhone(phone))>
             <i class="fa-solid fa-circle-minus" style="color: red;"></i>
           </span>
         </td>
@@ -67,12 +67,12 @@
         <td>
           <TelerikMaskedTextBox @bind-Value=@_newPhone.Number
                                 Mask="+1 (###) ###-####"
-                                Class="form-control" />
+                                Width="100%" />
         </td>
         <td>
           @if(CanAddPhone())
           {
-            <span class="clickable" @onclick=@AddPhone>
+            <span class="clickable-button" @onclick=@AddPhone>
               <i class="fa-duotone fa-plus" style="color:green;"></i>
             </span>
           }

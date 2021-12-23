@@ -6,6 +6,9 @@ namespace MultiFamilyPortal.Extensions
     {
         public static string ToPhoneNumberMask(this string input)
         {
+            if (string.IsNullOrEmpty(input))
+                return string.Empty;
+
             var sb = new StringBuilder();
             for(var i = 0; i < input.Length; i++)
             {

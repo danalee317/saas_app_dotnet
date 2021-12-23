@@ -77,7 +77,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 FirstName = request.FirstName.Trim(),
                 LastName = request.LastName.Trim(),
                 PhoneNumber = request.Phone,
-                PhoneNumberConfirmed = true,
+                PhoneNumberConfirmed = !string.IsNullOrEmpty(request.Phone) && request.Phone.Length == 10,
             };
 
             var info = "Use your Microsoft or Google Account to login";

@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Humanizer;
@@ -81,7 +81,7 @@ namespace MultiFamilyPortal.Converters
                 if (propValue is null)
                     continue;
 
-                var name = prop.Name.Pascalize();
+                var name = prop.Name.Camelize();
                 if(prop.PropertyType == typeof(int))
                 {
                     var integer = (int)prop.GetValue(value, null);

@@ -71,6 +71,12 @@ else
                 </TelerikTabStrip>
               </Content>
             </WizardStep>
+            <WizardStep Label="Reports"
+                        IconClass="fa-duotone fa-file-chart-column">
+              <Content>
+                <UnderwritingReports Property=@Property />
+              </Content>
+            </WizardStep>
           </WizardSteps>
           <WizardButtons>
             @if(showPrevious)

@@ -1,1 +1,90 @@
-﻿<ComingSoon />
+﻿@using MultiFamilyPortal.Data.Models
+<TelerikGrid Data=@Contact.NotableDates
+             Pageable=@true
+             PageSize=@(20)
+             EditMode=@GridEditMode.Inline
+             OnCreate=@OnMarketAdded
+             OnDelete=@OnMarketDeleted
+             OnEdit=@OnMarketEditing
+             OnUpdate=@OnMarketUpdated>
+  <GridToolBar>
+    <span class="k-toolbar-spacer"></span>
+    <GridCommandButton Command="Add" IconClass="fa-duotone fa-plus" Title="Add" Primary=@true>Add</GridCommandButton>
+  </GridToolBar>
+  <GridColumns>
+    <GridColumn Field="Type">
+      <Template>
+        @{ var notableDate = context as Data.Models.CRMNotableDate; }
+        @notableDate.Type.Humanize(LetterCasing.Title)
+      </Template>
+      <EditorTemplate>
+        @{
+          var notableDate = context as Data.Models.CRMNotableDate;
+          if(notableDate.Date == default)
+          {
+            notableDate.Date = DateTime.Now;
+          }
+        }
+        <TelerikDropDownList Data=@(Enum.GetValues<Data.Models.CRMNotableDateType>())
+                             @bind-Value=@notableDate.Type
+                             Context="typeContext">
+          <ValueTemplate>
+            @{ var type = (Data.Models.CRMNotableDateType)typeContext; }
+            @type.Humanize(LetterCasing.Title)
+          </ValueTemplate>
+          <ItemTemplate>
+            @{ var type = (Data.Models.CRMNotableDateType)typeContext; }
+            @type.Humanize(LetterCasing.Title)
+          </ItemTemplate>
+        </TelerikDropDownList>
+      </EditorTemplate>
+    </GridColumn>
+    <GridColumn Field="Description" />
+    <GridColumn Field="Date" DisplayFormat="{0:MMMM dd, yyyy}" />
+    <GridColumn Field="Recurring" Width="150px" TextAlign=@ColumnTextAlign.Center>
+      <EditorTemplate>
+        @{
+          var model = context as Data.Models.CRMNotableDate;
+          var state = model.Type.IsRecurring();
+          var enabled = state is null;
+          if(state is not null)
+          {
+            model.Recurring = state.Value;
+          }
+        }
+        <div class="text-center">
+          <TelerikSwitch @bind-Value=@model.Recurring
+                        Enabled=@enabled />
+        </div>
+      </EditorTemplate>
+    </GridColumn>
+    <GridColumn Field="DismissReminders" Title="Dismiss Reminders" Width="150px" TextAlign=@ColumnTextAlign.Center>
+      <EditorTemplate>
+        @{ var model = context as Data.Models.CRMNotableDate; }
+        <div class="text-center">
+          <TelerikSwitch @bind-Value=@model.DismissReminders />
+        </div>
+      </EditorTemplate>
+    </GridColumn>
+    <GridCommandColumn Width="100px">
+      @{ var market = context as Data.Models.CRMNotableDate; }
+      <div class="text-center">
+        <GridCommandButton Command="Edit"
+                            IconClass="fa-duotone fa-pencil"
+                            Title="Edit" />
+        <GridCommandButton Command="Delete"
+                            IconClass="fa-duotone fa-trash"
+                            Title="Delete" />
+        <GridCommandButton Command="Cancel"
+                            Icon="cancel"
+                            Title="Cancel"
+                            ShowInEdit=@true />
+        <GridCommandButton Command="Save"
+                            IconClass="fa-duotone fa-floppy-disk"
+                            Title="Save"
+                            ShowInEdit=@true
+                            Enabled=@(!string.IsNullOrEmpty(market.Description)) />
+      </div>
+    </GridCommandColumn>
+  </GridColumns>
+</TelerikGrid>

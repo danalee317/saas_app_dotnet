@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace MultiFamilyPortal.Data.Models
 {
@@ -9,6 +10,7 @@ namespace MultiFamilyPortal.Data.Models
 
         public string Name { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<CRMContact> Contacts { get; set; }
     }
 }

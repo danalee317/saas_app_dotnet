@@ -195,7 +195,11 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 .Distinct()
                 .ToListAsync();
 
-            markets.AddRange(await _dbContext.UnderwritingGuidance.Select(x => x.Market).ToArrayAsync());
+            markets.AddRange(await _dbContext.UnderwritingGuidance.Select(x => x.Market).Distinct().ToArrayAsync());
+            if(_dbContext is ICRMContext crmContext)
+            {
+                markets.AddRange(await crmContext.CrmContactMarkets.Select(x => x.Name).Distinct().ToArrayAsync());
+            }
 
             return Ok(markets.Where(x => !string.IsNullOrEmpty(x)).Distinct().OrderBy(x => x));
         }

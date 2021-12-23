@@ -13,7 +13,6 @@ namespace MultiFamilyPortal.AdminTheme.Models
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
         public string Phone { get; set; }
 
         [Required]

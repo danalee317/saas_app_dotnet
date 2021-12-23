@@ -19,9 +19,11 @@
         </span>
       </HeaderTemplate>
       <Content>
-        <LoaderContainer Context=@_contact>
-          <CrmContactInfoTab Contact=@_contact />
-        </LoaderContainer>
+        <PortalErrorBoundary>
+          <LoaderContainer Context=@_contact>
+            <CrmContactInfoTab Contact=@_contact />
+          </LoaderContainer>
+        </PortalErrorBoundary>
       </Content>
     </TabStripTab>
     <TabStripTab>
@@ -31,9 +33,11 @@
         </span>
       </HeaderTemplate>
       <Content>
-        <LoaderContainer Context=@_contact>
-          <CrmContactLogTab Contact=@_contact />
-        </LoaderContainer>
+        <PortalErrorBoundary>
+          <LoaderContainer Context=@_contact>
+            <CrmContactLogTab Contact=@_contact />
+          </LoaderContainer>
+        </PortalErrorBoundary>
       </Content>
     </TabStripTab>
     <TabStripTab>
@@ -43,9 +47,11 @@
         </span>
       </HeaderTemplate>
       <Content>
-        <LoaderContainer Context=@_contact>
-          <CrmContactNotableDatesTab Contact=@_contact />
-        </LoaderContainer>
+        <PortalErrorBoundary>
+          <LoaderContainer Context=@_contact>
+            <CrmContactNotableDatesTab Contact=@_contact />
+          </LoaderContainer>
+        </PortalErrorBoundary>
       </Content>
     </TabStripTab>
     <TabStripTab>
@@ -55,9 +61,11 @@
         </span>
       </HeaderTemplate>
       <Content>
-        <LoaderContainer Context=@_contact>
-          <CrmContactRemindersTab Contact=@_contact />
-        </LoaderContainer>
+        <PortalErrorBoundary>
+          <LoaderContainer Context=@_contact>
+            <CrmContactRemindersTab Contact=@_contact />
+          </LoaderContainer>
+        </PortalErrorBoundary>
       </Content>
     </TabStripTab>
     <TabStripTab>
@@ -67,9 +75,11 @@
         </span>
       </HeaderTemplate>
       <Content>
-        <LoaderContainer Context=@_contact>
-          <CrmContactMarketsTab Contact=@_contact />
-        </LoaderContainer>
+        <PortalErrorBoundary>
+          <LoaderContainer Context=@_contact>
+            <CrmContactMarketsTab Contact=@_contact />
+          </LoaderContainer>
+        </PortalErrorBoundary>
       </Content>
     </TabStripTab>
   </TelerikTabStrip>

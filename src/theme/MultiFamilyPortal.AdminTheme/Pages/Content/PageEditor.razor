@@ -6,8 +6,9 @@
     <SiteTitle Title=@(_content.Title) />
     <div class="row g-3 p-3">
       <label for="name" class="col-sm-2 col-form-label">Title <span style="color:red">*</span></label>
-      <div class="col-sm-10">
-        <TelerikTextBox @bind-Value=@_content.Title />
+      <div class="col-sm-5">
+        <TelerikTextBox @bind-Value=@_content.Title
+                        Class="form-control" />
       </div>
     </div>
     <div class="row g-3 p-3">

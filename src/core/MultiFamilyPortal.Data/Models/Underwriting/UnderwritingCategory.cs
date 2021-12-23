@@ -43,31 +43,31 @@ namespace MultiFamilyPortal.Data.Models
         [Display(Name = "Insurance")]
         Insurance,
 
-        [UnderwritingType(UnderwritingType.Expense)]
+        [UnderwritingType(UnderwritingType.Expense, true)]
         [Display(Name = "Repairs / Maintenance")]
         RepairsMaintenance,
 
-        [UnderwritingType(UnderwritingType.Expense)]
+        [UnderwritingType(UnderwritingType.Expense, true)]
         [Display(Name = "General / Admin")]
         GeneralAdmin,
 
-        [UnderwritingType(UnderwritingType.Expense)]
+        [UnderwritingType(UnderwritingType.Expense, true)]
         [Display(Name = "Management")]
         Management,
 
-        [UnderwritingType(UnderwritingType.Expense)]
+        [UnderwritingType(UnderwritingType.Expense, true)]
         [Display(Name = "Marketing")]
         Marketing,
 
-        [UnderwritingType(UnderwritingType.Expense)]
+        [UnderwritingType(UnderwritingType.Expense, true)]
         [Display(Name = "Utility")]
         Utility,
 
-        [UnderwritingType(UnderwritingType.Expense)]
+        [UnderwritingType(UnderwritingType.Expense, true)]
         [Display(Name = "Contract Services")]
         ContractServices,
 
-        [UnderwritingType(UnderwritingType.Expense)]
+        [UnderwritingType(UnderwritingType.Expense, true)]
         [Display(Name = "Payroll")]
         Payroll
     }

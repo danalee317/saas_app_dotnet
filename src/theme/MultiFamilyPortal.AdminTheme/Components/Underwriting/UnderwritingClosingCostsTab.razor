@@ -1,4 +1,6 @@
-﻿<table data-role="grid" role="grid" class="k-grid-table">
+﻿@using MultiFamilyPortal.Data.Models
+
+<table data-role="grid" role="grid" class="k-grid-table">
   <colgroup>
     <col style="width: 42%" />
     <col style="width: 16%" />
@@ -27,7 +29,7 @@
 
       </td>
       <td role="gridcell" class="px-2 text-center">
-        @Property.Mortgages.Sum(x => x.PointCost).ToString("C")
+        @_pointCost.ToString("C")
       </td>
     </tr>
     <tr role="row" class="k-master-row">
@@ -45,6 +47,21 @@
     </tr>
     <tr role="row" class="k-master-row k-alt">
       <td role="gridcell" class="px-2">
+        <strong>Subtotal</strong>
+      </td>
+      <td role="gridcell" class="px-2">
+
+      </td>
+      <td role="gridcell" class="px-2 text-center">
+        <strong>@GetSubtotal()</strong>
+      </td>
+    </tr>
+    <tr role="row" style="height:10px">
+      <td colspan="3"></td>
+    </tr>
+
+    <tr role="row" class="k-master-row">
+      <td role="gridcell" class="px-2">
         Deferred Maintenance
       </td>
       <td role="gridcell" class="px-2">
@@ -58,7 +75,7 @@
                                Format="C" />
       </td>
     </tr>
-    <tr role="row" class="k-master-row">
+    <tr role="row" class="k-master-row k-alt">
       <td role="gridcell" class="px-2">
         SEC Attorney
       </td>
@@ -73,7 +90,7 @@
                                Format="C" />
       </td>
     </tr>
-    <tr role="row" class="k-master-row k-alt">
+    <tr role="row" class="k-master-row">
       <td role="gridcell" class="px-2">
         Closing Cost Misc.
       </td>
@@ -88,48 +105,48 @@
                                Format="C" />
       </td>
     </tr>
-    <tr role="row" class="k-master-row">
-      <td role="gridcell" class="px-2">
-        Closing Cost Other
-      </td>
-      <td role="gridcell" class="px-2">
-
-      </td>
-      <td role="gridcell" class="px-2 text-center">
-        @Property.ClosingCostOther.ToString("C")
-      </td>
-    </tr>
     <tr role="row" class="k-master-row k-alt">
       <td role="gridcell" class="px-2">
-
+        Insurance - 12 Months
       </td>
       <td role="gridcell" class="px-2">
 
       </td>
       <td role="gridcell" class="px-2 text-center">
-
+        @_insurancePrepayment.ToString("C")
       </td>
     </tr>
     <tr role="row" class="k-master-row">
       <td role="gridcell" class="px-2">
-
+        2 Months Operating Expenses
       </td>
       <td role="gridcell" class="px-2">
 
       </td>
       <td role="gridcell" class="px-2 text-center">
-
+        @_twoMonthReserves.ToString("C")
       </td>
     </tr>
     <tr role="row" class="k-master-row k-alt">
       <td role="gridcell" class="px-2">
-
+        <strong>Total Closing Cost Other</strong>
       </td>
       <td role="gridcell" class="px-2">
 
       </td>
       <td role="gridcell" class="px-2 text-center">
+        <strong>@Property.ClosingCostOther.ToString("C")</strong>
+      </td>
+    </tr>
+    <tr role="row" class="k-master-row">
+      <td role="gridcell" class="px-2">
+        <strong>Total</strong>
+      </td>
+      <td role="gridcell" class="px-2">
 
+      </td>
+      <td role="gridcell" class="px-2 text-center">
+        <strong>@GetTotal()</strong>
       </td>
     </tr>
 

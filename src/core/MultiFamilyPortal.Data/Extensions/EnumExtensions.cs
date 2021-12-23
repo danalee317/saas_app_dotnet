@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using MultiFamilyPortal.Data.ComponentModel;
 
 namespace MultiFamilyPortal.Data.Models
@@ -15,6 +15,12 @@ namespace MultiFamilyPortal.Data.Models
             return GetTypeAttribute(category).OperatingExpense;
         }
 
+        public static bool? IsRecurring(this CRMNotableDateType dateType)
+        {
+            var attr = GetTypeAttribute(dateType);
+            return attr?.Recurring;
+        }
+
         private static UnderwritingTypeAttribute GetTypeAttribute(UnderwritingCategory category)
         {
             var type = typeof(UnderwritingCategory);
@@ -23,6 +29,16 @@ namespace MultiFamilyPortal.Data.Models
                 throw new InvalidOperationException($"Unable to find the memberdata for the Category {category}");
 
             return memberData.GetCustomAttribute<UnderwritingTypeAttribute>();
+        }
+
+        private static KnownRecurranceAttribute GetTypeAttribute(CRMNotableDateType dateType)
+        {
+            var type = typeof(CRMNotableDateType);
+            var memberData = type.GetMember(dateType.ToString())?.FirstOrDefault();
+            if (memberData is null)
+                throw new InvalidOperationException($"Unable to find the memberdata for the Category {dateType}");
+
+            return memberData.GetCustomAttribute<KnownRecurranceAttribute>();
         }
     }
 }

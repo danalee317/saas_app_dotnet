@@ -42,5 +42,7 @@ namespace MultiFamilyPortal.Data.Models
         public virtual ICollection<CRMContactReminder> Reminders { get; set; }
 
         public virtual ICollection<CRMContactLog> Logs { get; set; }
+
+        public virtual ICollection<CRMNotableDate> NotableDates { get; set; }
     }
 }

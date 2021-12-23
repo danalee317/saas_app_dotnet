@@ -124,3 +124,8 @@ img.logo {
 .clickable {
   cursor: pointer;
 }
+
+.clickable-button {
+  margin-left: 25px; 
+  cursor: pointer;
+}

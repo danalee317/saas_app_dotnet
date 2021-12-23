@@ -15,7 +15,7 @@
       @foreach(var email in Contact.Emails)
       {
         <tr>
-          <td style="width: 50px">
+          <td>
             <span class="clickable" @onclick=@(() => SetPrimaryEmail(email))>
               @if(email.Primary)
               {
@@ -46,7 +46,7 @@
                             Class="form-control" />
           </td>
           <td>
-            <span class="clickable" @onclick=@(() => OnDeleteEmail(email))>
+            <span class="clickable-button" @onclick=@(() => OnDeleteEmail(email))>
               <i class="fa-solid fa-circle-minus" style="color: red;"></i>
             </span>
           </td>
@@ -77,7 +77,7 @@
         <td>
           @if(CanAddEmail())
           {
-            <span class="clickable" @onclick=@AddEmail>
+            <span class="clickable-button" @onclick=@AddEmail>
               <i class="fa-duotone fa-plus" style="color:green;"></i>
             </span>
           }

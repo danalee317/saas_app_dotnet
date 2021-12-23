@@ -21,16 +21,16 @@
      </GridCommandColumn>
    </GridColumns>
 </TelerikGrid>
-<TelerikWindow Visible=@showWindow Modal=@true>
+<TelerikWindow Visible=@_showWindow Modal=@true>
   <WindowTitle>Update @_selected.DisplayName</WindowTitle>
   <WindowActions>
-    <WindowAction Name="Close" OnClick=@(() => showWindow = false) />
+    <WindowAction Name="Close" OnClick=@(() => _showWindow = false) />
   </WindowActions>
   <WindowContent>
     <p>
       You may upload a JPEG, PNG, or SVG. We recommend that you upload an SVG any time it is possible as they will scale the best across all devices.
     </p>
-    <TelerikUpload AllowedExtensions="@AllowedFileTypes"
+    <TelerikUpload AllowedExtensions="@_allowedFileTypes"
                     MaxFileSize="2048000"
                     SaveField="file"
                     Multiple="false"

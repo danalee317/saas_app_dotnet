@@ -130,7 +130,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         }
 
         [HttpPost("branding/{imageName}")]
-        public async Task<IActionResult> UpdateBrandingLogo(string imageName, [FromForm] IFormFile file, [FromServices] IWebHostEnvironment env, [FromServices] IBrandService brand)
+        public async Task<IActionResult> UpdateBrandingLogo(string imageName, [FromForm] IFormFile file, [FromServices] IBrandService brand)
         {
             if (file.Length > 0)
             {
@@ -138,8 +138,8 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 {
                     if (imageName == "favicon")
                     {
-                        using var stream = file.OpenReadStream();
-                        await brand.CreateIcons(stream);
+                        await using var stream = file.OpenReadStream();
+                        await brand.CreateIcons(stream, file.FileName);
                     }
                     else
                     {

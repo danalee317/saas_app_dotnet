@@ -15,7 +15,7 @@ else
   <h3>Edit Email - @_selected.Key</h3>
   <TelerikTabStrip TabPosition=TabPosition.Left>
     <TabStripTab Title="HTML">
-      <TelerikEditor @bind-Value=@_selected.Html />
+      <PortalWysiwyg @bind-Value=@_selected.Html />
     </TabStripTab>
     <TabStripTab Title="Plain Text">
       <div class="row">

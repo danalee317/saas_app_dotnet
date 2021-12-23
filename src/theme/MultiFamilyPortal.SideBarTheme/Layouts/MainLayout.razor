@@ -7,7 +7,9 @@
     <div class="sidebar">
       @if(SideBar != null)
       {
-        <DynamicComponent Type=@SideBar />
+        <PortalErrorBoundary>
+          <DynamicComponent Type=@SideBar />
+        </PortalErrorBoundary>
       }
     </div>
 
@@ -18,7 +20,9 @@
 
       <article class="content px-4">
         <TelerikRootComponent>
-          @Body
+          <PortalErrorBoundary>
+            @Body
+          </PortalErrorBoundary>
         </TelerikRootComponent>
       </article>
     </main>

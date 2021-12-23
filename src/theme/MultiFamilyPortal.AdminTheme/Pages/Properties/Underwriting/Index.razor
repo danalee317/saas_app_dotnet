@@ -34,14 +34,18 @@
   <div class="mb-5">
     <TelerikTabStrip TabPosition=@TabPosition.Top>
       <TabStripTab Title="Underwriting">
-        <UnderwritingList @ref="underwritingList"
-                          @bind-Profile=@Profile
-                          @bind-Start=@Start
-                          @bind-End=@End
-                          Status=@Status />
+        <PortalErrorBoundary>
+          <UnderwritingList @ref="underwritingList"
+                            @bind-Profile=@Profile
+                            @bind-Start=@Start
+                            @bind-End=@End
+                            Status=@Status />
+        </PortalErrorBoundary>
       </TabStripTab>
       <TabStripTab Title="Defaults">
-        <UnderwritingGuidanceDefaults />
+        <PortalErrorBoundary>
+          <UnderwritingGuidanceDefaults />
+        </PortalErrorBoundary>
       </TabStripTab>
     </TelerikTabStrip>
   </div>

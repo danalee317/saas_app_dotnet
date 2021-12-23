@@ -130,7 +130,7 @@
            <div class="row mb-1">
              <label for="Note" class="form-label col-sm-12">Notes</label>
              <div class="col-sm-12">
-               <TelerikEditor @bind-Value=@_newActivity.Notes
+               <PortalWysiwyg @bind-Value=@_newActivity.Notes
                               Width="556px"
                               Height="250px"
                               Id="Note"/>
@@ -205,7 +205,7 @@
         <div class="row mb-1">
           <label for="NoteEdit" class="form-label col-sm-12">Notes</label>
           <div class="col-sm-12">
-            <TelerikEditor @bind-Value=@_updateActivity.Notes
+            <PortalWysiwyg @bind-Value=@_updateActivity.Notes
                            Width="556px"
                            Height="250px"
                            Id="NotesEdit"/>

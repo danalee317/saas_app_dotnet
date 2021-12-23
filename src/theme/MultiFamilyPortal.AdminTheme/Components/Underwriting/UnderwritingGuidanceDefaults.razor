@@ -22,7 +22,7 @@
            {
              <div>
                <button class="btn btn-success btn-sm"
-                       @onclick=@(()=>EditAddGuidance(context.Value.ToString())) >
+                       @onclick=@(()=>EditAddGuidance(context.Value?.ToString())) >
                 Edit
                </button>
              </div>
@@ -80,6 +80,7 @@
   </WindowActions>
     <WindowContent>
       <UnderwritingMarketAddition Guidance="@(_guidance.Where(x => x.Market == _marketTitle))"
+                                  Editable="@_editIntent"
                                   UpdateGuidance=@RefreshGuidance />
   </WindowContent>
 </TelerikWindow>

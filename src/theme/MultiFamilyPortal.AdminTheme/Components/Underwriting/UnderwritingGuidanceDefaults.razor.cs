@@ -22,6 +22,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private ClaimsPrincipal _user { get; set; }
 
         private bool _editable;
+        private bool _editIntent;
         private readonly ObservableRangeCollection<UnderwritingGuidance> _guidance = new();
         private TelerikGrid<UnderwritingGuidance> grid;
         private bool _windowVisibility { get; set; }
@@ -65,13 +66,15 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private void OnAddGuidance()
         {
             _marketTitle = null;
+            _editIntent = false;
             _windowVisibility = true;
         }
 
         private void EditAddGuidance(string market)
         {
-            _marketTitle = market;
-            _windowVisibility = true;
+             _marketTitle = market;
+             _editIntent = true;
+             _windowVisibility = true;
         }
     }
 }

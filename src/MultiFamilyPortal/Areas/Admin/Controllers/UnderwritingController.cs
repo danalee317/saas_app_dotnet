@@ -155,15 +155,15 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         [HttpPut("guidance/{id}")]
         public async Task<IActionResult> EditGuidance(Guid id, [FromBody] UnderwritingGuidance guidance)
         {
-            if(string.IsNullOrEmpty(guidance.Market) || id == Guid.Empty || id != guidance.Id)
-                    return BadRequest();
+            if(id == Guid.Empty || id != guidance.Id)
+                return BadRequest();
 
             var existing = await _dbContext.UnderwritingGuidance.FirstOrDefaultAsync(x => x.Id == id);
 
             if (existing is null)
                 return NotFound();
 
-            existing.Market = guidance.Market.Trim();
+            existing.Market = guidance.Market?.Trim();
             existing.Category = guidance.Category;
             existing.Type = guidance.Type;
             existing.Min = guidance.Min;

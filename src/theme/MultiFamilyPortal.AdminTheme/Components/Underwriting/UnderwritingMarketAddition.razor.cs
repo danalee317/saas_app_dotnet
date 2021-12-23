@@ -19,18 +19,20 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         public IEnumerable<UnderwritingGuidance> Guidance { get; set; }
 
         [Parameter]
+        public bool Editable { get; set; }
+
+        [Parameter]
         public EventCallback UpdateGuidance { get; set; }
         private readonly ObservableRangeCollection<string> _markets = new();
         private PortalNotification notification;
         private readonly IEnumerable<CostType> _expenseTypes = Enum.GetValues<CostType>();
         private string _newMarket;
-        private bool _editIntent = false;
         private  bool _conformation = false;
         protected override async Task OnInitializedAsync()
         {
             await LoadMarkets();
             _newMarket = Guidance.FirstOrDefault().Market;
-            _editIntent = !string.IsNullOrEmpty(_newMarket);
+            _newMarket = string.IsNullOrEmpty(_newMarket) && Editable ? "Default" : _newMarket;
             _conformation = false;
         }
 
@@ -54,7 +56,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
                 return;
             }
 
-            if (_editIntent)
+            if (Editable)
                 await OnEditMarket();
             else
                 await OnAddMarket();

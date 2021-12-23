@@ -1,5 +1,12 @@
 ﻿<PortalErrorBoundary>
   <LoaderContainer Context=@Property>
-    <UnderwritingPropertyInfoTab Property=@Property />
+    <TelerikTabStrip>
+      <TabStripTab Title="Basics">
+        <UnderwritingPropertyInfoTab Property=@Property />
+      </TabStripTab>
+      <TabStripTab Title="RE Indicator">
+        <UnderwritingREIndicatorViewPort Property=@Property />
+      </TabStripTab>
+    </TelerikTabStrip>
   </LoaderContainer>
 </PortalErrorBoundary>

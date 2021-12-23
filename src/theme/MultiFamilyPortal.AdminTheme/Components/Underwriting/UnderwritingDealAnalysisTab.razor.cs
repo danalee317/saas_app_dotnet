@@ -6,7 +6,7 @@ using MultiFamilyPortal.Dtos.Underwriting;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 {
-    public partial class UnderwritingBucketlistTab
+    public partial class UnderwritingDealAnalysisTab
     {
         [Parameter]
         public UnderwritingAnalysis Property { get; set; }

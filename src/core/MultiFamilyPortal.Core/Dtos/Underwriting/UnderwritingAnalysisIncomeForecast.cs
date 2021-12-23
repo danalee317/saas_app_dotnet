@@ -1,8 +1,11 @@
-﻿using MultiFamilyPortal.Data.Models;
+﻿using System.Text.Json.Serialization;
+using MultiFamilyPortal.Converters;
+using MultiFamilyPortal.Data.Models;
 using ReactiveUI;
 
 namespace MultiFamilyPortal.Dtos.Underwriting
 {
+    [JsonConverter(typeof(ReactiveObjectConverter<UnderwritingAnalysisIncomeForecast>))]
     public class UnderwritingAnalysisIncomeForecast : ReactiveObject
     {
         public int Year { get; set; }

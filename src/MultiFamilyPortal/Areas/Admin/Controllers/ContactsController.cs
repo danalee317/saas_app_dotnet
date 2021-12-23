@@ -435,6 +435,28 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 }
             }
 
+            if (updatedContact.Markets?.Any() ?? false)
+            {
+                var markets = await _dbContext.CrmContactMarkets.ToArrayAsync();
+                var newMarkets = updatedContact.Markets.Where(x => !markets.Any(m => m.Name == x.Name));
+                if(newMarkets?.Any() ?? false)
+                {
+                    await _dbContext.CrmContactMarkets.AddRangeAsync(newMarkets);
+                    await _dbContext.SaveChangesAsync();
+                    markets = await _dbContext.CrmContactMarkets.ToArrayAsync();
+                }
+
+                if(contact.Markets.Count != updatedContact.Markets.Count ||
+                   !contact.Markets.All(x => updatedContact.Markets.Any(m => m.Name == x.Name)))
+                {
+                    contact.Markets.Clear();
+                    foreach(var market in markets.Where(x => updatedContact.Markets.Any(m => m.Name == x.Name)))
+                    {
+                        contact.Markets.Add(market);
+                    }
+                }
+            }
+
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             if (updatedContact.Logs?.Any() ?? false)
             {
@@ -473,6 +495,13 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
 
             _dbContext.CrmContacts.Update(contact);
             await _dbContext.SaveChangesAsync();
+
+            var toDelete = await _dbContext.CrmContactMarkets.Where(x => x.Contacts.Count == 0).ToArrayAsync();
+            if (toDelete?.Any() ?? false)
+            {
+                _dbContext.CrmContactMarkets.RemoveRange(toDelete);
+                await _dbContext.SaveChangesAsync();
+            }
 
             return Ok();
         }

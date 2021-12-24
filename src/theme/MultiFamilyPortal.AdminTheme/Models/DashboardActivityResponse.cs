@@ -4,7 +4,6 @@ namespace MultiFamilyPortal.AdminTheme.Models
 {
     public class DashboardActivityResponse
     {
-        public TimeSpan Total { get; set; }
-        public Dictionary<ActivityType, TimeSpan> Breakdown { get; set; }
+        public Dictionary<ActivityType, double> Breakdown { get; set; }
     }
 }

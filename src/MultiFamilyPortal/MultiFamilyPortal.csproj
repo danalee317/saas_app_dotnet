@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="6.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="6.0.1" />
     <PackageReference Include="Microsoft.SyndicationFeed.ReaderWriter" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
@@ -25,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\core\MultiFamilyPortal.Caching\MultiFamilyPortal.Caching.csproj" />
     <ProjectReference Include="..\core\MultiFamilyPortal.Core\MultiFamilyPortal.Core.csproj" />
+    <ProjectReference Include="..\saas\MultiFamilyPortal.SaaS.Authentication\MultiFamilyPortal.SaaS.Authentication.csproj" />
     <ProjectReference Include="..\theme\MultiFamilyPortal.FirstRun\MultiFamilyPortal.FirstRun.csproj" />
     <ProjectReference Include="..\theme\MultiFamilyPortal.AdminTheme\MultiFamilyPortal.AdminTheme.csproj" />
     <ProjectReference Include="..\theme\MultiFamilyPortal.QuarterRealEstateTheme\MultiFamilyPortal.QuarterRealEstateTheme.csproj" />

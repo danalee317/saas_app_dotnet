@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MultiFamilyPortal.Configuration;
+using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Http;
 using MultiFamilyPortal.SaaS.Extensions;
 using MultiFamilyPortal.Services;
@@ -34,12 +35,19 @@ namespace MultiFamilyPortal.Extensions
                 .AddScoped<ISiteInfo, SiteInfo>()
                 .AddScoped<IStartupTask, BrandStartupTask>()
                 .AddScoped<IBrandService, BrandService>()
-                .AddScoped<IUnderwritingService, UnderwritingService>();
+                .AddScoped<IUnderwritingService, UnderwritingService>()
+                .AddScoped(sp =>
+                {
+                    var context = sp.GetRequiredService<ITenantSettingsContext>();
+                    return new GoogleCaptchaOptions
+                    {
+                        SecretKey = context.GetSetting<string>(PortalSetting.CaptchaSiteSecret),
+                        SiteKey = context.GetSetting<string>(PortalSetting.CaptchaSiteKey)
+                    };
+                });
 
             var config = new SiteConfiguration();
             configuration.Bind(config);
-
-            services.AddSingleton(config.Captcha);
 
             services.AddTransient<PostmarkClient>(sp =>
             {

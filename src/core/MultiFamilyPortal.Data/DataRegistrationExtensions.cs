@@ -11,16 +11,15 @@ namespace MultiFamilyPortal
     {
         public static IServiceCollection AddMFContext(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<MFPContext>(options => { });
-
-            services.AddScoped<IStartupTask, DbContextStartupTask>();
-            services.AddTransient<IBlogContext>(sp => sp.GetRequiredService<MFPContext>());
-            services.AddTransient<IMFPContext>(sp => sp.GetRequiredService<MFPContext>());
-            services.AddTransient<ICRMContext>(sp => sp.GetRequiredService<MFPContext>());
-            services.AddTransient<IStartupContextHelper, StartupContextHelper>();
-
-            services.AddSaaSApplication(configuration);
-            return services;
+            return services.AddDbContext<MFPContext>(options => { })
+                .AddScoped<IStartupTask, DbContextStartupTask>()
+                .AddTransient<IBlogContext>(sp => sp.GetRequiredService<MFPContext>())
+                .AddTransient<IMFPContext>(sp => sp.GetRequiredService<MFPContext>())
+                .AddTransient<ICRMContext>(sp => sp.GetRequiredService<MFPContext>())
+                .AddTransient<ITenantSettingsContext>(sp => sp.GetRequiredService<MFPContext>())
+                .AddTransient<IStartupContextHelper, StartupContextHelper>()
+                .AddTransient<DatabaseContextSeeder>()
+                .AddSaaSApplication(configuration);
         }
     }
 }

@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.SaaS.Authentication.Google;
+using MultiFamilyPortal.SaaS.Authentication.MicrosoftAccount;
 
 namespace MultiFamilyPortal.Authentication
 {
@@ -60,24 +62,9 @@ namespace MultiFamilyPortal.Authentication
                 };
             });
 
-            var authBuilder = services.AddAuthentication();
-            if (!string.IsNullOrEmpty(options.Google?.ClientId) && !string.IsNullOrEmpty(options.Google?.ClientSecret))
-            {
-                authBuilder.AddGoogle(google =>
-                {
-                    google.ClientId = options.Google.ClientId;
-                    google.ClientSecret = options.Google.ClientSecret;
-                });
-            }
-
-            if (!string.IsNullOrEmpty(options.Microsoft?.ClientId) && !string.IsNullOrEmpty(options.Microsoft?.ClientSecret))
-            {
-                authBuilder.AddMicrosoftAccount(microsoft =>
-                {
-                    microsoft.ClientId = options.Microsoft.ClientId;
-                    microsoft.ClientSecret = options.Microsoft.ClientSecret;
-                });
-            }
+            services.AddAuthentication()
+                .AddGoogle()
+                .AddMicrosoftAccount();
 
             return services;
         }

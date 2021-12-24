@@ -1,0 +1,14 @@
+<TelerikChart Height="100%">
+    <ChartSeriesItems>
+        <ChartSeries Type="ChartSeriesType.Pie" 
+                     Data="@pieData"
+                     Field="@nameof(MyPieChartModel.SegmentValue)"
+                     CategoryField="@nameof(MyPieChartModel.SegmentName)">
+        </ChartSeries>
+    </ChartSeriesItems>
+
+    <ChartTitle Text="User Activity Chart"></ChartTitle>
+
+    <ChartLegend Position="ChartLegendPosition.Bottom">
+    </ChartLegend>
+</TelerikChart>

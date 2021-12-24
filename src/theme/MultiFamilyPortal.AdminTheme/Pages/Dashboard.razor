@@ -1,31 +1,48 @@
 ﻿@page "/admin"
+@using MultiFamilyPortal.AdminTheme.Components.Dashboard
 
 <SiteTitle Title="Dashboard" />
 <Animation OptionsName="Page">
   <div class="container">
     <div class="row mb-3">
 
-      <div class="col-md-2 mb-3" style="height: 160px;">
-        <div class="bg-light text-dark h-100 text-center">
-          Analytics Component 1 #99
-        </div>
+      <div class="col-md-2 mb-3">
+          <SingleInfo Title="Underwriting" 
+                      TimeFrame="Monthly" 
+                      TimeFrameColor="primary"
+                      Number="20"
+                      IndicatorTitle="Reports"
+                      IndicatorPercentage="20%"
+                      IsPositiveChange=@true/>
       </div>
 
-      <div class="col-md-2 mb-3" style="height: 160px;">
-        <div class="bg-light text-dark h-100 text-center">
-          Analytics Component 2 #99
-        </div>
+      <div class="col-md-2 mb-3">
+        <SingleInfo Title="Underwriting" 
+                    TimeFrame="Weekly" 
+                    TimeFrameColor="info"
+                    Number="3"
+                    IndicatorTitle="Reports"
+                    IndicatorPercentage="20%"
+                    IsPositiveChange=@false/>
       </div>
 
-      <div class="col-md-4 mb-3" style="height: 160px;">
-        <div class="bg-light text-dark h-100 text-center">
-          Analytics Component 3 #99
-        </div>
+      <div class="col-md-4 mb-3">
+        <CounterInfo Title="Underwriting Status" 
+                     TimeFrame="Monthly" 
+                     TimeFrameColor="primary"
+                     Passed = "2"
+                     Active = "5"
+                     OfferSubmitted = "2"
+                     OfferAccepted="4"
+                     OfferRejected="3"
+                     LOIAccepted = "2"
+                     LOIRejected = "0"
+                     LOISubmitted="2"/>
       </div>
 
-      <div class="col-md-4 mb-2" style="height: 160px;">
+      <div class="col-md-4 mb-2" style="height: 180px;">
         <div class="bg-light text-dark h-100 text-center">
-          User Activity (with pie chart) Component #99
+            Filter ?
         </div>
       </div>
     </div>
@@ -38,16 +55,20 @@
       </div>
 
       <div class="col-md-4" style="height: 500px">
-        <div class="bg-light text-dark h-100 text-center">
-          Investor List Component #100
-        </div>
+       <ActivityChart/>
       </div>
     </div>
 
     <div class="row mb-5">
-      <div class="col-12">
+       <div class="col-md-4  mb-2" style="height: 500px">
         <div class="bg-light text-dark h-100 text-center">
-          <div class="m-3 p-5">Other Components</div>
+             <div class="m-3">Investor List Component #100</div>
+        </div>
+      </div>
+
+      <div class="col-md-8  mb-2" style="height: 500px">
+        <div class="bg-light text-dark h-100 text-center">
+          <div class="m-3">Other Components</div>
         </div>
       </div>
     </div>

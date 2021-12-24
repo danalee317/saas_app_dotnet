@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using MultiFamilyPortal.SaaS.Models
+@using MultiFamilyPortal.SaaSAdmin.Components
 
 <PageTitle>Index</PageTitle>
 
@@ -59,6 +60,7 @@
         <GridCommandButton Command="Cancel" Icon="cancel" ShowInEdit="true">Cancel</GridCommandButton>
         <GridCommandButton Command="Edit" Icon="edit">Edit</GridCommandButton>
         <GridCommandButton Command="Delete" Icon="delete">Delete</GridCommandButton>
+        <GridCommandButton IconClass="fa-regular fa-cogs" OnClick=@OnShowSettings>Settings</GridCommandButton>
       </div>
     </GridCommandColumn>
   </GridColumns>
@@ -107,6 +109,11 @@
     </div>
   </WindowContent>
 </TelerikWindow>
+
+@if(editTenant != null)
+{
+  <TenantSettings @bind-Tenant=@editTenant />
+}
 
 <TelerikNotification @ref="notification"
                      HorizontalPosition="NotificationHorizontalPosition.Center" />

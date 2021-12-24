@@ -19,6 +19,7 @@ namespace MultiFamilyPortal.SaaSAdmin.Pages
         private ObservableCollection<Tenant> _tenants { get; } = new();
 
         private Tenant? newTenant;
+        private Tenant? editTenant;
         private TelerikNotification? notification;
 
         private IEnumerable<string> _environments = new[]
@@ -129,6 +130,11 @@ namespace MultiFamilyPortal.SaaSAdmin.Pages
                 Text = message,
                 ThemeColor = ThemeColors.Warning
             });
+        }
+
+        private void OnShowSettings(GridCommandEventArgs args)
+        {
+            editTenant = args.Item as Tenant;
         }
     }
 }

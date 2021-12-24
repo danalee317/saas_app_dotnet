@@ -1,4 +1,4 @@
-﻿namespace MultiFamilyPortal.CoreUI
+﻿namespace MultiFamilyPortal
 {
     public static class PortalPage
     {

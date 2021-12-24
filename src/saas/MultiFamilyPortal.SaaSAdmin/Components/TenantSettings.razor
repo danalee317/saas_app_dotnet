@@ -1,0 +1,48 @@
+﻿<TelerikWindow Visible=@(Tenant != null)
+               Modal=@true>
+  <WindowTitle>@Tenant!.Host</WindowTitle>
+  <WindowActions>
+    <WindowAction Icon="close" OnClick=@Close />
+  </WindowActions>
+  <WindowContent>
+    @if(didLoad)
+    {
+      <TelerikGrid Data=@_settings
+                   EditMode=GridEditMode.Inline
+                   OnUpdate=@OnSettingUpdated
+                   Pageable=@true
+                   PageSize=@(10)>
+        <GridColumns>
+          <GridColumn Field="Key" Editable=@false Width="200px" />
+          <GridColumn Field="Value" />
+          <GridCommandColumn Width="100px">
+            <div class="text-center">
+              <GridCommandButton Command="Edit"
+                                 IconClass="fa-duotone fa-pencil"
+                                 Title="Edit" />
+              <GridCommandButton Command="Cancel"
+                                 Icon="cancel"
+                                 Title="Cancel"
+                                 ShowInEdit=@true />
+              <GridCommandButton Command="Save"
+                                 IconClass="fa-duotone fa-floppy-disk"
+                                 Title="Save"
+                                 ShowInEdit=@true />
+            </div>
+          </GridCommandColumn>
+        </GridColumns>
+      </TelerikGrid>
+    }
+    else
+    {
+      <div class="my-auto py-5 text-center">
+        <TelerikLoader />
+        <p>
+          @status
+        </p>
+      </div>
+    }
+  </WindowContent>
+</TelerikWindow>
+
+

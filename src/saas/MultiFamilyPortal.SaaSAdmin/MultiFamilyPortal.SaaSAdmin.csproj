@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\core\MultiFamilyPortal.Data\MultiFamilyPortal.Data.csproj" />
     <ProjectReference Include="..\MultiFamilyPortal.SaaS\MultiFamilyPortal.SaaS.csproj" />
   </ItemGroup>
 

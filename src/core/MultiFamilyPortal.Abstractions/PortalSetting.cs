@@ -54,5 +54,13 @@ namespace MultiFamilyPortal
 
         [DefaultValue("#FFFFFF")]
         public const string BackgroundColor = nameof(BackgroundColor);
+
+        public const string MicrosoftClientId = nameof(MicrosoftClientId);
+        public const string MicrosoftClientSecret = nameof(MicrosoftClientSecret);
+        public const string GoogleClientId = nameof(GoogleClientId);
+        public const string GoogleClientSecret = nameof(GoogleClientSecret);
+
+        public const string CaptchaSiteKey = nameof(CaptchaSiteKey);
+        public const string CaptchaSiteSecret = nameof(CaptchaSiteSecret);
     }
 }

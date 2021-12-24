@@ -6,6 +6,8 @@ using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.AdminTheme.Models;
+using System;
+using UAParser;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
 {
@@ -29,92 +31,59 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         }
 
         [HttpGet("underwriting")]
-        public async Task<IActionResult> UnderwritingAnalytics()
+        public async Task<IActionResult> UnderwritingAnalytics(string userId = null)
         {
             try
             {
-                var email = User.FindFirstValue(ClaimTypes.Email);
-                var user = await _dbContext.Users
-                              .Include(x => x.Goals)
-                              .AsNoTracking()
-                              .FirstOrDefaultAsync(x => x.Email == email);
+                var weeklyGoal = 0;
+                IQueryable<UnderwritingProspectProperty> query = _dbContext.UnderwritingPropertyProspects;
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    query = query.Where(x => x.UnderwriterId == userId);
+                    weeklyGoal = await _dbContext.UnderwriterGoals.Where(x => x.UnderwriterId == userId).Select(x => x.PropertiesUnderwritten).FirstOrDefaultAsync();
+                }
+                else
+                {
+                    weeklyGoal = await _dbContext.UnderwriterGoals.SumAsync(x => x.PropertiesUnderwritten);
+                }
 
                 var now = DateTime.Now;
                 var _7DaysAgo = now.AddDays(-7);
                 var _30DaysAgo = now.AddMonths(-1);
-                int monthly = 0;
-                int weekly = 0;
-                int active = 0;
-                int passed = 0;
-                int offerSubmited = 0;
-                int offerAccepted = 0;
-                int offerRejected = 0;
-                int lSubmited = 0;
-                int lAccepted = 0;
-                int lRejected = 0;
-                double monthlyP = 0;
-                double weeklyP = 0;
 
-                if (await _dbContext.UnderwritingPropertyProspects.Where(x => x.UnderwriterId == user.Id).AnyAsync())
-                {
-                    var allUnderwritings = await _dbContext.UnderwritingPropertyProspects.Where(x => x.UnderwriterId == user.Id).CountAsync();
-                    var firstDate = await _dbContext.UnderwritingPropertyProspects.Where(x => x.UnderwriterId == user.Id).OrderBy(x => x.Timestamp).FirstOrDefaultAsync();
-                    var allUnderwritingsLastMonth = await _dbContext.UnderwritingPropertyProspects.Where(x => x.UnderwriterId == user.Id && x.Timestamp >= _30DaysAgo).CountAsync();
-                    var allUnderwritingsLastWeek = await _dbContext.UnderwritingPropertyProspects.Where(x => x.UnderwriterId == user.Id && x.Timestamp >= _7DaysAgo).CountAsync();
-                    var months = (DateTimeOffset.Now - firstDate.Timestamp).TotalDays / 30;
-                    var weeks = (DateTimeOffset.Now - firstDate.Timestamp).TotalDays / 7;
+                var allUnderwritings = await query.CountAsync();
+                var firstDate = await query.OrderBy(x => x.Timestamp).FirstOrDefaultAsync();
+                var months = (DateTimeOffset.Now - firstDate.Timestamp).TotalDays / 30;
+                var weeks = (DateTimeOffset.Now - firstDate.Timestamp).TotalDays / 7;
+                var allUnderwritingsLastMonth = await query.Where(x => x.Timestamp >= _30DaysAgo).CountAsync();
+                var allUnderwritingsLastWeek = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Timestamp >= _7DaysAgo).CountAsync();
 
-                    switch ((int)months)
-                    {
-                        case <= 0:
-                            monthly = allUnderwritings;
-                            break;
-                        default:
-                            monthly = allUnderwritings / (int)months;
-                            break;
-                    }
-
-                    switch ((int)weeks)
-                    {
-                        case <= 0:
-                            weekly = allUnderwritings;
-                            break;
-                        default:
-                            weekly = allUnderwritings / (int)weeks;
-                            break;
-                    }
-
-                    var referenceMonth = months <= 1 ? 1 : months - 1;
-                    var referenceWeek = weeks <= 1 ? 1 : weeks - 1;
-
-                    monthlyP = (double)allUnderwritings - allUnderwritingsLastMonth / referenceMonth;
-                    weeklyP = (double)allUnderwritings - allUnderwritingsLastMonth / referenceWeek;
-
-                    active = await _dbContext.UnderwritingPropertyProspects.Where(x => x.UnderwriterId == user.Id && x.Status == UnderwritingStatus.Active).CountAsync();
-                    passed = await _dbContext.UnderwritingPropertyProspects.Where(x => x.UnderwriterId == user.Id && x.Status == UnderwritingStatus.Passed).CountAsync();
-                    offerSubmited = await _dbContext.UnderwritingPropertyProspects.Where(x => x.UnderwriterId == user.Id && x.Status == UnderwritingStatus.OfferSubmitted).CountAsync();
-                    offerAccepted = await _dbContext.UnderwritingPropertyProspects.Where(x => x.UnderwriterId == user.Id && x.Status == UnderwritingStatus.OfferAccepted).CountAsync();
-                    offerRejected = await _dbContext.UnderwritingPropertyProspects.Where(x => x.UnderwriterId == user.Id && x.Status == UnderwritingStatus.OfferRejected).CountAsync();
-                    lSubmited = await _dbContext.UnderwritingPropertyProspects.Where(x => x.UnderwriterId == user.Id && x.Status == UnderwritingStatus.LOISubmitted).CountAsync();
-                    lAccepted = await _dbContext.UnderwritingPropertyProspects.Where(x => x.UnderwriterId == user.Id && x.Status == UnderwritingStatus.LOIAccepted).CountAsync();
-                    lRejected = await _dbContext.UnderwritingPropertyProspects.Where(x => x.UnderwriterId == user.Id && x.Status == UnderwritingStatus.LOIRejected).CountAsync();
-                }
+                var referenceMonth = months <= 1 ? 1 : months - 1;
+                var referenceWeek = weeks <= 1 ? 1 : weeks - 1;
 
                 var result = new DashboardUnderwritingResponse
                 {
-                    MonthlyReports = monthly,
-                    WeeklyReports = weekly,
-                    WeeklyGoal = user.Goals.PropertiesUnderwritten,
-                    Active = active,
-                    Passed = passed,
-                    OfferSubmitted = offerSubmited,
-                    OfferAccepted = offerAccepted,
-                    OfferRejected = offerRejected,
-                    LOISubmitted = lSubmited,
-                    LOIAccepted = lAccepted,
-                    LOIRejected = lRejected,
-                    MonthlyPercent = monthlyP,
-                    WeeklyPercent = weeklyP,
+                    MonthlyReports = (int)months switch
+                    {
+                        <= 0 => allUnderwritings,
+                        _ => allUnderwritings / (int)months,
+                    },
+                    WeeklyReports = (int)weeks switch
+                    {
+                        <= 0 => allUnderwritings,
+                        _ => allUnderwritings / (int)weeks,
+                    },
+WeeklyGoal = weeklyGoal,
+                    Active = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.Active).CountAsync(),
+                    Passed = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.Passed).CountAsync(),
+                    OfferSubmitted = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.OfferSubmitted).CountAsync(),
+                    OfferAccepted = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.OfferAccepted).CountAsync(),
+                    OfferRejected = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.OfferRejected).CountAsync(),
+                    LOISubmitted = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.LOISubmitted).CountAsync(),
+                    LOIAccepted = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.LOIAccepted).CountAsync(),
+                    LOIRejected = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.LOIRejected).CountAsync(),
+                    MonthlyPercent = (double)allUnderwritings - allUnderwritingsLastMonth / referenceMonth,
+                    WeeklyPercent = (double)allUnderwritings - allUnderwritingsLastMonth / referenceWeek,
                 };
 
                 return Ok(result);
@@ -140,18 +109,17 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         }
 
         [HttpGet("activity")]
-        public async Task<IActionResult> ActivityAnalytics()
+        public async Task<IActionResult> ActivityAnalytics(string userId = null)
         {
-            var email = User.FindFirstValue(ClaimTypes.Email);
-            var user = await _dbContext.Users
-                          .Include(x => x.Goals)
-                          .AsNoTracking()
-                          .FirstOrDefaultAsync(x => x.Email == email);
+            IQueryable<ActivityLog> query = _dbContext.ActivityLogs;
+            if(!string.IsNullOrEmpty(userId))
+            {
+                query = query.Where(x => x.UserId == userId);
+            }
 
-            var activies = await _dbContext.ActivityLogs.Where(x => x.Timestamp >= DateTime.Now.AddDays(-7)).AsNoTracking().ToArrayAsync();
+            var activies = await query.Where(x => x.Timestamp >= DateTime.Now.AddDays(-7)).AsNoTracking().ToArrayAsync();
 
-            var breakdown = activies.Where(x => x.UserId == user.Id)
-                .GroupBy(x => x.Type)
+            var breakdown = activies.GroupBy(x => x.Type)
                 .ToDictionary(x => x.Key, x => x.Sum(t => t.Total.TotalMinutes));
 
             var result = new DashboardActivityResponse

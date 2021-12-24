@@ -1,47 +1,39 @@
+using Microsoft.AspNetCore.Components;
+using MultiFamilyPortal.AdminTheme.Models;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
 {
     public partial class ActivityChart
     {
-        // TODO : Pass AcivityChart properties as parameters
+        [Parameter]
+        public DashboardActivityResponse UserActivity { get; set; }
+
+        public IEnumerable<MyPieChartModel> _pieData = Array.Empty<MyPieChartModel>();
+
+        private double _totalTime = 0;
+        protected override void OnParametersSet()
+        {
+            var _piedata = new List<MyPieChartModel>();
+
+            if (UserActivity.Breakdown is not null && UserActivity.Breakdown.Count > 0)
+            {
+                foreach (var item in UserActivity?.Breakdown)
+                    _piedata.Add(new MyPieChartModel
+                    {
+                        SegmentName = item.Key.ToString(),
+                        SegmentValue = item.Value
+                    });
+
+
+                _totalTime = _piedata.Sum(x => x.SegmentValue);
+            }
+            _pieData = _piedata;
+        }
+
         public class MyPieChartModel
         {
             public string SegmentName { get; set; }
             public double SegmentValue { get; set; }
         }
-        protected override void OnParametersSet()
-        {
-             // TODO : Set ActivityChart properties
-             base.OnParametersSet();
-        }
-
-        public List<MyPieChartModel> pieData = new List<MyPieChartModel>
-    {
-        new MyPieChartModel
-        {
-            SegmentName = "Underwriting",
-            SegmentValue = 1
-        },
-        new MyPieChartModel
-        {
-            SegmentName = "Brokers",
-            SegmentValue = 1
-        },
-        new MyPieChartModel
-        {
-            SegmentName = "Management Company",
-            SegmentValue = 2
-        },
-        new MyPieChartModel
-        {
-            SegmentName = "Lender",
-            SegmentValue = 1
-        },
-        new MyPieChartModel
-        {
-            SegmentName = "Other",
-            SegmentValue = 1
-        }
-    };
     }
 }

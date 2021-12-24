@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using MultiFamilyPortal.AdminTheme.Models;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
 {
@@ -14,27 +15,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
         public string TimeFrameColor { get; set; }
 
         [Parameter]
-        public int Active { get; set; }
-
-        [Parameter]
-        public int OfferSubmitted { get; set; }
-
-        [Parameter]
-        public int OfferAccepted { get; set; }
-
-        [Parameter]
-        public int OfferRejected{ get; set; }
-
-        [Parameter]
-        public int Passed { get; set; }
-
-        [Parameter]
-        public int LOISubmitted { get; set; }
-
-        [Parameter]
-        public int LOIAccepted { get; set; }
-
-        [Parameter]
-        public int LOIRejected { get; set; }
+        public  DashboardUnderwritingResponse Underwriting { get; set; }
     }
 }

@@ -10,54 +10,47 @@
           <SingleInfo Title="Underwriting" 
                       TimeFrame="Monthly" 
                       TimeFrameColor="primary"
-                      Number="20"
+                      Number=@_underwriting.MonthlyReports.ToString()
                       IndicatorTitle="Reports"
-                      IndicatorPercentage="20%"
-                      IsPositiveChange=@true/>
+                      IndicatorPercentage=@_underwriting.MonthlyPercent.ToString("P0")
+                      IsPositiveChange=@(_underwriting.MonthlyReports > (_underwriting.WeeklyGoal*4))/>
       </div>
 
       <div class="col-md-2 mb-3">
         <SingleInfo Title="Underwriting" 
                     TimeFrame="Weekly" 
                     TimeFrameColor="info"
-                    Number="3"
+                    Number=@_underwriting.WeeklyReports.ToString()
                     IndicatorTitle="Reports"
-                    IndicatorPercentage="20%"
-                    IsPositiveChange=@false/>
+                    IndicatorPercentage=@_underwriting.WeeklyPercent.ToString("P0")
+                    IsPositiveChange=@(_underwriting.WeeklyReports > _underwriting.WeeklyGoal) />
       </div>
 
       <div class="col-md-4 mb-3">
         <CounterInfo Title="Underwriting Status" 
                      TimeFrame="Monthly" 
                      TimeFrameColor="primary"
-                     Passed = "2"
-                     Active = "5"
-                     OfferSubmitted = "2"
-                     OfferAccepted="4"
-                     OfferRejected="3"
-                     LOIAccepted = "2"
-                     LOIRejected = "0"
-                     LOISubmitted="2"/>
+                     Underwriting=@_underwriting/>
       </div>
 
       <div class="col-md-2 mb-2">
        <TimelessInfo Title="Blog Subscribers"
                      UpperTitle="Lifetime"
-                     UpperNumber="2000"
+                     UpperNumber=@_blog.Total
                      MiddleTitle="Monthly"
-                     MiddleNumber="34"
+                     MiddleNumber=@_blog.Monthly
                      LowerTitle="Weelky"
-                     LowerNumber="13"/>
+                     LowerNumber=@_blog.Weekly/>
       </div>
 
-      <div class="col-md-2 mb-2" style="height: 180px;">
+      <div class="col-md-2 mb-2">
         <TimelessInfo Title="Investors"
                      UpperTitle="Lifetime"
-                     UpperNumber="80"
+                     UpperNumber=@_investors.Total
                      MiddleTitle="Contacted"
-                     MiddleNumber="54"
+                     MiddleNumber=@_investors.Contacted
                      LowerTitle="Waiting"
-                     LowerNumber="26"/>
+                     LowerNumber=@(_investors.Total - _investors.Contacted)/>
       </div>
     </div>
 
@@ -69,7 +62,7 @@
       </div>
 
       <div class="col-md-4" style="height: 500px">
-       <ActivityChart/>
+       <ActivityChart UserActivity=@_activity />
       </div>
     </div>
 

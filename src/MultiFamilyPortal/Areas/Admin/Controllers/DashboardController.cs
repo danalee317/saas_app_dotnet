@@ -150,9 +150,6 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
 
             var activies = await _dbContext.ActivityLogs.Where(x => x.Timestamp >= DateTime.Now.AddDays(-7)).AsNoTracking().ToArrayAsync();
 
-            var totalActivity = TimeSpan.FromMinutes(activies.Sum(x => x.Total.TotalMinutes));
-            Console.WriteLine($"Total Activity: {totalActivity}");
-
             var breakdown = activies.Where(x => x.UserId == user.Id)
                 .GroupBy(x => x.Type)
                 .ToDictionary(x => x.Key, x => x.Sum(t => t.Total.TotalMinutes));

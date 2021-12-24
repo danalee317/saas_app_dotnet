@@ -2,16 +2,20 @@
 @using MultiFamilyPortal.SaaS.Models
 @using MultiFamilyPortal.SaaSAdmin.Components
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Tenant Admin Portal</PageTitle>
 
 <h1>Tenants</h1>
 
-<TelerikGrid Data=@_tenants
+<TelerikGrid Data=@_filteredTenants
              ConfirmDelete=@true
              EditMode=@GridEditMode.Inline
              OnUpdate=@OnUpdateTenant
              OnDelete=@OnDeleteTenant>
   <GridToolBar>
+    <TelerikTextBox @bind-Value=@_query
+                    OnChange=@FilterResults
+                    Width="300px" />
+    <span class="k-toolbar-spacer"></span>
     <TelerikButton Primary=@true
                    IconClass="fa-duotone fa-circle-plus"
                    Title="Add Tenant"
@@ -64,6 +68,21 @@
       </div>
     </GridCommandColumn>
   </GridColumns>
+  <NoDataTemplate>
+    @if(_loading)
+    {
+      <div class="py-5 text-center">
+        <TelerikLoader Type=@LoaderType.ConvergingSpinner />
+        <p><strong>Loading...</strong></p>
+      </div>
+    }
+    else
+    {
+      <div class="py-5 text-center">
+        <h3>No Tenants have been configured</h3>
+      </div>
+    }
+  </NoDataTemplate>
 </TelerikGrid>
 
 <TelerikWindow Modal=@true

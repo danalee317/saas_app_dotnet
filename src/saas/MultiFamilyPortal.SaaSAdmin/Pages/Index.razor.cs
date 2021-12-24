@@ -1,6 +1,6 @@
-using System.Collections.ObjectModel;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
+using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.SaaS.Data;
 using MultiFamilyPortal.SaaS.Models;
 using Telerik.Blazor;
@@ -16,11 +16,14 @@ namespace MultiFamilyPortal.SaaSAdmin.Pages
         [Inject]
         private IWebHostEnvironment _hostEnvironment { get; set; } = default!;
 
-        private ObservableCollection<Tenant> _tenants { get; } = new();
+        private IEnumerable<Tenant> _tenants;
+        private readonly ObservableRangeCollection<Tenant> _filteredTenants = new ObservableRangeCollection<Tenant>();
 
         private Tenant? newTenant;
         private Tenant? editTenant;
         private TelerikNotification? notification;
+        private bool _loading;
+        private string _query = string.Empty;
 
         private IEnumerable<string> _environments = new[]
         {
@@ -36,12 +39,24 @@ namespace MultiFamilyPortal.SaaSAdmin.Pages
 
         private async Task UpdateTenants()
         {
-            var tenants = await _context.Tenants
+            _loading = true;
+            _tenants = await _context.Tenants
                 .AsNoTracking()
                 .ToArrayAsync();
-            _tenants.Clear();
-            foreach (var tenant in tenants)
-                _tenants.Add(tenant);
+            FilterResults();
+
+            _loading = false;
+        }
+
+        private void FilterResults()
+        {
+            if (!_tenants.Any())
+                _filteredTenants.Clear();
+            else if (string.IsNullOrEmpty(_query))
+                _filteredTenants.ReplaceRange(_tenants);
+            else
+                _filteredTenants.ReplaceRange(_tenants.Where(x => x.Host.Contains(_query, StringComparison.InvariantCultureIgnoreCase)));
+            StateHasChanged();
         }
 
         private void OnAddTenantClicked()
@@ -83,6 +98,7 @@ namespace MultiFamilyPortal.SaaSAdmin.Pages
                 return;
             }
 
+            newTenant.Host = newTenant.Host.ToLower();
             newTenant.Created = DateTimeOffset.Now;
 
             await _context.Tenants.AddAsync(newTenant);
@@ -118,8 +134,14 @@ namespace MultiFamilyPortal.SaaSAdmin.Pages
             if (tenant == null)
                 return;
 
-            _context.Tenants.Remove(tenant);
-            await _context.SaveChangesAsync();
+            var existing = await _context.Tenants.FirstOrDefaultAsync(x => x.Id == tenant.Id);
+
+            if(existing is not null)
+            {
+                _context.Tenants.Remove(existing);
+                await _context.SaveChangesAsync();
+            }
+
             await UpdateTenants();
         }
 

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using MultiFamilyPortal.Drawing;
 using SkiaSharp;
 
 namespace MultiFamilyPortal.Services
@@ -62,9 +63,8 @@ namespace MultiFamilyPortal.Services
                         ResizePngImage(data, icon.Value);
                     string filePath = Path.Combine(Icons, icon.Key);
 
-                    var type = Path.GetExtension(icon.Key).ToLower() == ".ico" ? SKEncodedImageFormat.Ico : SKEncodedImageFormat.Png;
                     using var bitmap = SKBitmap.FromImage(output);
-                    var skData = bitmap.Encode(type, 100);
+                    var skData = bitmap.Encode(SKEncodedImageFormat.Png, 100);
 
                     if (skData is not null)
                     {
@@ -79,6 +79,23 @@ namespace MultiFamilyPortal.Services
                     _logger.LogError(ex, ex.Message);
                 }
             }
+
+            var tempFilePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.ico");
+            using var pngStream = await _storage.GetAsync(Path.Combine(Icons, "android-chrome-512x512.png"));
+            var converted = false;
+            using (var outputStream = File.Create(tempFilePath))
+            {
+                converted = ImagingHelper.ConvertToIcon(pngStream, outputStream);
+            }
+
+            if (converted)
+            {
+                var iconTypeInfo = FileTypeLookup.GetFileTypeInfo("favicon.ico");
+                using var favIconStream = File.OpenRead(tempFilePath);
+                await _storage.PutAsync(Path.Combine(Icons, "favicon.ico"), favIconStream, iconTypeInfo.MimeType, overwrite: true);
+            }
+
+            File.Delete(tempFilePath);
         }
 
         private SKImage ResizePngImage(byte[] data, int size)

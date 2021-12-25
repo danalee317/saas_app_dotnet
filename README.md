@@ -5,31 +5,21 @@ The MultiFamilyPortal is configured as a Multi-Tenant SaaS application. This mea
 - The Default Connection: This is a templated connection string in which the Initial Catalog or Database name must be provided as `{0}`. The name of the database configured for the tenant will be substituted for each tenant.
 - The Tenant Connection: This is database that controls allowed tenants.
 
-Both connection strings must be supplied for the MultiFamilyPortal to function. However only the Tenant Connection is required for the MultiFamilyPortal SaaS Admin portal. By default while running this locally in debug mode, the MultiFamilyPortal will ensure that a Tenant exists for the host `localhost`. This will default to a database named `multifamilyportal`. You can customize this using the Admin portal.
+Both connection strings must be supplied for both the MultiFamilyPortal & the MultiFamlyPortal SaaS Admin Portal to function. By default while running this locally in debug mode, the MultiFamilyPortal will ensure that a Tenant exists for the host `localhost`. This will default to a database named `multifamilyportal`. You can customize this using the Admin portal.
 
-You must apply the database migration for the Tenant Portal. The MultiFamilyPortal will automatically apply all unapplied Migrations for all tenants. During the startup the Startup tasks will run ensure that default resources have been created for the tenants, and that the database is seeded with all expected defaults.
+When setting up a new environment it is important that you run the MultiFamilyPortal SaaS Admin portal first. You should ensure that the tenant exists for `localhost` while developing locally. You should also ensure that a database exists for the tenant which you will specify when adding the tenant. After setting up the tenant, you will need to open the Settings for the Tenant. You will need to add the settings for:
+
+- Google Captcha (Site Key & Secret)
+- Google Authentication (Client ID & Secret)
+- Microsoft Account Authentication (Client ID & Secret)
 
 ## Configuration
 
-The MultiFamilyPortal expects a configuration as follows.
+Note both connection strings are expected for both portals, however ONLY the MultiFamilyPortal requires the PostmarkApiKey.
 
 ```json
 {
-  "Authentication": {
-    "Google": {
-      "ClientId": "{Google Client Id}",
-      "ClientSecret": "{Google Client Secret}"
-    },
-    "Microsoft": {
-      "ClientId": "{Microsoft Client Id}",
-      "ClientSecret": "{Microsoft Client Secret}"
-    }
-  },
-  "Captcha": {
-    "SiteKey": "{Captcha Site Key}",
-    "SecretKey": "{Captcha Secret Key}"
-  },
-  "SendGridKey": "{SendGrid Key}",
+  "PostmarkApiKey": "{Postmark Key}",
   "ConnectionString": {
     "DefaultConnection": "{Default Connection String}",
     "TenantConnection": "{Tenant Connection String}"
@@ -37,7 +27,9 @@ The MultiFamilyPortal expects a configuration as follows.
 }
 ```
 
-The SaaS Admin portal only requires the Tenant Connection String.
+### OAuth Configuration
+
+The MultiFamilyPortal allows for the use of Google & Microsoft Accounts to authenticate users. The configuration for these providers is stored in each tenant's database. This ensures that in the event a tenant is compromised, the no database contains the client id and secret for all of the tenants. This can ONLY be configured however from the SaaS Tenant Admin Portal.
 
 ### Testing Multi Tenant Functionality
 

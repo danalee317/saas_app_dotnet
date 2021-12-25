@@ -80,9 +80,9 @@ namespace MultiFamilyPortal.Services
                 }
             }
 
-            var tempFilePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.ico");
-            using var pngStream = await _storage.GetAsync(Path.Combine(Icons, "android-chrome-512x512.png"));
             var converted = false;
+            var tempFilePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.ico");
+            using (var pngStream = await _storage.GetAsync(Path.Combine(Icons, "android-chrome-512x512.png")))
             using (var outputStream = File.Create(tempFilePath))
             {
                 converted = ImagingHelper.ConvertToIcon(pngStream, outputStream);

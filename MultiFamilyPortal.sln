@@ -36,8 +36,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiFamilyPortal.SideBarTh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiFamilyPortal.PortalTheme", "src\theme\MultiFamilyPortal.PortalTheme\MultiFamilyPortal.PortalTheme.csproj", "{DAF9A68B-F14A-41A3-9F13-5941B22A53AA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiFamilyPortal.InspiniaTheme", "src\theme\MultiFamilyPortal.InspiniaTheme\MultiFamilyPortal.InspiniaTheme.csproj", "{A01CCA81-742B-4FE0-AF8E-17489D35D1E1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiFamilyPortal.FirstRun", "src\theme\MultiFamilyPortal.FirstRun\MultiFamilyPortal.FirstRun.csproj", "{A34AC682-FB16-4EE9-AB67-FC843655622B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiFamilyPortal.InvestorPortal", "src\theme\MultiFamilyPortal.InvestorPortal\MultiFamilyPortal.InvestorPortal.csproj", "{1525D239-3CF7-46C0-B432-501FD4A8F0F1}"
@@ -50,7 +48,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiFamilyPortal.SaaS", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiFamilyPortal.SaaS.Authentication", "src\saas\MultiFamilyPortal.SaaS.Authentication\MultiFamilyPortal.SaaS.Authentication.csproj", "{86F209CC-64A4-438E-AA9C-A2665ED20F96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiFamilyPortal.SuspendedTenantTheme", "src\theme\MultiFamilyPortal.SuspendedTenantTheme\MultiFamilyPortal.SuspendedTenantTheme.csproj", "{FD9D7D64-A70E-4BAE-ADAB-4F87CA62B126}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiFamilyPortal.SuspendedTenantTheme", "src\theme\MultiFamilyPortal.SuspendedTenantTheme\MultiFamilyPortal.SuspendedTenantTheme.csproj", "{FD9D7D64-A70E-4BAE-ADAB-4F87CA62B126}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -106,10 +104,6 @@ Global
 		{DAF9A68B-F14A-41A3-9F13-5941B22A53AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAF9A68B-F14A-41A3-9F13-5941B22A53AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAF9A68B-F14A-41A3-9F13-5941B22A53AA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A01CCA81-742B-4FE0-AF8E-17489D35D1E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A01CCA81-742B-4FE0-AF8E-17489D35D1E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A01CCA81-742B-4FE0-AF8E-17489D35D1E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A01CCA81-742B-4FE0-AF8E-17489D35D1E1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A34AC682-FB16-4EE9-AB67-FC843655622B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A34AC682-FB16-4EE9-AB67-FC843655622B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A34AC682-FB16-4EE9-AB67-FC843655622B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -150,7 +144,6 @@ Global
 		{6B4643E2-7988-44BF-9957-2570A526F782} = {D209E292-EF1B-4192-8CFC-0CE4E3C57876}
 		{E13D6FF3-5BB3-4FE5-A5E4-B29E0AD90F76} = {700BED02-5AC2-462D-B57D-0CA801D64430}
 		{DAF9A68B-F14A-41A3-9F13-5941B22A53AA} = {700BED02-5AC2-462D-B57D-0CA801D64430}
-		{A01CCA81-742B-4FE0-AF8E-17489D35D1E1} = {700BED02-5AC2-462D-B57D-0CA801D64430}
 		{A34AC682-FB16-4EE9-AB67-FC843655622B} = {700BED02-5AC2-462D-B57D-0CA801D64430}
 		{1525D239-3CF7-46C0-B432-501FD4A8F0F1} = {700BED02-5AC2-462D-B57D-0CA801D64430}
 		{E66C1A79-28A6-408D-8FB1-90BD00436CE0} = {5BBB1D98-DE3F-4FFF-A218-C7AD6BFBEA52}

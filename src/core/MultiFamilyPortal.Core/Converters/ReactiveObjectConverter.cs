@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -20,10 +21,10 @@ namespace MultiFamilyPortal.Converters
                 var tokenType = reader.TokenType;
                 if(tokenType == JsonTokenType.PropertyName)
                 {
-                    var name = reader.GetString().Pascalize();
+                    var name = reader.GetString();
                     reader.Read();
 
-                    var prop = props.FirstOrDefault(x => x.Name == name);
+                    var prop = props.FirstOrDefault(x => GetPropertyName(x) == name);
                     if (prop is null || prop.SetMethod is null || prop.GetCustomAttribute<JsonIgnoreAttribute>() != null)
                         continue;
 
@@ -34,6 +35,8 @@ namespace MultiFamilyPortal.Converters
                             prop.SetValue(value, stringValue);
                         else if (prop.PropertyType == typeof(DateTimeOffset))
                             prop.SetValue(value, DateTimeOffset.Parse(stringValue));
+                        else if (prop.PropertyType == typeof(DateTime))
+                            prop.SetValue(value, DateTime.Parse(stringValue));
                         else if (prop.PropertyType.IsEnum)
                             prop.SetValue(value, Enum.Parse(prop.PropertyType, stringValue));
                         else if (prop.PropertyType == typeof(bool))
@@ -54,11 +57,22 @@ namespace MultiFamilyPortal.Converters
                     {
                         prop.SetValue(value, reader.GetBoolean());
                     }
+                    else if (typeof(string) != prop.PropertyType && typeof(IEnumerable).IsAssignableFrom(prop.PropertyType))
+                    {
+                        var converter = options.GetConverter(prop.PropertyType);
+
+                        var readHelperType = typeof(ReadHelper<>).MakeGenericType(prop.PropertyType);
+                        var readHelper = Activator.CreateInstance(readHelperType, converter) as ReadHelper;
+                        var listValue = readHelper.Read(ref reader, prop.PropertyType, options);
+                        prop.SetValue(value, listValue);
+                        continue;
+                    }
                 }
             }
 
             return value;
         }
+
         public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
         {
             if (value is null)
@@ -81,7 +95,7 @@ namespace MultiFamilyPortal.Converters
                 if (propValue is null)
                     continue;
 
-                var name = prop.Name.Camelize();
+                var name = GetPropertyName(prop);
                 if(prop.PropertyType == typeof(int))
                 {
                     var integer = (int)prop.GetValue(value, null);
@@ -102,6 +116,24 @@ namespace MultiFamilyPortal.Converters
                     var boolean = (bool)prop.GetValue(value, null);
                     writer.WriteBoolean(name, boolean);
                 }
+                else if(typeof(string) != prop.PropertyType && typeof(IEnumerable).IsAssignableFrom(prop.PropertyType))
+                {
+                    writer.WritePropertyName(name);
+                    writer.WriteStartArray();
+                    if(propValue is not null)
+                    {
+                        foreach (var item in (IEnumerable)propValue)
+                        {
+                            var itemType = item.GetType();
+                            var converter = options.GetConverter(itemType);
+                            var converterType = converter.GetType();
+                            var writeMethod = converterType.GetMethod("Write");
+                            writeMethod.Invoke(converter, new object[] { writer, item, options });
+                        }
+                    }
+
+                    writer.WriteEndArray();
+                }
                 else
                 {
                     var propertyValue = prop.GetValue(value, null).ToString();
@@ -110,6 +142,15 @@ namespace MultiFamilyPortal.Converters
             }
 
             writer.WriteEndObject();
+        }
+
+        private static string GetPropertyName(PropertyInfo prop)
+        {
+            var attr = prop.GetCustomAttribute<JsonPropertyNameAttribute>();
+            if (attr != null && !string.IsNullOrEmpty(attr.Name))
+                return attr.Name;
+
+            return prop.Name.Camelize();
         }
     }
 }

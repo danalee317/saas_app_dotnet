@@ -1,13 +1,10 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.AdminTheme.Models;
-using System;
-using UAParser;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
 {
@@ -73,7 +70,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                         <= 0 => allUnderwritings,
                         _ => allUnderwritings / (int)weeks,
                     },
-WeeklyGoal = weeklyGoal,
+                    WeeklyGoal = weeklyGoal,
                     Active = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.Active).CountAsync(),
                     Passed = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.Passed).CountAsync(),
                     OfferSubmitted = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.OfferSubmitted).CountAsync(),

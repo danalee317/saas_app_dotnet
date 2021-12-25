@@ -1,0 +1,49 @@
+<div class="border" style="height: 100%">
+  <div class="text-secondary m-2">
+    <b>@Title</b>
+  </div>
+  <hr />
+  <div id="body" class="my-2">
+    @if (Investors is not null && Investors.Count() > 0)
+    {
+      @foreach (var investor in Investors)
+      {
+        <div class="row my-3">
+          <div class="col-1 my-auto">
+            <input type="checkbox" class="ms-2" />
+          </div>
+          <div class="col-4 my-auto">
+            <small>@investor.FirstName @investor.LastName</small>
+          </div>
+          <div class="col-5 my-auto">
+            <small>@investor.Email</small>
+          </div>
+          <div class="col-2 my-auto text-center">
+            <div class="clickable" @onclick=@(()=> ShowContact(investor))>
+              <i class="fal fa-eye"></i>
+            </div>
+          </div>
+        </div>
+        <hr />
+      }
+
+      <div class="row h-75">
+      <div class="col-12 my-auto">
+        <button class="btn btn-primary btn-sm">
+          <i class="fas fa-save"></i>
+        </button>
+      </div>
+    </div>
+    }
+    else
+    {
+      <div class="row text-center" style="height: 400px;">
+        <div class="text-secondary my-auto">
+          No Investors yet.
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<InvestorDetail Investor=@_selectedInvestor WindowIsVisible=@_showDetail/>

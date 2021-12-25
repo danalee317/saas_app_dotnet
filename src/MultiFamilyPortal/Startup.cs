@@ -26,10 +26,11 @@ namespace MultiFamilyPortal
             services.RegisterThemes(env);
 
             // These have to be manually registered to avoid being linked out
-            services.RegisterTheme<QuarterRealEstateTheme.QuarterRealEstateTheme>();
-            services.RegisterTheme<AdminTheme.AdminTheme>();
-            services.RegisterTheme<PortalTheme.PortalTheme>();
-            services.RegisterTheme<InvestorPortal.InvestorTheme>();
+            services.RegisterTheme<QuarterRealEstateTheme.QuarterRealEstateTheme>()
+                .RegisterTheme<AdminTheme.AdminTheme>()
+                .RegisterTheme<PortalTheme.PortalTheme>()
+                .RegisterTheme<InvestorPortal.InvestorTheme>()
+                .RegisterTheme<SuspendedTenantTheme.SuspendedTenantTheme>();
 
             services.AddHsts(options =>
             {

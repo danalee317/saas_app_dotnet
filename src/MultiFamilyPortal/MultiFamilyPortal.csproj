@@ -28,6 +28,7 @@
     <ProjectReference Include="..\theme\MultiFamilyPortal.InvestorPortal\MultiFamilyPortal.InvestorPortal.csproj" />
     <ProjectReference Include="..\theme\MultiFamilyPortal.PortalTheme\MultiFamilyPortal.PortalTheme.csproj" />
     <ProjectReference Include="..\theme\MultiFamilyPortal.SideBarTheme\MultiFamilyPortal.SideBarTheme.csproj" />
+    <ProjectReference Include="..\theme\MultiFamilyPortal.SuspendedTenantTheme\MultiFamilyPortal.SuspendedTenantTheme.csproj" />
   </ItemGroup>
 
 </Project>

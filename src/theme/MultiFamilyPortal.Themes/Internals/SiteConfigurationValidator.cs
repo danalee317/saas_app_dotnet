@@ -27,6 +27,17 @@ namespace MultiFamilyPortal.Themes.Internals
             }
         }
 
+        public bool Enabled
+        {
+            get
+            {
+                var tenant = _tenantProvider.GetTenant();
+                if (tenant is null)
+                    return false;
+                return !tenant.Disabled;
+            }
+        }
+
         public void SetFirstRunTheme(IPortalTheme theme)
         {
             var tenant = _tenantProvider.GetTenant();

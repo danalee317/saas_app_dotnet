@@ -12,5 +12,8 @@ namespace MultiFamilyPortal.CoreUI.Models
 
         [JsonPropertyName("hostname")]
         public string Hostname { get; set; }
+
+        [JsonPropertyName("error-codes")]
+        public IEnumerable<string> ErrorCodes { get; set; }
     }
 }

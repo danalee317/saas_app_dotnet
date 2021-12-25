@@ -93,7 +93,9 @@ namespace MultiFamilyPortal.Themes.Internals
 
         public IPortalTheme GetCurrentTheme()
         {
-            if (_configurationValidator.Theme is not null)
+            if (!_configurationValidator.Enabled)
+                return _themes.FirstOrDefault(x => x.Name.Contains("Suspended"));
+            else if (_configurationValidator.Theme is not null)
                 return _configurationValidator.Theme;
 
             var uri = GetCurrentUri();

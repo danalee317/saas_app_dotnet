@@ -7,7 +7,7 @@ namespace MultiFamilyPortal.Data.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        public Guid BucketListId { get; set; }
+        public Guid DealAnalysisId { get; set; }
 
         private DateTimeOffset _timestamp = DateTimeOffset.UtcNow;
         public DateTimeOffset Timestamp => _timestamp;

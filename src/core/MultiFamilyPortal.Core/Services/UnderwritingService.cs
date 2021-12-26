@@ -23,17 +23,6 @@ namespace MultiFamilyPortal.Services
                     Address = x.Address,
                     AquisitionFeePercent = x.AquisitionFeePercent,
                     AskingPrice = x.AskingPrice,
-                    DealAnalysis = new UnderwritingAnalysisDealAnalysis
-                    {
-                        CompetitionNotes = x.DealAnalysis.CompetitionNotes,
-                        ConstructionType = x.DealAnalysis.ConstructionType,
-                        HowUnderwritingWasDetermined = x.DealAnalysis.HowUnderwritingWasDetermined,
-                        MarketCapRate = x.DealAnalysis.MarketCapRate,
-                        MarketPricePerUnit = x.DealAnalysis.MarketPricePerUnit,
-                        Summary = x.DealAnalysis.Summary,
-                        UtilityNotes = x.DealAnalysis.UtilityNotes,
-                        ValuePlays = x.DealAnalysis.ValuePlays,
-                    },
                     CapitalImprovements = x.CapitalImprovements.Select(c => new UnderwritingAnalysisCapitalImprovement
                     {
                         Cost = c.Cost,
@@ -67,7 +56,6 @@ namespace MultiFamilyPortal.Services
                     Management = x.Management,
                     Market = x.Market,
                     MarketVacancy = x.MarketVacancy,
-
                     Name = x.Name,
                     NeighborhoodClass = x.NeighborhoodClass,
                     Notes = x.Notes.Select(n => new UnderwritingAnalysisNote
@@ -98,6 +86,19 @@ namespace MultiFamilyPortal.Services
                     Zip = x.Zip,
                 })
                 .FirstOrDefaultAsync(x => x.Id == propertyId);
+
+            var dealAnalysis = await _dbContext.UnderwritingProspectPropertyDealAnalysis.FirstOrDefaultAsync(x => x.PropertyId == propertyId);
+            property.DealAnalysis = new UnderwritingAnalysisDealAnalysis
+            {
+                CompetitionNotes = dealAnalysis?.CompetitionNotes,
+                ConstructionType = dealAnalysis?.ConstructionType,
+                HowUnderwritingWasDetermined = dealAnalysis?.HowUnderwritingWasDetermined,
+                MarketCapRate = dealAnalysis?.MarketCapRate ?? 0,
+                MarketPricePerUnit = dealAnalysis?.MarketPricePerUnit ?? 0,
+                Summary = dealAnalysis?.Summary,
+                UtilityNotes = dealAnalysis?.UtilityNotes,
+                ValuePlays = dealAnalysis?.ValuePlays,
+            };
 
             if (property.IncomeForecast is null)
                 property.IncomeForecast = new List<UnderwritingAnalysisIncomeForecast>();
@@ -194,7 +195,7 @@ namespace MultiFamilyPortal.Services
                 .Include(x => x.Forecast)
                 .FirstOrDefaultAsync(x => x.Id == propertyId);
 
-            await UpdateBucketlist(property, analysis);
+            await UpdateDealAnalysis(property, analysis);
             await UpdateCapitalImprovements(propertyId, analysis);
             await UpdateLineItems(propertyId, analysis);
             await UpdateMortgages(propertyId, analysis);
@@ -487,7 +488,7 @@ namespace MultiFamilyPortal.Services
             }
         }
 
-        private async Task UpdateBucketlist(UnderwritingProspectProperty property, UnderwritingAnalysis analysis)
+        private async Task UpdateDealAnalysis(UnderwritingProspectProperty property, UnderwritingAnalysis analysis)
         {
             if (property.DealAnalysis is null)
             {
@@ -506,7 +507,7 @@ namespace MultiFamilyPortal.Services
 
                 await _dbContext.UnderwritingProspectPropertyDealAnalysis.AddAsync(bucketList);
                 await _dbContext.SaveChangesAsync();
-                property.BucketListId = bucketList.Id;
+                property.DealAnalysisId = bucketList.Id;
             }
             else
             {

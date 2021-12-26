@@ -33,7 +33,7 @@ namespace MultiFamilyPortal.Data
         DbSet<UnderwritingProspectFile> UnderwritingProspectFiles { get; }
         DbSet<UnderwritingGuidance> UnderwritingGuidance { get; }
         DbSet<UnderwritingProspectPropertyCapitalImprovements> UnderwritingProspectPropertyCapitalImprovements { get; }
-        DbSet<UnderwritingProspectPropertyBucketList> UnderwritingProspectPropertyBucketLists { get; }
+        DbSet<UnderwritingProspectPropertyDealAnalysis> UnderwritingProspectPropertyDealAnalysis { get; }
         DbSet<UnderwritingProspectPropertyIncomeForecast> UnderwritingProspectPropertyIncomeForecasts { get; }
     }
 }

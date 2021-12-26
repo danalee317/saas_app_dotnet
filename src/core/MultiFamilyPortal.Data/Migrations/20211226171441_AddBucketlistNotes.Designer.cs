@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MultiFamilyPortal.Data;
 
@@ -11,9 +12,10 @@ using MultiFamilyPortal.Data;
 namespace MultiFamilyPortal.Data.Migrations
 {
     [DbContext(typeof(MFPContext))]
-    partial class MFPContextModelSnapshot : ModelSnapshot
+    [Migration("20211226171441_AddBucketlistNotes")]
+    partial class AddBucketlistNotes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1689,6 +1691,9 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.Property<double>("AskingPrice")
                         .HasColumnType("float");
 
+                    b.Property<Guid>("BucketListId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<double>("CapRate")
                         .HasColumnType("float");
 
@@ -1716,9 +1721,6 @@ namespace MultiFamilyPortal.Data.Migrations
 
                     b.Property<string>("ContractServicesNotes")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("DealAnalysisId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("DebtCoverage")
                         .HasColumnType("float");

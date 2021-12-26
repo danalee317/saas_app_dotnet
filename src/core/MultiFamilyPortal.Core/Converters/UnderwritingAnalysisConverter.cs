@@ -38,9 +38,9 @@ namespace MultiFamilyPortal.Converters
                         case nameof(UnderwritingAnalysis.AskingPrice):
                             value.AskingPrice = reader.GetDouble();
                             break;
-                        case nameof(UnderwritingAnalysis.BucketList):
-                            var bucketListConverter = options.GetConverter<UnderwritingAnalysisBucketList>();
-                            value.BucketList = bucketListConverter.Read(ref reader, typeof(UnderwritingAnalysisBucketList), options);
+                        case nameof(UnderwritingAnalysis.DealAnalysis):
+                            var bucketListConverter = options.GetConverter<UnderwritingAnalysisDealAnalysis>();
+                            value.DealAnalysis = bucketListConverter.Read(ref reader, typeof(UnderwritingAnalysisDealAnalysis), options);
                             break;
                         case nameof(UnderwritingAnalysis.CapitalImprovements):
                             var capitalImprovementsConverter = options.GetConverter<List<UnderwritingAnalysisCapitalImprovement>>();
@@ -195,7 +195,7 @@ namespace MultiFamilyPortal.Converters
             Write(writer, nameof(UnderwritingAnalysis.Address), value.Address);
             WriteNumber(writer, nameof(UnderwritingAnalysis.AquisitionFeePercent), value.AquisitionFeePercent);
             WriteNumber(writer, nameof(UnderwritingAnalysis.AskingPrice), value.AskingPrice);
-            Write(writer, nameof(UnderwritingAnalysis.BucketList), value.BucketList, options);
+            Write(writer, nameof(UnderwritingAnalysis.DealAnalysis), value.DealAnalysis, options);
             WriteArray(writer, nameof(UnderwritingAnalysis.CapitalImprovements), value.CapitalImprovements, options);
             WriteNumber(writer, nameof(UnderwritingAnalysis.CapX), value.CapX);
             Write(writer, nameof(UnderwritingAnalysis.CapXType), value.CapXType);

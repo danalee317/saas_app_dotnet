@@ -5,8 +5,8 @@ using ReactiveUI;
 
 namespace MultiFamilyPortal.Dtos.Underwriting
 {
-    [JsonConverter(typeof(ReactiveObjectConverter<UnderwritingAnalysisBucketList>))]
-    public class UnderwritingAnalysisBucketList : ReactiveObject
+    [JsonConverter(typeof(ReactiveObjectConverter<UnderwritingAnalysisDealAnalysis>))]
+    public class UnderwritingAnalysisDealAnalysis : ReactiveObject
     {
         public string Summary { get; set; }
 

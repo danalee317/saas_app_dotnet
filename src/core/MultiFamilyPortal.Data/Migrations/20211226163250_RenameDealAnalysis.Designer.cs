@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MultiFamilyPortal.Data;
 
@@ -11,9 +12,10 @@ using MultiFamilyPortal.Data;
 namespace MultiFamilyPortal.Data.Migrations
 {
     [DbContext(typeof(MFPContext))]
-    partial class MFPContextModelSnapshot : ModelSnapshot
+    [Migration("20211226163250_RenameDealAnalysis")]
+    partial class RenameDealAnalysis
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1689,6 +1691,9 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.Property<double>("AskingPrice")
                         .HasColumnType("float");
 
+                    b.Property<Guid>("BucketListId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<double>("CapRate")
                         .HasColumnType("float");
 
@@ -1711,15 +1716,6 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.Property<double>("ClosingCostPercent")
                         .HasColumnType("float");
 
-                    b.Property<string>("ConcessionsNonPaymentNotes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContractServicesNotes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("DealAnalysisId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<double>("DebtCoverage")
                         .HasColumnType("float");
 
@@ -1732,23 +1728,11 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.Property<double>("Downpayment")
                         .HasColumnType("float");
 
-                    b.Property<string>("GeneralAdminNotes")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double>("GrossPotentialRent")
                         .HasColumnType("float");
 
-                    b.Property<string>("GrossPotentialRentNotes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GrossScheduledRentNotes")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("HoldYears")
                         .HasColumnType("int");
-
-                    b.Property<string>("InsuranceNotes")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("LTV")
                         .HasColumnType("float");
@@ -1757,23 +1741,14 @@ namespace MultiFamilyPortal.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LossToLeaseNotes")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double>("Management")
                         .HasColumnType("float");
-
-                    b.Property<string>("ManagementNotes")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Market")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("MarketVacancy")
                         .HasColumnType("float");
-
-                    b.Property<string>("MarketingNotes")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("NOI")
                         .HasColumnType("float");
@@ -1787,20 +1762,11 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.Property<double>("OfferPrice")
                         .HasColumnType("float");
 
-                    b.Property<string>("OtherIncomeNotes")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double>("OurEquityOfCF")
                         .HasColumnType("float");
 
-                    b.Property<string>("PayrollNotes")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double>("PhysicalVacancy")
                         .HasColumnType("float");
-
-                    b.Property<string>("PhysicalVacancyNotes")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PropertyClass")
                         .HasColumnType("int");
@@ -1810,9 +1776,6 @@ namespace MultiFamilyPortal.Data.Migrations
 
                     b.Property<int>("RentableSqFt")
                         .HasColumnType("int");
-
-                    b.Property<string>("RepairsMaintenanceNotes")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("SECAttorney")
                         .HasColumnType("float");
@@ -1830,9 +1793,6 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.Property<double>("StrikePrice")
                         .HasColumnType("float");
 
-                    b.Property<string>("TaxesNotes")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTimeOffset>("Timestamp")
                         .HasColumnType("datetimeoffset");
 
@@ -1841,12 +1801,6 @@ namespace MultiFamilyPortal.Data.Migrations
 
                     b.Property<int>("Units")
                         .HasColumnType("int");
-
-                    b.Property<string>("UtilityNotes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UtilityReimbursementNotes")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Vintage")
                         .HasColumnType("int");

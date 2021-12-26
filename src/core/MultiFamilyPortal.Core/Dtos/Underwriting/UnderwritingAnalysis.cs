@@ -368,6 +368,42 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
         public PropertyClass NeighborhoodClass { get; set; }
 
+        #region Bucketlist Notes
+
+        public string GrossPotentialRentNotes { get; set; }
+
+        public string LossToLeaseNotes { get; set; }
+
+        public string GrossScheduledRentNotes { get; set; }
+
+        public string PhysicalVacancyNotes { get; set; }
+
+        public string ConcessionsNonPaymentNotes { get; set; }
+
+        public string UtilityReimbursementNotes { get; set; }
+
+        public string OtherIncomeNotes { get; set; }
+
+        public string TaxesNotes { get; set; }
+
+        public string MarketingNotes { get; set; }
+
+        public string InsuranceNotes { get; set; }
+
+        public string UtilityNotes { get; set; }
+
+        public string RepairsMaintenanceNotes { get; set; }
+
+        public string ContractServicesNotes { get; set; }
+
+        public string PayrollNotes { get; set; }
+
+        public string GeneralAdminNotes { get; set; }
+
+        public string ManagementNotes { get; set; }
+
+        #endregion Bucketlist Notes
+
         [JsonIgnore]
         [DisplayFormat(DataFormatString = "{0:P}")]
         public double ReversionCapRate => _reversionCapRate?.Value ?? 0;
@@ -452,7 +488,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         [DisplayFormat(DataFormatString = "{0:C}")]
         public double Raise => _raise?.Value ?? 0;
 
-        public UnderwritingAnalysisBucketList BucketList { get; set; }
+        public UnderwritingAnalysisDealAnalysis DealAnalysis { get; set; }
 
         public IEnumerable<UnderwritingAnalysisLineItem> Sellers => _sellersLineItems;
         public IEnumerable<UnderwritingAnalysisLineItem> SellerIncome => _sellersIncomeItems;

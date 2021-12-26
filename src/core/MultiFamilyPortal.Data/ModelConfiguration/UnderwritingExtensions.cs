@@ -10,9 +10,9 @@ namespace MultiFamilyPortal.Data.ModelConfiguration
         {
             modelBuilder.Entity<UnderwritingProspectProperty>(builder =>
             {
-                builder.HasOne(x => x.BucketList)
+                builder.HasOne(x => x.DealAnalysis)
                     .WithOne(x => x.Property)
-                    .HasForeignKey<UnderwritingProspectPropertyBucketList>(x => x.PropertyId);
+                    .HasForeignKey<UnderwritingProspectPropertyDealAnalysis>(x => x.PropertyId);
             });
             modelBuilder.HasField<UnderwritingProspectProperty, DateTimeOffset>(x => x.Timestamp);
             modelBuilder.HasField<UnderwritingNote, DateTimeOffset>(x => x.Timestamp);

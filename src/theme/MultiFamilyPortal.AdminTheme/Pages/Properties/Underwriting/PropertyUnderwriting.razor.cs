@@ -98,7 +98,7 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
                 {
                     // TODO: dispose managed state (managed objects)
                     _navigationManager.LocationChanged -= OnNavigating;
-                    if (Property.OurExpense is INotifyCollectionChanged ncc)
+                    if (Property?.OurExpense is INotifyCollectionChanged ncc)
                     {
                         ncc.CollectionChanged -= OnCollectionChanged;
                     }

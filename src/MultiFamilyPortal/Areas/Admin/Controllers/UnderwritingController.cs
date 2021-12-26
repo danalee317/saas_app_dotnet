@@ -248,14 +248,14 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             await _dbContext.UnderwritingPropertyProspects.AddAsync(prospect);
             await _dbContext.SaveChangesAsync();
 
-            var bucketlist = new UnderwritingProspectPropertyBucketList
+            var dealAnalysis = new UnderwritingProspectPropertyDealAnalysis
             {
                 PropertyId = prospect.Id
             };
-            await _dbContext.UnderwritingProspectPropertyBucketLists.AddAsync(bucketlist);
+            await _dbContext.UnderwritingProspectPropertyDealAnalysis.AddAsync(dealAnalysis);
             await _dbContext.SaveChangesAsync();
 
-            prospect.BucketListId = bucketlist.Id;
+            prospect.DealAnalysisId = dealAnalysis.Id;
             _dbContext.UnderwritingPropertyProspects.Update(prospect);
             await _dbContext.SaveChangesAsync();
 

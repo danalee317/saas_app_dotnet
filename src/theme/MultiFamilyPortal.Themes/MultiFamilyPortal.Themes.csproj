@@ -15,22 +15,6 @@
     </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="ScriptOutlet.cs" />
-    <Compile Remove="Sections\ISectionContentProvider.cs" />
-    <Compile Remove="Sections\ISectionContentSubscriber.cs" />
-    <Compile Remove="Sections\SectionOutlet.cs" />
-    <Compile Remove="Sections\SectionRegistry.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="ScriptOutlet.cs" />
-    <None Include="Sections\ISectionContentProvider.cs" />
-    <None Include="Sections\ISectionContentSubscriber.cs" />
-    <None Include="Sections\SectionOutlet.cs" />
-    <None Include="Sections\SectionRegistry.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\core\MultiFamilyPortal.Abstractions\MultiFamilyPortal.Abstractions.csproj" />
     <ProjectReference Include="..\..\core\MultiFamilyPortal.Data\MultiFamilyPortal.Data.csproj" />
   </ItemGroup>

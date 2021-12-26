@@ -37,10 +37,10 @@ namespace MultiFamilyPortal.CoreUI
             using var client = new HttpClient();
             var request = new CaptchaRequest
             {
-                Secret = null,
+                Secret = _options.SecretKey,
                 Response = response
             };
-            using var httpResponseMessage = await client.PostAsJsonAsync("https://www.google.com/recaptcha/api/siteverify", request);
+            using var httpResponseMessage = await client.PostAsJsonAsync($"https://www.google.com/recaptcha/api/siteverify?secret={_options.SecretKey}&response={response}", request);
             if(httpResponseMessage.IsSuccessStatusCode)
             {
                 var result = await httpResponseMessage.Content.ReadFromJsonAsync<CaptchaResponse>();

@@ -25,7 +25,7 @@ namespace MultiFamilyPortal.Data.Models
 
         public string UserId { get; set; }
 
-        private DateTimeOffset _timestamp;
+        private DateTimeOffset _timestamp = DateTimeOffset.Now;
         public DateTimeOffset Timestamp => _timestamp;
 
         [JsonIgnore]

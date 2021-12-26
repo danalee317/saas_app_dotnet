@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +6,7 @@ using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.Services;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
 {
@@ -21,6 +22,22 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         {
             _dbContext = dbContext;
         }
+
+        [HttpGet("userImage/{id}")]
+        public async Task<IActionResult> GetUserImage(string id)
+        {
+            if(!string.IsNullOrEmpty(id))
+            {
+                var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+                if(user is not null)
+                {
+                    return Redirect(GravatarHelper.GetUri(user.Email, 90));
+                }
+            }
+
+            return Redirect(GravatarHelper.GetUri("system@multifamilyportal.app", 90, DefaultGravatar.Wavatar));
+        }
+
 
         [HttpGet("investors")]
         public async Task<IActionResult> Investors()
@@ -499,18 +516,11 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 }
             }
 
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (updatedContact.Logs?.Any() ?? false)
             {
                 var newLogs = updatedContact.Logs.Where(x => x.Id == default);
                 var existingLogs = updatedContact.Logs.Where(x => x.Id != default);
-                
-                //var deletedLogs = contact.Logs.Where(x => x.UserId == userId && updatedContact.Logs.Any(e => e.Id == x.Id));
-
-                //if (deletedLogs?.Any() ?? false)
-                //{
-                //    _dbContext.CrmContactLogs.RemoveRange(deletedLogs);
-                //}
 
                 foreach (var updated in existingLogs)
                 {
@@ -519,20 +529,23 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     if (log is null)
                         continue;
 
-                    log.Notes = updated.Notes;
-                    _dbContext.CrmContactLogs.Update(log);
+                    if (log.Notes != updated.Notes)
+                    {
+                        log.Notes = updated.Notes;
+                        _dbContext.CrmContactLogs.Update(log);
+                    }
                 }
 
-                //foreach (var added in newLogs)
-                //{
-                //    var newLog = new CRMContactLog
-                //    {
-                //        ContactId = contact.Id,
-                //        UserId = userId,
-                //        Notes = updated.Notes
-                //    };
-                //    await _dbContext.CrmContactLogs.AddAsync(newLog);
-                //}
+                foreach (var added in newLogs)
+                {
+                    var newLog = new CRMContactLog
+                    {
+                        ContactId = contact.Id,
+                        UserId = userId,
+                        Notes = added.Notes,
+                    };
+                    await _dbContext.CrmContactLogs.AddAsync(newLog);
+                }
             }
 
             _dbContext.CrmContacts.Update(contact);

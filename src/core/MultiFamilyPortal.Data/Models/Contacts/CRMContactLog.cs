@@ -23,7 +23,7 @@ namespace MultiFamilyPortal.Data.Models
 
         public string Notes { get; set; }
 
-        public Guid? UserId { get; set; }
+        public string UserId { get; set; }
 
         private DateTimeOffset _timestamp;
         public DateTimeOffset Timestamp => _timestamp;

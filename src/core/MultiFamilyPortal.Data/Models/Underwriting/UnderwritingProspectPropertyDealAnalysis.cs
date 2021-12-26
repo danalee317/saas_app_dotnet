@@ -2,7 +2,7 @@
 
 namespace MultiFamilyPortal.Data.Models
 {
-    public class UnderwritingProspectPropertyBucketList
+    public class UnderwritingProspectPropertyDealAnalysis
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }

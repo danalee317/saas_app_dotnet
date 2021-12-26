@@ -102,11 +102,11 @@ namespace MultiFamilyPortal.AdminTheme.Services
         {
             var sheet = workbook.GetWorksheet(CoachingForm);
 
-            sheet.SetValue("A4", analysis.BucketList.Summary)
-                .SetValue("A6", analysis.BucketList.ValuePlays)
+            sheet.SetValue("A4", analysis.DealAnalysis.Summary)
+                .SetValue("A6", analysis.DealAnalysis.ValuePlays)
                 .SetValue("C7", analysis.Vintage)
-                .SetValue("A9", analysis.BucketList.ConstructionType)
-                .SetValue("G10", analysis.BucketList.UtilityNotes)
+                .SetValue("A9", analysis.DealAnalysis.ConstructionType)
+                .SetValue("G10", analysis.DealAnalysis.UtilityNotes)
                 .SetValue("D11", analysis.DeferredMaintenance)
                 .SetValue("D12", analysis.PropertyClass.Humanize(LetterCasing.Title))
                 .SetValue("D13", analysis.NeighborhoodClass.Humanize(LetterCasing.Title))
@@ -118,10 +118,10 @@ namespace MultiFamilyPortal.AdminTheme.Services
                 .SetValue("D29", analysis.OfferPrice)
                 .SetValue("D30", analysis.StrikePrice)
                 .SetValue("D32", analysis.MarketVacancy)
-                .SetValue("D33", analysis.BucketList.MarketPricePerUnit)
-                .SetValue("D34", analysis.BucketList.MarketCapRate)
-                .SetValue("A36", analysis.BucketList.CompetitionNotes)
-                .SetValue("A40", analysis.BucketList.HowUnderwritingWasDetermined);
+                .SetValue("D33", analysis.DealAnalysis.MarketPricePerUnit)
+                .SetValue("D34", analysis.DealAnalysis.MarketCapRate)
+                .SetValue("A36", analysis.DealAnalysis.CompetitionNotes)
+                .SetValue("A40", analysis.DealAnalysis.HowUnderwritingWasDetermined);
         }
 
         public static void AddNotes(this Workbook workbook, UnderwritingAnalysis analysis)

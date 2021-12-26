@@ -23,16 +23,16 @@ namespace MultiFamilyPortal.Services
                     Address = x.Address,
                     AquisitionFeePercent = x.AquisitionFeePercent,
                     AskingPrice = x.AskingPrice,
-                    BucketList = new UnderwritingAnalysisBucketList
+                    DealAnalysis = new UnderwritingAnalysisDealAnalysis
                     {
-                        CompetitionNotes = x.BucketList.CompetitionNotes,
-                        ConstructionType = x.BucketList.ConstructionType,
-                        HowUnderwritingWasDetermined = x.BucketList.HowUnderwritingWasDetermined,
-                        MarketCapRate = x.BucketList.MarketCapRate,
-                        MarketPricePerUnit = x.BucketList.MarketPricePerUnit,
-                        Summary = x.BucketList.Summary,
-                        UtilityNotes = x.BucketList.UtilityNotes,
-                        ValuePlays = x.BucketList.ValuePlays,
+                        CompetitionNotes = x.DealAnalysis.CompetitionNotes,
+                        ConstructionType = x.DealAnalysis.ConstructionType,
+                        HowUnderwritingWasDetermined = x.DealAnalysis.HowUnderwritingWasDetermined,
+                        MarketCapRate = x.DealAnalysis.MarketCapRate,
+                        MarketPricePerUnit = x.DealAnalysis.MarketPricePerUnit,
+                        Summary = x.DealAnalysis.Summary,
+                        UtilityNotes = x.DealAnalysis.UtilityNotes,
+                        ValuePlays = x.DealAnalysis.ValuePlays,
                     },
                     CapitalImprovements = x.CapitalImprovements.Select(c => new UnderwritingAnalysisCapitalImprovement
                     {
@@ -187,7 +187,7 @@ namespace MultiFamilyPortal.Services
         public async Task<UnderwritingAnalysis> UpdateProperty(Guid propertyId, UnderwritingAnalysis analysis, string email)
         {
             var property = await _dbContext.UnderwritingPropertyProspects
-                .Include(x => x.BucketList)
+                .Include(x => x.DealAnalysis)
                 .Include(x => x.Notes)
                 .Include(x => x.Models)
                 .Include(x => x.CapitalImprovements)
@@ -489,37 +489,37 @@ namespace MultiFamilyPortal.Services
 
         private async Task UpdateBucketlist(UnderwritingProspectProperty property, UnderwritingAnalysis analysis)
         {
-            if (property.BucketList is null)
+            if (property.DealAnalysis is null)
             {
-                var bucketList = new UnderwritingProspectPropertyBucketList
+                var bucketList = new UnderwritingProspectPropertyDealAnalysis
                 {
-                    CompetitionNotes = analysis.BucketList.CompetitionNotes,
-                    ConstructionType = analysis.BucketList.ConstructionType,
-                    HowUnderwritingWasDetermined = analysis.BucketList.HowUnderwritingWasDetermined,
-                    MarketCapRate = analysis.BucketList.MarketCapRate,
-                    MarketPricePerUnit = analysis.BucketList.MarketPricePerUnit,
+                    CompetitionNotes = analysis.DealAnalysis.CompetitionNotes,
+                    ConstructionType = analysis.DealAnalysis.ConstructionType,
+                    HowUnderwritingWasDetermined = analysis.DealAnalysis.HowUnderwritingWasDetermined,
+                    MarketCapRate = analysis.DealAnalysis.MarketCapRate,
+                    MarketPricePerUnit = analysis.DealAnalysis.MarketPricePerUnit,
                     PropertyId = property.Id,
-                    Summary = analysis.BucketList.Summary,
-                    UtilityNotes = analysis.BucketList.UtilityNotes,
-                    ValuePlays = analysis.BucketList.ValuePlays
+                    Summary = analysis.DealAnalysis.Summary,
+                    UtilityNotes = analysis.DealAnalysis.UtilityNotes,
+                    ValuePlays = analysis.DealAnalysis.ValuePlays
                 };
 
-                await _dbContext.UnderwritingProspectPropertyBucketLists.AddAsync(bucketList);
+                await _dbContext.UnderwritingProspectPropertyDealAnalysis.AddAsync(bucketList);
                 await _dbContext.SaveChangesAsync();
                 property.BucketListId = bucketList.Id;
             }
             else
             {
-                var bucketList = property.BucketList;
-                bucketList.CompetitionNotes = analysis.BucketList.CompetitionNotes;
-                bucketList.ConstructionType = analysis.BucketList.ConstructionType;
-                bucketList.HowUnderwritingWasDetermined = analysis.BucketList.HowUnderwritingWasDetermined;
-                bucketList.MarketCapRate = analysis.BucketList.MarketCapRate;
-                bucketList.MarketPricePerUnit = analysis.BucketList.MarketPricePerUnit;
-                bucketList.Summary = analysis.BucketList.Summary;
-                bucketList.UtilityNotes = analysis.BucketList.UtilityNotes;
-                bucketList.ValuePlays = analysis.BucketList.ValuePlays;
-                _dbContext.UnderwritingProspectPropertyBucketLists.Update(bucketList);
+                var bucketList = property.DealAnalysis;
+                bucketList.CompetitionNotes = analysis.DealAnalysis.CompetitionNotes;
+                bucketList.ConstructionType = analysis.DealAnalysis.ConstructionType;
+                bucketList.HowUnderwritingWasDetermined = analysis.DealAnalysis.HowUnderwritingWasDetermined;
+                bucketList.MarketCapRate = analysis.DealAnalysis.MarketCapRate;
+                bucketList.MarketPricePerUnit = analysis.DealAnalysis.MarketPricePerUnit;
+                bucketList.Summary = analysis.DealAnalysis.Summary;
+                bucketList.UtilityNotes = analysis.DealAnalysis.UtilityNotes;
+                bucketList.ValuePlays = analysis.DealAnalysis.ValuePlays;
+                _dbContext.UnderwritingProspectPropertyDealAnalysis.Update(bucketList);
                 await _dbContext.SaveChangesAsync();
             }
         }

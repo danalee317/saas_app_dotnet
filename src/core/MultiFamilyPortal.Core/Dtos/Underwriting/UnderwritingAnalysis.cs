@@ -452,7 +452,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         [DisplayFormat(DataFormatString = "{0:C}")]
         public double Raise => _raise?.Value ?? 0;
 
-        public UnderwritingAnalysisBucketList BucketList { get; set; }
+        public UnderwritingAnalysisDealAnalysis DealAnalysis { get; set; }
 
         public IEnumerable<UnderwritingAnalysisLineItem> Sellers => _sellersLineItems;
         public IEnumerable<UnderwritingAnalysisLineItem> SellerIncome => _sellersIncomeItems;

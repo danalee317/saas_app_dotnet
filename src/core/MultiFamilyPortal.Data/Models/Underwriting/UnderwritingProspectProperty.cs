@@ -92,7 +92,7 @@ namespace MultiFamilyPortal.Data.Models
 
         public SiteUser Underwriter { get; set; }
 
-        public UnderwritingProspectPropertyBucketList BucketList { get; set; }
+        public UnderwritingProspectPropertyDealAnalysis DealAnalysis { get; set; }
 
         public virtual ICollection<UnderwritingProspectPropertyCapitalImprovements> CapitalImprovements { get; set; }
 

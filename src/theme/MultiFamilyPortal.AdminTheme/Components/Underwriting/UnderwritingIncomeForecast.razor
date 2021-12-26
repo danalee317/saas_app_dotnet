@@ -1,1 +1,149 @@
-﻿<ComingSoon />
+﻿@using MultiFamilyPortal.Data.Models
+
+<div class="row g-3 pt-3 pb-4">
+  <label for="HoldYears" class="col-sm-2 col-form col-form-label">Hold Period (Yrs)</label>
+  <div class="col-sm-4">
+    <TelerikNumericTextBox @bind-Value=@Property.HoldYears
+                    Min="0"
+                    Max="50"
+                    Enabled=@_editable
+                    Class="form-control" />
+  </div>
+  <label for="StartDate" class="col-sm-2 col-form col-form-label">Start Date</label>
+  <div class="col-sm-4">
+    <DateTimeOffsetPicker @bind-Value=@Property.StartDate
+                       Min=@Property.Timestamp.Date
+                       Enabled=@_editable
+                       Class="form-control" />
+  </div>
+</div>
+
+<TelerikGrid Data=@Property.IncomeForecast
+             EditMode=@GridEditMode.Inline
+             OnEdit=@OnForecastEditing
+             OnUpdate=@OnForecastUpdated>
+  <GridColumns>
+    <GridColumn Field="Year" Editable=@false TextAlign=@ColumnTextAlign.Center>
+      <Template>
+        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
+        @if(forecast.Year == 0)
+        {
+          <span>Start Year*: @Property.StartDate.Year</span>
+        }
+        else
+        {
+          <span>Year @(forecast.Year): @(Property.StartDate.Year + forecast.Year)</span>
+        }
+      </Template>
+    </GridColumn>
+    <GridColumn Field="IncreaseType" Title="Increase Type"TextAlign=@ColumnTextAlign.Center>
+      <Template>
+        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
+        @forecast.IncreaseType.Humanize(LetterCasing.Title)
+      </Template>
+      <EditorTemplate>
+        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
+        <TelerikDropDownList Data=@(Enum.GetValues<IncomeForecastIncreaseType>())
+                             @bind-Value=@forecast.IncreaseType
+                             Width="100%"
+                             Context="fContext">
+          <ItemTemplate>
+            @{ var type = (IncomeForecastIncreaseType)fContext; }
+            @type.Humanize(LetterCasing.Title)
+          </ItemTemplate>
+          <ValueTemplate>
+            @{ var type = (IncomeForecastIncreaseType)fContext; }
+            @type.Humanize(LetterCasing.Title)
+          </ValueTemplate>
+        </TelerikDropDownList>
+      </EditorTemplate>
+    </GridColumn>
+    <GridColumn Field="PerUnitIncrease" Title="Per Unit Increase"TextAlign=@ColumnTextAlign.Center>
+      <Template>
+        @{
+            var forecast = context as UnderwritingAnalysisIncomeForecast;
+            var format = forecast.IncreaseType == IncomeForecastIncreaseType.Percent ? "P" : "C";
+        }
+        @forecast.PerUnitIncrease.ToString(format)
+      </Template>
+      <EditorTemplate>
+        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
+        @if(forecast.IncreaseType == IncomeForecastIncreaseType.Percent)
+        {
+          <PercentageInput @bind-Value=@forecast.PerUnitIncrease />
+        }
+        else
+        {
+          <TelerikNumericTextBox @bind-Value=@forecast.PerUnitIncrease
+                                 Format="C"
+                                 Class="form-control" />
+        }
+      </EditorTemplate>
+    </GridColumn>
+    <GridColumn Field="UnitsAppliedTo" Title="Units Applied To" TextAlign=@ColumnTextAlign.Center />
+    <GridColumn Field="FixedIncreaseOnRemainingUnits"
+                Title="Fixed Increase On Remaining Units"
+                DisplayFormat="{0:C}"
+                TextAlign=@ColumnTextAlign.Center>
+      <EditorTemplate>
+        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
+        <TelerikNumericTextBox @bind-Value=@forecast.FixedIncreaseOnRemainingUnits
+                               Format="C"
+                               Class="form-control" />
+      </EditorTemplate>
+    </GridColumn>
+    <GridColumn Field="Vacancy"
+                DisplayFormat="{0:P}"
+                TextAlign=@ColumnTextAlign.Center>
+      <EditorTemplate>
+        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
+        <PercentageInput @bind-Value=@forecast.Vacancy />
+      </EditorTemplate>
+    </GridColumn>
+    <GridColumn Field="OtherLossesPercent"
+                Title="Other Losses Percent"
+                DisplayFormat="{0:P}"
+                TextAlign=@ColumnTextAlign.Center>
+      <EditorTemplate>
+        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
+        <PercentageInput @bind-Value=@forecast.OtherLossesPercent />
+      </EditorTemplate>
+    </GridColumn>
+    <GridColumn Field="UtilityIncreases"
+                Title="Utility Increases"
+                DisplayFormat="{0:C}"
+                TextAlign=@ColumnTextAlign.Center>
+      <EditorTemplate>
+        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
+        <TelerikNumericTextBox @bind-Value=@forecast.UtilityIncreases
+                               Format="C"
+                               Class="form-control" />
+      </EditorTemplate>
+    </GridColumn>
+    <GridColumn Field="OtherIncomePercent"
+                Title="Other Income Percent"
+                DisplayFormat="{0:P}"
+                TextAlign=@ColumnTextAlign.Center>
+      <EditorTemplate>
+        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
+        <PercentageInput @bind-Value=@forecast.OtherIncomePercent />
+      </EditorTemplate>
+    </GridColumn>
+    <GridCommandColumn>
+      <div class="text-center">
+        <GridCommandButton Command="Edit"
+                           IconClass="fa-duotone fa-pencil"
+                           Enabled=@_editable
+                           Title="Edit" />
+        <GridCommandButton Command="Cancel"
+                           Icon="cancel"
+                           Title="Cancel"
+                           ShowInEdit=@true />
+        <GridCommandButton Command="Save"
+                           IconClass="fa-duotone fa-floppy-disk"
+                           Title="Save"
+                           ShowInEdit=@true />
+      </div>
+    </GridCommandColumn>
+  </GridColumns>
+</TelerikGrid>

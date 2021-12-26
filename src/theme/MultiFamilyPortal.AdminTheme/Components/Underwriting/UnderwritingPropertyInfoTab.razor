@@ -153,6 +153,13 @@
                     Enabled=@_editable
                     Class="form-control" />
   </div>
+  <label for="StartDate" class="col-sm-2 col-form col-form-label">Start Date</label>
+  <div class="col-sm-4">
+    <DateTimeOffsetPicker @bind-Value=@Property.StartDate
+                       Min=@Property.Timestamp.Date
+                       Enabled=@_editable
+                       Class="form-control" />
+  </div>
 </div>
 
 <hr class="mt-3 mb-3" />

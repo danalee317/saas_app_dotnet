@@ -139,6 +139,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 .Include(x => x.Emails)
                 .Include(x => x.Logs)
                 .Include(x => x.Markets)
+                .Include(x => x.NotableDates)
                 .Include(x => x.Phones)
                 .Include(x => x.Roles)
                 .FirstOrDefaultAsync(x => x.Id == id);
@@ -258,6 +259,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 .Include(x => x.Phones)
                 .Include(x => x.Logs)
                 .Include(x => x.Markets)
+                .Include(x => x.NotableDates)
                 .Include(x => x.Reminders)
                 .Include(x => x.Roles)
                 .FirstOrDefaultAsync(x => x.Id == id);
@@ -454,6 +456,46 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     {
                         contact.Markets.Add(market);
                     }
+                }
+            }
+
+            if (updatedContact.NotableDates?.Any() ?? false)
+            {
+                var newDates = updatedContact.NotableDates.Where(x => x.Id == default);
+                var existingDates = updatedContact.NotableDates.Where(x => x.Id != default);
+                var deletedDates = contact.NotableDates.Where(x => !updatedContact.NotableDates.Any(e => e.Id == x.Id));
+
+                if (deletedDates?.Any() ?? false)
+                {
+                    _dbContext.CrmNotableDates.RemoveRange(deletedDates);
+                }
+
+                foreach (var updated in existingDates)
+                {
+                    var date = contact.NotableDates.FirstOrDefault(x => x.Id == updated.Id);
+                    if (date is null)
+                        continue;
+
+                    date.Date = updated.Date;
+                    date.Description = updated.Description.Trim();
+                    date.DismissReminders = updated.DismissReminders;
+                    date.Recurring = updated.Recurring;
+                    date.Type = updated.Type;
+                    _dbContext.CrmNotableDates.Update(date);
+                }
+
+                foreach (var added in newDates)
+                {
+                    var newDate = new CRMNotableDate
+                    {
+                        ContactId = contact.Id,
+                        Date = added.Date,
+                        Description = added.Description.Trim(),
+                        DismissReminders = added.DismissReminders,
+                        Recurring = added.Recurring,
+                        Type = added.Type
+                    };
+                    await _dbContext.CrmNotableDates.AddAsync(newDate);
                 }
             }
 

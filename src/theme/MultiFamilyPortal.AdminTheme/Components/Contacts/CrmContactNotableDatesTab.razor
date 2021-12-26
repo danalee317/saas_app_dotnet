@@ -42,9 +42,20 @@
     <GridColumn Field="Description" />
     <GridColumn Field="Date" DisplayFormat="{0:MMMM dd, yyyy}" />
     <GridColumn Field="Recurring" Width="150px" TextAlign=@ColumnTextAlign.Center>
+      <Template>
+        @{ var model = context as CRMNotableDate; }
+        @if(model.Recurring)
+        {
+          <i class="fa-duotone fa-repeat"></i>
+        }
+        else
+        {
+          <i class="fa-duotone fa-repeat-1"></i>
+        }
+      </Template>
       <EditorTemplate>
         @{
-          var model = context as Data.Models.CRMNotableDate;
+          var model = context as CRMNotableDate;
           var state = model.Type.IsRecurring();
           var enabled = state is null;
           if(state is not null)
@@ -59,15 +70,26 @@
       </EditorTemplate>
     </GridColumn>
     <GridColumn Field="DismissReminders" Title="Dismiss Reminders" Width="150px" TextAlign=@ColumnTextAlign.Center>
+      <Template>
+        @{ var model = context as CRMNotableDate; }
+        @if(model.DismissReminders)
+        {
+          <i class="fa-duotone fa-bell-slash"></i>
+        }
+        else
+        {
+          <i class="fa-duotone fa-bell-on"></i>
+        }
+      </Template>
       <EditorTemplate>
-        @{ var model = context as Data.Models.CRMNotableDate; }
+        @{ var model = context as CRMNotableDate; }
         <div class="text-center">
           <TelerikSwitch @bind-Value=@model.DismissReminders />
         </div>
       </EditorTemplate>
     </GridColumn>
     <GridCommandColumn Width="100px">
-      @{ var market = context as Data.Models.CRMNotableDate; }
+      @{ var market = context as CRMNotableDate; }
       <div class="text-center">
         <GridCommandButton Command="Edit"
                             IconClass="fa-duotone fa-pencil"
@@ -90,7 +112,6 @@
   <NoDataTemplate>
     <div class="text-center py-5">
       <img src="_content/MultiFamilyPortal.AdminTheme/img/events_re_98ue.svg" class="img-fluid" style="max-height: 400px" />
-      <span class="py-2">Notable Dates</span>
     </div>
   </NoDataTemplate>
 </TelerikGrid>

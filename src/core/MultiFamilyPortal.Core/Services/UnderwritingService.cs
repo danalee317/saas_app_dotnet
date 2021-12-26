@@ -84,6 +84,22 @@ namespace MultiFamilyPortal.Services
                     Units = x.Units,
                     Vintage = x.Vintage,
                     Zip = x.Zip,
+                    GrossPotentialRentNotes = x.GrossPotentialRentNotes,
+                    LossToLeaseNotes = x.LossToLeaseNotes,
+                    GrossScheduledRentNotes = x.GrossScheduledRentNotes,
+                    PhysicalVacancyNotes = x.PhysicalVacancyNotes,
+                    ConcessionsNonPaymentNotes = x.ConcessionsNonPaymentNotes,
+                    UtilityReimbursementNotes = x.UtilityReimbursementNotes,
+                    OtherIncomeNotes = x.OtherIncomeNotes,
+                    TaxesNotes = x.TaxesNotes,
+                    MarketingNotes = x.MarketingNotes,
+                    InsuranceNotes = x.InsuranceNotes,
+                    UtilityNotes = x.UtilityNotes,
+                    RepairsMaintenanceNotes = x.RepairsMaintenanceNotes,
+                    ContractServicesNotes = x.ContractServicesNotes,
+                    PayrollNotes = x.PayrollNotes,
+                    GeneralAdminNotes = x.GeneralAdminNotes,
+                    ManagementNotes = x.ManagementNotes,
                 })
                 .FirstOrDefaultAsync(x => x.Id == propertyId);
 
@@ -571,6 +587,27 @@ namespace MultiFamilyPortal.Services
             property.Units = analysis.Units;
             property.Vintage = analysis.Vintage;
             property.Zip = analysis.Zip;
+
+            #region Bucketlist Notes
+
+            property.GrossPotentialRentNotes = analysis.GrossPotentialRentNotes;
+            property.LossToLeaseNotes = analysis.LossToLeaseNotes;
+            property.GrossScheduledRentNotes = analysis.GrossScheduledRentNotes;
+            property.PhysicalVacancyNotes = analysis.PhysicalVacancyNotes;
+            property.ConcessionsNonPaymentNotes = analysis.ConcessionsNonPaymentNotes;
+            property.UtilityReimbursementNotes = analysis.UtilityReimbursementNotes;
+            property.OtherIncomeNotes = analysis.OtherIncomeNotes;
+            property.TaxesNotes = analysis.TaxesNotes;
+            property.MarketingNotes = analysis.MarketingNotes;
+            property.InsuranceNotes = analysis.InsuranceNotes;
+            property.UtilityNotes = analysis.UtilityNotes;
+            property.RepairsMaintenanceNotes = analysis.RepairsMaintenanceNotes;
+            property.ContractServicesNotes = analysis.ContractServicesNotes;
+            property.PayrollNotes = analysis.PayrollNotes;
+            property.GeneralAdminNotes = analysis.GeneralAdminNotes;
+            property.ManagementNotes = analysis.ManagementNotes;
+
+            #endregion Bucketlist Notes
 
             _dbContext.Update(property);
             await _dbContext.SaveChangesAsync();

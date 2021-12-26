@@ -57,6 +57,12 @@ namespace MultiFamilyPortal.Data.ModelConfiguration
                     .HasConversion(new EnumToStringConverter<UnderwritingPropertyUnitLedgerType>());
             });
 
+            modelBuilder.Entity<UnderwritingProspectPropertyCapitalImprovements>(builder =>
+            {
+                builder.Property(x => x.Status)
+                    .HasConversion(new EnumToStringConverter<CapitalImprovementStatus>());
+            });
+
             modelBuilder.Entity<UnderwritingProspectPropertyIncomeForecast>(builder =>
             {
                 builder.Property(x => x.IncreaseType)

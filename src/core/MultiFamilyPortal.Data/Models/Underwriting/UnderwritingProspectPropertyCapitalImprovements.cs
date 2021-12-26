@@ -7,6 +7,8 @@ namespace MultiFamilyPortal.Data.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
+        public CapitalImprovementStatus Status { get; set; }
+
         public double Cost { get; set; }
 
         public string Description { get; set; }

@@ -12,6 +12,13 @@
           <i class="fa-duotone fa-address-card"></i> Cards
         </span>
       </div>
+      <div class="col-md-6"></div>
+      <div class="col-md-3">
+        <TelerikDropDownList Data=@_markets
+                             @bind-Value=@_selectedMarket
+                             OnChange=@FilterResults
+                             Width="100%" />
+      </div>
     </div>
     <div class="row gt-3 my-3">
       <div class="col-md-4">
@@ -23,7 +30,7 @@
       <div class="col-md-2">
         <TelerikDropDownList Data=@_roles
                              @bind-Value=@_selectedRole
-                             OnChange=@OnRoleTypeChanged
+                             OnChange=@FilterResults
                              TextField="Name"
                              ValueField="Name"
                              Width="100%">

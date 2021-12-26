@@ -21,7 +21,7 @@
         }
         @if(!string.IsNullOrEmpty(email?.Email))
         {
-          <span>@email.Email <small>(@email.Type.Humanize(LetterCasing.Title))</small></span>
+          <span>@email.Email <small>(@email.Type.GetDisplayName())</small></span>
         }
       </Template>
     </GridColumn>
@@ -33,7 +33,7 @@
         }
         @if(!string.IsNullOrEmpty(phone?.Number))
         {
-          <span>@phone.Number.ToPhoneNumberMask() <small>(@phone.Type.Humanize(LetterCasing.Title))</small></span>
+          <span>@phone.Number.ToPhoneNumberMask() <small>(@phone.Type.GetDisplayName())</small></span>
         }
       </Template>
     </GridColumn>

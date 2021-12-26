@@ -143,6 +143,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 .Include(x => x.Emails)
                 .Include(x => x.Phones)
                 .Include(x => x.Roles)
+                .Include(x => x.Markets)
                 .ToArrayAsync();
 
             return Ok(contacts);

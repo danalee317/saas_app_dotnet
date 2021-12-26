@@ -17,13 +17,18 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
         private IEnumerable<CRMContact> _allContacts;
         private readonly ObservableRangeCollection<CRMContact> _contacts = new();
         private readonly ObservableRangeCollection<CRMContactRole> _roles = new();
+        private readonly ObservableRangeCollection<string> _markets = new ();
         private bool _showList = true;
         private CRMContact _newContact = null;
         private string _query;
         private string _selectedRole;
+        private string _selectedMarket;
 
         protected override async Task OnInitializedAsync()
         {
+            _selectedMarket = "All";
+            _markets.Add(_selectedMarket);
+            _markets.AddRange(await _client.GetFromJsonAsync<IEnumerable<string>>("/api/admin/underwriting/markets"));
             var roles = await _client.GetFromJsonAsync<IEnumerable<CRMContactRole>>("/api/admin/contacts/crm-roles");
             _roles.Clear();
             _roles.Add(new CRMContactRole
@@ -71,11 +76,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
             FilterResults();
         }
 
-        private void OnRoleTypeChanged()
-        {
-            FilterResults();
-        }
-
         private void FilterResults()
         {
             var filtered = _allContacts;
@@ -87,7 +87,10 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
                     x.Emails.Any(e => e.Email.Contains(_query, StringComparison.InvariantCultureIgnoreCase)));
 
             if (_roles.First(x => x.Name == _selectedRole).Id != default)
-                filtered = filtered.Where(x => x.Roles.Any(x => x.Name == _selectedRole));
+                filtered = filtered.Where(x => x.Roles.Any(r => r.Name == _selectedRole));
+
+            if (!string.IsNullOrEmpty(_selectedMarket) && _markets.IndexOf(_selectedMarket) > 0)
+                filtered = filtered.Where(x => x.Markets.Any(m => m.Name == _selectedMarket));
 
             _contacts.ReplaceRange(filtered.OrderBy(x => x.LastName));
         }

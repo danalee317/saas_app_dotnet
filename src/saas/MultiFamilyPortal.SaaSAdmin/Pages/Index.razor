@@ -48,7 +48,15 @@
                        OnLabel="Disabled" />
       </EditorTemplate>
     </GridColumn>
-    <GridColumn Field="Host" />
+    <GridColumn Field="Host">
+      <Template>
+        @{ var tenant = context as Tenant; }
+        <span class="text-center">
+          @tenant!.Host
+          <a href="https://@(tenant.Host)" target="_blank"><i class="fa-duotone fa-arrow-up-right-from-square"></i></a>
+        </span>
+      </Template>
+    </GridColumn>
     <GridColumn Field="Environment">
       <EditorTemplate>
         @{ var tenant = context as Tenant; }

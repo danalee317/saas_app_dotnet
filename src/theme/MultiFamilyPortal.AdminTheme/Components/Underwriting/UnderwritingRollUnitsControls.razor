@@ -5,7 +5,7 @@
   <div class="col-10 my-3">
    <TelerikTextBox  Id="unit-name"
                     Class="form-control w-100 mx-2"
-                    @bind-Value=@Unit.Unit/>
+                    @bind-Value="@Unit.Unit"/>
   </div>
   <div class="col-2 my-auto">
     <label for="unit-tenant" class="form-label mt-4">Tenant</label>
@@ -13,7 +13,7 @@
   <div class="col-10 my-3">
     <TelerikTextBox  Id="unit-name"
                      Class="form-control w-100 mx-2"
-                     @bind-Value=@Unit.Renter/>
+                     @bind-Value="@Unit.Renter"/>
   </div>
   <hr />
   <div class="col-2 my-auto">
@@ -22,7 +22,7 @@
   <div class="col-4 my-3">
     <TelerikDatePicker  Id="unit-start-date"
                         Class="form-control w-100"
-                        @bind-Value=@Unit.LeaseStart/>
+                        @bind-Value="@Unit.LeaseStart"/>
   </div>
   <div class="col-2 my-auto">
     <label for="unit-end-date" class="form-label">Lease End</label>
@@ -30,7 +30,7 @@
   <div class="col-4 my-3">
    <TelerikDatePicker  Id="unit-end-date"
                         Class="form-control w-100"
-                        @bind-Value=@Unit.LeaseEnd/>
+                        @bind-Value="@Unit.LeaseEnd" />
   </div>
   <div class="col-2 my-auto">
     <label for="unit-cash-at-hand" class="form-label">Paid</label>
@@ -41,7 +41,7 @@
                              Id="unit-cash-at-hand"
                              Step="50"
                              Format="C"
-                             @bind-Value=@Unit.DepositOnHand/>
+                             @bind-Value="@Unit.DepositOnHand"/>
   </div>
   <div class="col-2 my-auto">
     <label for="unit-monthly" class="form-label">At will</label>
@@ -49,7 +49,7 @@
   <div class="col-4 my-3 text-end">
    <TelerikSwitch  Id="unit-monthly"
                    Class="mt-3 me-2"
-                   @bind-Value=@Unit.AtWill/>
+                   @bind-Value="@Unit.AtWill"/>
   </div>
   <div class="col-2 my-auto">
     <label for="unit-single-rent" class="form-label my-auto">Rent</label>
@@ -60,20 +60,57 @@
                              Id="unit-single-rent"
                              Step="50"
                              Format="C"
-                             @bind-Value=@Unit.Rent/>
+                             @bind-Value="@Unit.Rent"/>
   </div>
   <div class="col-2 my-auto">
-    <label for="unit-balance class="form-label">Balance</label>
+    <label for="unit-balance" class="form-label">Balance</label>
   </div>
   <div class="col-4 my-3">
      <TelerikNumericTextBox  Class="form-control w-100"
                              Id="unit-balance"
                              Step="50"
                              Format="C"
-                             @bind-Value=@Unit.Balance/>
+                             @bind-Value="@Unit.Balance"/>
 
   </div>
-  <div class="col-12 text-center my-3">
-    <button class="btn btn-success" id="unit-save" @onclick=@UpdateUnit>Save</button>
-  </div>
+
+  @if(Editing)
+  {
+    <div class="col-6 text-center my-3">
+       @if(_conformation == false)
+      {
+          <button class="btn btn-danger" id="unit-remove" @onclick=@(()=> _conformation=true)>Remove</button>
+      }
+      else
+      {
+        <div class="row">
+          <div class="col-8 align-self-start">
+            <div class="text-danger">Are you sure you want to do this?</div>
+          </div>
+
+          <div class="col-2 align-self-center">
+            <div class="text-danger" @onclick="@RemoveUnit">
+              <b class="text-decoration-underline clickable">Yes</b>
+            </div>
+          </div>
+
+          <div class="col-2 align-self-center">
+            <div class="text-success" @onclick=@(()=> _conformation=false)>
+              <b class="text-decoration-underline clickable">No</b>
+            </div>
+         </div>
+        </div>
+    }
+    
+    </div>
+    <div class="col-6 text-center my-3">
+      <button class="btn btn-success" id="unit-add" @onclick="@UpdateUnit">Save</button>
+    </div>
+  } 
+  else
+  {
+    <div class="col-12 text-center my-3">
+      <button class="btn btn-success" id="unit-save" @onclick="@UpdateUnit">Save</button>
+    </div>
+  }
 </div>

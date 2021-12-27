@@ -1,24 +1,62 @@
-<TelerikGrid Data="@_rollUnits" 
-             Height="600px" 
-             Sortable="true" 
-             Pageable="true" 
-             Resizable="true" 
+<TelerikGrid Data="@_rollUnits"
+             Height="600px"
+             Sortable="true"
+             Pageable="true"
+             Resizable="true"
              Reorderable="true">
   <GridColumns>
     <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.Unit))" Title="Apartment Name" />
     <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.Renter))" Title="Tenant Name" Width="15%" />
-    <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.Rent))" Title="Floor Plan" /> @*This needs to match to floor plan*@
+    <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.Rent))" Title="Floor Plan">
+      <Template>
+           <span>@Property.Models.FirstOrDefault(m => m.Units.Contains(context))?.Name</span>
+      </Template>
+    </GridColumn>
     <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.Rent))" Title="Monthly Rent ($)" />
     <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.Balance))" Title="Balance ($)" />
     <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.DepositOnHand))" Title="Cash at Hand ($)" />
-    <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.LeaseStart))" Title="Lease Start" />
-    <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.LeaseEnd))" Title="Lease End" />
+    <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.LeaseStart))" Title="Lease Start">
+     <Template>
+       <span>
+         @((context as UnderwritingAnalysisUnit).LeaseStart.HasValue ? (context as UnderwritingAnalysisUnit).LeaseStart.Value.ToString($"MM/dd/yyyy") : "N/A")
+       </span>
+      </Template>
+    </GridColumn>
+    <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.LeaseEnd))" Title="Lease End">
+      <Template>
+        <span>
+          @((context as UnderwritingAnalysisUnit).LeaseEnd.HasValue ? (context as UnderwritingAnalysisUnit).LeaseEnd.Value.ToString($"MM/dd/yyyy") : "N/A")
+        </span>
+      </Template>
+    </GridColumn>
     <GridCommandColumn>
       <div class="text-center">
-        <GridCommandButton Command="MyOwnCommand" Icon="edit" ShowInEdit="false">
+        <GridCommandButton OnClick="UpdateUnit" Command="MyOwnCommand" Icon="edit" ShowInEdit="false">
           Edit
         </GridCommandButton>
       </div>
     </GridCommandColumn>
   </GridColumns>
 </TelerikGrid>
+
+
+@using Telerik.Blazor.Components
+
+<TelerikWindow @bind-Visible="@_showAddUnit"
+               Centered="true"
+               Modal="true"
+               Width="600px">
+    <WindowTitle>
+        <strong>Edit @_unit.Unit</strong>
+    </WindowTitle>
+     <WindowActions>
+        <WindowAction Name="Close" />
+    </WindowActions>
+    <WindowContent>
+      <UnderwritingRollUnitsControls Editing=@true 
+                                     Unit="@_unit" 
+                                     OnUnitChanged=@UpdateUnitList
+                                     RemoveUnitRequested=@RemoveUnit />
+    </WindowContent>
+</TelerikWindow>
+

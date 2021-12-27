@@ -77,7 +77,6 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
 
         private async Task OnUpdateProperty()
         {
-            // TODO : find out why units is received in end point as null
             using var response = await _client.PostAsJsonAsync<UnderwritingAnalysis>($"/api/admin/underwriting/update/{propertyId}", Property);
 
             if(response.IsSuccessStatusCode)

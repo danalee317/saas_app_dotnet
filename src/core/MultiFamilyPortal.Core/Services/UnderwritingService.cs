@@ -488,8 +488,8 @@ namespace MultiFamilyPortal.Services
                     LeaseStart = unit.LeaseStart,
                     ModelId = model.Id,
                     Rent = unit.Rent,
-                    Renter = unit.Renter,
-                    Unit = unit.Unit
+                    Renter = unit.Renter?.Trim(),
+                    Unit = unit.Unit?.Trim(),
                 };
                 await _dbContext.UnderwritingPropertyUnits.AddAsync(propertyUnit);
                 await _dbContext.SaveChangesAsync();

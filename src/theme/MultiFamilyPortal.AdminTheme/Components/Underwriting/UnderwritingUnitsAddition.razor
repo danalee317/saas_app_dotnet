@@ -9,7 +9,7 @@ else
   <TelerikGrid Data="@FloorPlan.Units" Height="560px" Pageable="true" Sortable="true" Resizable="true" Reorderable="true">
   <GridToolBar>
     <span class="k-toolbar-spacer"></span>
-    <GridCommandButton Command="My" Icon="add" Primary=@true OnClick=@ShowAddUnit Enabled=@(!(FloorPlan.Units?.Count() < FloorPlan.TotalUnits))>
+    <GridCommandButton Command="My" Icon="add" Primary=@true OnClick=@ShowAddUnit Enabled=@(FloorPlan.Units?.Count() < FloorPlan.TotalUnits)>
       Add Unit
     </GridCommandButton>
   </GridToolBar>

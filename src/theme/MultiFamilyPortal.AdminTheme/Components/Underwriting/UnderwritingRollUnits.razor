@@ -39,9 +39,6 @@
   </GridColumns>
 </TelerikGrid>
 
-
-@using Telerik.Blazor.Components
-
 <TelerikWindow @bind-Visible="@_showAddUnit"
                Centered="true"
                Modal="true"
@@ -53,10 +50,17 @@
         <WindowAction Name="Close" />
     </WindowActions>
     <WindowContent>
-      <UnderwritingRollUnitsControls Editing=@true 
-                                     Unit="@_unit" 
-                                     OnUnitChanged=@UpdateUnitList
-                                     RemoveUnitRequested=@RemoveUnit />
+       <TelerikTabStrip TabPosition="TabPosition.Top">
+          <TabStripTab Title="Units">
+            <UnderwritingRollUnitsControls Editing=@true 
+                                           Unit="@_unit" 
+                                           OnUnitChanged=@UpdateUnitList
+                                           RemoveUnitRequested=@RemoveUnit />
+                  </TabStripTab>
+                  <TabStripTab Title="Ledgers">
+                   <div class="my-3"><ComingSoon /></div>
+                  </TabStripTab>
+                </TelerikTabStrip>
     </WindowContent>
 </TelerikWindow>
 

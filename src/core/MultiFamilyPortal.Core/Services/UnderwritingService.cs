@@ -210,7 +210,7 @@ namespace MultiFamilyPortal.Services
                 .Include(x => x.DealAnalysis)
                 .Include(x => x.Notes)
                 .Include(x => x.Models)
-                .ThenInclude(y => y.Units)
+                .ThenInclude(x => x.Units)
                 .Include(x => x.CapitalImprovements)
                 .Include(x => x.Forecast)
                 .FirstOrDefaultAsync(x => x.Id == propertyId);

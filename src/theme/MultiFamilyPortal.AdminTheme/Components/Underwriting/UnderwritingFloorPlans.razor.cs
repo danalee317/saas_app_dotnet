@@ -10,7 +10,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         public UnderwritingAnalysis Property { get; set; }
 
         [Parameter]
-        public EventCallback OnPropertyChanged  { get; set; }
+        public EventCallback<UnderwritingAnalysis> OnPropertyChanged  { get; set; }
 
         private bool _showModel = false;
         private bool _isNew = false;
@@ -46,6 +46,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             _showModel = true;
         }
 
-        private async Task InformSuperParent() => await OnPropertyChanged.InvokeAsync();
+        private async Task InformSuperParent() => await OnPropertyChanged.InvokeAsync(Property);
     }
 }

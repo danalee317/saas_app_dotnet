@@ -32,7 +32,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         {
             try
             {
-                var weeklyGoal = 0;
+                int weeklyGoal;
                 IQueryable<UnderwritingProspectProperty> query = _dbContext.UnderwritingPropertyProspects;
                 if (!string.IsNullOrEmpty(userId))
                 {
@@ -45,7 +45,6 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 }
 
                 var now = DateTime.Now;
-                var _7DaysAgo = now.AddDays(-7);
                 var _30DaysAgo = now.AddMonths(-1);
 
                 var allUnderwritings = await query.CountAsync();
@@ -53,7 +52,6 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 var months = (DateTimeOffset.Now - firstDate.Timestamp).TotalDays / 30;
                 var weeks = (DateTimeOffset.Now - firstDate.Timestamp).TotalDays / 7;
                 var allUnderwritingsLastMonth = await query.Where(x => x.Timestamp >= _30DaysAgo).CountAsync();
-                var allUnderwritingsLastWeek = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Timestamp >= _7DaysAgo).CountAsync();
 
                 var referenceMonth = months <= 1 ? 1 : months - 1;
                 var referenceWeek = weeks <= 1 ? 1 : weeks - 1;
@@ -79,13 +77,13 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     LOISubmitted = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.LOISubmitted).CountAsync(),
                     LOIAccepted = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.LOIAccepted).CountAsync(),
                     LOIRejected = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.LOIRejected).CountAsync(),
-                    MonthlyPercent = (double)allUnderwritings - allUnderwritingsLastMonth / referenceMonth,
-                    WeeklyPercent = (double)allUnderwritings - allUnderwritingsLastMonth / referenceWeek,
+                    MonthlyPercent = allUnderwritings - allUnderwritingsLastMonth / referenceMonth,
+                    WeeklyPercent = allUnderwritings - allUnderwritingsLastMonth / referenceWeek,
                 };
 
                 return Ok(result);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
                 return BadRequest(ex.Message);
@@ -97,30 +95,26 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         {
             var investors =  await _dbContext.InvestorProspects
                                              .Where(x => x.Contacted == false)
-                                             .OrderByDescending(x => x.Timestamp)
                                              .AsNoTracking()
                                              .Take(7)
                                              .ToListAsync();
 
-            List<DashboardInvestor> Investors = new ();
+            List<DashboardInvestor> dashboardInvestors = new ();
 
-            if(investors != null && investors.Count > 0)
+            if(investors.Count > 0)
             {
-                foreach(var investor in investors)
+                dashboardInvestors.AddRange(investors.Select(investor => new DashboardInvestor
                 {
-                   Investors.Add(new DashboardInvestor
-                   {
-                       Id = investor.Id,
-                       FirstName = investor.FirstName,
-                       LastName = investor.LastName,
-                       Email = investor.Email,
-                       Phone = investor.Phone,
-                       Contacted = investor.Contacted,
-                       Timestamp = investor.Timestamp,
-                       Timezone = investor.Timezone,
-                       LookingToInvest = investor.LookingToInvest,
-                   });
-                }
+                    Id = investor.Id,
+                    FirstName = investor.FirstName,
+                    LastName = investor.LastName,
+                    Email = investor.Email,
+                    Phone = investor.Phone,
+                    Contacted = investor.Contacted,
+                    Timestamp = investor.Timestamp,
+                    Timezone = investor.Timezone,
+                    LookingToInvest = investor.LookingToInvest,
+                }));
             }
 
             var result = new DashboardInvestorsResponse
@@ -130,24 +124,24 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 Contacted = await _dbContext.InvestorProspects
                                             .Where(x => x.Contacted == true)
                                             .CountAsync(),
-                Investors = Investors,
+                Investors = dashboardInvestors,
             };
 
             return Ok(result);
         }
 
-        [HttpPut("investors/{id}")]
+        [HttpPut("investors/{id:guid}")]
         public async Task<IActionResult> InvestorUpdateAsync(Guid id, [FromBody] DashboardInvestor investor)
         {
-            if(id == Guid.Empty || id != investor.Id)
+            if(id == default || id != investor.Id)
                return BadRequest();
 
-            var Investor = await _dbContext.InvestorProspects.FirstOrDefaultAsync(x => x.Id == id);
+            var investorModel = await _dbContext.InvestorProspects.FirstOrDefaultAsync(x => x.Id == id);
 
-            if(Investor is null)
+            if(investorModel is null)
                return NotFound();
 
-            Investor.Contacted = investor.Contacted;
+            investorModel.Contacted = investor.Contacted;
             await _dbContext.SaveChangesAsync();
 
             return Ok();

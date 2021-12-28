@@ -20,15 +20,32 @@ namespace MultiFamilyPortal.SaaSAdmin.Components
         [Parameter]
         public EventCallback<Tenant?> TenantChanged { get; set; }
 
+        [Parameter]
+        public EventCallback OnTenantUpdated { get; set; }
+
         [Inject]
         private IConfiguration _configuration { get; set; }
+
+        [Inject]
+        private TenantContext _tenantContext { get; set; }
 
         private IEnumerable<Setting> _settings = Array.Empty<Setting>();
         private bool didLoad;
         private string status = "Loading...";
+        private Tenant _editableTenant;
+        private bool updating;
 
         protected override async Task OnInitializedAsync()
         {
+            if (Tenant is null)
+                return;
+
+            _editableTenant = new Tenant
+            {
+                GoogleSiteVerification = Tenant.GoogleSiteVerification,
+                IsREMentorStudent = Tenant.IsREMentorStudent,
+            };
+
             try
             {
                 using var dbContext = CreateDbContext();
@@ -101,6 +118,30 @@ namespace MultiFamilyPortal.SaaSAdmin.Components
                 }
             };
             return new MFPContext(options, identityOptions, new StartupTenantProvider(Tenant), _configuration.Get<DatabaseSettings>());
+        }
+
+        private async Task UpdateTenant()
+        {
+            try
+            {
+                updating = true;
+                if (Tenant is null || _editableTenant is null)
+                    return;
+
+                var tenant = await _tenantContext.Tenants.FirstOrDefaultAsync(x => x.Id == Tenant.Id);
+                if (tenant is null)
+                    return;
+
+                tenant.IsREMentorStudent = _editableTenant.IsREMentorStudent;
+                tenant.GoogleSiteVerification = _editableTenant.GoogleSiteVerification?.Trim();
+                _tenantContext.Tenants.Update(tenant);
+                await _tenantContext.SaveChangesAsync();
+                await OnTenantUpdated.InvokeAsync();
+            }
+            finally
+            {
+                updating = false;
+            }
         }
 
         private class TempOptions<T> : IOptions<T>

@@ -32,7 +32,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         {
             try
             {
-                int weeklyGoal;
+                int weeklyGoal = 0;
                 IQueryable<UnderwritingProspectProperty> query = _dbContext.UnderwritingPropertyProspects;
                 if (!string.IsNullOrEmpty(userId))
                 {

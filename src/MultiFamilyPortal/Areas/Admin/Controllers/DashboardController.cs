@@ -45,16 +45,16 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 }
 
                 var now = DateTime.Now;
-                var _30DaysAgo = now.AddMonths(-1);
+                DateTime _30DaysAgo = now.AddMonths(-1);
 
-                var allUnderwritings = await query.CountAsync();
+                int allUnderwritings = await query.CountAsync();
                 var firstDate = await query.OrderBy(x => x.Timestamp).FirstOrDefaultAsync();
-                var months = (DateTimeOffset.Now - firstDate.Timestamp).TotalDays / 30;
-                var weeks = (DateTimeOffset.Now - firstDate.Timestamp).TotalDays / 7;
-                var allUnderwritingsLastMonth = await query.Where(x => x.Timestamp >= _30DaysAgo).CountAsync();
+                double months = (DateTimeOffset.Now - firstDate.Timestamp).TotalDays / 30;
+                double weeks = (DateTimeOffset.Now - firstDate.Timestamp).TotalDays / 7;
+                int allUnderwritingsLastMonth = await query.Where(x => x.Timestamp >= _30DaysAgo).CountAsync();
 
-                var referenceMonth = months <= 1 ? 1 : months - 1;
-                var referenceWeek = weeks <= 1 ? 1 : weeks - 1;
+                double referenceMonth = months <= 1 ? 1 : months - 1;
+                double referenceWeek = weeks <= 1 ? 1 : weeks - 1;
 
                 var result = new DashboardUnderwritingResponse
                 {
@@ -97,7 +97,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                                              .Where(x => x.Contacted == false)
                                              .AsNoTracking()
                                              .Take(7)
-                                             .Select(investor => new DashboardInvestor 
+                                             .Select(investor => new DashboardInvestor
                                              {
                                                  Id = investor.Id,
                                                  FirstName = investor.FirstName,
@@ -150,9 +150,9 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 query = query.Where(x => x.UserId == userId);
             }
 
-            var activies = await query.Where(x => x.Timestamp >= DateTime.Now.AddDays(-7)).AsNoTracking().ToArrayAsync();
+            var activities = await query.Where(x => x.Timestamp >= DateTime.Now.AddDays(-7)).AsNoTracking().ToArrayAsync();
 
-            var breakdown = activies.GroupBy(x => x.Type)
+            var breakdown = activities.GroupBy(x => x.Type)
                 .ToDictionary(x => x.Key, x => x.Sum(t => t.Total.TotalMinutes));
 
             var result = new DashboardActivityResponse
@@ -166,36 +166,28 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         [HttpGet("blog")]
         public async Task<IActionResult> BlogAnalytics()
         {
-            var monthly = 0;
-            var weekly = 0;
-            var total = 0;
+            int monthly = 0;
+            int weekly = 0;
+            int total = 0;
 
             if (await _context.Subscribers.AnyAsync())
             {
                 var firstDate = await _context.Subscribers.OrderBy(x => x.Timestamp).FirstOrDefaultAsync();
-                var months = (DateTimeOffset.Now - firstDate.Timestamp).TotalDays / 30;
-                var weeks = (DateTimeOffset.Now - firstDate.Timestamp).TotalDays / 7;
+                double months = (DateTimeOffset.Now - firstDate.Timestamp).TotalDays / 30;
+                double weeks = (DateTimeOffset.Now - firstDate.Timestamp).TotalDays / 7;
                 total = await _context.Subscribers.CountAsync();
 
-                switch ((int)months)
+                monthly = (int)months switch
                 {
-                    case <= 0:
-                        monthly = total;
-                        break;
-                    default:
-                        monthly = total / (int)months;
-                        break;
-                }
+                    <= 0 => total,
+                    _ => total / (int)months
+                };
 
-                switch ((int)weeks)
+                weekly = (int)weeks switch
                 {
-                    case <= 0:
-                        weekly = total;
-                        break;
-                    default:
-                        weekly = total / (int)weeks;
-                        break;
-                }
+                    <= 0 => total,
+                    _ => total / (int)weeks
+                };
             }
 
             var result = new DashboardBlogResponse()

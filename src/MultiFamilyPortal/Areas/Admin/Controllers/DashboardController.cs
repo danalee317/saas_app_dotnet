@@ -93,7 +93,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         [HttpGet("investors")]
         public async Task<IActionResult> InvestorAnalytics()
         {
-            List<DashboardInvestor> dashboardInvestors = await _dbContext.InvestorProspects
+            var dashboardInvestors = await _dbContext.InvestorProspects
                                              .Where(x => x.Contacted == false)
                                              .AsNoTracking()
                                              .Take(7)

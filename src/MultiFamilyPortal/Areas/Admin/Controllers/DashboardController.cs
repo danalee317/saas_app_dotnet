@@ -103,7 +103,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
 
             if(investors.Count > 0)
             {
-                dashboardInvestors.AddRange(investors.Select(investor => new DashboardInvestor
+                dashboardInvestors = investors.Select(investor => new DashboardInvestor
                 {
                     Id = investor.Id,
                     FirstName = investor.FirstName,
@@ -114,7 +114,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     Timestamp = investor.Timestamp,
                     Timezone = investor.Timezone,
                     LookingToInvest = investor.LookingToInvest,
-                }));
+                }).ToList();
             }
 
             var result = new DashboardInvestorsResponse

@@ -44,22 +44,23 @@
 <TelerikWindow Visible=@showUploadFile
                Modal=@true
                Width="600px"
-               Height="400px">
+               Height="300px">
   <WindowTitle>Upload</WindowTitle>
   <WindowActions>
     <WindowAction Name="Close" OnClick=@CloseUpload />
   </WindowActions>
   <WindowContent>
-    <div class="row">
+    <div class="row my-3">
       <div class="col-3">
         File Type
       </div>
       <div class="col-9">
         <TelerikDropDownList Data=@fileTypes
+                             Class="w-100"
                              @bind-Value=@selectedFileType />
       </div>
     </div>
-    <div class="row">
+    <div class="row my-3">
       <div class="col-3">
         Description
       </div>
@@ -79,3 +80,22 @@
 </TelerikWindow>
 
 <PortalNotification @ref="notification" />
+
+@*Do it here then move it to a switch in Document viewer, there support all above types except the compressed ones*@
+@*New tab for images*@
+@*Disable for compressed*@
+
+<TelerikWindow @bind-Visible=@_showData 
+               Size="@WindowSize.Large"
+               State="WindowState.Maximized"
+               Modal="true">
+                <WindowActions>
+    <WindowAction Name="Close"></WindowAction>
+    </WindowActions>
+    <WindowTitle>
+        <strong>View {Doceument Title}</strong>
+    </WindowTitle>
+    <WindowContent>
+      <DocumentViewer/>
+    </WindowContent>
+</TelerikWindow>

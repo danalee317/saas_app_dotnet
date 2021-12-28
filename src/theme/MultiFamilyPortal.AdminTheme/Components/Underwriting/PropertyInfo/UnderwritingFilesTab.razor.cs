@@ -22,6 +22,8 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.PropertyInfo
 
         private ObservableRangeCollection<UnderwritingAnalysisFile> _files = new();
 
+        private bool _showData = false;
+
         private readonly IEnumerable<string> fileTypes = Enum.GetValues<UnderwritingProspectFileType>()
             .Select(x => x.Humanize(LetterCasing.Title));
         private string selectedFileType = UnderwritingProspectFileType.OfferMemorandum.Humanize(LetterCasing.Title);
@@ -71,6 +73,8 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.PropertyInfo
             var file = args.Item as UnderwritingAnalysisFile;
 
             // TODO: Implement Preview functionality
+
+            _showData = true;
         }
 
         private UnderwritingProspectFileType GetFileType() =>

@@ -12,9 +12,9 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
         public IEnumerable<InvestorProspect> Investors { get; set; }
 
         [Parameter]
-        public EventCallback<List<InvestorProspect>> OnInvestorSaved { get; set; }
+        public EventCallback<List<InvestorProspect>> InvestorsChanged { get; set; }
 
-        private List<InvestorProspect> _ConatactedInvestors = new List<InvestorProspect>();
+        private List<InvestorProspect> _contactedInvestors = new List<InvestorProspect>();
         private InvestorProspect _selectedInvestor;
         private bool _showDetail = false;
 
@@ -27,12 +27,24 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
 
         private void ProcessContact(InvestorProspect investor)
         {
-            // TODO : add the contact to list
+            if (_contactedInvestors.Contains(investor))
+            {
+                investor.Contacted = false;
+               _contactedInvestors.Remove(investor);
+            } 
+            else
+            {
+                investor.Contacted = true;
+               _contactedInvestors.Add(investor);
+            }
         }
 
-         private void SaveContact()
+        private async Task SaveContactAsync()
         {
-            // TODO : add the contact to list
+            if(_contactedInvestors.Count() == 0)
+             return;
+
+             await InvestorsChanged.InvokeAsync(_contactedInvestors);
         }
     }
 }

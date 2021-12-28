@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.CoreUI;
+using MultiFamilyPortal.Data.Models;
 
 namespace MultiFamilyPortal.AdminTheme.Pages
 {
@@ -19,7 +20,7 @@ namespace MultiFamilyPortal.AdminTheme.Pages
 
         private DashboardInvestorsResponse _investors = new();
         private DashboardBlogResponse _blog = new();
-        private DashboardActivityResponse ?_activity = new();
+        private DashboardActivityResponse _activity = new();
         private DashboardUnderwritingResponse _underwriting = new();
         private PortalNotification notification { get; set; }
         private string _message = "Error fetching dashboard data";
@@ -81,6 +82,22 @@ namespace MultiFamilyPortal.AdminTheme.Pages
             {
                 _logger.LogError(ex, _message + "\t blog subscriptions : " + DateTimeOffset.UtcNow);
                 notification.ShowError(_message);
+            }
+        }
+
+        private async Task UpdateInvestors(List<InvestorProspect> investors)
+        {
+            try
+            {
+                foreach (var i in investors)
+                    await _client.PutAsJsonAsync<InvestorProspect>($"/api/admin/dashboard/investors/{i.Id}", i);
+
+                await OnInitializedAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Put investor request unsuccessful " + DateTimeOffset.UtcNow);
+                notification.ShowError("Failed to mark investor(s) as contacted");
             }
         }
     }

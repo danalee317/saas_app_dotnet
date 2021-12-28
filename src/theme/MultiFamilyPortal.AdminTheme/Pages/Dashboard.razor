@@ -68,7 +68,9 @@
 
     <div class="row mb-5">
        <div class="col-md-4  mb-2" style="height: 500px">
-        <InvestorList Title="Investor List" Investors=@_investors.Investors/>
+        <InvestorList Title="Investor List" 
+                      Investors="@_investors.Investors"
+                      InvestorsChanged="@UpdateInvestors" />
       </div>
 
       <div class="col-md-8 mt-1 mb-2" style="height: 500px">

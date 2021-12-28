@@ -105,6 +105,23 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             return Ok(result);
         }
 
+        [HttpPut("investors/{id}")]
+        public async Task<IActionResult> InvestorUpdateAsync(Guid id, [FromBody] InvestorProspect investor)
+        {
+            if(id == Guid.Empty || id != investor.Id)
+               return BadRequest();
+
+            var Investor = await _dbContext.InvestorProspects.FirstOrDefaultAsync(x => x.Id == id);
+
+            if(Investor is null)
+               return NotFound();
+
+            Investor.Contacted = investor.Contacted;
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
+        }
+
         [HttpGet("activity")]
         public async Task<IActionResult> ActivityAnalytics(string userId = null)
         {

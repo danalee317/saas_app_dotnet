@@ -6,30 +6,32 @@
   <div id="body" class="my-2">
     @if (Investors is not null && Investors.Count() > 0)
     {
-      @foreach (var investor in Investors)
-      {
-        <div class="row my-3">
-          <div class="col-1 my-auto">
-            <input type="checkbox" class="ms-2" />
-          </div>
-          <div class="col-4 my-auto">
-            <small>@investor.FirstName @investor.LastName</small>
-          </div>
-          <div class="col-5 my-auto">
-            <small>@investor.Email</small>
-          </div>
-          <div class="col-2 my-auto text-center">
-            <div class="clickable" @onclick=@(()=> ShowContact(investor))>
-              <i class="fal fa-eye"></i>
+      <Animation Effect="@Effect.FadeIn" Speed="@Speed.Slow">
+        @foreach (var investor in Investors)
+        {
+          <div class="row my-3">
+              <div class="col-1 my-auto">
+                <input type="checkbox" checked=@(investor.Contacted) class="ms-2" @onchange="@(() => ProcessContact(investor))" />
+              </div>
+            <div class="col-4 my-auto">
+              <small>@investor.FirstName @investor.LastName</small>
+            </div>
+            <div class="col-5 my-auto">
+              <small>@investor.Email</small>
+            </div>
+            <div class="col-2 my-auto text-center">
+              <div class="clickable" @onclick=@(()=> ShowContact(investor))>
+                <i class="fal fa-eye"></i>
+              </div>
             </div>
           </div>
-        </div>
-        <hr />
-      }
+          <hr />
+        }
+      </Animation>
 
       <div class="row h-75">
       <div class="col-12 my-auto">
-        <button class="btn btn-primary btn-sm">
+        <button class="btn btn-primary btn-sm" @onclick="SaveContactAsync">
           <i class="fas fa-save"></i>
         </button>
       </div>
@@ -39,11 +41,11 @@
     {
       <div class="row text-center" style="height: 400px;">
         <div class="text-secondary my-auto">
-          No Investors yet.
+          No New Investors yet.
         </div>
       </div>
     }
   </div>
 </div>
 
-<InvestorDetail Investor=@_selectedInvestor WindowIsVisible=@_showDetail/>
+<InvestorDetail Investor=@_selectedInvestor @bind-WindowIsVisible=@_showDetail/>

@@ -1,6 +1,8 @@
-<TelerikWindow @bind-Visible="@WindowIsVisible" Modal=@true>
+<TelerikWindow @bind-Visible="@WindowIsVisible" 
+               Modal="true"
+               Width="600px">
   <WindowTitle>
-    <strong>Contact Details</strong>
+    <strong>New Investor Details</strong>
   </WindowTitle>
   <WindowContent>
     <div class="container">
@@ -50,6 +52,6 @@
     </div>
   </WindowContent>
   <WindowActions>
-    <WindowAction Name="Close"></WindowAction>
+    <WindowAction Name="Close" OnClick="UpdateVisibilty"></WindowAction>
   </WindowActions>
 </TelerikWindow>

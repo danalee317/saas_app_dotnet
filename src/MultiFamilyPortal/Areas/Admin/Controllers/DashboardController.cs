@@ -93,29 +93,23 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         [HttpGet("investors")]
         public async Task<IActionResult> InvestorAnalytics()
         {
-            var investors =  await _dbContext.InvestorProspects
+            List<DashboardInvestor> dashboardInvestors = await _dbContext.InvestorProspects
                                              .Where(x => x.Contacted == false)
                                              .AsNoTracking()
                                              .Take(7)
-                                             .ToListAsync();
-
-            List<DashboardInvestor> dashboardInvestors = new ();
-
-            if(investors.Count > 0)
-            {
-                dashboardInvestors = investors.Select(investor => new DashboardInvestor
-                {
-                    Id = investor.Id,
-                    FirstName = investor.FirstName,
-                    LastName = investor.LastName,
-                    Email = investor.Email,
-                    Phone = investor.Phone,
-                    Contacted = investor.Contacted,
-                    Timestamp = investor.Timestamp,
-                    Timezone = investor.Timezone,
-                    LookingToInvest = investor.LookingToInvest,
-                }).ToList();
-            }
+                                             .Select(investor => new DashboardInvestor 
+                                             {
+                                                 Id = investor.Id,
+                                                 FirstName = investor.FirstName,
+                                                 LastName = investor.LastName,
+                                                 Email = investor.Email,
+                                                 Phone = investor.Phone,
+                                                 Contacted = investor.Contacted,
+                                                 Timestamp = investor.Timestamp,
+                                                 Timezone = investor.Timezone,
+                                                 LookingToInvest = investor.LookingToInvest,
+                                              })
+                                            .ToListAsync();
 
             var result = new DashboardInvestorsResponse
             {

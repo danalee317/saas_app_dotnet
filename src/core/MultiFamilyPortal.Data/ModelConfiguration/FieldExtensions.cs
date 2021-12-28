@@ -31,7 +31,7 @@ namespace MultiFamilyPortal.Data.ModelConfiguration
             }
 
             modelBuilder.Entity<TEntity>()
-                .Property(propertyExpression)
+                .Property(name)
                 .HasField(fieldName);
         }
     }

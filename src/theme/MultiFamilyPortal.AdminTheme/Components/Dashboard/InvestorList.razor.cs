@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Components;
-using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.AdminTheme.Models;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
 {
@@ -9,22 +9,22 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
         public string Title { get; set; }
 
         [Parameter]
-        public IEnumerable<InvestorProspect> Investors { get; set; }
+        public IEnumerable<DashboardInvestor> Investors { get; set; }
 
         [Parameter]
-        public EventCallback<List<InvestorProspect>> InvestorsChanged { get; set; }
+        public EventCallback<List<DashboardInvestor>> InvestorsChanged { get; set; }
 
-        private List<InvestorProspect> _contactedInvestors = new List<InvestorProspect>();
-        private InvestorProspect _selectedInvestor;
+        private List<DashboardInvestor> _contactedInvestors = new List<DashboardInvestor>();
+        private DashboardInvestor _selectedInvestor;
         private bool _showDetail = false;
 
-        private void ShowContact(InvestorProspect investor)
+        private void ShowContact(DashboardInvestor investor)
         {
             _selectedInvestor = investor;
             _showDetail = true;
         }
 
-        private void ProcessContact(InvestorProspect investor)
+        private void ProcessContact(DashboardInvestor investor)
         {
             if (_contactedInvestors.Contains(investor))
             {

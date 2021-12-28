@@ -7,7 +7,7 @@
     @if (Investors is not null && Investors.Count() > 0)
     {
       <Animation Effect="@Effect.FadeIn" Speed="@Speed.Slow">
-        @foreach (var investor in Investors)
+        @foreach (var investor in Investors.OrderBy(x => x.Timestamp))
         {
           <div class="row my-3">
               <div class="col-1 my-auto">

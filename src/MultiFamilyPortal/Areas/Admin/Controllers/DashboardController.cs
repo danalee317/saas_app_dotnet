@@ -95,18 +95,49 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         [HttpGet("investors")]
         public async Task<IActionResult> InvestorAnalytics()
         {
+            var investors =  await _dbContext.InvestorProspects
+                                             .Where(x => x.Contacted == false)
+                                             .OrderByDescending(x => x.Timestamp)
+                                             .AsNoTracking()
+                                             .Take(7)
+                                             .ToListAsync();
+
+            List<DashboardInvestor> Investors = new ();
+
+            if(investors != null && investors.Count > 0)
+            {
+                foreach(var investor in investors)
+                {
+                   Investors.Add(new DashboardInvestor
+                   {
+                       Id = investor.Id,
+                       FirstName = investor.FirstName,
+                       LastName = investor.LastName,
+                       Email = investor.Email,
+                       Phone = investor.Phone,
+                       Contacted = investor.Contacted,
+                       Timestamp = investor.Timestamp,
+                       Timezone = investor.Timezone,
+                       LookingToInvest = investor.LookingToInvest,
+                   });
+                }
+            }
+
             var result = new DashboardInvestorsResponse
             {
                 Total = await _dbContext.InvestorProspects.CountAsync(),
-                Contacted = await _dbContext.InvestorProspects.Where(x => x.Contacted == true).CountAsync(),
-                Investors = await _dbContext.InvestorProspects.Where(x => x.Contacted == false).OrderByDescending(y => y.Timestamp).AsNoTracking().Take(7).ToListAsync()
+
+                Contacted = await _dbContext.InvestorProspects
+                                            .Where(x => x.Contacted == true)
+                                            .CountAsync(),
+                Investors = Investors,
             };
 
             return Ok(result);
         }
 
         [HttpPut("investors/{id}")]
-        public async Task<IActionResult> InvestorUpdateAsync(Guid id, [FromBody] InvestorProspect investor)
+        public async Task<IActionResult> InvestorUpdateAsync(Guid id, [FromBody] DashboardInvestor investor)
         {
             if(id == Guid.Empty || id != investor.Id)
                return BadRequest();

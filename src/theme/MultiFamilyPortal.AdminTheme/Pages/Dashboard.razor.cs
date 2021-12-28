@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.CoreUI;
-using MultiFamilyPortal.Data.Models;
 
 namespace MultiFamilyPortal.AdminTheme.Pages
 {
@@ -85,12 +84,12 @@ namespace MultiFamilyPortal.AdminTheme.Pages
             }
         }
 
-        private async Task UpdateInvestors(List<InvestorProspect> investors)
+        private async Task UpdateInvestors(List<DashboardInvestor> investors)
         {
             try
             {
                 foreach (var i in investors)
-                    await _client.PutAsJsonAsync<InvestorProspect>($"/api/admin/dashboard/investors/{i.Id}", i);
+                    await _client.PutAsJsonAsync<DashboardInvestor>($"/api/admin/dashboard/investors/{i.Id}", i);
 
                 await OnInitializedAsync();
             }

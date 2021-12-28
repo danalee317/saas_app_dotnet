@@ -6,6 +6,6 @@ namespace MultiFamilyPortal.AdminTheme.Models
     {
         public int Total { get; set; }
         public int Contacted { get; set; }
-        public List<InvestorProspect> Investors { get; set; }
+        public List<DashboardInvestor> Investors { get; set; }
     }
 }

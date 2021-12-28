@@ -139,7 +139,7 @@
 
 @if(editTenant != null)
 {
-  <TenantSettings @bind-Tenant=@editTenant />
+  <TenantSettings @bind-Tenant=@editTenant OnTenantUpdated=@UpdateTenants />
 }
 
 <TelerikNotification @ref="notification"

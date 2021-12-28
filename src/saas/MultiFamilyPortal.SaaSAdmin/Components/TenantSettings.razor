@@ -1,4 +1,5 @@
 ﻿<TelerikWindow Visible=@(Tenant != null)
+               Width="650px"
                Modal=@true>
   <WindowTitle>@Tenant!.Host</WindowTitle>
   <WindowActions>
@@ -7,31 +8,63 @@
   <WindowContent>
     @if(didLoad)
     {
-      <TelerikGrid Data=@_settings
-                   EditMode=GridEditMode.Inline
-                   OnUpdate=@OnSettingUpdated
-                   Pageable=@true
-                   PageSize=@(10)>
-        <GridColumns>
-          <GridColumn Field="Key" Editable=@false Width="200px" />
-          <GridColumn Field="Value" />
-          <GridCommandColumn Width="100px">
-            <div class="text-center">
-              <GridCommandButton Command="Edit"
-                                 IconClass="fa-duotone fa-pencil"
-                                 Title="Edit" />
-              <GridCommandButton Command="Cancel"
-                                 Icon="cancel"
-                                 Title="Cancel"
-                                 ShowInEdit=@true />
-              <GridCommandButton Command="Save"
-                                 IconClass="fa-duotone fa-floppy-disk"
-                                 Title="Save"
-                                 ShowInEdit=@true />
+      <TelerikTabStrip>
+        <TabStripTab Title="Application Settings">
+          <Content>
+            <TelerikGrid Data=@_settings
+                         EditMode=GridEditMode.Inline
+                         OnUpdate=@OnSettingUpdated
+                         Pageable=@true
+                         PageSize=@(10)>
+              <GridColumns>
+                <GridColumn Field="Key" Editable=@false Width="200px" />
+                <GridColumn Field="Value" />
+                <GridCommandColumn Width="100px">
+                  <div class="text-center">
+                    <GridCommandButton Command="Edit"
+                                       IconClass="fa-duotone fa-pencil"
+                                       Title="Edit" />
+                    <GridCommandButton Command="Cancel"
+                                       Icon="cancel"
+                                       Title="Cancel"
+                                       ShowInEdit=@true />
+                    <GridCommandButton Command="Save"
+                                       IconClass="fa-duotone fa-floppy-disk"
+                                       Title="Save"
+                                       ShowInEdit=@true />
+                  </div>
+                </GridCommandColumn>
+              </GridColumns>
+            </TelerikGrid>
+          </Content>
+        </TabStripTab>
+        <TabStripTab Title="Tenant Settings">
+          <Content>
+            <TelerikLoaderContainer OverlayThemeColor="dark"
+                                    ThemeColor=@ThemeColors.Tertiary
+                                    Visible=@updating />
+            <div class="row mt-5">
+              <label class="col-md-4">Enable RE Mentor</label>
+              <div class="col-md-8">
+                <TelerikSwitch @bind-Value=@_editableTenant!.IsREMentorStudent />
+              </div>
             </div>
-          </GridCommandColumn>
-        </GridColumns>
-      </TelerikGrid>
+            <div class="row mt-2">
+              <label class="col-md-4" style="vertical-align:middle">Google Verification</label>
+              <div class="col-md-8">
+                <TelerikTextBox @bind-Value=@_editableTenant!.GoogleSiteVerification
+                                Width="100%" />
+              </div>
+            </div>
+            <div class="row mt-2 mb-5 text-center">
+              <TelerikButton Primary=@true
+                              Title="Update"
+                              IconClass="fa-duotone fa-floppy-disk"
+                              OnClick=@UpdateTenant>Update</TelerikButton>
+            </div>
+          </Content>
+        </TabStripTab>
+      </TelerikTabStrip>
     }
     else
     {

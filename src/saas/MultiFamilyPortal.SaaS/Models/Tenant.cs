@@ -7,6 +7,8 @@
         public string Environment { get; set; }
         public bool Disabled { get; set; }
         public string DatabaseName { get; set; }
+        public bool IsREMentorStudent { get; set; }
+        public string GoogleSiteVerification { get; set; }
         public DateTimeOffset Created { get; set; }
     }
 }

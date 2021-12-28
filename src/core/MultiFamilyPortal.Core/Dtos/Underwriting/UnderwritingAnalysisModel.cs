@@ -34,7 +34,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
         [JsonIgnore]
         public double AverageRent => Units is null ? 0 :
-            Units.Average(x => x.Rent);
+            Units.Where(x => x.Rent > 0).Average(x => x.Rent);
 
         public List<UnderwritingAnalysisUnit> Units { get; set; }
     }

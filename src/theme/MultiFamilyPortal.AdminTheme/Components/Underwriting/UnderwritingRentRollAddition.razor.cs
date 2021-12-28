@@ -18,7 +18,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
         public UnderwritingAnalysisUnit _unit  = new();
 
-        protected override void OnParametersSet() => _unit.Rent = Model.CurrentRent;
+        protected override void OnInitialized() => _unit.Rent = Model.CurrentRent;
 
         private async Task UpdateUnitList(UnderwritingAnalysisUnit unit)
         {

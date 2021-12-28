@@ -13,7 +13,7 @@
     <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Name))" Title="Name" Width="20%" />
     <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Beds))" Title="Bed" Width="80px" />
     <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Baths))" Title="Bath" Width="80px" />
-    @*<GridColumn Field="@(nameof(UnderwritingAnalysisModel.SquareFt))" Title="Sqft" Width="100px" /> *@
+    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Area))" Title="Sqft" Width="100px" /> 
     <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Upgraded))" Title="Upgraded" Width="100px">
       <Template>
         @{
@@ -38,7 +38,7 @@
         }
       </Template>
     </GridColumn>
-     <GridColumn Field="@(nameof(UnderwritingAnalysisModel.MarketRent))" Title="Average Rent ($)">
+     <GridColumn Field="@(nameof(UnderwritingAnalysisModel.AverageRent))" Title="Average Rent ($)">
       <Template>
         @{
           var truth = context as UnderwritingAnalysisModel;

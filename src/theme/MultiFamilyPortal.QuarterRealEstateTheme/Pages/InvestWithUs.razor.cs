@@ -13,6 +13,9 @@ namespace MultiFamilyPortal.QuarterRealEstateTheme.Pages
         [Inject]
         private IFormService _formService { get; set; }
 
+        [Inject]
+        private ITimeZoneService _timeZoneService { get; set; }
+
         private InvestorInquiryRequest _form => _formService?.InvestorInquiry;
         private PortalNotification notification { get; set; } = default!;
         private ServerSideValidator serverSideValidator { get; set; } = default!;
@@ -31,7 +34,7 @@ namespace MultiFamilyPortal.QuarterRealEstateTheme.Pages
                 return;
             }
 
-            var response = await _formService.SubmitSubscriberSignup();
+            var response = await _formService.SubmitInvestorContactForm();
             if (response?.Errors?.Any() ?? false)
             {
                 serverSideValidator.DisplayErrors(response.Errors);

@@ -1,0 +1,57 @@
+<TelerikWindow @bind-Visible="@WindowIsVisible" 
+               Modal="true"
+               Width="600px">
+  <WindowTitle>
+    <strong>New Investor Details</strong>
+  </WindowTitle>
+  <WindowContent>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 my-3">
+          <form class="form-floating">
+            <input type="text" class="form-control" value="@Investor.FirstName" id="floatingInputValue" disabled>
+            <label for="floatingInputValue">Name</label>
+          </form>
+        </div>
+        <div class="col-md-6 my-3">
+          <form class="form-floating">
+            <input type="text" class="form-control" value="@Investor.LastName" id="floatingInputValue" disabled>
+            <label for="floatingInputValue">Surname</label>
+          </form>
+        </div>
+        <div class="col-md-6 my-3">
+          <form class="form-floating">
+            <input type="email" class="form-control" value="@Investor.Email" id="floatingInputValue" disabled>
+            <label for="floatingInputValue">Email</label>
+          </form>
+        </div>
+        <div class="col-md-6 my-3">
+          <form class="form-floating">
+            <input type="text" class="form-control" value="@Investor.Phone" id="floatingInputValue" disabled>
+            <label for="floatingInputValue">Phone</label>
+          </form>
+        </div>
+        <div class="col-md-6 my-3">
+          <form class="form-floating">
+            <input type="text" class="form-control" value="@_localTime" id="floatingInputValue" disabled>
+            <label for="floatingInputValue">Local Time (@Investor.Timezone)</label>
+          </form>
+        </div>
+        <div class="col-md-6 my-3">
+          <form class="form-floating">
+            <input type="text" class="form-control" value=@Investor.LookingToInvest.ToString("C")
+              id="floatingInputValue" disabled>
+            <label for="floatingInputValue">Capital</label>
+          </form>
+        </div>
+
+        <div class="col-md-12 my-3">
+          <span class="text-secondary">Request made : @Investor.Timestamp.Humanize()</span>
+        </div>
+      </div>
+    </div>
+  </WindowContent>
+  <WindowActions>
+    <WindowAction Name="Close" OnClick="UpdateVisibilty"></WindowAction>
+  </WindowActions>
+</TelerikWindow>

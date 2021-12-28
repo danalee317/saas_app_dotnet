@@ -1,13 +1,10 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.AdminTheme.Models;
-using System;
-using UAParser;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
 {
@@ -48,7 +45,6 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 }
 
                 var now = DateTime.Now;
-                var _7DaysAgo = now.AddDays(-7);
                 var _30DaysAgo = now.AddMonths(-1);
 
                 var allUnderwritings = await query.CountAsync();
@@ -56,7 +52,6 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 var months = (DateTimeOffset.Now - firstDate.Timestamp).TotalDays / 30;
                 var weeks = (DateTimeOffset.Now - firstDate.Timestamp).TotalDays / 7;
                 var allUnderwritingsLastMonth = await query.Where(x => x.Timestamp >= _30DaysAgo).CountAsync();
-                var allUnderwritingsLastWeek = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Timestamp >= _7DaysAgo).CountAsync();
 
                 var referenceMonth = months <= 1 ? 1 : months - 1;
                 var referenceWeek = weeks <= 1 ? 1 : weeks - 1;
@@ -73,7 +68,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                         <= 0 => allUnderwritings,
                         _ => allUnderwritings / (int)weeks,
                     },
-WeeklyGoal = weeklyGoal,
+                    WeeklyGoal = weeklyGoal,
                     Active = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.Active).CountAsync(),
                     Passed = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.Passed).CountAsync(),
                     OfferSubmitted = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.OfferSubmitted).CountAsync(),
@@ -82,13 +77,13 @@ WeeklyGoal = weeklyGoal,
                     LOISubmitted = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.LOISubmitted).CountAsync(),
                     LOIAccepted = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.LOIAccepted).CountAsync(),
                     LOIRejected = await _dbContext.UnderwritingPropertyProspects.Where(x => x.Status == UnderwritingStatus.LOIRejected).CountAsync(),
-                    MonthlyPercent = (double)allUnderwritings - allUnderwritingsLastMonth / referenceMonth,
-                    WeeklyPercent = (double)allUnderwritings - allUnderwritingsLastMonth / referenceWeek,
+                    MonthlyPercent = allUnderwritings - allUnderwritingsLastMonth / referenceMonth,
+                    WeeklyPercent = allUnderwritings - allUnderwritingsLastMonth / referenceWeek,
                 };
 
                 return Ok(result);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
                 return BadRequest(ex.Message);
@@ -98,14 +93,52 @@ WeeklyGoal = weeklyGoal,
         [HttpGet("investors")]
         public async Task<IActionResult> InvestorAnalytics()
         {
+            var dashboardInvestors = await _dbContext.InvestorProspects
+                                             .Where(x => x.Contacted == false)
+                                             .AsNoTracking()
+                                             .Take(7)
+                                             .Select(investor => new DashboardInvestor 
+                                             {
+                                                 Id = investor.Id,
+                                                 FirstName = investor.FirstName,
+                                                 LastName = investor.LastName,
+                                                 Email = investor.Email,
+                                                 Phone = investor.Phone,
+                                                 Contacted = investor.Contacted,
+                                                 Timestamp = investor.Timestamp,
+                                                 Timezone = investor.Timezone,
+                                                 LookingToInvest = investor.LookingToInvest,
+                                              })
+                                            .ToListAsync();
+
             var result = new DashboardInvestorsResponse
             {
                 Total = await _dbContext.InvestorProspects.CountAsync(),
-                Contacted = await _dbContext.InvestorProspects.Where(x => x.Contacted == true).CountAsync(),
-                Investors = await _dbContext.InvestorProspects.Where(x => x.Contacted == false).OrderByDescending(y => y.Timestamp).AsNoTracking().Take(7).ToListAsync()
+
+                Contacted = await _dbContext.InvestorProspects
+                                            .Where(x => x.Contacted == true)
+                                            .CountAsync(),
+                Investors = dashboardInvestors,
             };
 
             return Ok(result);
+        }
+
+        [HttpPut("investors/{id:guid}")]
+        public async Task<IActionResult> InvestorUpdateAsync(Guid id, [FromBody] DashboardInvestor investor)
+        {
+            if(id == default || id != investor.Id)
+               return BadRequest();
+
+            var investorModel = await _dbContext.InvestorProspects.FirstOrDefaultAsync(x => x.Id == id);
+
+            if(investorModel is null)
+               return NotFound();
+
+            investorModel.Contacted = investor.Contacted;
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
         }
 
         [HttpGet("activity")]

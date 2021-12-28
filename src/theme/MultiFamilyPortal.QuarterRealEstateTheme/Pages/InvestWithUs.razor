@@ -57,7 +57,13 @@
                 </div>
                 <div class="col-md-6">
                   <div class="input-item input-item-date ltn__custom-icon">
-                    <InputText type="text" name="Timezone" placeholder="Enter your timezone" @bind-Value=@_form.Timezone />
+                    <InputText type="text" list="timezoneList" name="Timezone" placeholder="Enter your timezone" @bind-Value=@_form.Timezone />
+                    <datalist id="timezoneList">
+                      @foreach (var zone in _timeZoneService.Timezones)
+                      {
+                           <option value="@zone.Name"/>
+                      }
+                    </datalist>
                   </div>
                 </div>
               </div>

@@ -68,14 +68,14 @@
 
     <div class="row mb-5">
        <div class="col-md-4  mb-2" style="height: 500px">
-        <div class="bg-light text-dark h-100 text-center">
-             <div class="m-3">Investor List Component #100</div>
-        </div>
+        <InvestorList Title="Investor List" 
+                      Investors="@_investors.Investors"
+                      InvestorsChanged="@UpdateInvestors" />
       </div>
 
-      <div class="col-md-8  mb-2" style="height: 500px">
+      <div class="col-md-8 mt-1 mb-2" style="height: 500px">
         <div class="bg-light text-dark h-100 text-center">
-          <div class="m-3">Other Components</div>
+          <div class="">Other Components</div>
         </div>
       </div>
     </div>

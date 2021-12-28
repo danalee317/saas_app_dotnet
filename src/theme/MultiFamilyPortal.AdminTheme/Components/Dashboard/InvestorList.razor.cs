@@ -18,7 +18,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
         private InvestorProspect _selectedInvestor;
         private bool _showDetail = false;
 
-        //TODO : Find a way to fix the changing time issue
         private void ShowContact(InvestorProspect investor)
         {
             _selectedInvestor = investor;

@@ -16,7 +16,7 @@ A new app will need to be created. This can be done from a personal AAD Tenant o
 
 After creating the app, take note of the **Application (client) ID**. You will need this for the configuration. Next go to the Certificates &amp; Secrets section and create a new application secret. Set the expiration to 12 months so that we know to update this for the service renewal. In Development you can set this to any timeframe. After creating the secret make a note of it along with the Client Id from earlier.
 
-For Production Scenarios be sure to update the Application Branding with the MPN Id: 4652616. This will validate the application as a trusted application.
+For Production Scenarios be sure to update the Application Branding with the MPN Id: 4652615. This will validate the application as a trusted application.
 
 Additional Reading: [AspNetCore Authentication Docs](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/social/microsoft-logins?view=aspnetcore-6.0)
 

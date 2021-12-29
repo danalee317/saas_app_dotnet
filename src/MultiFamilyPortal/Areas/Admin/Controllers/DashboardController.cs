@@ -94,22 +94,22 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         public async Task<IActionResult> InvestorAnalytics()
         {
             var dashboardInvestors = await _dbContext.InvestorProspects
-                                             .Where(x => x.Contacted == false)
-                                             .AsNoTracking()
-                                             .Take(7)
-                                             .Select(investor => new DashboardInvestor 
-                                             {
-                                                 Id = investor.Id,
-                                                 FirstName = investor.FirstName,
-                                                 LastName = investor.LastName,
-                                                 Email = investor.Email,
-                                                 Phone = investor.Phone,
-                                                 Contacted = investor.Contacted,
-                                                 Timestamp = investor.Timestamp,
-                                                 Timezone = investor.Timezone,
-                                                 LookingToInvest = investor.LookingToInvest,
-                                              })
-                                            .ToListAsync();
+                .Where(x => x.Contacted == false)
+                .AsNoTracking()
+                .Take(7)
+                .Select(investor => new DashboardInvestor
+                {
+                    Id = investor.Id,
+                    FirstName = investor.FirstName,
+                    LastName = investor.LastName,
+                    Email = investor.Email,
+                    Phone = investor.Phone,
+                    Contacted = investor.Contacted,
+                    Timestamp = investor.Timestamp,
+                    Timezone = investor.Timezone,
+                    LookingToInvest = investor.LookingToInvest,
+                })
+                .ToListAsync();
 
             var result = new DashboardInvestorsResponse
             {

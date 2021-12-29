@@ -419,7 +419,7 @@ namespace MultiFamilyPortal.Services
             if (await _dbContext.UnderwritingProspectPropertyCapitalImprovements.AnyAsync(x => x.PropertyId == propertyId))
             {
                 var existingImprovements = await _dbContext.UnderwritingProspectPropertyCapitalImprovements
-                    .Where(x => x.PropertyId != propertyId)
+                    .Where(x => x.PropertyId == propertyId)
                     .ToArrayAsync();
                 _dbContext.UnderwritingProspectPropertyCapitalImprovements.RemoveRange(existingImprovements);
                 await _dbContext.SaveChangesAsync();

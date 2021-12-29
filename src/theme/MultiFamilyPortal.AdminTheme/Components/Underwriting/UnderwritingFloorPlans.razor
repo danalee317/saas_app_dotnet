@@ -1,19 +1,19 @@
-<TelerikGrid Data="@_floorPlans" 
-             Height="600px" 
-             Sortable="true" 
-             Resizable="true" 
+<TelerikGrid Data="@_floorPlans"
+             Height="600px"
+             Sortable="true"
+             Resizable="true"
              Reorderable="true">
   <GridToolBar>
     <span class="k-toolbar-spacer"></span>
-    <GridCommandButton Command="MyToolbarCommand" Icon="add" OnClick="@OnAddFloor">
-      Add Floor
-    </GridCommandButton>
+    <GridCommandButton Primary=@true
+                       IconClass="fa-duotone fa-plus"
+                       OnClick="@OnAddFloor">Add</GridCommandButton>
   </GridToolBar>
   <GridColumns>
     <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Name))" Title="Name" Width="20%" />
     <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Beds))" Title="Bed" Width="80px" />
     <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Baths))" Title="Bath" Width="80px" />
-    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Area))" Title="Sqft" Width="100px" /> 
+    <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Area))" Title="Sqft" Width="100px" />
     <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Upgraded))" Title="Upgraded" Width="100px">
       <Template>
         @{

@@ -25,7 +25,7 @@ namespace MultiFamilyPortal.Converters
                     reader.Read();
 
                     var prop = props.FirstOrDefault(x => GetPropertyName(x) == name);
-                    if (prop is null || prop.SetMethod is null || prop.GetCustomAttribute<JsonIgnoreAttribute>() != null)
+                    if (prop is null || (prop.SetMethod is null && prop.GetCustomAttribute<AddMethodAttribute>() is null) || prop.GetCustomAttribute<JsonIgnoreAttribute>() != null)
                         continue;
 
                     if (reader.TokenType == JsonTokenType.String)
@@ -64,7 +64,19 @@ namespace MultiFamilyPortal.Converters
                         var readHelperType = typeof(ReadHelper<>).MakeGenericType(prop.PropertyType);
                         var readHelper = Activator.CreateInstance(readHelperType, converter) as ReadHelper;
                         var listValue = readHelper.Read(ref reader, prop.PropertyType, options);
-                        prop.SetValue(value, listValue);
+
+                        var addMethodAttr = prop.GetCustomAttribute<AddMethodAttribute>();
+                        if(!string.IsNullOrEmpty(addMethodAttr?.Name) &&
+                            type.GetMethods().Any(x => x.Name == addMethodAttr.Name))
+                        {
+                            var method = type.GetMethod(addMethodAttr.Name);
+                            method.Invoke(value, new object[] { listValue });
+                        }
+                        else if(prop.SetMethod is not null)
+                        {
+                            prop.SetValue(value, listValue);
+                        }
+
                         continue;
                     }
                 }

@@ -13,7 +13,7 @@ using ReactiveUI.Fody.Helpers;
 
 namespace MultiFamilyPortal.Dtos.Underwriting
 {
-    [JsonConverter(typeof(UnderwritingAnalysisConverter))]
+    [JsonConverter(typeof(ReactiveObjectConverter<UnderwritingAnalysis>))]
     public class UnderwritingAnalysis : ReactiveObject, IDisposable
     {
         public static object locker = new object();
@@ -490,13 +490,27 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
         public UnderwritingAnalysisDealAnalysis DealAnalysis { get; set; }
 
+        [AddMethod(nameof(AddSellerItems))]
         public IEnumerable<UnderwritingAnalysisLineItem> Sellers => _sellersLineItems;
+
+        [JsonIgnore]
         public IEnumerable<UnderwritingAnalysisLineItem> SellerIncome => _sellersIncomeItems;
+
+        [JsonIgnore]
         public IEnumerable<UnderwritingAnalysisLineItem> SellerExpense => _sellersExpenseItems;
+
+        [AddMethod(nameof(AddOurItems))]
         public IEnumerable<UnderwritingAnalysisLineItem> Ours => _ourLineItems;
+
+        [JsonIgnore]
         public IEnumerable<UnderwritingAnalysisLineItem> OurIncome => _ourIncomeItems;
+
+        [JsonIgnore]
         public IEnumerable<UnderwritingAnalysisLineItem> OurExpense => _ourExpenseItems;
+
+        [AddMethod(nameof(AddMortgages))]
         public IEnumerable<UnderwritingAnalysisMortgage> Mortgages => _mortgages;
+
         public List<UnderwritingAnalysisNote> Notes { get; set; }
         public List<UnderwritingAnalysisModel> Models { get; set; }
         public List<UnderwritingAnalysisCapitalImprovement> CapitalImprovements { get; set; }

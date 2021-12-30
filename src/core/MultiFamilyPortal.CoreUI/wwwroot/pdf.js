@@ -5,7 +5,7 @@ function destroyWidgets(container) {
 
 function ensureKendoAndJquery() {
 	if (!window.$ || !window.kendo) {
-		alert("something went wrong with loading the Kendo library, review the script references");
+		alert("Something went wrong with loading the Kendo library, review the script references.");
 		return false;
 	}
 	return true;

@@ -82,6 +82,26 @@ namespace MultiFamilyPortal.Converters
                 }
             }
 
+            foreach(var prop in props)
+            {
+                if (prop.SetMethod is null || prop.PropertyType.IsEnum || prop.PropertyType == typeof(string) || prop.PropertyType == typeof(int) || prop.PropertyType.IsPrimitive)
+                    continue;
+                var propValue = prop.GetValue(value);
+                if(propValue is null)
+                {
+                    if(prop.PropertyType.IsInterface && prop.PropertyType.GenericTypeArguments.Any())
+                    {
+                        var argumentType = prop.PropertyType.GenericTypeArguments.First();
+                        var listType = argumentType.MakeArrayType();
+                        prop.SetValue(value, Activator.CreateInstance(listType));
+                    }
+                    else
+                    {
+                        prop.SetValue(value, Activator.CreateInstance(prop.PropertyType));
+                    }
+                }
+            }
+
             return value;
         }
 

@@ -131,18 +131,20 @@
     </GridColumn>
     <GridCommandColumn>
       <div class="text-center">
-        <GridCommandButton Command="Edit"
-                           IconClass="fa-duotone fa-pencil"
-                           Enabled=@_editable
-                           Title="Edit" />
-        <GridCommandButton Command="Cancel"
-                           Icon="cancel"
-                           Title="Cancel"
-                           ShowInEdit=@true />
-        <GridCommandButton Command="Save"
-                           IconClass="fa-duotone fa-floppy-disk"
-                           Title="Save"
-                           ShowInEdit=@true />
+        @if(_editable)
+        {
+          <GridCommandButton Command="Edit"
+                             IconClass="fa-duotone fa-pencil"
+                             Title="Edit" />
+          <GridCommandButton Command="Cancel"
+                             Icon="cancel"
+                             Title="Cancel"
+                             ShowInEdit=@true />
+          <GridCommandButton Command="Save"
+                             IconClass="fa-duotone fa-floppy-disk"
+                             Title="Save"
+                             ShowInEdit=@true />
+        }
       </div>
     </GridCommandColumn>
   </GridColumns>

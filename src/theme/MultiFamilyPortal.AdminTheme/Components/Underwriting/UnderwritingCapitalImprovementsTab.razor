@@ -9,10 +9,13 @@
              OnUpdate=@OnImprovementUpdated>
   <GridToolBar>
     <span class="k-toolbar-spacer"></span>
-    <GridCommandButton Primary=@true
-                       Command="Add"
-                       IconClass="fa-duotone fa-plus"
-                       Title="Add">Add</GridCommandButton>
+    @if(_editable)
+    {
+      <GridCommandButton Primary=@true
+                         Command="Add"
+                         IconClass="fa-duotone fa-plus"
+                         Title="Add">Add</GridCommandButton>
+    }
   </GridToolBar>
   <GridColumns>
     <GridColumn Field="Status" Width="200px">
@@ -56,22 +59,25 @@
     <GridCommandColumn Width="200px">
       @{ var capitalImprovement = context as UnderwritingAnalysisCapitalImprovement; }
       <div class="text-center">
-        <GridCommandButton Command="Edit"
-                           IconClass="fa-duotone fa-pencil"
-                           Enabled=@_editable
-                           Title="Edit" />
-        <GridCommandButton Command="Delete"
-                           IconClass="fa-duotone fa-trash"
-                           Enabled=@_editable
-                           Title="Delete" />
-        <GridCommandButton Command="Cancel"
-                           Icon="cancel"
-                           Title="Cancel"
-                           ShowInEdit=@true />
-        <GridCommandButton Command="Save"
-                           IconClass="fa-duotone fa-floppy-disk"
-                           Title="Save"
-                           ShowInEdit=@true />
+        @if(_editable)
+        {
+          <GridCommandButton Command="Edit"
+                             IconClass="fa-duotone fa-pencil"
+                             Enabled=@_editable
+                             Title="Edit" />
+          <GridCommandButton Command="Delete"
+                             IconClass="fa-duotone fa-trash"
+                             Enabled=@_editable
+                             Title="Delete" />
+          <GridCommandButton Command="Cancel"
+                             Icon="cancel"
+                             Title="Cancel"
+                             ShowInEdit=@true />
+          <GridCommandButton Command="Save"
+                             IconClass="fa-duotone fa-floppy-disk"
+                             Title="Save"
+                             ShowInEdit=@true />
+        }
       </div>
     </GridCommandColumn>
   </GridColumns>

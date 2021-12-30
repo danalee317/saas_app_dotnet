@@ -61,7 +61,7 @@ namespace MultiFamilyPortal.AdminTheme
                     {
                         Title = "All Contacts",
                         Link = "/admin/contacts",
-                        Match = NavLinkMatch.All,
+                        Match = NavLinkMatch.Prefix,
                     },
                     new ChildMenuOption
                     {
@@ -133,6 +133,12 @@ namespace MultiFamilyPortal.AdminTheme
                     {
                         Title = "Settings",
                         Link = "/admin/settings",
+                        Match = NavLinkMatch.All
+                    },
+                    new ChildMenuOption
+                    {
+                        Title = "Support",
+                        Link = "/admin/support",
                         Match = NavLinkMatch.All
                     }
                 }

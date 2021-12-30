@@ -33,9 +33,9 @@ namespace MultiFamilyPortal.Converters
                         var stringValue = reader.GetString();
                         if (prop.PropertyType == typeof(string))
                             prop.SetValue(value, stringValue);
-                        else if (prop.PropertyType == typeof(DateTimeOffset))
+                        else if (prop.PropertyType == typeof(DateTimeOffset) || (prop.PropertyType == typeof(DateTimeOffset?) && !string.IsNullOrEmpty(stringValue)))
                             prop.SetValue(value, DateTimeOffset.Parse(stringValue));
-                        else if (prop.PropertyType == typeof(DateTime))
+                        else if (prop.PropertyType == typeof(DateTime) || (prop.PropertyType == typeof(DateTime?) && !string.IsNullOrEmpty(stringValue)))
                             prop.SetValue(value, DateTime.Parse(stringValue));
                         else if (prop.PropertyType.IsEnum)
                             prop.SetValue(value, Enum.Parse(prop.PropertyType, stringValue));
@@ -84,7 +84,7 @@ namespace MultiFamilyPortal.Converters
 
             foreach(var prop in props)
             {
-                if (prop.SetMethod is null || prop.PropertyType.IsEnum || prop.PropertyType == typeof(string) || prop.PropertyType == typeof(int) || prop.PropertyType.IsPrimitive)
+                if (prop.SetMethod is null || prop.PropertyType.IsEnum || prop.PropertyType == typeof(string) || prop.PropertyType == typeof(int) || prop.PropertyType.IsPrimitive || prop.PropertyType.Namespace == "System")
                     continue;
                 var propValue = prop.GetValue(value);
                 if(propValue is null)

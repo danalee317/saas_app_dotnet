@@ -97,5 +97,28 @@ namespace MultiFamilyPortal.Tests.Fixtures
             var lineItem = model.Sellers.First();
             Assert.Equal(150000, lineItem.AnnualizedTotal);
         }
+
+        [Fact]
+        public void InitializesDealAnalysis()
+        {
+            var model = JsonSerializer.Deserialize<UnderwritingAnalysis>(ExpectedJson);
+            Assert.NotNull(model.DealAnalysis);
+        }
+
+        [Fact]
+        public void InitializesInvestmentForcast()
+        {
+            var model = JsonSerializer.Deserialize<UnderwritingAnalysis>(ExpectedJson);
+            Assert.NotNull(model.IncomeForecast);
+            Assert.Single(model.IncomeForecast);
+        }
+
+        [Fact]
+        public void InitializesModels()
+        {
+            var model = JsonSerializer.Deserialize<UnderwritingAnalysis>(ExpectedJson);
+            Assert.NotNull(model.Models);
+            Assert.Empty(model.Models);
+        }
     }
 }

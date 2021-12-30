@@ -96,7 +96,7 @@ namespace MultiFamilyPortal.Controllers
         {
             var validatorResponse = await _emailValidator.Validate(form.Email);
 
-            if (!validatorResponse.IsValid)
+            if (!validatorResponse.IsValid || form.LookingToInvest is null)
             {
                 return BadRequest(new FormResult
                 {
@@ -114,7 +114,7 @@ namespace MultiFamilyPortal.Controllers
                 Email = form.Email,
                 FirstName = form.FirstName,
                 LastName = form.LastName,
-                LookingToInvest = form.LookingToInvest,
+                LookingToInvest = form.LookingToInvest.Value,
                 Phone = form.Phone,
                 Timezone = form.Timezone,
             });
@@ -129,7 +129,7 @@ namespace MultiFamilyPortal.Controllers
                 FirstName = form.FirstName,
                 LastName = form.LastName,
                 Phone = form.Phone,
-                LookingToInvest = form.LookingToInvest.ToString("C"),
+                LookingToInvest = form.LookingToInvest.Value.ToString("C"),
                 Timezone = form.Timezone,
                 Subject = $"Investor Inquiry - {form.FirstName} {form.LastName}"
             };

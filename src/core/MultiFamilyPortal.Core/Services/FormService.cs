@@ -14,10 +14,7 @@ namespace MultiFamilyPortal.Services
             _client = client;
             SignupModel = new();
             ContactForm = new();
-            InvestorInquiry = new InvestorInquiryRequest
-            {
-                LookingToInvest = 100000
-            };
+            InvestorInquiry = new();
         }
 
 

@@ -26,9 +26,11 @@ namespace MultiFamilyPortal.Dtos
         public string Timezone { get; set; }
 
         [Required]
-        [Range(25000.0, double.MaxValue)]
-        public double LookingToInvest { get; set; }
+        [Range(10000.0, 100000000.0)]
+        public double? LookingToInvest { get; set; }
 
+
+        [MinLength(10, ErrorMessage = "Please let use know about what type of investments you are looking to invest in, or questions that you may have.")]
         public string Comments { get; set; }
     }
 }

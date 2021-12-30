@@ -36,7 +36,12 @@
                 </div>
                 <div class="col-md-6">
                   <div class="input-item input-item-phone ltn__custom-icon">
-                    <InputText type="text" placeholder="Enter phone number" @bind-Value=@_form.Phone />
+                    <TelerikMaskedTextBox Mask="(000) 000-0000"  
+                                          Class="w-100 mb-4"
+                                          MaskOnFocus=@true
+                                          Id="home-size" 
+                                          placeholder="Enter phone number" 
+                                          @bind-Value=@_form.Phone />
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -45,7 +50,7 @@
                   </div>
                 </div>
                 <div class="col-md-6">
-                  <div class="input-item input-item-email ltn__custom-icon">
+                  <div class="input-item input-item-dollar ltn__custom-icon">
                     <TelerikNumericTextBox Decimals="0"
                                            @bind-Value=@_form.LookingToInvest
                                            Min="25000"
@@ -97,4 +102,11 @@
     border: 2px solid var(--ltn__primary-color);
     border-color: #E4ECF2 !important;
 }
+.input-item.ltn__custom-icon::before {
+    z-index: 1;
+}
+
+.input-item-dollar.ltn__custom-icon::before{
+  content:"\24"
+  }
 </style>

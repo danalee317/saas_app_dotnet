@@ -72,9 +72,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.PropertyInfo
         private void OnPreview(GridCommandEventArgs args)
         {
             _selectedFile = args.Item as UnderwritingAnalysisFile;
-
-            // TODO: Implement Preview functionality
-
             _showData = true;
         }
 

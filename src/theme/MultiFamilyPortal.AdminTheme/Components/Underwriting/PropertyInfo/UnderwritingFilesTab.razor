@@ -26,11 +26,11 @@
     <GridColumn Field=@nameof(UnderwritingAnalysisFile.Description) />
     <GridCommandColumn>
       <div class="text-center">
-        @{ var fileInfo = context as UnderwritingAnalysisFile; }
-        @if(Path.GetExtension(fileInfo.Name).ToLower() == ".pdf" ||
-            Path.GetExtension(fileInfo.Name).ToLower() == ".jpeg" || 
-            Path.GetExtension(fileInfo.Name).ToLower() == ".png" || 
-            Path.GetExtension(fileInfo.Name).ToLower() == ".jpg")
+        @{ 
+          var fileInfo = context as UnderwritingAnalysisFile; 
+          var extension = Path.GetExtension(fileInfo.Name).ToLower();
+        }
+        @if(extension == ".pdf" || extension == ".jpeg" || extension == ".png" || extension == ".jpg")
         {
           <GridCommandButton Title="Preview" 
                              IconClass="fa-duotone fa-eye" 
@@ -93,21 +93,17 @@
 
 <PortalNotification @ref="notification" />
 
-@*Do it here then move it to a switch in Document viewer, there support all above types except the compressed ones*@
-@*New tab for images*@
-@*Disable for compressed*@
-
 <TelerikWindow @bind-Visible=@_showData 
                Size="@WindowSize.Large"
                State="WindowState.Maximized"
                Modal="true">
-                <WindowActions>
-    <WindowAction Name="Close"></WindowAction>
+    <WindowActions>
+      <WindowAction Name="Close" />
     </WindowActions>
     <WindowTitle>
         <strong>View @_selectedFile.Name</strong>
     </WindowTitle>
     <WindowContent>
-      <DocumentViewer FileDocument="@_selectedFile"/>
+      <DocumentViewer Link="@_selectedFile.DownloadLink" Type=@(Path.GetExtension(_selectedFile.Name).ToLower() == ".pdf" ? DocumentType.PDF : DocumentType.Image) />
     </WindowContent>
 </TelerikWindow>

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using MultiFamilyPortal.Dtos.Underwriting;
 
 namespace MultiFamilyPortal.CoreUI
 {
@@ -10,31 +9,33 @@ namespace MultiFamilyPortal.CoreUI
         private IJSRuntime JsRuntime { get; set; }
 
         [Parameter]
-        public UnderwritingAnalysisFile FileDocument { get; set; }
+        public DocumentType Type { get; set; }
 
-        ElementReference WrapperRef;
+        [Parameter]
+        public string Link { get; set; }
+
+        private ElementReference _wrapperRef;
         private readonly string _widgetId = Guid.NewGuid().ToString();
-
-        DotNetObjectReference<DocumentViewer> CurrentRazorComponent { get; set; }
+        private DotNetObjectReference<DocumentViewer> _currentRazorComponent;
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender && Path.GetExtension(FileDocument.Name).ToLower() == ".pdf")
+            if (firstRender && Type == DocumentType.PDF)
             {
-                if (CurrentRazorComponent == null)
+                if (_currentRazorComponent == null)
                 {
-                    CurrentRazorComponent = DotNetObjectReference.Create(this);
+                    _currentRazorComponent = DotNetObjectReference.Create(this);
                 }
 
-                await JsRuntime.InvokeVoidAsync("createWidget", "createPdfViewer", WrapperRef, _widgetId, CurrentRazorComponent);
+                await JsRuntime.InvokeVoidAsync("MFPortal.KendoIntialiase", _wrapperRef, _widgetId, _currentRazorComponent);
             }
         }
 
         public async ValueTask DisposeAsync()
         {
-            await JsRuntime.InvokeVoidAsync("destroyWidgets", WrapperRef);
-            if (CurrentRazorComponent != null)
+            await JsRuntime.InvokeVoidAsync("MFPortal.DisposeKendo", _wrapperRef);
+            if (_currentRazorComponent != null)
             {
-                CurrentRazorComponent.Dispose();
+                _currentRazorComponent.Dispose();
             }
         }
     }

@@ -2,15 +2,12 @@ using Microsoft.AspNetCore.Components;
 using MultiFamilyPortal.Dtos.Underwriting;
 using Telerik.Blazor.Components;
 
-namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
+namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
 {
     public partial class UnderwritingRollUnits
     {
         [Parameter]
         public UnderwritingAnalysis Property { get; set; }
-
-        [Parameter]
-        public EventCallback<UnderwritingAnalysis> OnPropertyChanged { get; set; }
 
         private IEnumerable<UnderwritingAnalysisUnit> _rollUnits = Array.Empty<UnderwritingAnalysisUnit>();
         private bool _showAddUnit = false;
@@ -30,7 +27,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
         private async Task UpdateUnitList(UnderwritingAnalysisUnit unit)
         {
-            await OnPropertyChanged.InvokeAsync(Property);
+            //await OnPropertyChanged.InvokeAsync(Property);
             _showAddUnit = false;
         }
 
@@ -39,7 +36,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             var model = Property.Models.FirstOrDefault(m => m.Units.Contains(unit));
             model?.Units.Remove(unit);
 
-            await OnPropertyChanged.InvokeAsync(Property);
+            //await OnPropertyChanged.InvokeAsync(Property);
             _showAddUnit = false;
         }
     }

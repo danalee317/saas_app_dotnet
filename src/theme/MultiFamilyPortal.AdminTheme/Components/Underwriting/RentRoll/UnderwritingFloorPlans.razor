@@ -1,4 +1,4 @@
-<TelerikGrid Data="@_floorPlans"
+<TelerikGrid Data="@Property.Models"
              Height="600px"
              Sortable="true"
              Resizable="true"
@@ -56,7 +56,7 @@
     </GridColumn>
     <GridCommandColumn>
       <div class="text-center">
-        <GridCommandButton Command="MyOwnCommand" Icon="edit" ShowInEdit="false" OnClick="@OnEditFloor">
+        <GridCommandButton Icon="edit" ShowInEdit="false" OnClick="@OnEditFloor">
           Edit
         </GridCommandButton>
       </div>
@@ -64,8 +64,8 @@
   </GridColumns>
 </TelerikGrid>
 
-<UnderwritingFloorPlansEdit ShowWindow="@_showModel"
-                            IsNew="@_isNew"
-                            FloorPlan="@_floorPlan"
-                            Property="@Property" 
-                            FloorPlanChanged=@InformSuperParent/>
+@if(_floorPlan is not null)
+{
+  <UnderwritingFloorPlansEdit @bind-FloorPlan="@_floorPlan"
+                              Property="@Property" />
+}

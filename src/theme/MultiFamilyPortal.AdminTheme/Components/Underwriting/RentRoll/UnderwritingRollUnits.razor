@@ -43,24 +43,24 @@
                Centered="true"
                Modal="true"
                Width="600px">
-    <WindowTitle>
-        <strong>Edit @_unit.Unit</strong>
-    </WindowTitle>
-     <WindowActions>
-        <WindowAction Name="Close" />
-    </WindowActions>
-    <WindowContent>
-       <TelerikTabStrip TabPosition="TabPosition.Top">
-          <TabStripTab Title="Units">
-            <UnderwritingRollUnitsControls Editing=@true 
-                                           Unit="@_unit" 
-                                           OnUnitChanged=@UpdateUnitList
-                                           RemoveUnitRequested=@RemoveUnit />
-                  </TabStripTab>
-                  <TabStripTab Title="Ledgers">
-                   <div class="my-3"><ComingSoon /></div>
-                  </TabStripTab>
-                </TelerikTabStrip>
-    </WindowContent>
+  <WindowTitle>
+    <strong>Edit @_unit.Unit</strong>
+  </WindowTitle>
+  <WindowActions>
+    <WindowAction Name="Close" />
+  </WindowActions>
+  <WindowContent>
+    <TelerikTabStrip TabPosition="TabPosition.Top">
+      <TabStripTab Title="Units">
+        <UnderwritingRollUnitsControls Editing=@true 
+                                       Unit="@_unit" 
+                                       OnUnitChanged=@UpdateUnitList
+                                       RemoveUnitRequested=@RemoveUnit />
+      </TabStripTab>
+      <TabStripTab Title="Ledgers">
+        <div class="my-3"><ComingSoon /></div>
+      </TabStripTab>
+    </TelerikTabStrip>
+  </WindowContent>
 </TelerikWindow>
 

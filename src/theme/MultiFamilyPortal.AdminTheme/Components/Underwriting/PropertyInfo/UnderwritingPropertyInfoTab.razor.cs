@@ -7,7 +7,7 @@ using MultiFamilyPortal.CoreUI;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
 
-namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
+namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.PropertyInfo
 {
     public partial class UnderwritingPropertyInfoTab
     {

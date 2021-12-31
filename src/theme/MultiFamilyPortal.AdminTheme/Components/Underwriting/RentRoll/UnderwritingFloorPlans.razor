@@ -5,9 +5,12 @@
              Reorderable="true">
   <GridToolBar>
     <span class="k-toolbar-spacer"></span>
-    <GridCommandButton Primary=@true
-                       IconClass="fa-duotone fa-plus"
-                       OnClick="@OnAddFloor">Add</GridCommandButton>
+    @if(_editable)
+    {
+      <GridCommandButton Primary=@true
+                         IconClass="fa-duotone fa-plus"
+                         OnClick="@OnAddFloor">Add</GridCommandButton>
+    }
   </GridToolBar>
   <GridColumns>
     <GridColumn Field="@(nameof(UnderwritingAnalysisModel.Name))" Title="Name" Width="20%" />
@@ -56,9 +59,14 @@
     </GridColumn>
     <GridCommandColumn>
       <div class="text-center">
-        <GridCommandButton Icon="edit" ShowInEdit="false" OnClick="@OnEditFloor">
-          Edit
-        </GridCommandButton>
+        @if(_editable)
+        {
+          <GridCommandButton Icon="edit"
+                             ShowInEdit="false"
+                             OnClick="@OnEditFloor">
+            Edit
+          </GridCommandButton>
+        }
       </div>
     </GridCommandColumn>
   </GridColumns>

@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
+using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Dtos.Underwriting;
 using Telerik.Blazor.Components;
 
@@ -9,7 +11,17 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
         [Parameter]
         public UnderwritingAnalysis Property { get; set; }
 
+        [CascadingParameter]
+        private ClaimsPrincipal _user { get; set; }
+
+        private bool _editable;
+
         private UnderwritingAnalysisModel _floorPlan;
+
+        protected override void OnInitialized()
+        {
+            _editable = _user.IsAuthorizedInPolicy(PortalPolicy.Underwriter);
+        }
 
         private void OnAddFloor()
         {

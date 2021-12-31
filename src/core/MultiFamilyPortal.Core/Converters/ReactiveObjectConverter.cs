@@ -46,11 +46,11 @@ namespace MultiFamilyPortal.Converters
                     }
                     else if (reader.TokenType == JsonTokenType.Number)
                     {
-                        if (prop.PropertyType == typeof(int))
+                        if (prop.PropertyType == typeof(int) || prop.PropertyType == typeof(int?))
                             prop.SetValue(value, reader.GetInt32());
-                        else if (prop.PropertyType == typeof(double))
+                        else if (prop.PropertyType == typeof(double) || prop.PropertyType == typeof(double?))
                             prop.SetValue(value, reader.GetDouble());
-                        else if (prop.PropertyType == typeof(decimal))
+                        else if (prop.PropertyType == typeof(decimal) || prop.PropertyType == typeof(decimal?))
                             prop.SetValue(value, reader.GetDecimal());
                     }
                     else if(prop.PropertyType == typeof(bool) && (reader.TokenType == JsonTokenType.False || reader.TokenType == JsonTokenType.True))
@@ -128,17 +128,17 @@ namespace MultiFamilyPortal.Converters
                     continue;
 
                 var name = GetPropertyName(prop);
-                if(prop.PropertyType == typeof(int))
+                if(prop.PropertyType == typeof(int) || prop.PropertyType == typeof(int?))
                 {
                     var integer = (int)prop.GetValue(value, null);
                     writer.WriteNumber(name, integer);
                 }
-                else if (prop.PropertyType == typeof(double))
+                else if (prop.PropertyType == typeof(double) || prop.PropertyType == typeof(double?))
                 {
                     var real = (double)prop.GetValue(value, null);
                     writer.WriteNumber(name, real);
                 }
-                else if (prop.PropertyType == typeof(decimal))
+                else if (prop.PropertyType == typeof(decimal) || prop.PropertyType == typeof(decimal?))
                 {
                     var decimalValue = (decimal)prop.GetValue(value, null);
                     writer.WriteNumber(name, decimalValue);

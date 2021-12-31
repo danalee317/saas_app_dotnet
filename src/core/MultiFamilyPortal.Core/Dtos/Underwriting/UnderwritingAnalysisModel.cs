@@ -32,7 +32,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         public int TotalUnits { get; set; }
 
         [Reactive]
-        public double Area { get; set; }
+        public int? Area { get; set; }
 
         [JsonIgnore]
         public double AverageRent => (Units?.Any(x => x.Rent > 0) ?? false) ? 

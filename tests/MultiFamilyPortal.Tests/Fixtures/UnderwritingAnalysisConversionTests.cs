@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
 using Xunit;
 
@@ -142,18 +143,17 @@ namespace MultiFamilyPortal.Tests.Fixtures
                 StartDate = DateTimeOffset.Now.AddMonths(3),
                 Timestamp = DateTimeOffset.Now,
                 Vintage = 1980,
-                Models = new List<UnderwritingAnalysisModel>
-                {
-                    new UnderwritingAnalysisModel
-                    {
-                        Name = "Classic 1bed",
-                        Area = 650,
-                        Baths = 1,
-                        Beds = 1,
-                        CurrentRent = 1200,
-                        MarketRent = 1400,
-                        TotalUnits = 10,
-                        Units = new List<UnderwritingAnalysisUnit>
+            };
+            analysis.AddModel(new UnderwritingAnalysisModel
+            {
+                Name = "Classic 1bed",
+                Area = 650,
+                Baths = 1,
+                Beds = 1,
+                CurrentRent = 1200,
+                MarketRent = 1400,
+                TotalUnits = 10,
+                Units = new List<UnderwritingAnalysisUnit>
                         {
                             new UnderwritingAnalysisUnit
                             {
@@ -167,20 +167,18 @@ namespace MultiFamilyPortal.Tests.Fixtures
                                 {
                                     new UnderwritingAnalysisUnitLedgerItem
                                     {
-                                        Type = Data.Models.UnderwritingPropertyUnitLedgerType.Rent,
+                                        Type = UnderwritingPropertyUnitLedgerType.Rent,
                                         Rent = 1175
                                     },
                                     new UnderwritingAnalysisUnitLedgerItem
                                     {
-                                        Type = Data.Models.UnderwritingPropertyUnitLedgerType.Admin,
+                                        Type = UnderwritingPropertyUnitLedgerType.Admin,
                                         ChargesCredits = 25
                                     }
                                 }
                             }
                         }
-                    }
-                }
-            };
+            });
 
             var json = JsonSerializer.Serialize(analysis);
             Assert.Contains("John Smith", json);
@@ -199,6 +197,13 @@ namespace MultiFamilyPortal.Tests.Fixtures
             Assert.Equal("John Smith", unit.Renter);
             Assert.Equal(new DateTime(2022, 6, 30), unit.LeaseEnd);
             Assert.Equal(new DateTime(2021, 7, 1), unit.LeaseStart);
+
+            Assert.NotNull(unit.Ledger);
+            Assert.Equal(2, unit.Ledger.Count);
+
+            var rent = unit.Ledger.First();
+            Assert.Equal(UnderwritingPropertyUnitLedgerType.Rent, rent.Type);
+            Assert.Equal(1175, rent.Rent);
         }
     }
 }

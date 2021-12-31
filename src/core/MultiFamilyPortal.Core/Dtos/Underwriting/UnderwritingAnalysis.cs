@@ -25,9 +25,11 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         private ReadOnlyObservableCollection<UnderwritingAnalysisLineItem> _ourIncomeItems;
         private ReadOnlyObservableCollection<UnderwritingAnalysisLineItem> _ourExpenseItems;
         private ReadOnlyObservableCollection<UnderwritingAnalysisMortgage> _mortgages;
+        private ReadOnlyObservableCollection<UnderwritingAnalysisModel> _models;
         private readonly SourceCache<UnderwritingAnalysisLineItem, Guid> _sellersCache;
         private readonly SourceCache<UnderwritingAnalysisLineItem, Guid> _oursCache;
         private readonly SourceCache<UnderwritingAnalysisMortgage, Guid> _mortgageCache;
+        private readonly SourceCache<UnderwritingAnalysisModel, Guid> _modelsCache;
 
         private ObservableAsPropertyHelper<double> _raise;
         private ObservableAsPropertyHelper<double> _debtCoverage;
@@ -128,6 +130,15 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
             mortgageRefCount
                 .Bind(out _mortgages)
+                .DisposeMany()
+                .Subscribe()
+                .DisposeWith(_disposable);
+
+            _modelsCache = new SourceCache<UnderwritingAnalysisModel, Guid>(x => x.Id);
+            var modelRefCount = _modelsCache.Connect()
+                .RefCount();
+            modelRefCount
+                .Bind(out _models)
                 .DisposeMany()
                 .Subscribe()
                 .DisposeWith(_disposable);
@@ -512,8 +523,12 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         public IEnumerable<UnderwritingAnalysisMortgage> Mortgages => _mortgages;
 
         public List<UnderwritingAnalysisNote> Notes { get; set; }
-        public List<UnderwritingAnalysisModel> Models { get; set; }
+
+        [AddMethod(nameof(AddModels))]
+        public IEnumerable<UnderwritingAnalysisModel> Models => _models;
+
         public List<UnderwritingAnalysisCapitalImprovement> CapitalImprovements { get; set; }
+
         public List<UnderwritingAnalysisIncomeForecast> IncomeForecast { get; set; }
 
         private ReactiveCommand<Unit, Unit> _downpaymentCommand;
@@ -521,6 +536,27 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         private ReactiveCommand<Unit, Unit> _calculateLoanAmount;
         private ReactiveCommand<Unit, Unit> _updateIncomeForecast;
         private bool _disposedValue;
+
+        public void AddModel(UnderwritingAnalysisModel item)
+        {
+            if (item.Id == default)
+                item.Id = Guid.NewGuid();
+
+            _modelsCache.AddOrUpdate(item);
+        }
+
+        public void AddModels(IEnumerable<UnderwritingAnalysisModel> items)
+        {
+            foreach (var model in items.Where(x => x.Id == default))
+                model.Id = Guid.NewGuid();
+
+            _modelsCache.Edit(x => x.AddOrUpdate(items));
+        }
+
+        public void RemoveModel(UnderwritingAnalysisModel model)
+        {
+            _modelsCache.Remove(model);
+        }
 
         public void AddMortgage(UnderwritingAnalysisMortgage mortgage)
         {

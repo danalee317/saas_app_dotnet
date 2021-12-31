@@ -154,6 +154,7 @@ namespace MultiFamilyPortal.Services
                 .Where(x => x.PropertyId == propertyId)
                 .Select(m => new UnderwritingAnalysisModel
                 {
+                    Id = m.Id,
                     Baths = m.Baths,
                     Beds = m.Beds,
                     CurrentRent = m.CurrentRent,
@@ -163,6 +164,7 @@ namespace MultiFamilyPortal.Services
                     Upgraded = m.Upgraded,
                     Units = m.Units.Select(u => new UnderwritingAnalysisUnit
                     {
+                        Id = u.Id,
                         AtWill = u.AtWill,
                         Renter = u.Renter,
                         Balance = u.Balance,

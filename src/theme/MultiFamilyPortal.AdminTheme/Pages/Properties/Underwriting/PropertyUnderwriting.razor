@@ -54,14 +54,7 @@ else
             <WizardStep Label="Rent Roll"
                         IconClass="fa-duotone fa-list">
               <Content>
-               <TelerikTabStrip TabPosition="TabPosition.Top">
-                  <TabStripTab Title="Floor Plans">
-                    <UnderwritingFloorPlans Property=@Property OnPropertyChanged=@OnUpdateProperty/>
-                  </TabStripTab>
-                  <TabStripTab Title="Units">
-                    <UnderwritingRollUnits Property=@Property OnPropertyChanged=@OnUpdateProperty/>
-                  </TabStripTab>
-                </TelerikTabStrip>
+                <RentRollWizardStep Property=@Property />
               </Content>
             </WizardStep>
             <WizardStep Label="Reports"

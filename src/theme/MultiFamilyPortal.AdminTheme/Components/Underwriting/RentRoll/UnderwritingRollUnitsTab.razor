@@ -1,0 +1,64 @@
+<TelerikGrid Data="@_filteredUnits"
+             Height="600px"
+             Sortable="true"
+             Pageable="true"
+             Resizable="true"
+             Reorderable="true">
+  <GridColumns>
+    <GridColumn Field="@(nameof(DisplayUnit.UnitName))" Title="Unit" />
+    <GridColumn Field="@(nameof(DisplayUnit.Renter))" Title="Tenant Name" Width="15%">
+      <Template>
+        @{ var unit = context as DisplayUnit; }
+        @(string.IsNullOrEmpty(unit.Renter) ? "N/A" : unit.Renter)
+      </Template>
+    </GridColumn>
+    <GridColumn Field="@(nameof(DisplayUnit.FloorPlanName))" Title="Floor Plan" />
+    <GridColumn Field="@(nameof(DisplayUnit.Rent))" Title="Monthly Rent ($)" DisplayFormat="{0:C}" />
+    <GridColumn Field="@(nameof(DisplayUnit.Balance))" Title="Balance ($)" DisplayFormat="{0:C}" />
+    <GridColumn Field="@(nameof(DisplayUnit.DepositOnHand))" Title="Deposit ($)" DisplayFormat="{0:C}" />
+    <GridColumn Field="@(nameof(DisplayUnit.LeaseStart))" Title="Lease Start" >
+      <Template>
+        @{ var unit = context as DisplayUnit; }
+        @(unit.LeaseStart.HasValue ? unit.LeaseStart.Value.ToString($"MM/yyyy") : "N/A")
+      </Template>
+    </GridColumn>
+    <GridColumn Field="@(nameof(DisplayUnit.LeaseEnd))" Title="Lease End">
+      <Template>
+        @{ var unit = context as DisplayUnit; }
+        @(unit.LeaseEnd.HasValue ? unit.LeaseEnd.Value.ToString($"MM/yyyy") : "N/A")
+      </Template>
+    </GridColumn>
+    <GridCommandColumn>
+      <div class="text-center">
+        <GridCommandButton OnClick="UpdateUnit" Icon="edit">
+          Edit
+        </GridCommandButton>
+      </div>
+    </GridCommandColumn>
+  </GridColumns>
+</TelerikGrid>
+
+@if (_unit != null)
+{
+  <TelerikWindow Centered="true"
+                 Modal="true"
+                 Visible=@(_unit != null)
+                 Width="600px">
+    <WindowTitle>
+      <strong>Edit @_unit.UnitName</strong>
+    </WindowTitle>
+    <WindowActions>
+      <WindowAction Name="Close" />
+    </WindowActions>
+    <WindowContent>
+      <TelerikTabStrip TabPosition="TabPosition.Top">
+        <TabStripTab Title="Units">
+          <UnderwritingRollUnitsControls @bind-Unit=@_unit />
+        </TabStripTab>
+        <TabStripTab Title="Ledgers">
+          <div class="my-3"><ComingSoon /></div>
+        </TabStripTab>
+      </TelerikTabStrip>
+    </WindowContent>
+  </TelerikWindow>
+}

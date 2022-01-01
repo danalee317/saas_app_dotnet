@@ -5,7 +5,7 @@ using MultiFamilyPortal.Dtos.Underwriting;
 using Telerik.Blazor.Components;
 using Telerik.DataSource.Extensions;
 
-namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
+namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.PropertyInfo
 {
     public partial class UnderwritingCapitalImprovementsTab
     {

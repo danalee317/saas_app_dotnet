@@ -8,6 +8,8 @@ namespace MultiFamilyPortal.Dtos.Underwriting
     [JsonConverter(typeof(ReactiveObjectConverter<UnderwritingAnalysisModel>))]
     public class UnderwritingAnalysisModel : ReactiveObject
     {
+        public Guid Id { get; set; }
+
         [Reactive]
         public string Name { get; set; }
 
@@ -30,7 +32,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         public int TotalUnits { get; set; }
 
         [Reactive]
-        public double Area { get; set; }
+        public int? Area { get; set; }
 
         [JsonIgnore]
         public double AverageRent => (Units?.Any(x => x.Rent > 0) ?? false) ? 

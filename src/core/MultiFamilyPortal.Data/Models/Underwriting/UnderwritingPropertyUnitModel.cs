@@ -21,6 +21,8 @@ namespace MultiFamilyPortal.Data.Models
 
         public bool Upgraded { get; set; }
 
+        public int? SquareFeet { get; set; }
+
         public int TotalUnits { get; set; }
 
         public UnderwritingProspectProperty Property { get; set; }

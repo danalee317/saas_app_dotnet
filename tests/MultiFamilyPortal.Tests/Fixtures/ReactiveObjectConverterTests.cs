@@ -97,5 +97,46 @@ namespace MultiFamilyPortal.Tests.Fixtures
             Assert.Equal(4, obj.MyItems.Count);
             Assert.Equal(2, obj.MyItems.Count(x => x.SomeEnum == AnEnum.Value2));
         }
+
+        [Fact]
+        public void SerializesNullNumerics()
+        {
+            var model = new NullableNumeric();
+            var json = JsonSerializer.Serialize(model);
+            Assert.Equal("{}", json);
+        }
+
+        [Fact]
+        public void SerializesNonNullNumerics()
+        {
+            var model = new NullableNumeric
+            {
+                SomeInt = 5,
+                SomeDouble = 6.5
+            };
+            var json = JsonSerializer.Serialize(model);
+            Assert.Equal(@"{""someInt"":5,""someDouble"":6.5}", json);
+        }
+
+        [Theory]
+        [InlineData("{}")]
+        [InlineData(@"{""someInt"":null,""someDouble"":null}")]
+        public void DeserializesNullNumerics(string json)
+        {
+            var model = JsonSerializer.Deserialize<NullableNumeric>(json);
+
+            Assert.Null(model.SomeDouble);
+            Assert.Null(model.SomeInt);
+        }
+
+        [Fact]
+        public void DeserializesNonNullNumerics()
+        {
+            var json = @"{""someInt"":5,""someDouble"":6.5}";
+            var model = JsonSerializer.Deserialize<NullableNumeric>(json);
+
+            Assert.Equal(6.5, model.SomeDouble);
+            Assert.Equal(5, model.SomeInt);
+        }
     }
 }

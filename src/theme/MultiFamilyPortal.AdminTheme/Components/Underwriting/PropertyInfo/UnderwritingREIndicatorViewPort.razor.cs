@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using MultiFamilyPortal.Dtos.Underwriting;
 
-namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
+namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.PropertyInfo
 {
     public partial class UnderwritingREIndicatorViewPort
     {

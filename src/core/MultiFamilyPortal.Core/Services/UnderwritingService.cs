@@ -154,6 +154,8 @@ namespace MultiFamilyPortal.Services
                 .Where(x => x.PropertyId == propertyId)
                 .Select(m => new UnderwritingAnalysisModel
                 {
+                    Id = m.Id,
+                    Area = m.SquareFeet,
                     Baths = m.Baths,
                     Beds = m.Beds,
                     CurrentRent = m.CurrentRent,
@@ -163,6 +165,7 @@ namespace MultiFamilyPortal.Services
                     Upgraded = m.Upgraded,
                     Units = m.Units.Select(u => new UnderwritingAnalysisUnit
                     {
+                        Id = u.Id,
                         AtWill = u.AtWill,
                         Renter = u.Renter,
                         Balance = u.Balance,
@@ -179,7 +182,7 @@ namespace MultiFamilyPortal.Services
                         }).ToList()
                     }).ToList(),
                 }).ToListAsync();
-            property.Models = unitModels;
+            property.AddModels(unitModels);
 
             var lineItems = await _dbContext.UnderwritingLineItems.Where(x => x.PropertyId == property.Id).ToArrayAsync();
             if (lineItems.Any())
@@ -462,6 +465,7 @@ namespace MultiFamilyPortal.Services
                         MarketRent = model.MarketRent,
                         CurrentRent = model.CurrentRent,
                         Upgraded = model.Upgraded,
+                        SquareFeet = model.Area,
                         TotalUnits = model.TotalUnits,
                         PropertyId = propertyId
                     };

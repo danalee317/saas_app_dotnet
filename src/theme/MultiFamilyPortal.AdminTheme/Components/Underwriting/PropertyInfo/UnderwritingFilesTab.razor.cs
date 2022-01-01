@@ -7,7 +7,7 @@ using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
 using Telerik.Blazor.Components;
 
-namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
+namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.PropertyInfo
 {
     public partial class UnderwritingFilesTab
     {

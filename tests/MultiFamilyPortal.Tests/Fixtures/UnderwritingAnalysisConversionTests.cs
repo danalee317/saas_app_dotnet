@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
 using Xunit;
 
@@ -119,6 +120,90 @@ namespace MultiFamilyPortal.Tests.Fixtures
             var model = JsonSerializer.Deserialize<UnderwritingAnalysis>(ExpectedJson);
             Assert.NotNull(model.Models);
             Assert.Empty(model.Models);
+        }
+
+        [Fact]
+        public void SerializesAndDeserializesModelsAndUnits()
+        {
+            var analysis = new UnderwritingAnalysis()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Hello World",
+                Address = "123 Some St",
+                City = "San Diego",
+                State = "CA",
+                AskingPrice = 2600000,
+                OfferPrice = 2500000,
+                StrikePrice = 2500000,
+                PurchasePrice = 2500000,
+                LTV = 0.75,
+                LoanType = Data.Models.UnderwritingLoanType.Automatic,
+                Units = 45,
+                RentableSqFt = 45 * 650,
+                StartDate = DateTimeOffset.Now.AddMonths(3),
+                Timestamp = DateTimeOffset.Now,
+                Vintage = 1980,
+            };
+            analysis.AddModel(new UnderwritingAnalysisModel
+            {
+                Name = "Classic 1bed",
+                Area = 650,
+                Baths = 1,
+                Beds = 1,
+                CurrentRent = 1200,
+                MarketRent = 1400,
+                TotalUnits = 10,
+                Units = new List<UnderwritingAnalysisUnit>
+                        {
+                            new UnderwritingAnalysisUnit
+                            {
+                                DepositOnHand = 500,
+                                LeaseEnd = new DateTime(2022, 6, 30),
+                                LeaseStart = new DateTime(2021, 7, 1),
+                                Rent = 1175,
+                                Renter = "John Smith",
+                                Unit = "D101",
+                                Ledger = new List<UnderwritingAnalysisUnitLedgerItem>
+                                {
+                                    new UnderwritingAnalysisUnitLedgerItem
+                                    {
+                                        Type = UnderwritingPropertyUnitLedgerType.Rent,
+                                        Rent = 1175
+                                    },
+                                    new UnderwritingAnalysisUnitLedgerItem
+                                    {
+                                        Type = UnderwritingPropertyUnitLedgerType.Admin,
+                                        ChargesCredits = 25
+                                    }
+                                }
+                            }
+                        }
+            });
+
+            var json = JsonSerializer.Serialize(analysis);
+            Assert.Contains("John Smith", json);
+            Assert.Contains("D101", json);
+
+            var deserialized = JsonSerializer.Deserialize<UnderwritingAnalysis>(json);
+
+            Assert.Single(deserialized.Models);
+            var model = deserialized.Models.First();
+            Assert.Equal("Classic 1bed", model.Name);
+
+            Assert.Single(model.Units);
+            var unit = model.Units.First();
+
+            Assert.Equal("D101", unit.Unit);
+            Assert.Equal("John Smith", unit.Renter);
+            Assert.Equal(new DateTime(2022, 6, 30), unit.LeaseEnd);
+            Assert.Equal(new DateTime(2021, 7, 1), unit.LeaseStart);
+
+            Assert.NotNull(unit.Ledger);
+            Assert.Equal(2, unit.Ledger.Count);
+
+            var rent = unit.Ledger.First();
+            Assert.Equal(UnderwritingPropertyUnitLedgerType.Rent, rent.Type);
+            Assert.Equal(1175, rent.Rent);
         }
     }
 }

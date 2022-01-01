@@ -21,8 +21,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.PropertyInfo
         private HttpClient _client { get; set; }
 
         private ObservableRangeCollection<UnderwritingAnalysisFile> _files = new();
-
-        private bool _showData = false;
         private UnderwritingAnalysisFile _selectedFile;
 
         private readonly IEnumerable<string> fileTypes = Enum.GetValues<UnderwritingProspectFileType>()
@@ -72,7 +70,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.PropertyInfo
         private void OnPreview(GridCommandEventArgs args)
         {
             _selectedFile = args.Item as UnderwritingAnalysisFile;
-            _showData = true;
         }
 
         private UnderwritingProspectFileType GetFileType() =>

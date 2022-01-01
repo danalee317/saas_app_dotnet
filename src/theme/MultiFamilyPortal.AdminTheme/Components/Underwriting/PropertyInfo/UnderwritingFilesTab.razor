@@ -93,7 +93,7 @@
 
 <PortalNotification @ref="notification" />
 
-<TelerikWindow @bind-Visible=@_showData 
+<TelerikWindow Visible="@(_selectedFile != null)" 
                Size="@WindowSize.Large"
                State="WindowState.Maximized"
                Modal="true">

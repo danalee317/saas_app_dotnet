@@ -23,7 +23,7 @@
     }
     return true;
   },
-  KendoIntialiase: function createWidget(container, id, dotNetComponent, initialColor) {
+  KendoInitialize: function createWidget(container, id, dotNetComponent, initialColor) {
     if (!this.EnsureKendo()) { return; }
   
     this.ViewPDF($(container).find("#" + id), dotNetComponent, initialColor);

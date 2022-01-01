@@ -9,27 +9,41 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
         public DisplayUnit Unit { get; set; }
 
         [Parameter]
-        public bool Editing { get; set; }
+        public EventCallback<DisplayUnit> UnitChanged { get; set; }
 
-        [Parameter]
-        public EventCallback<DisplayUnit> OnUnitChanged { get; set; }
-
-        [Parameter]
-        public EventCallback<DisplayUnit> RemoveUnitRequested { get; set; }
-
-        private bool _conformation = false;
+        private bool _confirmation = false;
+        private bool _canSave => !string.IsNullOrEmpty(Unit?.UnitName);
 
         private async Task UpdateUnit()
         {
-            if (string.IsNullOrEmpty(Unit.UnitName))
+            if (!_canSave)
                 return;
 
-            await OnUnitChanged.InvokeAsync(Unit);
+            if(Unit.Id == default)
+            {
+                Unit.Add();
+            }
+            else
+            {
+                Unit.Update();
+            }
+
+            await UnitChanged.InvokeAsync(null);
         }
 
         private async Task RemoveUnit()
         {
-            await RemoveUnitRequested.InvokeAsync(Unit);
+            Unit.Remove();
+            await UnitChanged.InvokeAsync(null);
+        }
+
+        private void AddAnother()
+        {
+            if (!_canSave)
+                return;
+
+            Unit.Add();
+            Unit = new DisplayUnit(Unit.FloorPlan);
         }
     }
 }

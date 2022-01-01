@@ -36,7 +36,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
                 Property.AddModel(model);
             }
 
-            await FloorPlanChanged.InvokeAsync(null);
+            await CloseAsync();
         }
 
         private async Task EditFloorAsync()
@@ -56,18 +56,15 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
             model.Units = FloorPlan.Units;
             model.Upgraded = FloorPlan.Upgraded;
 
-            await FloorPlanChanged.InvokeAsync(null);
+            await CloseAsync();
         }
 
         private async Task DeleteFloorAsync()
         {
             Property.RemoveModel(FloorPlan);
-            await FloorPlanChanged.InvokeAsync(null);
+            await CloseAsync();
         }
 
-        private void ClearCurrent()
-        {
-            FloorPlan = new UnderwritingAnalysisModel();
-        }
+        private Task CloseAsync() => FloorPlanChanged.InvokeAsync(null);
     }
 }

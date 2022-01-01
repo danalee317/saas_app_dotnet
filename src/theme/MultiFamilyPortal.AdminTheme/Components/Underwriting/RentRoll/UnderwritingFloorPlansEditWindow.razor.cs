@@ -31,7 +31,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
             }
         }
 
-        private async Task PropertyUpdated()
+        private async Task CloseAsync()
         {
             await FloorPlanChanged.InvokeAsync(null);
         }

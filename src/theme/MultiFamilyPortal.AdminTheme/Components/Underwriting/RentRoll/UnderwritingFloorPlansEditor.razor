@@ -80,15 +80,15 @@
                               Id="floor-mktrent"
                               Step="50"
                               Format="C"
-                              @bind-Value="@FloorPlan.MarketRent"/>
+                              @bind-Value="@FloorPlan.MarketRent" />
     </div>
   </div>
   <div class="row my-3">
     <div class="col-md-3 offset-md-2">
     @if (FloorPlan.Id == default)
     {
-      <button class="btn btn-secondary w-100" @onclick="@ClearCurrent">
-        Clear
+      <button class="btn btn-secondary w-100" @onclick="@CloseAsync">
+        Close
       </button>
     }
     else

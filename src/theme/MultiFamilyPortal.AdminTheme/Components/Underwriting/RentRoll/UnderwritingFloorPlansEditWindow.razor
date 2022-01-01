@@ -1,32 +1,31 @@
 <TelerikWindow Modal="true"
                Centered="true"
-               Visible=@true
+               Visible=@(FloorPlan != null)
                Height=@_height Width="600px">
   <WindowTitle>
     <strong>@_title</strong>
   </WindowTitle>
   <WindowActions>
-    <WindowAction Name="Close" />
+    <WindowAction Name="Close" OnClick=@CloseAsync />
   </WindowActions>
   <WindowContent>
     <LoaderContainer Context=@FloorPlan>
       @if (FloorPlan.Id == default)
       {
-        <UnderwritingFloorPlansEditor FloorPlan="@FloorPlan"
-                                      Property="@Property"
-                                      FloorPlanChanged=@PropertyUpdated />
+        <UnderwritingFloorPlansEditor Property="@Property"
+                                      FloorPlan="@FloorPlan"
+                                      FloorPlanChanged=@CloseAsync />
       }
       else
       {
         <TelerikTabStrip TabPosition="TabPosition.Top">
           <TabStripTab Title="Floor Plan">
-            <UnderwritingFloorPlansEditor FloorPlan="@FloorPlan"
-                                          Property="@Property"
-                                          FloorPlanChanged=@PropertyUpdated />
+            <UnderwritingFloorPlansEditor Property="@Property"
+                                          FloorPlan="@FloorPlan"
+                                          FloorPlanChanged=@CloseAsync />
           </TabStripTab>
           <TabStripTab Title="Roll Units">
-            <UnderwritingUnitListEditor FloorPlan="@FloorPlan"
-                                        UpdateModel=@PropertyUpdated />
+            <UnderwritingUnitListEditor FloorPlan=@FloorPlan />
           </TabStripTab>
         </TelerikTabStrip>
       }

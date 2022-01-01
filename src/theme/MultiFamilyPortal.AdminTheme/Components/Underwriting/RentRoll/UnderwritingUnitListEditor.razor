@@ -1,8 +1,6 @@
-@if (_showAddUnit)
+@if (_unit != null)
 {
-  <UnderwritingRentRollAddition OnCancel=@ClearAddUnit
-                                Model=@FloorPlan
-                                UpdateModel=@OnAddUnit />
+  <UnderwritingRentRollAddition @bind-Unit=@_unit />
 }
 else
 {
@@ -21,9 +19,9 @@ else
     </GridToolBar>
     <GridColumns>
       <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.Unit))" Width="135px" Title="Apartment Name" />
-      <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.LeaseStart))" Title="Lease Start" />
-      <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.LeaseEnd))" Title="Lease End" />
-      <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.Rent))" Title="Rent" />
+      <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.LeaseStart))" Title="Lease Start" DisplayFormat="{0:MM/dd/yyyy}" />
+      <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.LeaseEnd))" Title="Lease End" DisplayFormat="{0:MM/dd/yyyy}" />
+      <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.Rent))" Title="Rent" DisplayFormat="{0:C}" />
     </GridColumns>
   </TelerikGrid>
 }

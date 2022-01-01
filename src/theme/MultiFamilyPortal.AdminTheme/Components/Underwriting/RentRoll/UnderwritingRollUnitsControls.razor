@@ -22,6 +22,7 @@
   <div class="col-4 my-3">
     <TelerikDatePicker Id="unit-start-date"
                        Class="form-control w-100"
+                       Format="MM/dd/yyyy"
                        @bind-Value="@Unit.LeaseStart" />
   </div>
   <div class="col-2 my-auto">
@@ -30,6 +31,7 @@
   <div class="col-4 my-3">
     <TelerikDatePicker Id="unit-end-date"
                        Class="form-control w-100"
+                       Format="MM/dd/yyyy"
                        @bind-Value="@Unit.LeaseEnd" />
   </div>
   <div class="col-2 my-auto">
@@ -56,11 +58,11 @@
   </div>
   <div class="col-4 my-3">
     <TelerikNumericTextBox Class="form-control w-100"
-                          Min="100"
-                          Id="unit-single-rent"
-                          Step="50"
-                          Format="C"
-                          @bind-Value="@Unit.Rent" />
+                           Min="100"
+                           Id="unit-single-rent"
+                           Step="50"
+                           Format="C"
+                           @bind-Value="@Unit.Rent" />
   </div>
   <div class="col-2 my-auto">
     <label for="unit-balance" class="form-label">Balance</label>
@@ -73,12 +75,12 @@
                            @bind-Value="@Unit.Balance"/>
   </div>
 
-  @if(Editing)
+  @if(Unit.Id != default)
   {
     <div class="col-6 text-center my-3">
-      @if(_conformation == false)
+      @if(_confirmation == false)
       {
-        <button class="btn btn-danger" id="unit-remove" @onclick=@(()=> _conformation=true)>Remove</button>
+        <button class="btn btn-danger" id="unit-remove" @onclick=@(()=> _confirmation = true)>Remove</button>
       }
       else
       {
@@ -94,7 +96,7 @@
           </div>
 
           <div class="col-2 align-self-center">
-            <div class="text-success" @onclick=@(()=> _conformation=false)>
+            <div class="text-success" @onclick=@(()=> _confirmation=false)>
               <b class="text-decoration-underline clickable">No</b>
             </div>
          </div>
@@ -107,8 +109,11 @@
   } 
   else
   {
-    <div class="col-12 text-center my-3">
-      <button class="btn btn-success" id="unit-save" @onclick="@UpdateUnit">Save</button>
+    <div class="col-6 text-center my-3">
+      <button class="btn btn-success" id="unit-save" @onclick="@UpdateUnit">Add &amp; Close</button>
+    </div>
+    <div class="col-6 text-center my-3">
+      <button class="btn btn-primary" id="unit-save" @onclick="@AddAnother">Add Another</button>
     </div>
   }
 </div>

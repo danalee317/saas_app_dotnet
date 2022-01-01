@@ -5,35 +5,32 @@
              Resizable="true"
              Reorderable="true">
   <GridColumns>
-    <GridColumn Field="@(nameof(DisplayUnit.Unit))" Title="Apartment Name" />
-    <GridColumn Field="@(nameof(DisplayUnit.Renter))" Title="Tenant Name" Width="15%" />
-    <GridColumn Field="@(nameof(DisplayUnit.Rent))" Title="Floor Plan">
+    <GridColumn Field="@(nameof(DisplayUnit.UnitName))" Title="Unit" />
+    <GridColumn Field="@(nameof(DisplayUnit.Renter))" Title="Tenant Name" Width="15%">
       <Template>
-           <span>@Property.Models.FirstOrDefault(m => m.Units.Contains(context))?.Name</span>
+        @{ var unit = context as DisplayUnit; }
+        @(string.IsNullOrEmpty(unit.Renter) ? "N/A" : unit.Renter)
       </Template>
     </GridColumn>
-    <GridColumn Field="@(nameof(DisplayUnit.Rent))" Title="Monthly Rent ($)" />
-    <GridColumn Field="@(nameof(DisplayUnit.Balance))" Title="Balance ($)" />
-    <GridColumn Field="@(nameof(DisplayUnit.DepositOnHand))" Title="Cash at Hand ($)" />
-    <GridColumn Field="@(nameof(DisplayUnit.LeaseStart))" Title="Lease Start">
-     <Template>
-       @{ var unit = context as DisplayUnit; }
-       <span>
-         @(unit.LeaseStart.HasValue ? unit.LeaseStart.Value.ToString($"MM/dd/yyyy") : "N/A")
-       </span>
+    <GridColumn Field="@(nameof(DisplayUnit.FloorPlanName))" Title="Floor Plan" />
+    <GridColumn Field="@(nameof(DisplayUnit.Rent))" Title="Monthly Rent ($)" DisplayFormat="{0:C}" />
+    <GridColumn Field="@(nameof(DisplayUnit.Balance))" Title="Balance ($)" DisplayFormat="{0:C}" />
+    <GridColumn Field="@(nameof(DisplayUnit.DepositOnHand))" Title="Deposit ($)" DisplayFormat="{0:C}" />
+    <GridColumn Field="@(nameof(DisplayUnit.LeaseStart))" Title="Lease Start" >
+      <Template>
+        @{ var unit = context as DisplayUnit; }
+        @(unit.LeaseStart.HasValue ? unit.LeaseStart.Value.ToString($"MM/yyyy") : "N/A")
       </Template>
     </GridColumn>
     <GridColumn Field="@(nameof(DisplayUnit.LeaseEnd))" Title="Lease End">
       <Template>
-       @{ var unit = context as DisplayUnit; }
-        <span>
-          @(unit.LeaseEnd.HasValue ? unit.LeaseEnd.Value.ToString($"MM/dd/yyyy") : "N/A")
-        </span>
+        @{ var unit = context as DisplayUnit; }
+        @(unit.LeaseEnd.HasValue ? unit.LeaseEnd.Value.ToString($"MM/yyyy") : "N/A")
       </Template>
     </GridColumn>
     <GridCommandColumn>
       <div class="text-center">
-        <GridCommandButton OnClick="UpdateUnit" Icon="edit" ShowInEdit="false">
+        <GridCommandButton OnClick="UpdateUnit" Icon="edit">
           Edit
         </GridCommandButton>
       </div>
@@ -45,9 +42,10 @@
 {
   <TelerikWindow Centered="true"
                  Modal="true"
+                 Visible=@(_unit != null)
                  Width="600px">
     <WindowTitle>
-      <strong>Edit @_unit.Unit</strong>
+      <strong>Edit @_unit.UnitName</strong>
     </WindowTitle>
     <WindowActions>
       <WindowAction Name="Close" />
@@ -55,10 +53,7 @@
     <WindowContent>
       <TelerikTabStrip TabPosition="TabPosition.Top">
         <TabStripTab Title="Units">
-          <UnderwritingRollUnitsControls Editing=@true
-                                         Unit="@_unit" />
-                                         @*OnUnitChanged=@UpdateUnitList
-                                         RemoveUnitRequested=@RemoveUnit />*@
+          <UnderwritingRollUnitsControls @bind-Unit=@_unit />
         </TabStripTab>
         <TabStripTab Title="Ledgers">
           <div class="my-3"><ComingSoon /></div>

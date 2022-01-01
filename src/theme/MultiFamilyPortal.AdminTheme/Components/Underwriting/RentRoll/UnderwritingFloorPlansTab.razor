@@ -64,6 +64,6 @@
 
 @if(_floorPlan is not null)
 {
-  <UnderwritingFloorPlansEditWindow @bind-FloorPlan="@_floorPlan"
-                                    Property="@Property" />
+  <UnderwritingFloorPlansEditWindow Property=@Property
+                                    @bind-FloorPlan=@_floorPlan />
 }

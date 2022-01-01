@@ -1,0 +1,29 @@
+@if (_showAddUnit)
+{
+  <UnderwritingRentRollAddition OnCancel=@ClearAddUnit
+                                Model=@FloorPlan
+                                UpdateModel=@OnAddUnit />
+}
+else
+{
+  <TelerikGrid Data="@FloorPlan.Units"
+               Height="560px"
+               Pageable="true"
+               Resizable="true">
+    <GridToolBar>
+      <span class="k-toolbar-spacer"></span>
+      <GridCommandButton Icon="add"
+                         Primary=@true
+                         OnClick=@ShowAddUnit
+                         Enabled=@(FloorPlan.Units?.Count() < FloorPlan.TotalUnits)>
+        Add Unit
+      </GridCommandButton>
+    </GridToolBar>
+    <GridColumns>
+      <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.Unit))" Width="135px" Title="Apartment Name" />
+      <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.LeaseStart))" Title="Lease Start" />
+      <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.LeaseEnd))" Title="Lease End" />
+      <GridColumn Field="@(nameof(UnderwritingAnalysisUnit.Rent))" Title="Rent" />
+    </GridColumns>
+  </TelerikGrid>
+}

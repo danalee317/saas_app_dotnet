@@ -3,7 +3,7 @@ using MultiFamilyPortal.Dtos.Underwriting;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
 {
-    public partial class UnderwritingFloorPlansEdit
+    public partial class UnderwritingFloorPlansEditWindow
     {
         [Parameter]
         public UnderwritingAnalysis Property { get; set; }

@@ -4,12 +4,12 @@
   <LoaderContainer Context=@Property>
     <TelerikTabStrip TabPosition="TabPosition.Top">
       <TabStripTab Title="Floor Plans">
-        <UnderwritingFloorPlans Property=@Property />
+        <UnderwritingFloorPlansTab Property=@Property />
       </TabStripTab>
       @if(Property.Models.Any())
       {
         <TabStripTab Title="Units">
-          <UnderwritingRollUnits Property=@Property />
+          <UnderwritingRollUnitsTab Property=@Property />
         </TabStripTab>
       }
     </TelerikTabStrip>

@@ -6,7 +6,7 @@ using Telerik.Blazor.Components;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
 {
-    public partial class UnderwritingFloorPlans
+    public partial class UnderwritingFloorPlansTab
     {
         [Parameter]
         public UnderwritingAnalysis Property { get; set; }

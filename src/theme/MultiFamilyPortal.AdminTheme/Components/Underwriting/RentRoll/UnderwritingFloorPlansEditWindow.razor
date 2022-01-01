@@ -1,0 +1,36 @@
+<TelerikWindow Modal="true"
+               Centered="true"
+               Visible=@true
+               Height=@_height Width="600px">
+  <WindowTitle>
+    <strong>@_title</strong>
+  </WindowTitle>
+  <WindowActions>
+    <WindowAction Name="Close" />
+  </WindowActions>
+  <WindowContent>
+    <LoaderContainer Context=@FloorPlan>
+      @if (FloorPlan.Id == default)
+      {
+        <UnderwritingFloorPlansEditor FloorPlan="@FloorPlan"
+                                      Property="@Property"
+                                      FloorPlanChanged=@PropertyUpdated />
+      }
+      else
+      {
+        <TelerikTabStrip TabPosition="TabPosition.Top">
+          <TabStripTab Title="Floor Plan">
+            <UnderwritingFloorPlansEditor FloorPlan="@FloorPlan"
+                                          Property="@Property"
+                                          FloorPlanChanged=@PropertyUpdated />
+          </TabStripTab>
+          <TabStripTab Title="Roll Units">
+            <UnderwritingUnitListEditor FloorPlan="@FloorPlan"
+                                        UpdateModel=@PropertyUpdated />
+          </TabStripTab>
+        </TelerikTabStrip>
+      }
+    </LoaderContainer>
+  </WindowContent>
+
+</TelerikWindow>

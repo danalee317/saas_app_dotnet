@@ -3,7 +3,7 @@ using MultiFamilyPortal.Dtos.Underwriting;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
 {
-    public partial class UnderwritingFloorPlansControls
+    public partial class UnderwritingFloorPlansEditor
     {
         [Parameter]
         public UnderwritingAnalysis Property { get; set; }
@@ -53,6 +53,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
             model.MarketRent = FloorPlan.MarketRent;
             model.Name = FloorPlan.Name;
             model.TotalUnits = FloorPlan.TotalUnits;
+            model.Units = FloorPlan.Units;
             model.Upgraded = FloorPlan.Upgraded;
 
             await FloorPlanChanged.InvokeAsync(null);

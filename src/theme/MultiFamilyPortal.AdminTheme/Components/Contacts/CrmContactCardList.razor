@@ -1,2 +1,19 @@
-﻿<ComingSoon />
-
+﻿<div class="row row-cols-1 row-cols-md-3 g-3 mb-3">
+  @if (Contacts.Any())
+  {
+    @foreach (var contact in Contacts)
+    {
+      <div class="col" @onclick=@(async () => await ShowContactDetails.InvokeAsync(contact)) >
+        <CrmContactCard Contact="@contact" />
+      </div>
+    }
+  }
+  else
+  {
+    <div class="col">
+      <div class="alert alert-info">
+        No contacts found.
+      </div>
+    </div>
+  }
+</div>

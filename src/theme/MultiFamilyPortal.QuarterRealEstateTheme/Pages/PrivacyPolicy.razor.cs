@@ -1,6 +1,5 @@
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
-using MultiFamilyPortal.CoreUI;
 using MultiFamilyPortal.Data.Models;
 
 namespace MultiFamilyPortal.QuarterRealEstateTheme.Pages

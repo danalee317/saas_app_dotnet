@@ -1,4 +1,4 @@
-using System.Reflection;using System.Text.RegularExpressions;
+using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using MultiFamilyPortal.SaaS;
 using MultiFamilyPortal.SaaS.Models;
@@ -28,4 +28,4 @@ namespace MultiFamilyPortal.Themes
             _tenant = _tenantProvider.GetTenant(uri.Host);
         }
     }
-}
+}

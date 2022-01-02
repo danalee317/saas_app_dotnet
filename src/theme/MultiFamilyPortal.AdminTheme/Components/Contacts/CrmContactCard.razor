@@ -1,7 +1,6 @@
 <div class="card shadow-sm h-100 card-length">
-  <div class="card-body my-5">
+  <div class="card-body my-2">
     <div class="container">
-
       <div class="row">
 
         <div class="col-5 my-auto">
@@ -19,17 +18,17 @@
         </div>
 
         <div class="col-7 border-start">
-          <div class="row">
+          <div class="row mb-3">
             <div class="col-2">
               <i class="fal fa-phone"></i>
             </div>
             <div class="col-10">
               @{
-                 var phone = Contact?.Phones?.FirstOrDefault(x => x.Primary);
-                 if(!string.IsNullOrEmpty(phone?.Number))
+                var phone = Contact?.Phones?.FirstOrDefault(x => x.Primary);
+                 if (!string.IsNullOrEmpty(phone?.Number))
                  {
                   <span>@phone.Number.ToPhoneNumberMask() <small>(@phone.Type.GetDisplayName())</small></span>
-                 } 
+                 }
                  else
                  {
                     <span> - </span>
@@ -38,7 +37,7 @@
             </div>
           </div>
 
-          <div class="row my-4">
+          <div class="row mb-3">
             <div class="col-2">
               <i class="fal fa-at"></i>
             </div>
@@ -48,7 +47,7 @@
                 if (!string.IsNullOrEmpty(email?.Email))
                 {
                   <span>@email.Email <small>(@email.Type.GetDisplayName())</small></span>
-                } 
+                }
                 else
                 {
                   <span> - </span>
@@ -57,9 +56,43 @@
             </div>
           </div>
 
+          <div class="row mb-3">
+            <div class="col-2">
+              <i class="fal fa-pen"></i>
+            </div>
+            <div class="col-10">
+              @if (!string.IsNullOrEmpty(Contact.MarketNotes))
+              {
+                <span class="text-success">
+                  <i class="fal fa-check"></i>
+                </span>
+              }
+              else
+              {
+                <span> - </span>
+              }
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-2">
+             <i class="fal fa-map-marker-alt"></i>
+            </div>
+            <div class="col-10">
+              @if (Contact.Markets.Any())
+              {
+                @Contact.Markets.FirstOrDefault().Name
+              }
+              else
+              {
+                <span> - </span>
+              }
+            </div>
+          </div>
+
           <div class="row">
             <div class="col-2">
-              <i class="fal fa-map-marker-alt"></i>
+              <i class="fal fa-link"></i>
             </div>
             <div class="col-10">
               @Contact.Company
@@ -67,9 +100,7 @@
           </div>
 
         </div>
-
       </div>
-
     </div>
   </div>
 </div>

@@ -98,7 +98,7 @@
                State="WindowState.Maximized"
                Modal="true">
     <WindowActions>
-      <WindowAction Name="Close" />
+      <WindowAction Name="Close" OnClick=@(() => _selectedFile = null) />
     </WindowActions>
     <WindowTitle>
         <strong>View @_selectedFile.Name</strong>

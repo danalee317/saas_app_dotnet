@@ -29,6 +29,5 @@ namespace MultiFamilyPortal.CoreUI
             TimeSpan = selected.TimeOfDay;
             await TimeSpanChanged.InvokeAsync(selected.TimeOfDay);
         }
-
     }
 }

@@ -207,6 +207,13 @@ namespace MultiFamilyPortal.Services
                 }
             }
 
+            if(property.ReversionCapRate == 0)
+            {
+                property.ReversionCapRate = property.CapRate - 0.01;
+                if (property.ReversionCapRate < 0)
+                    property.ReversionCapRate = 0.07;
+            }
+
             return property;
         }
 

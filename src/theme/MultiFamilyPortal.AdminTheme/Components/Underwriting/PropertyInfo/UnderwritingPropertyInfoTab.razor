@@ -1,5 +1,5 @@
 ﻿<div class="row g-3">
-  <label for="name" class="col-sm-2 col-form-label">Property Name <span style="color:red">*</span></label>
+  <label for="name" class="col-sm-2 col-form-label">Property Name</label>
   <div class="col-sm-10">
     <TelerikTextBox @bind-Value=@Property.Name
                     Enabled=@_editable
@@ -111,6 +111,8 @@
                      Id="Management"/>
   </div>
 
+  <div class="col-sm-6"></div>
+
   <label for="CapX" class="col-sm-2 col-form col-form-label">CapX</label>
   <div class="col-sm-4">
     <TelerikNumericTextBox @bind-Value=@Property.CapX
@@ -142,11 +144,12 @@
 <hr class="mt-3 mb-3" />
 
 <div class="row g-3">
-  <label for="DesiredYield" class="col-sm-2 col-form col-form-label">Desired Yield</label>
+  <label for="StartDate" class="col-sm-2 col-form col-form-label">Start Date</label>
   <div class="col-sm-4">
-    <PercentageInput @bind-Value=@Property.DesiredYield
-                     Enabled=@_editable
-                     Id="DesiredYield" />
+    <DateTimeOffsetPicker @bind-Value=@Property.StartDate
+                       Min=@Property.Timestamp.Date
+                       Enabled=@_editable
+                       Class="form-control" />
   </div>
   <label for="HoldYears" class="col-sm-2 col-form col-form-label">Hold Period (Yrs)</label>
   <div class="col-sm-4">
@@ -157,12 +160,18 @@
                     Enabled=@_editable
                     Class="form-control" />
   </div>
-  <label for="StartDate" class="col-sm-2 col-form col-form-label">Start Date</label>
+  <label for="DesiredYield" class="col-sm-2 col-form col-form-label">Desired Yield</label>
   <div class="col-sm-4">
-    <DateTimeOffsetPicker @bind-Value=@Property.StartDate
-                       Min=@Property.Timestamp.Date
-                       Enabled=@_editable
-                       Class="form-control" />
+    <PercentageInput @bind-Value=@Property.DesiredYield
+                     Enabled=@_editable
+                     Id="DesiredYield" />
+  </div>
+  <div class="col-sm-6"></div>
+  <label for="ReversionCapRate" class="col-sm-2 col-form col-form-label">Reversion Cap Rate</label>
+  <div class="col-sm-4">
+    <PercentageInput @bind-Value=@Property.ReversionCapRate
+                     Enabled=@_editable
+                     Id="ReversionCapRate" />
   </div>
 </div>
 

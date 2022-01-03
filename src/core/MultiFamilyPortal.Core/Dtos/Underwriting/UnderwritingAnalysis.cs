@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reactive;
 using System.Reactive.Disposables;
@@ -27,11 +28,13 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         private ReadOnlyObservableCollection<UnderwritingAnalysisMortgage> _mortgages;
         private ReadOnlyObservableCollection<UnderwritingAnalysisModel> _models;
         private ReadOnlyObservableCollection<UnderwritingAnalysisIncomeForecast> _forecast;
+        private ReadOnlyObservableCollection<UnderwritingAnalysisProjection> _projections;
         private readonly SourceCache<UnderwritingAnalysisLineItem, Guid> _sellersCache;
         private readonly SourceCache<UnderwritingAnalysisLineItem, Guid> _oursCache;
         private readonly SourceCache<UnderwritingAnalysisMortgage, Guid> _mortgageCache;
         private readonly SourceCache<UnderwritingAnalysisModel, Guid> _modelsCache;
         private readonly SourceCache<UnderwritingAnalysisIncomeForecast, int> _forecastCache;
+        private readonly SourceCache<UnderwritingAnalysisProjection, int> _projectionCache;
 
         private ObservableAsPropertyHelper<double> _raise;
         private ObservableAsPropertyHelper<double> _debtCoverage;
@@ -44,15 +47,11 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         private ObservableAsPropertyHelper<double> _totalAnnualReturn;
 
         // Seller
-        private ObservableAsPropertyHelper<double> _sellerIncome;
-        private ObservableAsPropertyHelper<double> _sellerExpenses;
         private ObservableAsPropertyHelper<double> _sellerCashOnCash;
         private ObservableAsPropertyHelper<double> _sellerCapRate;
         private ObservableAsPropertyHelper<double> _sellerNOI;
 
         // Buyer
-        private ObservableAsPropertyHelper<double> _ourIncome;
-        private ObservableAsPropertyHelper<double> _ourExpenses;
         private ObservableAsPropertyHelper<double> _capRate;
         private ObservableAsPropertyHelper<double> _cashOnCash;
         private ObservableAsPropertyHelper<double> _lossToLease;
@@ -271,6 +270,8 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .Throttle(TimeSpan.FromMilliseconds(100))
                 .InvokeCommand(_updateIncomeForecast)
                 .DisposeWith(_disposable);
+
+            _updateProjections = ReactiveCommand.Create(OnUpdateProjections);
         }
 
         public Guid Id { get; set; }
@@ -546,10 +547,14 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         [AddMethod(nameof(ReplaceForecast))]
         public IEnumerable<UnderwritingAnalysisIncomeForecast> IncomeForecast => _forecast;
 
+        [JsonIgnore]
+        public IEnumerable<UnderwritingAnalysisProjection> Projections => _projections;
+
         private ReactiveCommand<Unit, Unit> _downpaymentCommand;
         private ReactiveCommand<Unit, Unit> _calculateVacancyAndManagement;
         private ReactiveCommand<Unit, Unit> _calculateLoanAmount;
         private ReactiveCommand<Unit, Unit> _updateIncomeForecast;
+        private ReactiveCommand<Unit, Unit> _updateProjections;
         private bool _disposedValue;
 
         public void AddModel(UnderwritingAnalysisModel item)
@@ -776,6 +781,120 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 ReplaceForecast(list);
             }
         }
+
+        private void OnUpdateProjections()
+        {
+            if (Units < 1)
+                return;
+
+            var list = new List<UnderwritingAnalysisProjection>();
+            var grossScheduledRent = Ours.Where(x => x.Category == UnderwritingCategory.GrossScheduledRent)
+                .Sum(x => x.AnnualizedTotal);
+            var concessionsNonPayment = Ours.Where(x => x.Category == UnderwritingCategory.ConsessionsNonPayment)
+                .Sum(x => x.AnnualizedTotal);
+            var otherIncome = Ours.Where(x => x.Category == UnderwritingCategory.OtherIncome || x.Category == UnderwritingCategory.OtherIncomeBad)
+                .Sum(x => x.AnnualizedTotal);
+            var utilityReimbursement = Ours.Where(x => x.Category == UnderwritingCategory.UtilityReimbursement)
+                .Sum(x => x.AnnualizedTotal);
+
+            var taxes = Ours.Where(x => x.Category == UnderwritingCategory.Taxes)
+                .Sum(x => x.AnnualizedTotal);
+            var insurance = Ours.Where(x => x.Category == UnderwritingCategory.Insurance)
+                .Sum(x => x.AnnualizedTotal);
+            var repairsMaint = Ours.Where(x => x.Category == UnderwritingCategory.RepairsMaintenance)
+                .Sum(x => x.AnnualizedTotal);
+            var generalAdmin = Ours.Where(x => x.Category == UnderwritingCategory.GeneralAdmin)
+                .Sum(x => x.AnnualizedTotal);
+            var marketing = Ours.Where(x => x.Category == UnderwritingCategory.Marketing)
+                .Sum(x => x.AnnualizedTotal);
+            var utility = Ours.Where(x => x.Category == UnderwritingCategory.UtilityReimbursement)
+                .Sum(x => x.AnnualizedTotal);
+            var contractServices = Ours.Where(x => x.Category == UnderwritingCategory.ContractServices)
+                .Sum(x => x.AnnualizedTotal);
+            var payroll = Ours.Where(x => x.Category == UnderwritingCategory.Payroll)
+                .Sum(x => x.AnnualizedTotal);
+
+            var debtService = Mortgages.Sum(x => x.AnnualDebtService);
+            var capitalReserves = CapXTotal;
+
+            for (int i = 0; i < HoldYears + 1; i++)
+            {
+                var factor = 1.0;
+                if (i == 0)
+                {
+                    factor = (new DateTime(StartDate.Year, 1, 1) - StartDate.DateTime) / TimeSpan.FromDays(365);
+                }
+
+                var forecast = IncomeForecast.ElementAtOrDefault(i);
+                if (forecast is null)
+                    break;
+
+                if ((forecast.UnitsAppliedTo > 0 && forecast.PerUnitIncrease > 0) || forecast.FixedIncreaseOnRemainingUnits > 0)
+                {
+                    var increase = forecast.IncreaseType switch
+                    {
+                        IncomeForecastIncreaseType.FixedAmount => forecast.UnitsAppliedTo * forecast.PerUnitIncrease,
+                        _ => (forecast.UnitsAppliedTo / Units) * (grossScheduledRent * forecast.PerUnitIncrease),
+                    };
+                    increase += (Units - forecast.UnitsAppliedTo) * forecast.FixedIncreaseOnRemainingUnits;
+                    grossScheduledRent += increase;
+                }
+
+                if (forecast.OtherIncomePercent > 0)
+                {
+                    otherIncome += otherIncome * forecast.OtherIncomePercent;
+                }
+
+                if (forecast.OtherLossesPercent > 0)
+                {
+                    // TODO: Determine how we want to apply Other Losses
+                }
+
+                utility += forecast.UtilityIncreases;
+
+                var vacancyRate = forecast.Vacancy > 0 ? forecast.Vacancy : PhysicalVacancy;
+                var vacancy = (grossScheduledRent * vacancyRate);
+                var netCollectedRent = grossScheduledRent - vacancy;
+                var management = Management * netCollectedRent;
+
+                var egi = grossScheduledRent - vacancy - concessionsNonPayment + otherIncome + utilityReimbursement;
+                var expenses = taxes + insurance + repairsMaint + generalAdmin + management + marketing + utility + contractServices + payroll;
+                var noi = egi - expenses;
+                var capRate = ReversionCapRate > 0 ? ReversionCapRate : CapRate - 0.01;
+                if (capRate < 0)
+                    capRate = 0.06;
+
+                list.Add(new UnderwritingAnalysisProjection
+                {
+                    CapitalReserves = capitalReserves * factor,
+                    ConcessionsNonPayment = concessionsNonPayment * factor,
+                    ContractServices = contractServices * factor,
+                    DebtService = debtService * factor,
+                    GeneralAdmin = generalAdmin * factor,
+                    GrossScheduledRent = grossScheduledRent * factor,
+                    Insurance = insurance * factor,
+                    Management = management * factor,
+                    Marketing = marketing * factor,
+                    OtherIncome = otherIncome * factor,
+                    Payroll = payroll * factor,
+                    RepairsMaintenance = repairsMaint * factor,
+                    SalesPrice = noi / capRate,
+                    Taxes = taxes * factor,
+                    UtilityReimbursement = utilityReimbursement * factor,
+                    Vacancy = vacancy * factor,
+                    Year = StartDate.Year + i
+                });
+            }
+
+            _projectionCache.Edit(x =>
+            {
+                x.Clear();
+                x.AddOrUpdate(list);
+            });
+
+            Reversion = Projections.LastOrDefault()?.SalesPrice ?? PurchasePrice;
+        }
+
 
         private static double CalculateCapRate(double noi, double purchasePrice)
         {

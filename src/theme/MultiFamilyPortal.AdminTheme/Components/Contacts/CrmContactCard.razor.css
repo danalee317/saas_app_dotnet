@@ -9,5 +9,5 @@
 
 .large{
     font-weight: bolder;
-    color: goldenrod;
+    color: var( --Portal-title-color);
 }

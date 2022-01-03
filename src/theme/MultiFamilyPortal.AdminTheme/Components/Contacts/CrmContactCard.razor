@@ -20,6 +20,15 @@
         <div class="col-7 border-start">
           <div class="row mb-3">
             <div class="col-2">
+              <i class="fal fa-link"></i>
+            </div>
+            <div class="col-10">
+              <b>@Contact.Company</b>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-2">
               <i class="fal fa-phone"></i>
             </div>
             <div class="col-10">
@@ -64,24 +73,8 @@
               @if (!string.IsNullOrEmpty(Contact.MarketNotes))
               {
                 <span class="text-success">
-                  <i class="fal fa-check"></i>
+                  Has Market Notes
                 </span>
-              }
-              else
-              {
-                <span> - </span>
-              }
-            </div>
-          </div>
-
-          <div class="row mb-3">
-            <div class="col-2">
-             <i class="fal fa-map-marker-alt"></i>
-            </div>
-            <div class="col-10">
-              @if (Contact.Markets.Any())
-              {
-                @Contact.Markets.FirstOrDefault().Name
               }
               else
               {
@@ -92,12 +85,24 @@
 
           <div class="row">
             <div class="col-2">
-              <i class="fal fa-link"></i>
+             <i class="fal fa-map-marker-alt"></i>
             </div>
             <div class="col-10">
-              @Contact.Company
+             @{
+                var address = Contact?.Addresses ?.FirstOrDefault(x => x.Primary);
+                if (!string.IsNullOrEmpty(address?.City))
+                {
+                  <span>@address.City <small>(@address?.Type.GetDisplayName())</small></span>
+                }
+                else
+                {
+                  <span> - </span>
+                }
+              }
             </div>
           </div>
+
+       
 
         </div>
       </div>

@@ -101,7 +101,7 @@
       <WindowAction Name="Close" OnClick=@(() => _selectedFile = null) />
     </WindowActions>
     <WindowTitle>
-        <strong>View @_selectedFile.Name</strong>
+        <strong>@_selectedFile.Name</strong>
     </WindowTitle>
     <WindowContent>
       <DocumentViewer Link="@_selectedFile.DownloadLink" Type=@(Path.GetExtension(_selectedFile.Name).ToLower() == ".pdf" ? DocumentType.PDF : DocumentType.Image) />

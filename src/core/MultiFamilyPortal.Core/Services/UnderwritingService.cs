@@ -61,6 +61,7 @@ namespace MultiFamilyPortal.Services
                     PropertyClass = x.PropertyClass,
                     PurchasePrice = x.PurchasePrice,
                     RentableSqFt = x.RentableSqFt,
+                    ReversionCapRate = x.ReversionCapRate,
                     SECAttorney = x.SECAttorney,
                     StartDate = x.StartDate,
                     State = x.State,
@@ -589,6 +590,7 @@ namespace MultiFamilyPortal.Services
             property.PropertyClass = analysis.PropertyClass;
             property.PurchasePrice = analysis.PurchasePrice;
             property.RentableSqFt = analysis.RentableSqFt;
+            property.ReversionCapRate = analysis.ReversionCapRate;
             property.SECAttorney = analysis.SECAttorney;
             property.StartDate = analysis.StartDate;
             property.State = analysis.State;

@@ -26,10 +26,12 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         private ReadOnlyObservableCollection<UnderwritingAnalysisLineItem> _ourExpenseItems;
         private ReadOnlyObservableCollection<UnderwritingAnalysisMortgage> _mortgages;
         private ReadOnlyObservableCollection<UnderwritingAnalysisModel> _models;
+        private ReadOnlyObservableCollection<UnderwritingAnalysisIncomeForecast> _forecast;
         private readonly SourceCache<UnderwritingAnalysisLineItem, Guid> _sellersCache;
         private readonly SourceCache<UnderwritingAnalysisLineItem, Guid> _oursCache;
         private readonly SourceCache<UnderwritingAnalysisMortgage, Guid> _mortgageCache;
         private readonly SourceCache<UnderwritingAnalysisModel, Guid> _modelsCache;
+        private readonly SourceCache<UnderwritingAnalysisIncomeForecast, int> _forecastCache;
 
         private ObservableAsPropertyHelper<double> _raise;
         private ObservableAsPropertyHelper<double> _debtCoverage;
@@ -37,8 +39,6 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         private ObservableAsPropertyHelper<double> _closingCosts;
         private ObservableAsPropertyHelper<double> _aquisitionFee;
         private ObservableAsPropertyHelper<double> _costPerUnit;
-        private ObservableAsPropertyHelper<double> _reversion;
-        private ObservableAsPropertyHelper<double> _reversionCapRate;
         private ObservableAsPropertyHelper<double> _netPresentValue;
         private ObservableAsPropertyHelper<double> _initialRateOfReturn;
         private ObservableAsPropertyHelper<double> _totalAnnualReturn;
@@ -143,6 +143,15 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .Subscribe()
                 .DisposeWith(_disposable);
 
+            _forecastCache = new SourceCache<UnderwritingAnalysisIncomeForecast, int>(x => x.Year);
+            _forecastCache.Connect()
+                .RefCount()
+                .AutoRefresh(x => x.Changed)
+                .Bind(out _forecast)
+                .DisposeMany()
+                .Subscribe()
+                .DisposeWith(_disposable);
+
             this.WhenAnyValue(x => x.Units, x => x.PurchasePrice, CalculatePricePerUnit)
                 .ToProperty(this, nameof(PricePerUnit), out _pricePerUnit)
                 .DisposeWith(_disposable);
@@ -229,7 +238,8 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .ToProperty(this, nameof(LossToLease), out _lossToLease)
                 .DisposeWith(_disposable);
 
-            _calculateVacancyAndManagement = ReactiveCommand.Create(OnCalculateGSRAndManagement);
+            _calculateVacancyAndManagement = ReactiveCommand.Create(OnCalculateGSRAndManagement)
+                .DisposeWith(_disposable);
             ourRefCount
                 .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.Management, x => x.MarketVacancy, x=> x.PhysicalVacancy))
                 .Batch(TimeSpan.FromSeconds(0.5))
@@ -238,7 +248,8 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .InvokeCommand(_calculateVacancyAndManagement)
                 .DisposeWith(_disposable);
 
-            _downpaymentCommand = ReactiveCommand.Create(OnDownpaymentCommandExecuted);
+            _downpaymentCommand = ReactiveCommand.Create(OnDownpaymentCommandExecuted)
+                .DisposeWith(_disposable);
             mortgageRefCount
                 .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.PurchasePrice, x => x.LoanType, x => x.LTV))
                 .Batch(TimeSpan.FromSeconds(1))
@@ -247,13 +258,15 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .InvokeCommand(_downpaymentCommand)
                 .DisposeWith(_disposable);
 
-            _calculateLoanAmount = ReactiveCommand.Create(OnCalculateLoanAmount);
+            _calculateLoanAmount = ReactiveCommand.Create(OnCalculateLoanAmount)
+                .DisposeWith(_disposable);
             this.WhenAnyValue(x => x.LoanType, x => x.LTV, x => x.PurchasePrice, (lt, ltv, pp) => Unit.Default)
                 .Throttle(TimeSpan.FromSeconds(1))
                 .InvokeCommand(_calculateLoanAmount)
                 .DisposeWith(_disposable);
 
-            _updateIncomeForecast = ReactiveCommand.Create(OnUpdateIncomeForecast);
+            _updateIncomeForecast = ReactiveCommand.Create(OnUpdateIncomeForecast)
+                .DisposeWith(_disposable);
             this.WhenAnyValue(x => x.HoldYears, x => x.IncomeForecast, (h, i) => Unit.Default)
                 .Throttle(TimeSpan.FromMilliseconds(100))
                 .InvokeCommand(_updateIncomeForecast)
@@ -415,16 +428,17 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
         #endregion Bucketlist Notes
 
-        [JsonIgnore]
+        [Reactive]
         [DisplayFormat(DataFormatString = "{0:P}")]
-        public double ReversionCapRate => _reversionCapRate?.Value ?? 0;
+        public double ReversionCapRate { get; set; }
+
+        [Reactive]
+        [JsonIgnore]
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public double Reversion { get; private set; }
 
         [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public double Reversion => _reversion?.Value ?? 0;
-
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
+        [DisplayFormat(DataFormatString = "{0:C}")]
         public double NetPresentValue => _netPresentValue?.Value ?? 0;
 
         [JsonIgnore]
@@ -529,7 +543,8 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
         public List<UnderwritingAnalysisCapitalImprovement> CapitalImprovements { get; set; }
 
-        public List<UnderwritingAnalysisIncomeForecast> IncomeForecast { get; set; }
+        [AddMethod(nameof(ReplaceForecast))]
+        public IEnumerable<UnderwritingAnalysisIncomeForecast> IncomeForecast => _forecast;
 
         private ReactiveCommand<Unit, Unit> _downpaymentCommand;
         private ReactiveCommand<Unit, Unit> _calculateVacancyAndManagement;
@@ -614,6 +629,16 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         public void RemoveOurItem(UnderwritingAnalysisLineItem item)
         {
             _oursCache.Remove(item.Id);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public void ReplaceForecast(IEnumerable<UnderwritingAnalysisIncomeForecast> items)
+        {
+            _forecastCache.Edit(x =>
+            {
+                x.Clear();
+                x.AddOrUpdate(items.OrderBy(i => i.Year));
+            });
         }
 
         private void OnCalculateLoanAmount()
@@ -734,26 +759,21 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
         private void OnUpdateIncomeForecast()
         {
-            if (IncomeForecast is null)
-                IncomeForecast = new List<UnderwritingAnalysisIncomeForecast>();
+            var list = new List<UnderwritingAnalysisIncomeForecast>();
 
-            if(IncomeForecast.Count != HoldYears + 1)
+            if(IncomeForecast.Count() != HoldYears + 1)
             {
                 var temp = IncomeForecast.ToArray();
-                lock(locker)
+                for (int i = 0; i < HoldYears + 1; i++)
                 {
-                    IncomeForecast.Clear();
-                    for (int i = 0; i < HoldYears + 1; i++)
+                    var forecast = temp.FirstOrDefault(x => x.Year == i);
+                    list.Insert(i, forecast ?? new UnderwritingAnalysisIncomeForecast
                     {
-                        var forecast = temp.FirstOrDefault(x => x.Year == i);
-                        IncomeForecast.Insert(i, forecast ?? new UnderwritingAnalysisIncomeForecast
-                        {
-                            Year = i,
-                        });
-                    }
-
-
+                        Year = i,
+                    });
                 }
+
+                ReplaceForecast(list);
             }
         }
 

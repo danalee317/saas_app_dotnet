@@ -39,18 +39,6 @@ namespace MultiFamilyPortal.Services
                     GrossPotentialRent = x.GrossPotentialRent,
                     HoldYears = x.HoldYears,
                     Id = x.Id,
-                    IncomeForecast = x.Forecast.Select(f => new UnderwritingAnalysisIncomeForecast
-                    {
-                        FixedIncreaseOnRemainingUnits = f.FixedIncreaseOnRemainingUnits,
-                        IncreaseType = f.IncreaseType,
-                        OtherIncomePercent = f.OtherIncomePercent,
-                        OtherLossesPercent = f.OtherLossesPercent,
-                        PerUnitIncrease = f.PerUnitIncrease,
-                        UnitsAppliedTo = f.UnitsAppliedTo,
-                        UtilityIncreases = f.UtilityIncreases,
-                        Vacancy = f.Vacancy,
-                        Year = f.Year
-                    }).ToList(),
                     LoanType = x.LoanType,
                     LTV = x.LTV,
                     Management = x.Management,
@@ -115,22 +103,36 @@ namespace MultiFamilyPortal.Services
                 UtilityNotes = dealAnalysis?.UtilityNotes,
                 ValuePlays = dealAnalysis?.ValuePlays,
             };
+            var forecast = await _dbContext.UnderwritingProspectPropertyIncomeForecasts
+                .Where(x => x.ProspectId == propertyId)
+                .Select(x => new UnderwritingAnalysisIncomeForecast
+                {
+                    FixedIncreaseOnRemainingUnits = x.FixedIncreaseOnRemainingUnits,
+                    IncreaseType = x.IncreaseType,
+                    OtherIncomePercent = x.OtherIncomePercent,
+                    OtherLossesPercent = x.OtherLossesPercent,
+                    PerUnitIncrease = x.PerUnitIncrease,
+                    UnitsAppliedTo = x.UnitsAppliedTo,
+                    UtilityIncreases = x.UtilityIncreases,
+                    Vacancy = x.Vacancy,
+                    Year = x.Year
+                }).ToArrayAsync();
 
-            if (property.IncomeForecast is null)
-                property.IncomeForecast = new List<UnderwritingAnalysisIncomeForecast>();
+            property.ReplaceForecast(forecast);
 
-            if(property.IncomeForecast.Count != property.HoldYears + 1)
+            if(property.IncomeForecast.Count() != property.HoldYears + 1)
             {
+                var forecastList = new List<UnderwritingAnalysisIncomeForecast>();
                 var temp = property.IncomeForecast.ToArray();
-                property.IncomeForecast.Clear();
                 for(var i = 0; i < property.HoldYears + 1; i++)
                 {
                     var year = temp.FirstOrDefault(x => x.Year == i) ?? new UnderwritingAnalysisIncomeForecast
                     {
                         Year = i
                     };
-                    property.IncomeForecast.Add(year);
+                    forecastList.Add(year);
                 }
+                property.ReplaceForecast(forecastList);
             }
 
             var mortgages = await _dbContext.UnderwritingMortgages.Where(x => x.PropertyId == property.Id)

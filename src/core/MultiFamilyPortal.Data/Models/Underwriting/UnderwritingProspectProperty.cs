@@ -126,6 +126,8 @@ namespace MultiFamilyPortal.Data.Models
 
         #endregion Bucketlist Notes
 
+        public double ReversionCapRate { get; set; }
+
         public SiteUser Underwriter { get; set; }
 
         public UnderwritingProspectPropertyDealAnalysis DealAnalysis { get; set; }
@@ -143,5 +145,7 @@ namespace MultiFamilyPortal.Data.Models
         public virtual ICollection<UnderwritingProspectFile> Files { get; set; }
 
         public virtual ICollection<UnderwritingProspectPropertyIncomeForecast> Forecast { get; set; }
+
+        public virtual ICollection<UnderwritingTier> Tiers { get; set; }
     }
 }

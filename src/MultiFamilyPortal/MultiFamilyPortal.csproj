@@ -15,7 +15,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="vCardLib.dll" Version="4.0.0" />
+    <PackageReference Include="vCardLib.dll" Version="4.0.1" />
   </ItemGroup>
 
   <ItemGroup>

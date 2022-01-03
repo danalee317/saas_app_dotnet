@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -8,7 +7,6 @@ using MultiFamilyPortal.CoreUI.Extensions;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos;
 using Microsoft.JSInterop;
-using System.Net.Http;
 using System.Web;
 
 namespace MultiFamilyPortal.QuarterRealEstateTheme.Pages.Account

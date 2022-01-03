@@ -51,9 +51,6 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
         private void OnNavigating(object sender, LocationChangedEventArgs e)
         {
             _navigationManager.LocationChanged -= OnNavigating;
-            //Property.Update();
-            //DbContext.Update(Property);
-            //DbContext.SaveChanges();
         }
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)

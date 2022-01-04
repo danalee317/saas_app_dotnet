@@ -62,7 +62,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
         public UnderwritingAnalysis()
         {
-            var throttle = TimeSpan.FromMilliseconds(150);
+            var throttle = TimeSpan.FromMilliseconds(100);
             _disposable = new();
             Notes = new List<UnderwritingAnalysisNote>();
 
@@ -241,7 +241,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .DisposeWith(_disposable);
             ourRefCount
                 .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.Management, x => x.MarketVacancy, x=> x.PhysicalVacancy))
-                .Batch(TimeSpan.FromSeconds(0.5))
+                .Batch(throttle)
                 .ToCollection()
                 .Select(_ => Unit.Default)
                 .InvokeCommand(_calculateVacancyAndManagement)
@@ -251,7 +251,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .DisposeWith(_disposable);
             mortgageRefCount
                 .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.PurchasePrice, x => x.LoanType, x => x.LTV))
-                .Batch(TimeSpan.FromSeconds(1))
+                .Batch(throttle)
                 .ToCollection()
                 .Select(_ => Unit.Default)
                 .InvokeCommand(_downpaymentCommand)
@@ -260,14 +260,14 @@ namespace MultiFamilyPortal.Dtos.Underwriting
             _calculateLoanAmount = ReactiveCommand.Create(OnCalculateLoanAmount)
                 .DisposeWith(_disposable);
             this.WhenAnyValue(x => x.LoanType, x => x.LTV, x => x.PurchasePrice, (lt, ltv, pp) => Unit.Default)
-                .Throttle(TimeSpan.FromSeconds(1))
+                .Throttle(throttle)
                 .InvokeCommand(_calculateLoanAmount)
                 .DisposeWith(_disposable);
 
             _updateIncomeForecast = ReactiveCommand.Create(OnUpdateIncomeForecast)
                 .DisposeWith(_disposable);
             this.WhenAnyValue(x => x.HoldYears, x => x.IncomeForecast, (h, i) => Unit.Default)
-                .Throttle(TimeSpan.FromMilliseconds(100))
+                .Throttle(throttle)
                 .InvokeCommand(_updateIncomeForecast)
                 .DisposeWith(_disposable);
 
@@ -757,9 +757,6 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
             var income = items.Where(x => x.Category.GetLineItemType() == UnderwritingType.Income).Sum(x => x.AnnualizedTotal);
             var expenses = items.Where(x => x.Category.GetLineItemType() == UnderwritingType.Expense).Sum(x => x.AnnualizedTotal);
-
-            if (income <= 0 || expenses <= 0)
-                return 0;
 
             return income - expenses;
         }

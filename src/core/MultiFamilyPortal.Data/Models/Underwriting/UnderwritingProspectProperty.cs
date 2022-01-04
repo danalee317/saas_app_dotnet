@@ -126,6 +126,8 @@ namespace MultiFamilyPortal.Data.Models
 
         #endregion Bucketlist Notes
 
+        public Guid? AssetId { get; set; }
+
         public double ReversionCapRate { get; set; }
 
         public SiteUser Underwriter { get; set; }

@@ -276,6 +276,8 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
         public Guid Id { get; set; }
 
+        public Guid? AssetId { get; set; }
+
         public DateTimeOffset Timestamp { get; set; }
 
         [Reactive]

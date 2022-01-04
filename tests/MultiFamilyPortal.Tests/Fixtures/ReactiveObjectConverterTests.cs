@@ -138,5 +138,43 @@ namespace MultiFamilyPortal.Tests.Fixtures
             Assert.Equal(6.5, model.SomeDouble);
             Assert.Equal(5, model.SomeInt);
         }
+
+        [Theory]
+        [InlineData("{}")]
+        [InlineData(@"{""id"":null}")]
+        public void DeserializesNullGuid(string json)
+        {
+            var model = JsonSerializer.Deserialize<NullableGuid>(json);
+
+            Assert.Null(model.Id);
+        }
+
+        [Fact]
+        public void DeserializesNullableGuid()
+        {
+            var json = @"{""id"":""964b344f-18ea-4e6d-8dcf-76d720b9e280""}";
+            var model = JsonSerializer.Deserialize<NullableGuid>(json);
+
+            Assert.NotNull(model.Id);
+            Assert.Equal(Guid.Parse("964b344f-18ea-4e6d-8dcf-76d720b9e280"), model.Id);
+        }
+
+        [Fact]
+        public void SerializesNullableGuid()
+        {
+            var model = new NullableGuid { Id = Guid.Parse("964b344f-18ea-4e6d-8dcf-76d720b9e280") };
+            var json = JsonSerializer.Serialize(model);
+
+            Assert.Equal(@"{""id"":""964b344f-18ea-4e6d-8dcf-76d720b9e280""}", json);
+        }
+
+        [Fact]
+        public void SerializesNullGuid()
+        {
+            var model = new NullableGuid();
+            var json = JsonSerializer.Serialize(model);
+
+            Assert.Equal("{}", json);
+        }
     }
 }

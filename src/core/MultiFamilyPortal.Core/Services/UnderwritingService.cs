@@ -23,6 +23,7 @@ namespace MultiFamilyPortal.Services
                     Address = x.Address,
                     AquisitionFeePercent = x.AquisitionFeePercent,
                     AskingPrice = x.AskingPrice,
+                    AssetId = x.AssetId,
                     CapitalImprovements = x.CapitalImprovements.Select(c => new UnderwritingAnalysisCapitalImprovement
                     {
                         Cost = c.Cost,

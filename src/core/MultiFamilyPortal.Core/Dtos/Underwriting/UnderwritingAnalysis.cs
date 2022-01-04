@@ -143,9 +143,10 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .DisposeWith(_disposable);
 
             _forecastCache = new SourceCache<UnderwritingAnalysisIncomeForecast, int>(x => x.Year);
-            _forecastCache.Connect()
+            var forecastRef = _forecastCache.Connect()
                 .RefCount()
-                .AutoRefresh(x => x.Changed)
+                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.NOI, x => x.HoldYears, x => x.StartDate, x => x.Units, (noi, hold, start, units) => Unit.Default));
+            forecastRef
                 .Bind(out _forecast)
                 .DisposeMany()
                 .Subscribe()
@@ -271,7 +272,20 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .InvokeCommand(_updateIncomeForecast)
                 .DisposeWith(_disposable);
 
+            _projectionCache = new SourceCache<UnderwritingAnalysisProjection, int>(x => x.Year);
+            _projectionCache.Connect()
+                .RefCount()
+                .Bind(out _projections)
+                .DisposeMany()
+                .Subscribe()
+                .DisposeWith(_disposable);
+
             _updateProjections = ReactiveCommand.Create(OnUpdateProjections);
+            forecastRef
+                .Select(x => Unit.Default)
+                .Throttle(throttle)
+                .InvokeCommand(_updateProjections)
+                .DisposeWith(_disposable);
         }
 
         public Guid Id { get; set; }
@@ -871,7 +885,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 var expenses = taxes + insurance + repairsMaint + generalAdmin + management + marketing + utility + contractServices + payroll;
                 var noi = egi - expenses;
                 var capRate = ReversionCapRate > 0 ? ReversionCapRate : CapRate - 0.01;
-                if (capRate < 0)
+                if (capRate <= 0)
                     capRate = 0.06;
 
                 list.Add(new UnderwritingAnalysisProjection

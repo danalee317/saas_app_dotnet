@@ -197,14 +197,14 @@ namespace MultiFamilyPortal.Dtos.Underwriting
             sellersRefCount
                 .Batch(throttle)
                 .ToCollection()
-                .Select(CalculateNOI)
+                .Select(x => CalculateNOI(x, false))
                 .ToProperty(this, nameof(SellerNOI), out _sellerNOI)
                 .DisposeWith(_disposable);
 
             ourRefCount
                 .Batch(throttle)
                 .ToCollection()
-                .Select(CalculateNOI)
+                .Select(x => CalculateNOI(x, true))
                 .ToProperty(this, nameof(NOI), out _noi)
                 .DisposeWith(_disposable);
 
@@ -764,7 +764,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
             return 0;
         }
 
-        private double CalculateNOI(IEnumerable<UnderwritingAnalysisLineItem> items)
+        private double CalculateNOI(IEnumerable<UnderwritingAnalysisLineItem> items, bool calculateManagement)
         {
             if (items is null)
                 return 0;
@@ -781,7 +781,29 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .Sum(x => x.AnnualizedTotal);
 
             var income = gsr - vacancy - concessions + utilityReimbursement + otherIncome;
-            var expenses = items.Where(x => x.Category.GetLineItemType() == UnderwritingType.Expense).Sum(x => x.AnnualizedTotal);
+
+            var taxes = items.Where(x => x.Category == UnderwritingCategory.Taxes)
+                .Sum(x => x.AnnualizedTotal);
+            var insurance = items.Where(x => x.Category == UnderwritingCategory.Insurance)
+                .Sum(x => x.AnnualizedTotal);
+            var repairsMaint = items.Where(x => x.Category == UnderwritingCategory.RepairsMaintenance)
+                .Sum(x => x.AnnualizedTotal);
+            var generalAdmin = items.Where(x => x.Category == UnderwritingCategory.GeneralAdmin)
+                .Sum(x => x.AnnualizedTotal);
+            var marketing = items.Where(x => x.Category == UnderwritingCategory.Marketing)
+                .Sum(x => x.AnnualizedTotal);
+            var utility = items.Where(x => x.Category == UnderwritingCategory.Utility)
+                .Sum(x => x.AnnualizedTotal);
+            var contractServices = items.Where(x => x.Category == UnderwritingCategory.ContractServices)
+                .Sum(x => x.AnnualizedTotal);
+            var payroll = items.Where(x => x.Category == UnderwritingCategory.Payroll)
+                .Sum(x => x.AnnualizedTotal);
+            var management = calculateManagement ? (gsr - vacancy - concessions) * Management :
+                items.Where(x => x.Category == UnderwritingCategory.Management)
+                     .Sum(x => x.AnnualizedTotal);
+
+            var expenses = taxes + insurance + repairsMaint + generalAdmin + marketing + utility + contractServices + payroll + management;
+
 
             return income - expenses;
         }
@@ -922,7 +944,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
         private static double CalculateCapRate(double noi, double purchasePrice)
         {
-            if (purchasePrice <= 0)
+            if (purchasePrice <= 0 || noi <= 0)
                 return 0;
 
             return noi / purchasePrice;

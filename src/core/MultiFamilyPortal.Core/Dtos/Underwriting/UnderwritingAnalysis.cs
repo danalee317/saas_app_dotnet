@@ -755,7 +755,18 @@ namespace MultiFamilyPortal.Dtos.Underwriting
             if (items is null)
                 return 0;
 
-            var income = items.Where(x => x.Category.GetLineItemType() == UnderwritingType.Income).Sum(x => x.AnnualizedTotal);
+            var gsr = items.Where(x => x.Category == UnderwritingCategory.GrossScheduledRent)
+                .Sum(x => x.AnnualizedTotal);
+            var vacancy = items.Where(x => x.Category == UnderwritingCategory.PhysicalVacancy)
+                .Sum(x => x.AnnualizedTotal);
+            var concessions = items.Where(x => x.Category == UnderwritingCategory.ConsessionsNonPayment)
+                .Sum(x => x.AnnualizedTotal);
+            var utilityReimbursement = items.Where(x => x.Category == UnderwritingCategory.UtilityReimbursement)
+                .Sum(x => x.AnnualizedTotal);
+            var otherIncome = items.Where(x => x.Category == UnderwritingCategory.OtherIncome || x.Category == UnderwritingCategory.OtherIncomeBad || x.Category == UnderwritingCategory.OtherIncomeOneTime)
+                .Sum(x => x.AnnualizedTotal);
+
+            var income = gsr - vacancy - concessions + utilityReimbursement + otherIncome;
             var expenses = items.Where(x => x.Category.GetLineItemType() == UnderwritingType.Expense).Sum(x => x.AnnualizedTotal);
 
             return income - expenses;

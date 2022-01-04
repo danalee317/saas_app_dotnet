@@ -26,7 +26,19 @@
     <GridColumn Field=@nameof(UnderwritingAnalysisFile.Description) />
     <GridCommandColumn>
       <div class="text-center">
-        <GridCommandButton Title="Preview" IconClass="fa-duotone fa-eye" Primary=@true OnClick=@OnPreview>Preview</GridCommandButton>
+        @{ 
+          var fileInfo = context as UnderwritingAnalysisFile; 
+          var extension = Path.GetExtension(fileInfo.Name).ToLower();
+        }
+        @if(extension == ".pdf" || extension == ".jpeg" || extension == ".png" || extension == ".jpg")
+        {
+          <GridCommandButton Title="Preview" 
+                             IconClass="fa-duotone fa-eye" 
+                             Primary=@true 
+                             OnClick=@OnPreview>Preview
+          </GridCommandButton>
+        }
+
         @{ var file = context as UnderwritingAnalysisFile; }
         <a href="@file.DownloadLink" target="_blank" class="btn btn-secondary text-center">
           <span style="color: #FFFFFF;">
@@ -44,22 +56,23 @@
 <TelerikWindow Visible=@showUploadFile
                Modal=@true
                Width="600px"
-               Height="400px">
+               Height="300px">
   <WindowTitle>Upload</WindowTitle>
   <WindowActions>
     <WindowAction Name="Close" OnClick=@CloseUpload />
   </WindowActions>
   <WindowContent>
-    <div class="row">
+    <div class="row my-3">
       <div class="col-3">
         File Type
       </div>
       <div class="col-9">
         <TelerikDropDownList Data=@fileTypes
+                             Class="w-100"
                              @bind-Value=@selectedFileType />
       </div>
     </div>
-    <div class="row">
+    <div class="row my-3">
       <div class="col-3">
         Description
       </div>
@@ -79,3 +92,18 @@
 </TelerikWindow>
 
 <PortalNotification @ref="notification" />
+
+<TelerikWindow Visible="@(_selectedFile != null)" 
+               Size="@WindowSize.Large"
+               State="WindowState.Maximized"
+               Modal="true">
+    <WindowActions>
+      <WindowAction Name="Close" OnClick=@(() => _selectedFile = null) />
+    </WindowActions>
+    <WindowTitle>
+        <strong>@_selectedFile.Name</strong>
+    </WindowTitle>
+    <WindowContent>
+      <DocumentViewer Link="@_selectedFile.DownloadLink" Type=@(Path.GetExtension(_selectedFile.Name).ToLower() == ".pdf" ? DocumentType.PDF : DocumentType.Image) />
+    </WindowContent>
+</TelerikWindow>

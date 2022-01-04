@@ -33,6 +33,9 @@ namespace MultiFamilyPortal.CoreUI
 
         public async ValueTask DisposeAsync()
         {
+            if(Type == DocumentType.Image)
+              return;
+
             await _jsRuntime.InvokeVoidAsync("MFPortal.DisposeKendo", _wrapperRef);
             if (_currentRazorComponent != null)
             {

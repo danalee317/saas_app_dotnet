@@ -24,12 +24,11 @@
     return true;
   },
   KendoInitialize: function createWidget(container, id, dotNetComponent, initialColor) {
-    if (!this.EnsureKendo()) { return; }
-  
     this.ViewPDF($(container).find("#" + id), dotNetComponent, initialColor);
   },
   ViewPDF: function createPdfViewer($elem) {
     $.when(
+      $.getScript("https://kendo.cdn.telerik.com/2021.3.1207/js/kendo.all.min.js"),
       $.getScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.js"),
       $.getScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.worker.js")
     ).done(function () {

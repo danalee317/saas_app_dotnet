@@ -90,9 +90,17 @@
             <div class="col-10">
              @{
                 var address = Contact?.Addresses ?.FirstOrDefault(x => x.Primary);
-                if (!string.IsNullOrEmpty(address?.City))
+                if (!string.IsNullOrEmpty(address?.City) && !string.IsNullOrEmpty(address?.State))
                 {
-                  <span>@address.City <small>(@address?.Type.GetDisplayName())</small></span>
+                  <span>@address.City, @address.State</span>
+                }
+                else if(!string.IsNullOrEmpty(address?.City))
+                {
+                  <span>@address.City</span>
+                }
+                else if(!string.IsNullOrEmpty(address?.State))
+                {
+                  <span>@address.State</span>
                 }
                 else
                 {
@@ -101,9 +109,6 @@
               }
             </div>
           </div>
-
-       
-
         </div>
       </div>
     </div>

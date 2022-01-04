@@ -9,5 +9,5 @@
 
 .large{
     font-weight: bolder;
-    color: var( --Portal-title-color);
+    color: var( --portal-title-color);
 }

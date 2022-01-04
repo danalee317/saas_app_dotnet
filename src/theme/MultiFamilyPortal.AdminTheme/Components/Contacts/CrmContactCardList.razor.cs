@@ -14,7 +14,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
         [Parameter]
         public EventCallback<CRMContact> ShowContactDetails { get; set; }
 
-        public int _pageSize { get; set; } = 6;
+        public int _pageSize { get; set; } = 15;
         public int _page { get; set; } = 1; 
     }
 }

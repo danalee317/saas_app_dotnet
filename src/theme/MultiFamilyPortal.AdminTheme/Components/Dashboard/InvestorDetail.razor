@@ -1,10 +1,12 @@
-<TelerikWindow @bind-Visible="@WindowIsVisible" 
+<TelerikWindow Visible="@(Investor != null)" 
                Modal="true"
                Width="600px">
   <WindowTitle>
     <strong>Investor Prospect</strong>
   </WindowTitle>
   <WindowContent>
+  <TelerikTabStrip Class="res-tabstrip">
+    <TabStripTab Title="Details">
     <div class="container">
       <div class="row">
         <div class="col-md-6 my-3">
@@ -27,7 +29,7 @@
         </div>
         <div class="col-md-6 my-3">
           <form class="form-floating">
-            <input type="text" class="form-control" value="@MaskNumber(Investor.Phone)" id="investorPhone" disabled>
+            <input type="text" class="form-control" value="@Investor.Phone.ToPhoneNumberMask()" id="investorPhone" disabled>
             <label for="investorPhone">Phone</label>
           </form>
         </div>
@@ -44,28 +46,29 @@
             <label for="investorCapital">Capital</label>
           </form>
         </div>
-        <div class="col-12 my-3">
-          <form class="form-floating">
-            <textarea id="investorMotive" class="form-control" value="@Investor.Reason" disabled/>
-            <label for="investorMotive">Motive</label>
-          </form>
-        </div>
-        <div class="col-md-6 my-3">
-           <input type="checkbox" id="investorContact" @bind-value=@Investor.Contacted />
-           <label for="investorContact" class="mx-2">Contacted</label>
-        </div>
         <div class="col-md-6 my-3">
           <span class="text-secondary">Request made : @Investor.Timestamp.Humanize()</span>
         </div>
         <div class="col-md-12 text-center my-3">
-          <button class="btn btn-primary btn-sm" id="investorContactedSubmit" @onclick="UpdateInvestor">
-            <i class="fas fa-save"></i> Save
+          <button class="btn btn-primary" id="investorContactedSubmit" @onclick="UpdateInvestor">
+            Mark as Contacted
           </button>
         </div>
       </div>
     </div>
+    </TabStripTab>
+    <TabStripTab Title="Notes">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 h-100 my-3">
+            <textarea id="investorMotive" class="form-control" value="@Investor.Reason" disabled/>
+          </div>
+        </div>
+      </div>
+    </TabStripTab>
+  </TelerikTabStrip> 
   </WindowContent>
   <WindowActions>
-    <WindowAction Name="Close" OnClick="UpdateVisibilty"/>
+    <WindowAction Name="Close" OnClick="@(() => Investor = null)"/>
   </WindowActions>
 </TelerikWindow>

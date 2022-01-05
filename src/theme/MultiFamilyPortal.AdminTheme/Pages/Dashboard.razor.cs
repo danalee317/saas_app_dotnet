@@ -84,18 +84,6 @@ namespace MultiFamilyPortal.AdminTheme.Pages
             }
         }
 
-        private async Task UpdateInvestor(DashboardInvestor investor)
-        {
-            try
-            {
-                await _client.PutAsJsonAsync<DashboardInvestor>($"/api/admin/dashboard/investors/{investor.Id}", investor);
-                await OnInitializedAsync();
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, "Put investor request unsuccessful " + DateTimeOffset.UtcNow);
-                notification.ShowError("Failed to mark investor(s) as contacted");
-            }
-        }
+        private async Task RefreshAsync() => await GetInvestorsAsync();
     }
 }

@@ -40,6 +40,4 @@
   </div>
 </div>
 
-<InvestorDetail Investor=@_selectedInvestor 
-                @bind-WindowIsVisible=@_showDetail
-                InvestorChanged="@SaveContactAsync"/>
+<InvestorDetail Investor=@_selectedInvestor OnInvestorUpdated="@RefreshContactsAsync"/>

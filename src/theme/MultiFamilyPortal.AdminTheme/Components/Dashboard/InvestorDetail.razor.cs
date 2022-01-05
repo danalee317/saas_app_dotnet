@@ -1,4 +1,6 @@
+using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Services;
 
@@ -6,20 +8,20 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
 {
     public partial class InvestorDetail
     {
-        [Inject]
-        private ITimeZoneService _timezoneService { get; set; }
-
-        [Parameter] 
-        public bool WindowIsVisible { get; set; }
-
-        [Parameter] 
-        public EventCallback<bool> WindowIsVisibleChanged { get; set; }
-
-        [Parameter] 
+        [Parameter]
         public DashboardInvestor Investor { get; set; }
 
-        [Parameter] 
-        public EventCallback<DashboardInvestor> InvestorChanged { get; set; }
+        [Parameter]
+        public EventCallback OnInvestorUpdated { get; set; }
+
+        [Inject]
+        private HttpClient _client { get; set; }
+
+        [Inject]
+        private ILogger<InvestorDetail> _logger { get; set; }
+
+        [Inject]
+        private ITimeZoneService _timezoneService { get; set; }
 
         private string _localTime;
 
@@ -43,14 +45,19 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
                 }
         }
 
-        private async Task UpdateVisibilty() => await WindowIsVisibleChanged.InvokeAsync(false);
-
         private async Task UpdateInvestor()
         {
-            if (Investor.Contacted == false)
-                return;
-
-            await InvestorChanged.InvokeAsync(Investor);
+            Investor.Contacted = true;
+            
+            try
+            {
+                await _client.PutAsJsonAsync<DashboardInvestor>($"/api/admin/dashboard/investors/{Investor.Id}", Investor);
+                await OnInvestorUpdated.InvokeAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Put investor request unsuccessful " + DateTimeOffset.UtcNow);
+            }
         }
 
         private string HandleTimeZone(string userInput)
@@ -85,11 +92,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
                 default:
                     return timezone.Name;
             }
-        }
-
-        private string MaskNumber(string phone)
-        {
-            return "+1 ("+phone.Substring(0, 3) + ")-" + phone.Substring(3, 3) + "-" + phone.Substring(6, 4);
         }
     }
 }

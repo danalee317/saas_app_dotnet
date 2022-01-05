@@ -11,16 +11,16 @@ public partial class UnderwritingSummary
 {
     [Parameter]
     public UnderwritingAnalysis Property { get; set; }
-
     private double _capRate;
     private double _debtCoverageRatio;
     private double _sellerCashOnCash;
 
     private ReactiveCommand<Unit, Unit> RefreshCommand;
     private CompositeDisposable _disposables = new CompositeDisposable();
-    private const string _lowerColor = "var(--bs-warning)";
-    private const string _middleColor = "var(--bs-info)";
-    private const string _higherColor = "var(--bs-danger)";
+    private const string _infoColor = "var(--bs-info)"; 
+    private const string _lowerColor = "#C8A951";
+    private const string _middleColor = "#0e952f";
+    private const string _higherColor = "salmon";
 
     protected override void OnInitialized()
     {

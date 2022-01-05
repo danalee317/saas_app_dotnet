@@ -49,7 +49,7 @@
             </div>
             <div class="col-lg col-md-4">
               <UnderwritingInfoBar Title="Ann. CoC Return"
-                                   Color=@_middleColor
+                                   Color=@_lowerColor
                                    Value=@Property.CashOnCash.ToString("P") />
             </div>
           </div>
@@ -78,12 +78,12 @@
             </div>
             <div class="col-lg col-md-4">
               <UnderwritingInfoBar Title="LTV"
-                                   Color=@_middleColor
+                                   Color=@_lowerColor
                                    Value=@Property.LTV.ToString("P2") />
             </div>
             <div class="col-lg col-md-4">
               <UnderwritingInfoBar Title="Reversion Value"
-                                   Color=@_middleColor
+                                   Color=@_higherColor
                                    Value=@Property.Reversion.ToString("N0") />
             </div>
             <div class="col-lg col-md-4">
@@ -93,7 +93,7 @@
             </div>
             <div class="col-lg col-md-4">
               <UnderwritingInfoBar Title="IRR"
-                                   Color=@_middleColor
+                                   Color=@_higherColor
                                    Value=@Property.InitialRateOfReturn.ToString("P") />
             </div>
              <div class="col-lg col-md-4">

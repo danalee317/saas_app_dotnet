@@ -130,3 +130,7 @@ img.logo {
   margin-left: 25px; 
   cursor: pointer;
 }
+
+.res-tabstrip .k-tabstrip-items {
+  flex-wrap: wrap;
+}

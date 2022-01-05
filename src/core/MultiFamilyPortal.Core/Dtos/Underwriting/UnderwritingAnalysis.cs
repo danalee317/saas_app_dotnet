@@ -52,25 +52,54 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         private ObservableAsPropertyHelper<double> _sellerNOI;
 
         // Buyer
-        private ObservableAsPropertyHelper<double> _capRate;
         private ObservableAsPropertyHelper<double> _cashOnCash;
         private ObservableAsPropertyHelper<double> _lossToLease;
-        private ObservableAsPropertyHelper<double> _noi;
         private ObservableAsPropertyHelper<double> _capXTotal;
         private ObservableAsPropertyHelper<double> _pricePerUnit;
         private ObservableAsPropertyHelper<double> _pricePerSqFt;
 
         public UnderwritingAnalysis()
         {
-            var throttle = TimeSpan.FromMilliseconds(100);
+            var primaryThrottle = TimeSpan.FromMilliseconds(50);
+            var secondaryThrottle = TimeSpan.FromMilliseconds(100);
             _disposable = new();
             Notes = new List<UnderwritingAnalysisNote>();
 
             _sellersCache = new SourceCache<UnderwritingAnalysisLineItem, Guid>(x => x.Id);
+            _oursCache = new SourceCache<UnderwritingAnalysisLineItem, Guid>(x => x.Id);
+            _mortgageCache = new SourceCache<UnderwritingAnalysisMortgage, Guid>(x => x.Id);
+            _modelsCache = new SourceCache<UnderwritingAnalysisModel, Guid>(x => x.Id); _forecastCache = new SourceCache<UnderwritingAnalysisIncomeForecast, int>(x => x.Year);
+            _projectionCache = new SourceCache<UnderwritingAnalysisProjection, int>(x => x.Year);
+
+            _calculateVacancyAndManagement = ReactiveCommand.Create(OnCalculateGSRAndManagement)
+                .DisposeWith(_disposable);
+            _downpaymentCommand = ReactiveCommand.Create(OnDownpaymentCommandExecuted)
+                .DisposeWith(_disposable);
+            _calculateLoanAmount = ReactiveCommand.Create(OnCalculateLoanAmount)
+                .DisposeWith(_disposable);
+            _updateIncomeForecast = ReactiveCommand.Create(OnUpdateIncomeForecast)
+                .DisposeWith(_disposable);
+            _updateProjections = ReactiveCommand.Create(OnUpdateProjections)
+                .DisposeWith(_disposable);
+
             var sellersRefCount = _sellersCache.Connect()
                 .RefCount()
                 .AutoRefresh(x => x.AnnualizedTotal)
                 .AutoRefresh(x => x.Category);
+            var ourRefCount = _oursCache.Connect()
+                .RefCount()
+                .AutoRefresh(x => x.AnnualizedTotal)
+                .AutoRefresh(x => x.Category);
+            var mortgageRefCount = _mortgageCache.Connect()
+                .RefCount()
+                .AutoRefresh(x => x.AnnualDebtService);
+            var modelRefCount = _modelsCache.Connect()
+                .RefCount();
+            var forecastRef = _forecastCache.Connect()
+                .RefCount();
+            //.AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.NOI, x => x.HoldYears, x => x.StartDate, x => x.Units, (noi, hold, start, units) => Unit.Default));
+
+            #region Sellers Numbers
             sellersRefCount
                 .SortBy(x => x.Category)
                 .Bind(out _sellersLineItems)
@@ -94,11 +123,15 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .Subscribe()
                 .DisposeWith(_disposable);
 
-            _oursCache = new SourceCache<UnderwritingAnalysisLineItem, Guid>(x => x.Id);
-            var ourRefCount = _oursCache.Connect()
-                .RefCount()
-                .AutoRefresh(x => x.AnnualizedTotal)
-                .AutoRefresh(x => x.Category);
+            sellersRefCount
+                .Batch(primaryThrottle)
+                .ToCollection()
+                .Select(x => CalculateNOI(x, Management, false))
+                .ToProperty(this, nameof(SellerNOI), out _sellerNOI)
+                .DisposeWith(_disposable);
+            #endregion Sellers Numbers
+
+            #region Our Numbers
             ourRefCount
                 .SortBy(x => x.Category)
                 .Bind(out _ourLineItems)
@@ -122,10 +155,33 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .Subscribe()
                 .DisposeWith(_disposable);
 
-            _mortgageCache = new SourceCache<UnderwritingAnalysisMortgage, Guid>(x => x.Id);
-            var mortgageRefCount = _mortgageCache.Connect()
-                .RefCount()
-                .AutoRefresh(x => x.AnnualDebtService);
+            ourRefCount
+                .AutoRefreshOnObservable(_ =>
+                    this.WhenAnyValue(x => x.DeferredMaintenance, x => x.CapXTotal, x => x.SECAttorney, x => x.ClosingCostMiscellaneous))
+                .Batch(primaryThrottle)
+                .ToCollection()
+                .WithLatestFrom(this.WhenAnyValue(x => x.DeferredMaintenance, x => x.CapXTotal, x => x.SECAttorney, x => x.ClosingCostMiscellaneous, (deferredMaintenance, capX, secAttorney, closingMisc) => (deferredMaintenance, capX, secAttorney, closingMisc)), (collection, value) => (collection, value))
+                .Select(x => CalculateClosingCostOther(x.collection, x.value.deferredMaintenance, x.value.capX, x.value.secAttorney, x.value.closingMisc))
+                .ToProperty(this, nameof(ClosingCostOther), out _closingCostOther)
+                .DisposeWith(_disposable);
+
+            ourRefCount
+                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.GrossPotentialRent))
+                .Batch(primaryThrottle)
+                .ToCollection()
+                .WithLatestFrom(this.WhenAnyValue(x => x.GrossPotentialRent), (ours, gpr) => (ours, gpr))
+                .Select(x => CalculateLossToLease(x.gpr, x.ours))
+                .ToProperty(this, nameof(LossToLease), out _lossToLease)
+                .DisposeWith(_disposable);
+
+            ourRefCount
+                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.Management, x => x.MarketVacancy, x => x.PhysicalVacancy))
+                .Batch(primaryThrottle)
+                .ToCollection()
+                .Select(_ => Unit.Default)
+                .InvokeCommand(_calculateVacancyAndManagement)
+                .DisposeWith(_disposable);
+            #endregion
 
             mortgageRefCount
                 .Bind(out _mortgages)
@@ -133,24 +189,52 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .Subscribe()
                 .DisposeWith(_disposable);
 
-            _modelsCache = new SourceCache<UnderwritingAnalysisModel, Guid>(x => x.Id);
-            var modelRefCount = _modelsCache.Connect()
-                .RefCount();
             modelRefCount
                 .Bind(out _models)
                 .DisposeMany()
                 .Subscribe()
                 .DisposeWith(_disposable);
 
-            _forecastCache = new SourceCache<UnderwritingAnalysisIncomeForecast, int>(x => x.Year);
-            var forecastRef = _forecastCache.Connect()
-                .RefCount()
-                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.NOI, x => x.HoldYears, x => x.StartDate, x => x.Units, (noi, hold, start, units) => Unit.Default));
             forecastRef
                 .Bind(out _forecast)
                 .DisposeMany()
                 .Subscribe()
                 .DisposeWith(_disposable);
+
+            
+
+
+            mortgageRefCount
+                 .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.NOI))
+                 .Batch(primaryThrottle)
+                 .ToCollection()
+                 .WithLatestFrom(this.WhenAnyValue(x => x.NOI), (mortgages, noi) => (mortgages, noi))
+                 .Select(x => CalculateDebtCoverage(x.noi, x.mortgages))
+                 .ToProperty(this, nameof(DebtCoverage), out _debtCoverage)
+                 .DisposeWith(_disposable);
+
+            mortgageRefCount
+                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.PurchasePrice, x => x.LoanType, x => x.LTV))
+                .Batch(primaryThrottle)
+                .ToCollection()
+                .Select(_ => Unit.Default)
+                .InvokeCommand(_downpaymentCommand)
+                .DisposeWith(_disposable);
+
+            _projectionCache.Connect()
+                .RefCount()
+                .Bind(out _projections)
+                .DisposeMany()
+                .Subscribe()
+                .DisposeWith(_disposable);
+
+            forecastRef
+                .Select(x => Unit.Default)
+                .Throttle(primaryThrottle)
+                .InvokeCommand(_updateProjections)
+                .DisposeWith(_disposable);
+
+
 
             this.WhenAnyValue(x => x.Units, x => x.PurchasePrice, CalculatePricePerUnit)
                 .ToProperty(this, nameof(PricePerUnit), out _pricePerUnit)
@@ -180,45 +264,9 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .ToProperty(this, nameof(Raise), out _raise)
                 .DisposeWith(_disposable);
 
-            ourRefCount
-                .AutoRefreshOnObservable(_ =>
-                    this.WhenAnyValue(x => x.DeferredMaintenance, x => x.CapXTotal, x => x.SECAttorney, x => x.ClosingCostMiscellaneous))
-                .Batch(throttle)
-                .ToCollection()
-                .WithLatestFrom(this.WhenAnyValue(x => x.DeferredMaintenance, x => x.CapXTotal, x => x.SECAttorney, x => x.ClosingCostMiscellaneous, (deferredMaintenance, capX, secAttorney, closingMisc) => (deferredMaintenance, capX, secAttorney, closingMisc)), (collection, value) => (collection, value))
-                .Select(x => CalculateClosingCostOther(x.collection, x.value.deferredMaintenance, x.value.capX, x.value.secAttorney, x.value.closingMisc))
-                .ToProperty(this, nameof(ClosingCostOther), out _closingCostOther)
-                .DisposeWith(_disposable);
 
             this.WhenAnyValue(x => x.PurchasePrice, x => x.ClosingCostPercent, CalculateClosingCosts)
                 .ToProperty(this, nameof(ClosingCosts), out _closingCosts)
-                .DisposeWith(_disposable);
-
-            sellersRefCount
-                .Batch(throttle)
-                .ToCollection()
-                .Select(x => CalculateNOI(x, Management, false))
-                .ToProperty(this, nameof(SellerNOI), out _sellerNOI)
-                .DisposeWith(_disposable);
-
-            ourRefCount
-                .Batch(throttle)
-                .ToCollection()
-                .Select(x => CalculateNOI(x, Management, true))
-                .ToProperty(this, nameof(NOI), out _noi)
-                .DisposeWith(_disposable);
-
-            mortgageRefCount
-                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.NOI))
-                .Batch(throttle)
-                .ToCollection()
-                .WithLatestFrom(this.WhenAnyValue(x => x.NOI), (mortgages, noi) => (mortgages, noi))
-                .Select(x => CalculateDebtCoverage(x.noi, x.mortgages))
-                .ToProperty(this, nameof(DebtCoverage), out _debtCoverage)
-                .DisposeWith(_disposable);
-
-            this.WhenAnyValue(x => x.NOI, x => x.PurchasePrice, CalculateCapRate)
-                .ToProperty(this, nameof(CapRate), out _capRate)
                 .DisposeWith(_disposable);
 
             this.WhenAnyValue(x => x.SellerNOI, x => x.PurchasePrice, CalculateCapRate)
@@ -229,62 +277,14 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .ToProperty(this, nameof(CostPerUnit), out _costPerUnit)
                 .DisposeWith(_disposable);
 
-            ourRefCount
-                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.GrossPotentialRent))
-                .Batch(throttle)
-                .ToCollection()
-                .WithLatestFrom(this.WhenAnyValue(x => x.GrossPotentialRent), (ours, gpr) => (ours, gpr))
-                .Select(x => CalculateLossToLease(x.gpr, x.ours))
-                .ToProperty(this, nameof(LossToLease), out _lossToLease)
-                .DisposeWith(_disposable);
-
-            _calculateVacancyAndManagement = ReactiveCommand.Create(OnCalculateGSRAndManagement)
-                .DisposeWith(_disposable);
-            ourRefCount
-                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.Management, x => x.MarketVacancy, x=> x.PhysicalVacancy))
-                .Batch(throttle)
-                .ToCollection()
-                .Select(_ => Unit.Default)
-                .InvokeCommand(_calculateVacancyAndManagement)
-                .DisposeWith(_disposable);
-
-            _downpaymentCommand = ReactiveCommand.Create(OnDownpaymentCommandExecuted)
-                .DisposeWith(_disposable);
-            mortgageRefCount
-                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.PurchasePrice, x => x.LoanType, x => x.LTV))
-                .Batch(throttle)
-                .ToCollection()
-                .Select(_ => Unit.Default)
-                .InvokeCommand(_downpaymentCommand)
-                .DisposeWith(_disposable);
-
-            _calculateLoanAmount = ReactiveCommand.Create(OnCalculateLoanAmount)
-                .DisposeWith(_disposable);
             this.WhenAnyValue(x => x.LoanType, x => x.LTV, x => x.PurchasePrice, (lt, ltv, pp) => Unit.Default)
-                .Throttle(throttle)
+                .Throttle(primaryThrottle)
                 .InvokeCommand(_calculateLoanAmount)
                 .DisposeWith(_disposable);
 
-            _updateIncomeForecast = ReactiveCommand.Create(OnUpdateIncomeForecast)
-                .DisposeWith(_disposable);
             this.WhenAnyValue(x => x.HoldYears, x => x.IncomeForecast, (h, i) => Unit.Default)
-                .Throttle(throttle)
+                .Throttle(primaryThrottle)
                 .InvokeCommand(_updateIncomeForecast)
-                .DisposeWith(_disposable);
-
-            _projectionCache = new SourceCache<UnderwritingAnalysisProjection, int>(x => x.Year);
-            _projectionCache.Connect()
-                .RefCount()
-                .Bind(out _projections)
-                .DisposeMany()
-                .Subscribe()
-                .DisposeWith(_disposable);
-
-            _updateProjections = ReactiveCommand.Create(OnUpdateProjections);
-            forecastRef
-                .Select(x => Unit.Default)
-                .Throttle(throttle)
-                .InvokeCommand(_updateProjections)
                 .DisposeWith(_disposable);
         }
 
@@ -482,9 +482,10 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         [DisplayFormat(DataFormatString = "{0:C}")]
         public double PricePerUnit => _pricePerUnit?.Value ?? 0;
 
+        [Reactive]
         [JsonIgnore]
         [DisplayFormat(DataFormatString = "{0:C}")]
-        public double NOI => _noi?.Value ?? 0;
+        public double NOI { get; private set; }
 
         [JsonIgnore]
         [DisplayFormat(DataFormatString = "{0:C}")]
@@ -494,9 +495,10 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         [DisplayFormat(DataFormatString = "{0:C}")]
         public double LossToLease => _lossToLease?.Value ?? 0;
 
+        [Reactive]
         [JsonIgnore]
         [DisplayFormat(DataFormatString = "{0:P}")]
-        public double CapRate => _capRate?.Value ?? 0;
+        public double CapRate { get; private set; }
 
         [JsonIgnore]
         [DisplayFormat(DataFormatString = "{0:P}")]
@@ -894,6 +896,12 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 x.AddOrUpdate(list);
             });
 
+            var startYear = Projections.FirstOrDefault();
+            if(startYear != null)
+            {
+                NOI = startYear.NetOperatingIncome;
+                CapRate = CalculateCapRate(startYear.NetOperatingIncome, PurchasePrice);
+            }
             Reversion = Projections.LastOrDefault()?.SalesPrice ?? PurchasePrice;
         }
 

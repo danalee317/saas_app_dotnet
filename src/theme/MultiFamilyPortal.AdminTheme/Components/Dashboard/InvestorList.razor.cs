@@ -12,38 +12,16 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
         public IEnumerable<DashboardInvestor> Investors { get; set; }
 
         [Parameter]
-        public EventCallback<List<DashboardInvestor>> InvestorsChanged { get; set; }
+        public EventCallback OnInvestorUpdated { get; set; }
 
-        private List<DashboardInvestor> _contactedInvestors = new List<DashboardInvestor>();
         private DashboardInvestor _selectedInvestor;
-        private bool _showDetail = false;
 
-        private void ShowContact(DashboardInvestor investor)
+        private void ShowContact(DashboardInvestor investor) => _selectedInvestor = investor;
+
+        private async Task RefreshContactsAsync()
         {
-            _selectedInvestor = investor;
-            _showDetail = true;
-        }
-
-        private void ProcessContact(DashboardInvestor investor)
-        {
-            if (_contactedInvestors.Contains(investor))
-            {
-                investor.Contacted = false;
-               _contactedInvestors.Remove(investor);
-            } 
-            else
-            {
-                investor.Contacted = true;
-               _contactedInvestors.Add(investor);
-            }
-        }
-
-        private async Task SaveContactAsync()
-        {
-            if(_contactedInvestors.Count() == 0)
-             return;
-
-             await InvestorsChanged.InvokeAsync(_contactedInvestors);
+            await OnInvestorUpdated.InvokeAsync();
+            _selectedInvestor = null;
         }
     }
 }

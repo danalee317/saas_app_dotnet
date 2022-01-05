@@ -116,6 +116,7 @@ namespace MultiFamilyPortal.Controllers
                 LastName = form.LastName,
                 LookingToInvest = form.LookingToInvest.Value,
                 Phone = form.Phone,
+                //Comments = form.Comments,
                 Timezone = form.Timezone,
             });
 

@@ -96,13 +96,14 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             var dashboardInvestors = await _dbContext.InvestorProspects
                 .Where(x => x.Contacted == false)
                 .AsNoTracking()
-                .Take(7)
+                .Take(8)
                 .Select(investor => new DashboardInvestor
                 {
                     Id = investor.Id,
                     FirstName = investor.FirstName,
                     LastName = investor.LastName,
                     Email = investor.Email,
+                    // Reason = investor.Comments,
                     Phone = investor.Phone,
                     Contacted = investor.Contacted,
                     Timestamp = investor.Timestamp,

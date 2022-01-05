@@ -103,7 +103,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     FirstName = investor.FirstName,
                     LastName = investor.LastName,
                     Email = investor.Email,
-                    Reason = "Comment",
+                    // Reason = investor.Comments,
                     Phone = investor.Phone,
                     Contacted = investor.Contacted,
                     Timestamp = investor.Timestamp,

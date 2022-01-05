@@ -21,6 +21,9 @@ namespace MultiFamilyPortal.Data.Models
         [Required]
         public string Phone { get; set; }
 
+        //[Required]
+        //public string Comments { get; set; }
+
         [Required]
         public string Timezone { get; set; }
 

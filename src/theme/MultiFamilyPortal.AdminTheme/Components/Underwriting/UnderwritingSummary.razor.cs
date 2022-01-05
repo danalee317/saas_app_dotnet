@@ -18,9 +18,9 @@ public partial class UnderwritingSummary
 
     private ReactiveCommand<Unit, Unit> RefreshCommand;
     private CompositeDisposable _disposables = new CompositeDisposable();
-    private const string _lowerColor = "#FFFF99";
-    private const string _middleColor = "lightgreen";
-    private const string _higherColor = "salmon";
+    private const string _lowerColor = "var(--bs-warning)";
+    private const string _middleColor = "var(--bs-info)";
+    private const string _higherColor = "var(--bs-danger)";
 
     protected override void OnInitialized()
     {

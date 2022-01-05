@@ -18,6 +18,9 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
         [Parameter] 
         public DashboardInvestor Investor { get; set; }
 
+        [Parameter] 
+        public EventCallback<DashboardInvestor> InvestorChanged { get; set; }
+
         private string _localTime;
 
         protected override void OnParametersSet()
@@ -41,6 +44,14 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
         }
 
         private async Task UpdateVisibilty() => await WindowIsVisibleChanged.InvokeAsync(false);
+
+        private async Task UpdateInvestor()
+        {
+            if (Investor.Contacted == false)
+                return;
+
+            await InvestorChanged.InvokeAsync(Investor);
+        }
 
         private string HandleTimeZone(string userInput)
         {
@@ -74,6 +85,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
                 default:
                     return timezone.Name;
             }
+        }
+
+        private string MaskNumber(string phone)
+        {
+            return "+1 ("+phone.Substring(0, 3) + ")-" + phone.Substring(3, 3) + "-" + phone.Substring(6, 4);
         }
     }
 }

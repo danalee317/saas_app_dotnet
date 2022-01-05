@@ -10,11 +10,8 @@
         @foreach (var investor in Investors.OrderBy(x => x.Timestamp))
         {
           <div class="row my-3">
-              <div class="col-1 my-auto">
-                <input type="checkbox" checked=@(investor.Contacted) class="ms-2" @onchange="@(() => ProcessContact(investor))" />
-              </div>
-            <div class="col-4 my-auto">
-              <small>@investor.FirstName @investor.LastName</small>
+            <div class="col-5 my-auto">
+              <small class="ms-2">@investor.FirstName @investor.LastName</small>
             </div>
             <div class="col-5 my-auto">
               <small>@investor.Email</small>
@@ -25,17 +22,12 @@
               </div>
             </div>
           </div>
-          <hr />
+          @if(investor != Investors.OrderBy(x => x.Timestamp).Last())
+          {
+            <hr />
+          }
         }
       </Animation>
-
-      <div class="row h-75">
-      <div class="col-12 my-auto">
-        <button class="btn btn-primary btn-sm" @onclick="SaveContactAsync">
-          <i class="fas fa-save"></i>
-        </button>
-      </div>
-    </div>
     }
     else
     {
@@ -48,4 +40,6 @@
   </div>
 </div>
 
-<InvestorDetail Investor=@_selectedInvestor @bind-WindowIsVisible=@_showDetail/>
+<InvestorDetail Investor=@_selectedInvestor 
+                @bind-WindowIsVisible=@_showDetail
+                InvestorChanged="@SaveContactAsync"/>

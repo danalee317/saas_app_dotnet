@@ -84,13 +84,11 @@ namespace MultiFamilyPortal.AdminTheme.Pages
             }
         }
 
-        private async Task UpdateInvestors(List<DashboardInvestor> investors)
+        private async Task UpdateInvestor(DashboardInvestor investor)
         {
             try
             {
-                foreach (var i in investors)
-                    await _client.PutAsJsonAsync<DashboardInvestor>($"/api/admin/dashboard/investors/{i.Id}", i);
-
+                await _client.PutAsJsonAsync<DashboardInvestor>($"/api/admin/dashboard/investors/{investor.Id}", investor);
                 await OnInitializedAsync();
             }
             catch (HttpRequestException ex)

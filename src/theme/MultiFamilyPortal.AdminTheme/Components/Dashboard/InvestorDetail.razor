@@ -2,56 +2,70 @@
                Modal="true"
                Width="600px">
   <WindowTitle>
-    <strong>New Investor Details</strong>
+    <strong>Investor Prospect</strong>
   </WindowTitle>
   <WindowContent>
     <div class="container">
       <div class="row">
         <div class="col-md-6 my-3">
           <form class="form-floating">
-            <input type="text" class="form-control" value="@Investor.FirstName" id="floatingInputValue" disabled>
-            <label for="floatingInputValue">Name</label>
+            <input type="text" class="form-control" value="@Investor.FirstName" id="investorName" disabled>
+            <label for="investorName">Name</label>
           </form>
         </div>
         <div class="col-md-6 my-3">
           <form class="form-floating">
-            <input type="text" class="form-control" value="@Investor.LastName" id="floatingInputValue" disabled>
-            <label for="floatingInputValue">Surname</label>
+            <input type="text" class="form-control" value="@Investor.LastName" id="investorSurname" disabled>
+            <label for="investorSurname">Surname</label>
           </form>
         </div>
         <div class="col-md-6 my-3">
           <form class="form-floating">
-            <input type="email" class="form-control" value="@Investor.Email" id="floatingInputValue" disabled>
-            <label for="floatingInputValue">Email</label>
+            <input type="email" class="form-control" value="@Investor.Email" id="investorEmail" disabled>
+            <label for="investEmail">Email</label>
           </form>
         </div>
         <div class="col-md-6 my-3">
           <form class="form-floating">
-            <input type="text" class="form-control" value="@Investor.Phone" id="floatingInputValue" disabled>
-            <label for="floatingInputValue">Phone</label>
+            <input type="text" class="form-control" value="@MaskNumber(Investor.Phone)" id="investorPhone" disabled>
+            <label for="investorPhone">Phone</label>
           </form>
         </div>
         <div class="col-md-6 my-3">
           <form class="form-floating">
-            <input type="text" class="form-control" value="@_localTime" id="floatingInputValue" disabled>
-            <label for="floatingInputValue">Local Time (@Investor.Timezone)</label>
+            <input type="text" class="form-control" value="@_localTime" id="investorTimezone" disabled>
+            <label for="investorTimezone">Local Time (@Investor.Timezone)</label>
           </form>
         </div>
         <div class="col-md-6 my-3">
           <form class="form-floating">
             <input type="text" class="form-control" value=@Investor.LookingToInvest.ToString("C")
-              id="floatingInputValue" disabled>
-            <label for="floatingInputValue">Capital</label>
+              id="investorCapital" disabled>
+            <label for="investorCapital">Capital</label>
           </form>
         </div>
-
-        <div class="col-md-12 my-3">
+        <div class="col-12 my-3">
+          <form class="form-floating">
+            <textarea id="investorMotive" class="form-control" value="@Investor.Reason" disabled/>
+            <label for="investorMotive">Motive</label>
+          </form>
+        </div>
+        <div class="col-md-6 my-3">
+           <input type="checkbox" id="investorContact" @bind-value=@Investor.Contacted />
+           <label for="investorContact" class="mx-2">Contacted</label>
+        </div>
+        <div class="col-md-6 my-3">
           <span class="text-secondary">Request made : @Investor.Timestamp.Humanize()</span>
+        </div>
+        <div class="col-md-12 text-center my-3">
+          <button class="btn btn-primary btn-sm" id="investorContactedSubmit" @onclick="UpdateInvestor">
+            <i class="fas fa-save"></i> Save
+          </button>
         </div>
       </div>
     </div>
   </WindowContent>
   <WindowActions>
-    <WindowAction Name="Close" OnClick="UpdateVisibilty"></WindowAction>
+    <WindowAction Name="Close" OnClick="UpdateVisibilty"/>
   </WindowActions>
 </TelerikWindow>

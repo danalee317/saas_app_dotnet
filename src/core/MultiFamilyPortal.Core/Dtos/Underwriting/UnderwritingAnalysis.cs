@@ -11,13 +11,13 @@ using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Extensions;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using static MultiFamilyPortal.Helpers.FinancialHelpers;
 
 namespace MultiFamilyPortal.Dtos.Underwriting
 {
     [JsonConverter(typeof(ReactiveObjectConverter<UnderwritingAnalysis>))]
     public class UnderwritingAnalysis : ReactiveObject, IDisposable
     {
-        public static object locker = new object();
         private readonly CompositeDisposable _disposable;
         private ReadOnlyObservableCollection<UnderwritingAnalysisLineItem> _sellersLineItems;
         private ReadOnlyObservableCollection<UnderwritingAnalysisLineItem> _sellersIncomeItems;
@@ -197,14 +197,14 @@ namespace MultiFamilyPortal.Dtos.Underwriting
             sellersRefCount
                 .Batch(throttle)
                 .ToCollection()
-                .Select(x => CalculateNOI(x, false))
+                .Select(x => CalculateNOI(x, Management, false))
                 .ToProperty(this, nameof(SellerNOI), out _sellerNOI)
                 .DisposeWith(_disposable);
 
             ourRefCount
                 .Batch(throttle)
                 .ToCollection()
-                .Select(x => CalculateNOI(x, true))
+                .Select(x => CalculateNOI(x, Management, true))
                 .ToProperty(this, nameof(NOI), out _noi)
                 .DisposeWith(_disposable);
 
@@ -764,50 +764,6 @@ namespace MultiFamilyPortal.Dtos.Underwriting
             return 0;
         }
 
-        private double CalculateNOI(IEnumerable<UnderwritingAnalysisLineItem> items, bool calculateManagement)
-        {
-            if (items is null)
-                return 0;
-
-            var gsr = items.Where(x => x.Category == UnderwritingCategory.GrossScheduledRent)
-                .Sum(x => x.AnnualizedTotal);
-            var vacancy = items.Where(x => x.Category == UnderwritingCategory.PhysicalVacancy)
-                .Sum(x => x.AnnualizedTotal);
-            var concessions = items.Where(x => x.Category == UnderwritingCategory.ConsessionsNonPayment)
-                .Sum(x => x.AnnualizedTotal);
-            var utilityReimbursement = items.Where(x => x.Category == UnderwritingCategory.UtilityReimbursement)
-                .Sum(x => x.AnnualizedTotal);
-            var otherIncome = items.Where(x => x.Category == UnderwritingCategory.OtherIncome || x.Category == UnderwritingCategory.OtherIncomeBad || x.Category == UnderwritingCategory.OtherIncomeOneTime)
-                .Sum(x => x.AnnualizedTotal);
-
-            var income = gsr - vacancy - concessions + utilityReimbursement + otherIncome;
-
-            var taxes = items.Where(x => x.Category == UnderwritingCategory.Taxes)
-                .Sum(x => x.AnnualizedTotal);
-            var insurance = items.Where(x => x.Category == UnderwritingCategory.Insurance)
-                .Sum(x => x.AnnualizedTotal);
-            var repairsMaint = items.Where(x => x.Category == UnderwritingCategory.RepairsMaintenance)
-                .Sum(x => x.AnnualizedTotal);
-            var generalAdmin = items.Where(x => x.Category == UnderwritingCategory.GeneralAdmin)
-                .Sum(x => x.AnnualizedTotal);
-            var marketing = items.Where(x => x.Category == UnderwritingCategory.Marketing)
-                .Sum(x => x.AnnualizedTotal);
-            var utility = items.Where(x => x.Category == UnderwritingCategory.Utility)
-                .Sum(x => x.AnnualizedTotal);
-            var contractServices = items.Where(x => x.Category == UnderwritingCategory.ContractServices)
-                .Sum(x => x.AnnualizedTotal);
-            var payroll = items.Where(x => x.Category == UnderwritingCategory.Payroll)
-                .Sum(x => x.AnnualizedTotal);
-            var management = calculateManagement ? (gsr - vacancy - concessions) * Management :
-                items.Where(x => x.Category == UnderwritingCategory.Management)
-                     .Sum(x => x.AnnualizedTotal);
-
-            var expenses = taxes + insurance + repairsMaint + generalAdmin + marketing + utility + contractServices + payroll + management;
-
-
-            return income - expenses;
-        }
-
         private void OnUpdateIncomeForecast()
         {
             var list = new List<UnderwritingAnalysisIncomeForecast>();
@@ -939,93 +895,6 @@ namespace MultiFamilyPortal.Dtos.Underwriting
             });
 
             Reversion = Projections.LastOrDefault()?.SalesPrice ?? PurchasePrice;
-        }
-
-
-        private static double CalculateCapRate(double noi, double purchasePrice)
-        {
-            if (purchasePrice <= 0 || noi <= 0)
-                return 0;
-
-            return noi / purchasePrice;
-        }
-
-        private static double CalculateCapX(double capXbasis, CostType costType, int units, double purchasePrice)
-        {
-            return costType switch
-            {
-                CostType.PercentOfPurchase => capXbasis * purchasePrice,
-                CostType.PerDoor => capXbasis * units,
-                _ => capXbasis
-            };
-        }
-
-        public static double CalculateCashOnCash(double noi, double raise)
-        {
-            return noi / raise;
-        }
-
-        private static double CalculateClosingCostOther(IEnumerable<UnderwritingAnalysisLineItem> lineItems, double deferredMaintenance, double capXTotal, double secAttorney, double closingCostMiscellaneous)
-        {
-            return (AnnualOperatingExpenses(lineItems) / 6) + InsuranceTotal(lineItems) + deferredMaintenance + capXTotal + secAttorney + closingCostMiscellaneous;
-        }
-
-        private static double AnnualOperatingExpenses(IEnumerable<UnderwritingAnalysisLineItem> lineItems)
-        {
-            if (lineItems is null || !lineItems.Any(x => x.Category.GetLineItemType() == UnderwritingType.Expense))
-                return 0;
-
-            return lineItems.Where(x => x.Category.GetLineItemType() == UnderwritingType.Expense && x.Category != UnderwritingCategory.Insurance)
-                .Sum(x => x.AnnualizedTotal);
-        }
-
-        private static double InsuranceTotal(IEnumerable<UnderwritingAnalysisLineItem> lineItems)
-        {
-            if (lineItems is null || !lineItems.Any(x => x.Category == UnderwritingCategory.Insurance))
-                return 0;
-
-            return lineItems.Where(x => x.Category == UnderwritingCategory.Insurance)
-                .Sum(x => x.AnnualizedTotal);
-        }
-
-        private static double CalculateLossToLease(double grossPotentialRent, IEnumerable<UnderwritingAnalysisLineItem> lineItems)
-        {
-            if (grossPotentialRent <= 0 || lineItems is null || !lineItems.Any())
-                return 0;
-
-            var grossScheduledRent = lineItems.Where(x => x.Category == UnderwritingCategory.GrossScheduledRent).Sum(x => x.AnnualizedTotal);
-            return grossPotentialRent - grossScheduledRent;
-        }
-
-        private static double CalculateRaise(double closingCosts, double closingCostOther, double aquisitionFee, double purchasePrice, double ltv)
-        {
-            return closingCostOther + closingCosts + aquisitionFee + ((1 - ltv) * purchasePrice);
-        }
-
-        private static double CalculatePricePerUnit(int units, double purchasePrice)
-        {
-            if (units < 1)
-                return 0;
-
-            return purchasePrice / units;
-        }
-
-        private static double CalculatePricePerSqFt(int rentableSqFt, double purchasePrice)
-        {
-            if (rentableSqFt < 1)
-                return 0;
-
-            return purchasePrice / rentableSqFt;
-        }
-
-        private static double CalculateAquisitionFee(double percent, double purchasePrice)
-        {
-            return percent * purchasePrice;
-        }
-
-        private static double CalculateClosingCosts(double purchasePrice, double percent)
-        {
-            return percent * purchasePrice;
         }
 
         protected virtual void Dispose(bool disposing)

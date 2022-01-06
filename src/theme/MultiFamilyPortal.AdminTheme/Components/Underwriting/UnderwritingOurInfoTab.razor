@@ -10,6 +10,7 @@ else
       <TelerikNumericTextBox @bind-Value=@Property.Units
                       Min="2"
                       Max="1500"
+                      Arrows=@false
                       Enabled=@_editable
                       Class="form-control" />
     </div>
@@ -18,7 +19,7 @@ else
     <div class="col-sm-4">
       <TelerikNumericTextBox @bind-Value=@Property.GrossPotentialRent
                       Min="0"
-                      Step="1000"
+                      Arrows=@false
                       Format="C"
                       Enabled=@_editable
                       Class="form-control" />

@@ -6,6 +6,7 @@
     <TelerikNumericTextBox @bind-Value=@Property.HoldYears
                     Min="0"
                     Max="50"
+                    Arrows=@false
                     Enabled=@_editable
                     Class="form-control" />
   </div>
@@ -76,6 +77,7 @@
         {
           <TelerikNumericTextBox @bind-Value=@forecast.PerUnitIncrease
                                  Format="C"
+                                 Arrows=@false
                                  Class="form-control" />
         }
       </EditorTemplate>
@@ -89,6 +91,7 @@
         @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
         <TelerikNumericTextBox @bind-Value=@forecast.FixedIncreaseOnRemainingUnits
                                Format="C"
+                               Arrows=@false
                                Class="form-control" />
       </EditorTemplate>
     </GridColumn>
@@ -117,6 +120,7 @@
         @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
         <TelerikNumericTextBox @bind-Value=@forecast.UtilityIncreases
                                Format="C"
+                               Arrows=@false
                                Class="form-control" />
       </EditorTemplate>
     </GridColumn>

@@ -123,6 +123,7 @@
         <TelerikNumericTextBox @bind-Value=@NewProspect.Units
                         Min="2"
                         Max="1500"
+                        Arrows=@false
                         Class="form-control" />
       </div>
 
@@ -130,6 +131,7 @@
       <div class="col-sm-4">
         <TelerikNumericTextBox @bind-Value=@NewProspect.Vintage
                         Min="1900"
+                        Arrows=@false
                         Max="@DateTime.Now.Year"
                         Class="form-control" />
       </div>

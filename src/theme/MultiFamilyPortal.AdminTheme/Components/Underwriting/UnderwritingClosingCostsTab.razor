@@ -68,8 +68,8 @@
       <td role="gridcell" class="px-2 text-center">
         <TelerikNumericTextBox @bind-Value=@Property.DeferredMaintenance
                                Enabled=@_editable
+                               Arrows=@false
                                Min="0"
-                               Step="1000"
                                Format="C" />
       </td>
     </tr>
@@ -84,7 +84,7 @@
         <TelerikNumericTextBox @bind-Value=@Property.SECAttorney
                                Enabled=@_editable
                                Min="0"
-                               Step="1000"
+                               Arrows=@false
                                Format="C" />
       </td>
     </tr>
@@ -98,8 +98,8 @@
       <td role="gridcell" class="px-2 text-center">
         <TelerikNumericTextBox @bind-Value=@Property.ClosingCostMiscellaneous
                                Enabled=@_editable
+                               Arrows=@false
                                Min="0"
-                               Step="1000"
                                Format="C" />
       </td>
     </tr>

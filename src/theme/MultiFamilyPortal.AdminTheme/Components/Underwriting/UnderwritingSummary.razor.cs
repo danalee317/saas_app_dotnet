@@ -16,11 +16,7 @@ public partial class UnderwritingSummary
     private double _sellerCashOnCash;
 
     private ReactiveCommand<Unit, Unit> RefreshCommand;
-    private CompositeDisposable _disposables = new CompositeDisposable();
-    private const string _infoColor = "var(--bs-info)"; 
-    private const string _lowerColor = "#C8A951";
-    private const string _middleColor = "#0e952f";
-    private const string _higherColor = "salmon";
+    private CompositeDisposable _disposables = new();
 
     protected override void OnInitialized()
     {
@@ -30,10 +26,22 @@ public partial class UnderwritingSummary
         Property.WhenAnyValue(x => x.SellerCashOnCash).Select(_ => Unit.Default).InvokeCommand(RefreshCommand).DisposeWith(_disposables);
     }
 
-    private string GetDebtCoverageColor() => _debtCoverageRatio < 1.2 ? _higherColor :
-        _debtCoverageRatio < 1.5 ? _lowerColor : _middleColor;
-    private string GetCoCColor() =>
-        _sellerCashOnCash < 0.10 ? _higherColor : (_sellerCashOnCash >= .10 && _sellerCashOnCash <= .12) ? _lowerColor : _middleColor;
+    private static string GetColor(_colorCodes status) => status switch
+    {
+        _colorCodes.Info => "var(--bs-info)",
+        _colorCodes.Warning => "salmon",
+        _colorCodes.Default => "#ffd800",
+        _colorCodes.Success => "#0e952f",
+        _colorCodes.Light => "var(--bs-light)",
+        _colorCodes.Dark => "var(--bs-dark)",
+    };
+
+    private string GetDebtCoverageColor() => _debtCoverageRatio < 1.2 ? GetColor(_colorCodes.Warning) :
+        _debtCoverageRatio < 1.5 ? GetColor(_colorCodes.Default) : GetColor(_colorCodes.Success);
+    private string GetCoCColor() => _sellerCashOnCash < 0.10 ? GetColor(_colorCodes.Warning) : 
+        (_sellerCashOnCash >= .10 && _sellerCashOnCash <= .12) ? GetColor(_colorCodes.Default) : 
+        GetColor(_colorCodes.Success);
+
     private async Task Refresh()
     {
         if (_capRate != Property.CapRate)
@@ -61,5 +69,15 @@ public partial class UnderwritingSummary
             _disposables.Dispose();
 
         GC.SuppressFinalize(this);
+    }
+
+    private enum _colorCodes
+    {
+        Info,
+        Warning,
+        Default,
+        Success,
+        Light,
+        Dark,
     }
 }

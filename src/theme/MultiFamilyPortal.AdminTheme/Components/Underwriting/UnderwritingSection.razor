@@ -129,6 +129,7 @@
             <TelerikNumericTextBox @bind-Value=@NewItem.Amount
                                    Format="C"
                                    Min="0"
+                                   Arrows=@false
                                    Class="form-control" />
           </div>
           <label for="ExpenseType" class="col-sm-2 col-form-label mb-3">Type</label>
@@ -202,6 +203,7 @@
             <TelerikNumericTextBox @bind-Value=@EditItem.Amount
                                    Format="C"
                                    Min="0"
+                                   Arrows=@false
                                    Class="form-control" />
           </div>
           <label for="ExpenseType" class="col-sm-2 col-form-label mb-3">Type</label>

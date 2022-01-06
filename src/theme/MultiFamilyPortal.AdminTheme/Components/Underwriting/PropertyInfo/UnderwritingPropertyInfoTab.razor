@@ -55,6 +55,7 @@
     <TelerikNumericTextBox @bind-Value=@Property.Units
                     Min="2"
                     Max="1500"
+                    Arrows=@false
                     Enabled=@_editable
                     Class="form-control" />
   </div>
@@ -64,6 +65,7 @@
     <TelerikNumericTextBox @bind-Value=@Property.Vintage
                     Min="1900"
                     Max="@DateTime.Now.Year"
+                    Arrows=@false
                     Enabled=@_editable
                     Class="form-control" />
   </div>
@@ -73,6 +75,7 @@
     <TelerikNumericTextBox @bind-Value=@Property.RentableSqFt
                     Min="0"
                     Format="G"
+                    Arrows=@false
                     Enabled=@_editable
                     Class="form-control" />
   </div>
@@ -81,8 +84,8 @@
   <div class="col-sm-4">
     <TelerikNumericTextBox @bind-Value=@Property.GrossPotentialRent
                     Min="0"
-                    Step="1000"
                     Format="C"
+                    Arrows=@false
                     Enabled=@_editable
                     Class="form-control" />
   </div>
@@ -112,7 +115,7 @@
   <div class="col-sm-4">
     <TelerikNumericTextBox @bind-Value=@Property.CapX
                     Min="0"
-                    Step="1000"
+                    Arrows=@false
                     Format="C"
                     Enabled=@_editable
                     Class="form-control" />
@@ -150,6 +153,7 @@
     <TelerikNumericTextBox @bind-Value=@Property.HoldYears
                     Min="0"
                     Max="50"
+                    Arrows=@false
                     Enabled=@_editable
                     Class="form-control" />
   </div>
@@ -171,6 +175,7 @@
                     Min="0"
                     Step="1000"
                     Format="C"
+                    Arrows=@false
                     Enabled=@_editable
                     Class="form-control" />
   </div>
@@ -181,6 +186,7 @@
                     Min="0"
                     Step="1000"
                     Format="C"
+                    Arrows=@false
                     Enabled=@_editable
                     Class="form-control" />
   </div>
@@ -189,8 +195,8 @@
   <div class="col-sm-4">
     <TelerikNumericTextBox @bind-Value=@Property.OfferPrice
                     Min="0"
-                    Step="1000"
                     Format="C"
+                    Arrows=@false
                     Enabled=@_editable
                     Class="form-control" />
   </div>
@@ -199,8 +205,8 @@
   <div class="col-sm-4">
     <TelerikNumericTextBox @bind-Value=@Property.PurchasePrice
                     Min="0"
-                    Step="1000"
                     Format="C"
+                    Arrows=@false
                     Enabled=@_editable
                     Class="form-control" />
   </div>
@@ -221,7 +227,7 @@
   <div class="col-sm-4">
     <TelerikNumericTextBox @bind-Value=@Property.ClosingCostMiscellaneous
                     Min="0"
-                    Step="1000"
+                    Arrows=@false
                     Format="C"
                     Enabled=@_editable
                     Class="form-control" />
@@ -231,7 +237,7 @@
   <div class="col-sm-4">
     <TelerikNumericTextBox @bind-Value=@Property.DeferredMaintenance
                     Min="0"
-                    Step="1000"
+                    Arrows=@false
                     Format="C"
                     Enabled=@_editable
                     Class="form-control" />
@@ -241,7 +247,7 @@
   <div class="col-sm-4">
     <TelerikNumericTextBox @bind-Value=@Property.SECAttorney
                     Min="0"
-                    Step="1000"
+                    Arrows=@false
                     Format="C"
                     Enabled=@_editable
                     Class="form-control" />

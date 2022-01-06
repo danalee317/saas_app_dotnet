@@ -106,7 +106,8 @@ else
             <label for="PageSize" class="col-sm-2 col-form-label">Page Size</label>
             <div class="col-sm-10">
               <TelerikNumericTextBox @bind-Value=@Model.BlogPageLimit
-                              Class="form-control" />
+                                     Arrows=@false
+                                     Class="form-control" />
             </div>
           </div>
           <div class="row py-4 px-2">

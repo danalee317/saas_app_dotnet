@@ -62,7 +62,7 @@
                <TelerikNumericTextBox Format="C"
                                       Min="0" 
                                       Max=@guidance.Max
-                                      Step="50"
+                                      Arrows=@false
                                       Id="market-min-ed"
                                       Class="form-control form-control-sm w-100" 
                                       @bind-Value=@guidance.Min />
@@ -75,7 +75,7 @@
               <TelerikNumericTextBox Format="C" 
                                      Min=@guidance.Min 
                                      Id="market-max-ed"
-                                     Step="50"
+                                     Arrows=@false
                                      Class="form-control form-control-sm w-100" 
                                      @bind-Value=@guidance.Max />
             </div>
@@ -83,20 +83,21 @@
          }
          else if (guidance.Type == CostType.PercentOfPurchase)
          {
-           <TelerikNumericTextBox @bind-Value=@guidance.Max 
-                                  Format="P" 
-                                  Min="0" 
-                                  Max="1" 
-                                  Step="0.01"
+           <TelerikNumericTextBox @bind-Value=@guidance.Max
+                                  Format="P"
+                                  Min="0"
+                                  Max="1"
+                                  Arrows=@false
                                   Id="market-max-ed"
                                   Class="form-control form-control-sm w-100" />  
         }
          else
         {
           <TelerikNumericTextBox @bind-Value=@guidance.Max
-                                 Format="C" 
-                                 Min="0" 
+                                 Format="C"
+                                 Min="0"
                                  Step="50"
+                                 Arrows=@false
                                  Id="market-max-ed"
                                  Class="form-control form-control-sm w-100" />
         }

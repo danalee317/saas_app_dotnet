@@ -41,7 +41,7 @@
     <TelerikNumericTextBox Class="form-control w-100"
                            Min="100"
                            Id="unit-cash-at-hand"
-                           Step="50"
+                           Arrows=@false
                            Format="C"
                            @bind-Value="@Unit.DepositOnHand" />
   </div>
@@ -60,7 +60,7 @@
     <TelerikNumericTextBox Class="form-control w-100"
                            Min="100"
                            Id="unit-single-rent"
-                           Step="50"
+                           Arrows=@false
                            Format="C"
                            @bind-Value="@Unit.Rent" />
   </div>
@@ -70,7 +70,7 @@
   <div class="col-4 my-3">
     <TelerikNumericTextBox Class="form-control w-100"
                            Id="unit-balance"
-                           Step="50"
+                           Arrows=@false
                            Format="C"
                            @bind-Value="@Unit.Balance"/>
   </div>

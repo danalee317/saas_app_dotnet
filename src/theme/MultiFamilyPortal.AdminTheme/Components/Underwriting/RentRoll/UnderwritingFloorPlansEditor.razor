@@ -15,7 +15,7 @@
       <TelerikNumericTextBox Class="form-control w-100"
                              Min="1"
                              Id="floor-beds"
-                             Step="1"
+                             Arrows=@false
                              @bind-Value="@FloorPlan.Beds"/>
     </div>
     <div class="col-1 my-3">
@@ -25,7 +25,7 @@
       <TelerikNumericTextBox Class="form-control w-100"
                              Min="1"
                              Id="floor-baths"
-                             Step="1"
+                             Arrows=@false
                              @bind-Value="@FloorPlan.Baths"/>
     </div>
     <div class="col-1 my-3">
@@ -35,7 +35,7 @@
       <TelerikNumericTextBox Class="form-control w-100"
                              Min="1"
                              Id="floor-sqft"
-                             Step="1"
+                             Arrows=@false
                              @bind-Value=@FloorPlan.Area />
     </div>
     <div class="col-1 my-3">
@@ -57,7 +57,7 @@
                              Min="1"
                              Max=@(Property.Units - (Property.Models == null ? 0 : Property.Models.Sum(x => x.TotalUnits)))
                              Id="floor-avgrent"
-                             Step="1"
+                             Arrows=@false
                              @bind-Value="@FloorPlan.TotalUnits"/>
     </div>
     <div class="col-3 my-2">
@@ -67,7 +67,7 @@
       <TelerikNumericTextBox  Class="form-control w-100"
                               Min="100"
                               Id="floor-avgrent"
-                              Step="50"
+                              Arrows=@false
                               Format="C"
                               @bind-Value="@FloorPlan.CurrentRent"/>
     </div>
@@ -78,7 +78,7 @@
       <TelerikNumericTextBox  Class="form-control w-100"
                               Min="100"
                               Id="floor-mktrent"
-                              Step="50"
+                              Arrows=@false
                               Format="C"
                               @bind-Value="@FloorPlan.MarketRent" />
     </div>

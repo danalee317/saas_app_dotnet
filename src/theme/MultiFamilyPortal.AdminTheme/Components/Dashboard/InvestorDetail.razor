@@ -1,5 +1,6 @@
 <TelerikWindow Visible="@(Investor != null)" 
                Modal="true"
+               Height="560px"
                Width="600px">
   <WindowTitle>
     <strong>Investor Prospect</strong>
@@ -58,11 +59,13 @@
     </div>
     </TabStripTab>
     <TabStripTab Title="Notes">
-      <div class="container">
-        <div class="row">
-          <div class="col-12 h-100 my-3">
-            <textarea id="investorMotive" class="form-control" value="@Investor.Reason" disabled/>
-          </div>
+      <div class="row">
+        <div class="col-12 h-100">
+          <textarea id="investorMotive" 
+                    style="min-height: 390px;"
+                    class="form-control mx-2" 
+                    disabled>@Investor.Reason
+          </textarea>
         </div>
       </div>
     </TabStripTab>

@@ -140,6 +140,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         public async Task<IActionResult> GetCrmContacts()
         {
             var contacts = await _dbContext.CrmContacts
+                .Include(x => x.Addresses)
                 .Include(x => x.Emails)
                 .Include(x => x.Phones)
                 .Include(x => x.Roles)

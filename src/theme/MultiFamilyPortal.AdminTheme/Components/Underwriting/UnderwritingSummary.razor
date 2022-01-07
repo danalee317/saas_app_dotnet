@@ -1,4 +1,3 @@
-@using MultiFamilyPortal.Dtos
 <div class="container">
   <div class="row underwriting-summary-bar">
     <div class="col-12">
@@ -33,7 +32,7 @@
                                  Color="ColorCode.Info"
                                  Value=@Property.RentableSqFt.ToString("N0") />
             <UnderwritingInfoBar Title="Ann. CoC Return"
-                                 Color="ColorCode.Default"
+                                 Color="ColorCode.Warning"
                                  Value=@Property.CashOnCash.ToString("P") />
           </div>
         </div>
@@ -43,25 +42,25 @@
                                  Color="ColorCode.Success"
                                  Value=@_capRate.ToString("P2") />
             <UnderwritingInfoBar Title="Purchase DSCR"
-                                 Color=@GetDebtCoverageColor()
+                                 Color="@GetDebtCoverageColor()"
                                  Value=@_debtCoverageRatio.ToString("N2") />
             <UnderwritingInfoBar Title="Purchase CoC"
-                                 Color=@GetCoCColor()
+                                 Color="@GetCoCColor()"
                                  Value=@_sellerCashOnCash.ToString("P2") />
             <UnderwritingInfoBar Title="Desired Yield"
                                  Color="ColorCode.Info"
                                  Value=@Property.DesiredYield.ToString("P2") />
             <UnderwritingInfoBar Title="LTV"
-                                 Color="ColorCode.Default"
+                                 Color="ColorCode.Warning"
                                  Value=@Property.LTV.ToString("P2") />
             <UnderwritingInfoBar Title="Reversion Value"
-                                 Color="ColorCode.Warning"
+                                 Color="ColorCode.Danger"
                                  Value=@Property.Reversion.ToString("N0") />
             <UnderwritingInfoBar Title="NPV"
                                  Color="ColorCode.Success"
                                  Value=@Property.NetPresentValue.ToString("N0") />
             <UnderwritingInfoBar Title="IRR"
-                                 Color="ColorCode.Warning"
+                                 Color="ColorCode.Danger"
                                  Value=@Property.InitialRateOfReturn.ToString("P") />
             <UnderwritingInfoBar Title="Total Ann. Return"
                                  Color="ColorCode.Success"

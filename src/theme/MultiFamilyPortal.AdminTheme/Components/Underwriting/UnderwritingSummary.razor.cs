@@ -2,7 +2,7 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Microsoft.AspNetCore.Components;
-using MultiFamilyPortal.Dtos;
+using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
 using ReactiveUI;
 
@@ -27,10 +27,10 @@ public partial class UnderwritingSummary
         Property.WhenAnyValue(x => x.SellerCashOnCash).Select(_ => Unit.Default).InvokeCommand(_refreshCommand).DisposeWith(_disposables);
     }
 
-    private ColorCode GetDebtCoverageColor() => _debtCoverageRatio < 1.2 ? ColorCode.Warning :
-        _debtCoverageRatio < 1.5 ? ColorCode.Default : ColorCode.Success;
-    private ColorCode GetCoCColor() => _sellerCashOnCash < 0.10 ? ColorCode.Warning :
-        _sellerCashOnCash is >= .10 and <= .12 ? ColorCode.Default : ColorCode.Success;
+    private ColorCode GetDebtCoverageColor() => _debtCoverageRatio < 1.2 ? ColorCode.Danger :
+        _debtCoverageRatio < 1.5 ? ColorCode.Warning : ColorCode.Success;
+    private ColorCode GetCoCColor() => _sellerCashOnCash < 0.10 ? ColorCode.Danger :
+        _sellerCashOnCash is >= .10 and <= .12 ? ColorCode.Warning : ColorCode.Success;
 
     private async Task Refresh()
     {

@@ -1,12 +1,10 @@
-namespace MultiFamilyPortal.Dtos
+namespace MultiFamilyPortal.AdminTheme.Models
 {
     public enum ColorCode
     {
         Info,
         Warning,
-        Default,
+        Danger,
         Success,
-        Light,
-        Dark,
     }
 }

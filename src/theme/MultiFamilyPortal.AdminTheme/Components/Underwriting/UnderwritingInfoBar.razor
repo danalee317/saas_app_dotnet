@@ -1,7 +1,6 @@
-@using MultiFamilyPortal.Dtos
-<div class="col-lg col-md-4" style="color: @GetColor(ColorCode.Light)">
-  <div class="mb-2 text-center my-auto">@Title</div>
-  <div style=@($"background-color: {GetColor(Color)}") class="text-center m-2 p-2">
-    <span>@Value</span>
+<div class="col-lg col-md-4">
+  <div class="mb-2 text-center text-light my-auto">@Title</div>
+  <div style=@($"background-color: {GetColor(Color)};") class="text-center m-2 p-2">
+    <span style="color:  @GetTextColor();">@Value</span>
   </div>
 </div>

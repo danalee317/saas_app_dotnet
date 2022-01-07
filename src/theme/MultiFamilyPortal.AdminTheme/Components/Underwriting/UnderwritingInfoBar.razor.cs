@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Components;
-using MultiFamilyPortal.Dtos;
+using MultiFamilyPortal.AdminTheme.Models;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 {
@@ -17,11 +17,19 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         private static string GetColor(ColorCode status) => status switch
         {
             ColorCode.Info => "var(--bs-info)",
-            ColorCode.Warning => "salmon",
-            ColorCode.Default => "#ffd800",
+            ColorCode.Warning => "#ffd800",
+            ColorCode.Danger => "salmon",
             ColorCode.Success => "#0e952f",
-            ColorCode.Light => "var(--bs-light)",
-            ColorCode.Dark => "var(--bs-dark)",
+            _ => "var(--bs-light)"
+        };
+
+        private string GetTextColor() => Color switch
+        {
+            ColorCode.Danger => "var(--bs-light)",
+            ColorCode.Warning => "var(--bs-dark)",
+            ColorCode.Success => "var(--bs-light)",
+            ColorCode.Info => "var(--bs-dark)",
+            _=> "var(--bs-light)",
         };
     }
 }

@@ -14,7 +14,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         [Parameter]
         public ColorCode Color { get; set; }
 
-        private static string GetColor(ColorCode status) => status switch
+        private string GetColor() => Color switch
         {
             ColorCode.Info => "var(--bs-info)",
             ColorCode.Warning => "#ffd800",

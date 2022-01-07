@@ -115,29 +115,9 @@
 
   <label for="CapX" class="col-sm-2 col-form col-form-label">CapX</label>
   <div class="col-sm-4">
-    <TelerikNumericTextBox @bind-Value=@Property.CapX
-                    Min="0"
-                    Arrows=@false
-                    Format="C"
-                    Enabled=@_editable
-                    Class="form-control" />
-  </div>
-
-  <label for="CapX" class="col-sm-2 col-form col-form-label">CapX Type</label>
-  <div class="col-sm-4">
-    <TelerikDropDownList Data=@CostTypes
-                         @bind-Value=@Property.CapXType
-                         Enabled=@_editable
-                         Class="form-control">
-      <ValueTemplate>
-        @{ var value = (Data.Models.CostType)context; }
-        @value.Humanize(LetterCasing.Title)
-      </ValueTemplate>
-      <ItemTemplate>
-        @{ var value = (Data.Models.CostType)context; }
-        @value.Humanize(LetterCasing.Title)
-      </ItemTemplate>
-    </TelerikDropDownList>
+    <DouInput Type="@Property.CapXType"
+              Value="@Property.CapX"
+              Enabled=@_editable /> 
   </div>
 </div>
 

@@ -18,11 +18,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
             var address = new CRMContactAddress 
             {
                 ContactId = Contact.Id,
-                Address1 = string.IsNullOrEmpty(_newAddress.Address1) ? null : _newAddress.Address1.Trim(),
-                Address2 = string.IsNullOrEmpty(_newAddress.Address2) ? null : _newAddress.Address2.Trim(),
-                City = _newAddress.City.Trim(),
-                State = _newAddress.State.Trim(),
-                PostalCode = string.IsNullOrEmpty(_newAddress.PostalCode) ? null : _newAddress.PostalCode.Trim(),
+                Address1 =  _newAddress.Address1,
+                Address2 = _newAddress.Address2,
+                City = _newAddress.City,
+                State = _newAddress.State,
+                PostalCode = _newAddress.PostalCode,
                 Type = _newAddress.Type,
             };
             Contact.Addresses.Add(address);

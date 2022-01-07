@@ -1,32 +1,26 @@
 <div class="container">
   <div class="row">
-    <div class="col-12 my-3">
+    <div class="col-12 my-1">
       <div class="form-floating">
-        <textarea class="form-control" 
-                  id="contactAddress1"
-                  style="height: 80px"
-                  value="@Address.Address1" 
-                  @onchange="@((args) => Address.Address1 = args.Value.ToString())" 
-                  @onblur="@(() => UpdateParent())"/>
+        <TelerikTextBox class="form-control w-100" 
+                  Id="contactAddress1"
+                  @bind-Value="@Address.Address1" />
         <label for="address1">Address 1</label>
       </div>
     </div>
 
-    <div class="col-12 my-3">
+    <div class="col-12 my-1">
       <div class="form-floating">
-        <textarea class="form-control"
-                  id="contactAddress2"
-                  style="height: 80px"
-                  value="@Address.Address2" 
-                  @onchange="@((args) => Address.Address2 = args.Value.ToString())"
-                  @onblur="@(() => UpdateParent())" />
+        <TelerikTextBox class="form-control w-100"
+                  Id="contactAddress2"
+                  @bind-Value="@Address.Address2" />
         <label for="contactAddress2">Address 2</label>
       </div>
     </div>
 
     <div class="col-12">
       <div class="row">
-        <div class="col-md-4 my-3">
+        <div class="col-md-4 my-1">
           <div class="form-floating">
             <input type="text"
                    class="form-control"
@@ -37,7 +31,7 @@
           </div>
         </div>
 
-        <div class="col-md-4 my-3">
+        <div class="col-md-4 my-1">
           <div class="form-floating">
             <input type="text"
                    class="form-control"
@@ -48,7 +42,7 @@
           </div>
         </div>
 
-        <div class="col-md-4 my-3">
+        <div class="col-md-4 my-1">
           <div class="form-floating">
             <input type="text"
                    class="form-control"

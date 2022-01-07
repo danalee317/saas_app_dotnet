@@ -49,16 +49,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
 
         private bool CanAddAddress()
         {
-            if (string.IsNullOrEmpty(_newAddress.Address1) ||
-                string.IsNullOrEmpty(_newAddress.Address2) ||
-                string.IsNullOrEmpty(_newAddress.City) ||
-                string.IsNullOrEmpty(_newAddress.State) ||
-                string.IsNullOrEmpty(_newAddress.PostalCode) ||
-                Contact.Addresses.Any(x => x.Address1.Trim().ToLowerInvariant() == _newAddress.Address1.Trim().ToLowerInvariant() ||
-                Contact.Addresses.Any(x => x.Address2.Trim().ToLowerInvariant() == _newAddress.Address2.Trim().ToLowerInvariant()) ||
-                Contact.Addresses.Any(x => x.Address1.Trim().ToLowerInvariant() == _newAddress.Address2.Trim().ToLowerInvariant()) ||
-                Contact.Addresses.Any(x => x.Address2.Trim().ToLowerInvariant() == _newAddress.Address1.Trim().ToLowerInvariant())
-                ))
+            if (string.IsNullOrEmpty(_newAddress.City) || string.IsNullOrEmpty(_newAddress.State))
                 return false;
 
             return true;

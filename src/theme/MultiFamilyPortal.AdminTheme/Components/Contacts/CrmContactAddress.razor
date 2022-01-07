@@ -1,26 +1,24 @@
 <div class="container">
   <div class="row">
-    <div class="col-12 my-1">
+    <div class="col-12">
       <div class="form-floating">
         <TelerikTextBox class="form-control w-100" 
                   Id="contactAddress1"
                   @bind-Value="@Address.Address1" />
-        <label for="address1">Address 1</label>
-      </div>
-    </div>
-
-    <div class="col-12 my-1">
-      <div class="form-floating">
-        <TelerikTextBox class="form-control w-100"
-                  Id="contactAddress2"
-                  @bind-Value="@Address.Address2" />
-        <label for="contactAddress2">Address 2</label>
+        <label for="address1">Address</label>
       </div>
     </div>
 
     <div class="col-12">
+      <TelerikTextBox class="form-control w-100"
+                      Id="contactAddress2"
+                     @bind-Value="@Address.Address2" />
+      
+    </div>
+
+    <div class="col-12">
       <div class="row">
-        <div class="col-md-4 my-1">
+        <div class="col-md-4">
           <div class="form-floating">
             <input type="text"
                    class="form-control"
@@ -31,7 +29,7 @@
           </div>
         </div>
 
-        <div class="col-md-4 my-1">
+        <div class="col-md-4">
           <div class="form-floating">
             <input type="text"
                    class="form-control"
@@ -42,7 +40,7 @@
           </div>
         </div>
 
-        <div class="col-md-4 my-1">
+        <div class="col-md-4">
           <div class="form-floating">
             <input type="text"
                    class="form-control"

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using MultiFamilyPortal.AdminTheme.Models;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 {
@@ -11,6 +12,24 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         public string Value { get; set; }
 
         [Parameter]
-        public string Color { get; set; }
+        public ColorCode Color { get; set; }
+
+        private string GetColor() => Color switch
+        {
+            ColorCode.Info => "var(--bs-info)",
+            ColorCode.Warning => "#ffd800",
+            ColorCode.Danger => "salmon",
+            ColorCode.Success => "#0e952f",
+            _ => "var(--bs-light)"
+        };
+
+        private string GetTextColor() => Color switch
+        {
+            ColorCode.Danger => "var(--bs-light)",
+            ColorCode.Warning => "var(--bs-dark)",
+            ColorCode.Success => "var(--bs-light)",
+            ColorCode.Info => "var(--bs-dark)",
+            _=> "var(--bs-light)",
+        };
     }
 }

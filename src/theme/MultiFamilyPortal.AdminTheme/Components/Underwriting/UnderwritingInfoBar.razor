@@ -1,6 +1,6 @@
-<div class="w-100">
+<div class="col-lg col-md-4">
   <div class="mb-2 text-center text-light my-auto">@Title</div>
-  <div style=@($"background-color: {Color}") class="text-center m-2 p-2">
-    <span>@Value</span>
+  <div style=@($"background-color: {GetColor()};") class="text-center m-2 p-2">
+    <span style="color:  @GetTextColor();">@Value</span>
   </div>
 </div>

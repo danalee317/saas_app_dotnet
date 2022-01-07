@@ -5,7 +5,7 @@ using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.Dtos.Underwriting;
 using Telerik.Blazor.Components;
 
-namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
+namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Closing
 {
     public partial class UnderwritingMortgagesTab
     {

@@ -81,9 +81,10 @@ namespace MultiFamilyPortal.Tests.Fixtures
             var model = JsonSerializer.Deserialize<UnderwritingAnalysis>(ExpectedJson);
 
             Assert.NotNull(model);
-            Assert.Single(model.Ours);
+            Assert.Equal(3, model.Ours.Count());
 
-            var lineItem = model.Ours.First();
+            var lineItem = model.Ours.FirstOrDefault(x => x.Category == UnderwritingCategory.GrossScheduledRent);
+            Assert.NotNull(lineItem);
             Assert.Equal(150000, lineItem.AnnualizedTotal);
         }
 

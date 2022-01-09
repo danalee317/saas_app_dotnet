@@ -33,6 +33,8 @@ namespace MultiFamilyPortal.Data.Models
 
         public bool Contacted { get; set; }
 
+        public string Comments { get; set; }
+
         private DateTimeOffset _timestamp = DateTimeOffset.Now;
         public DateTimeOffset Timestamp => _timestamp;
     }

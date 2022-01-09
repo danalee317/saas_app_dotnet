@@ -21,7 +21,7 @@ namespace MultiFamilyPortal.Data
 
         DbSet<SocialLink> SocialLinks { get; }
         DbSet<SocialProvider> SocialProviders { get; }
-        
+
         DbSet<UnderwriterGoal> UnderwriterGoals { get; }
         DbSet<UnderwritingLineItem> UnderwritingLineItems { get; }
         DbSet<UnderwritingMortgage> UnderwritingMortgages { get; }
@@ -35,5 +35,6 @@ namespace MultiFamilyPortal.Data
         DbSet<UnderwritingProspectPropertyCapitalImprovements> UnderwritingProspectPropertyCapitalImprovements { get; }
         DbSet<UnderwritingProspectPropertyDealAnalysis> UnderwritingProspectPropertyDealAnalysis { get; }
         DbSet<UnderwritingProspectPropertyIncomeForecast> UnderwritingProspectPropertyIncomeForecasts { get; }
+        DbSet<UnderwritingTier> UnderwritingTiers { get; }
     }
 }

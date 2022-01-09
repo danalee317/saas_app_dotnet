@@ -69,8 +69,8 @@ namespace MultiFamilyPortal.Data
         public DbSet<UnderwritingPropertyUnitLedger> UnderwritingPropertyUnitsLedger { get; set; } = default!;
         public DbSet<UnderwritingProspectFile> UnderwritingProspectFiles { get; set; } = default!;
         public DbSet<UnderwritingProspectPropertyDealAnalysis> UnderwritingProspectPropertyDealAnalysis { get; set; } = default!;
-
         public DbSet<UnderwritingProspectPropertyIncomeForecast> UnderwritingProspectPropertyIncomeForecasts { get; set; } = default!;
+        public DbSet<UnderwritingTier> UnderwritingTiers { get; set; } = default!;
         #endregion
 
         #region Investors

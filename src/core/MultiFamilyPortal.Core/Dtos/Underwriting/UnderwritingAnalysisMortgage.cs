@@ -60,7 +60,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
             {
                 var payment = LoanAmount * (Math.Pow((1 + InterestRate / 12), termOfLoan) * InterestRate) / (12 * (Math.Pow((1 + InterestRate / 12), termOfLoan) - 1));
 
-                return payment * 12;
+                return Math.Round(payment * 12, 2);
             }
         }
     }

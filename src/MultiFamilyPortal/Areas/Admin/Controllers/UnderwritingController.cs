@@ -12,6 +12,7 @@ using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
+using MultiFamilyPortal.Dtos.Underwriting.Reports;
 using MultiFamilyPortal.Services;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
@@ -472,6 +473,45 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
 
             // Return an empty string message in this case
             return new EmptyResult();
+        }
+
+        [HttpGet("property/{propertyId:guid}/investmentTiers/{groupName}")]
+        public async Task<IActionResult> GetInvestmentTiers(Guid propertyId, string groupName)
+        {
+            if (!await _dbContext.UnderwritingPropertyProspects.AnyAsync(x => x.Id == propertyId))
+                return NotFound();
+
+            var tiers = await _dbContext.UnderwritingTiers.Where(x => x.PropertyId == propertyId && x.Group == groupName).ToListAsync();
+
+            return Ok(tiers);
+        }
+
+        [HttpPut("property/{propertyId:guid}/investmentTiers/{groupName}")]
+        public async Task<IActionResult> UpdateInvestmentTiers(Guid propertyId, string groupName, [FromBody] IEnumerable<UnderwritingInvestmentTier> tiers)
+        {
+            if (tiers is null)
+                return BadRequest();
+            else if (!await _dbContext.UnderwritingPropertyProspects.AnyAsync(x => x.Id == propertyId))
+                return NotFound();
+
+            var existing = await _dbContext.UnderwritingTiers.Where(x => x.PropertyId == propertyId && x.Group == groupName).ToListAsync();
+            _dbContext.UnderwritingTiers.RemoveRange(existing);
+            await _dbContext.SaveChangesAsync();
+            if(existing.Any())
+            {
+                await _dbContext.UnderwritingTiers.AddRangeAsync(tiers.Select(x => new UnderwritingTier
+                {
+                    Group = groupName,
+                    PropertyId = propertyId,
+                    Investment = x.Investment,
+                    Name = x.Name,
+                    PreferredRoR = x.PreferredRoR,
+                    RoROnSale = x.RoROnSale,
+                }));
+                await _dbContext.SaveChangesAsync();
+            }
+
+            return Ok();
         }
 
         private async Task<IEnumerable<UnderwritingAnalysisFile>> GetAnalysisFiles(Guid propertyId)

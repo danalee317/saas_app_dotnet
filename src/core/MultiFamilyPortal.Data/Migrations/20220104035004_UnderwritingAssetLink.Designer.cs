@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MultiFamilyPortal.Data;
 
@@ -11,9 +12,10 @@ using MultiFamilyPortal.Data;
 namespace MultiFamilyPortal.Data.Migrations
 {
     [DbContext(typeof(MFPContext))]
-    partial class MFPContextModelSnapshot : ModelSnapshot
+    [Migration("20220104035004_UnderwritingAssetLink")]
+    partial class UnderwritingAssetLink
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -877,9 +879,6 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Comments")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Contacted")
                         .HasColumnType("bit");

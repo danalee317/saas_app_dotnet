@@ -22,8 +22,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
         protected override void OnInitialized()
         {
             _editable = _user.IsAuthorizedInPolicy(PortalPolicy.Underwriter);
-            if (Property.IncomeForecast is null)
-                Property.IncomeForecast = new List<UnderwritingAnalysisIncomeForecast>();
         }
 
         private void OnForecastEditing(GridCommandEventArgs args)

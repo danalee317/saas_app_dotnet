@@ -35,6 +35,8 @@ namespace MultiFamilyPortal.Data.Models
 
         public AssetInvestorState InvestorState { get; set; }
 
+        public Guid? UnderwritingId { get; set; }
+
         private DateTimeOffset _timestamp = DateTimeOffset.Now;
         public DateTimeOffset Timestamp => _timestamp;
 

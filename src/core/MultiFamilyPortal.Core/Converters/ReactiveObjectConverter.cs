@@ -31,6 +31,16 @@ namespace MultiFamilyPortal.Converters
                     if (reader.TokenType == JsonTokenType.String)
                     {
                         var stringValue = reader.GetString();
+                        if (string.IsNullOrEmpty(stringValue))
+                        {
+                            if(prop.PropertyType == typeof(string))
+                            {
+                                prop.SetValue(value, string.Empty);
+                            }
+
+                            continue;
+                        }
+
                         if (prop.PropertyType == typeof(string))
                             prop.SetValue(value, stringValue);
                         else if (prop.PropertyType == typeof(DateTimeOffset) || (prop.PropertyType == typeof(DateTimeOffset?) && !string.IsNullOrEmpty(stringValue)))
@@ -39,9 +49,9 @@ namespace MultiFamilyPortal.Converters
                             prop.SetValue(value, DateTime.Parse(stringValue));
                         else if (prop.PropertyType.IsEnum)
                             prop.SetValue(value, Enum.Parse(prop.PropertyType, stringValue));
-                        else if (prop.PropertyType == typeof(bool))
-                            prop.SetValue(value, bool.Parse(stringValue));
-                        else if (prop.PropertyType == typeof(Guid) && Guid.TryParse(stringValue, out Guid guidValue))
+                        else if (prop.PropertyType == typeof(bool) && bool.TryParse(stringValue, out var boolValue))
+                            prop.SetValue(value, boolValue);
+                        else if ((prop.PropertyType == typeof(Guid) || prop.PropertyType == typeof(Guid?)) && Guid.TryParse(stringValue, out Guid guidValue))
                             prop.SetValue(value, guidValue);
                     }
                     else if (reader.TokenType == JsonTokenType.Number)
@@ -66,15 +76,17 @@ namespace MultiFamilyPortal.Converters
                         var listValue = readHelper.Read(ref reader, prop.PropertyType, options);
 
                         var addMethodAttr = prop.GetCustomAttribute<AddMethodAttribute>();
-                        if(!string.IsNullOrEmpty(addMethodAttr?.Name) &&
-                            type.GetMethods().Any(x => x.Name == addMethodAttr.Name))
+                        if(HasMethod(addMethodAttr?.Name, out var method))
                         {
-                            var method = type.GetMethod(addMethodAttr.Name);
                             method.Invoke(value, new object[] { listValue });
                         }
                         else if(prop.SetMethod is not null)
                         {
                             prop.SetValue(value, listValue);
+                        }
+                        else if(!string.IsNullOrEmpty(addMethodAttr?.Name))
+                        {
+                            throw new InvalidOperationException($"Could not locate method: {addMethodAttr.Name}");
                         }
 
                         continue;
@@ -130,22 +142,22 @@ namespace MultiFamilyPortal.Converters
                 var name = GetPropertyName(prop);
                 if(prop.PropertyType == typeof(int) || prop.PropertyType == typeof(int?))
                 {
-                    var integer = (int)prop.GetValue(value, null);
+                    var integer = (int)propValue;
                     writer.WriteNumber(name, integer);
                 }
                 else if (prop.PropertyType == typeof(double) || prop.PropertyType == typeof(double?))
                 {
-                    var real = (double)prop.GetValue(value, null);
+                    var real = (double)propValue;
                     writer.WriteNumber(name, real);
                 }
                 else if (prop.PropertyType == typeof(decimal) || prop.PropertyType == typeof(decimal?))
                 {
-                    var decimalValue = (decimal)prop.GetValue(value, null);
+                    var decimalValue = (decimal)propValue;
                     writer.WriteNumber(name, decimalValue);
                 }
                 else if (prop.PropertyType == typeof(bool))
                 {
-                    var boolean = (bool)prop.GetValue(value, null);
+                    var boolean = (bool)propValue;
                     writer.WriteBoolean(name, boolean);
                 }
                 else if(typeof(string) != prop.PropertyType && typeof(IEnumerable).IsAssignableFrom(prop.PropertyType))
@@ -168,7 +180,7 @@ namespace MultiFamilyPortal.Converters
                 }
                 else
                 {
-                    var propertyValue = prop.GetValue(value, null).ToString();
+                    var propertyValue = propValue.ToString();
                     writer.WriteString(name, propertyValue);
                 }
             }
@@ -183,6 +195,23 @@ namespace MultiFamilyPortal.Converters
                 return attr.Name;
 
             return prop.Name.Camelize();
+        }
+
+        private static bool HasMethod(string methodName, out MethodInfo method)
+        {
+            method = null;
+            if (string.IsNullOrEmpty(methodName))
+                return false;
+
+            var type = typeof(T);
+            method = type.GetRuntimeMethods().FirstOrDefault(x => x.Name == methodName);
+
+            if(method is null)
+            {
+                method = type.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
+            }
+
+            return method != null;
         }
     }
 }

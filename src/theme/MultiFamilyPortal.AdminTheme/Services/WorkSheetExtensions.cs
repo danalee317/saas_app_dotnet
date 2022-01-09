@@ -111,7 +111,7 @@ namespace MultiFamilyPortal.AdminTheme.Services
                 .SetValue("D12", analysis.PropertyClass.Humanize(LetterCasing.Title))
                 .SetValue("D13", analysis.NeighborhoodClass.Humanize(LetterCasing.Title))
                 .SetValue("D24", analysis.PhysicalVacancy)
-                .SetValue("D25", analysis.PricePerUnit)
+                .SetValue("D25", analysis.CostPerUnit)
                 .SetValue("D26", analysis.CapRate)
                 .SetValue("D27", analysis.CashOnCash)
                 .SetValue("D28", analysis.AskingPrice)

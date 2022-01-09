@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MultiFamilyPortal.Data;
 
@@ -11,9 +12,10 @@ using MultiFamilyPortal.Data;
 namespace MultiFamilyPortal.Data.Migrations
 {
     [DbContext(typeof(MFPContext))]
-    partial class MFPContextModelSnapshot : ModelSnapshot
+    [Migration("20220103032441_InvestmentTier")]
+    partial class InvestmentTier
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -432,9 +434,6 @@ namespace MultiFamilyPortal.Data.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
-
-                    b.Property<Guid?>("UnderwritingId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Units")
                         .HasColumnType("int");
@@ -877,9 +876,6 @@ namespace MultiFamilyPortal.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Comments")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Contacted")
                         .HasColumnType("bit");
@@ -1697,9 +1693,6 @@ namespace MultiFamilyPortal.Data.Migrations
 
                     b.Property<double>("AskingPrice")
                         .HasColumnType("float");
-
-                    b.Property<Guid?>("AssetId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("CapRate")
                         .HasColumnType("float");

@@ -23,6 +23,7 @@ namespace MultiFamilyPortal.Services
                     Address = x.Address,
                     AquisitionFeePercent = x.AquisitionFeePercent,
                     AskingPrice = x.AskingPrice,
+                    AssetId = x.AssetId,
                     CapitalImprovements = x.CapitalImprovements.Select(c => new UnderwritingAnalysisCapitalImprovement
                     {
                         Cost = c.Cost,
@@ -39,18 +40,6 @@ namespace MultiFamilyPortal.Services
                     GrossPotentialRent = x.GrossPotentialRent,
                     HoldYears = x.HoldYears,
                     Id = x.Id,
-                    IncomeForecast = x.Forecast.Select(f => new UnderwritingAnalysisIncomeForecast
-                    {
-                        FixedIncreaseOnRemainingUnits = f.FixedIncreaseOnRemainingUnits,
-                        IncreaseType = f.IncreaseType,
-                        OtherIncomePercent = f.OtherIncomePercent,
-                        OtherLossesPercent = f.OtherLossesPercent,
-                        PerUnitIncrease = f.PerUnitIncrease,
-                        UnitsAppliedTo = f.UnitsAppliedTo,
-                        UtilityIncreases = f.UtilityIncreases,
-                        Vacancy = f.Vacancy,
-                        Year = f.Year
-                    }).ToList(),
                     LoanType = x.LoanType,
                     LTV = x.LTV,
                     Management = x.Management,
@@ -73,6 +62,7 @@ namespace MultiFamilyPortal.Services
                     PropertyClass = x.PropertyClass,
                     PurchasePrice = x.PurchasePrice,
                     RentableSqFt = x.RentableSqFt,
+                    ReversionCapRate = x.ReversionCapRate,
                     SECAttorney = x.SECAttorney,
                     StartDate = x.StartDate,
                     State = x.State,
@@ -115,22 +105,36 @@ namespace MultiFamilyPortal.Services
                 UtilityNotes = dealAnalysis?.UtilityNotes,
                 ValuePlays = dealAnalysis?.ValuePlays,
             };
+            var forecast = await _dbContext.UnderwritingProspectPropertyIncomeForecasts
+                .Where(x => x.ProspectId == propertyId)
+                .Select(x => new UnderwritingAnalysisIncomeForecast
+                {
+                    FixedIncreaseOnRemainingUnits = x.FixedIncreaseOnRemainingUnits,
+                    IncreaseType = x.IncreaseType,
+                    OtherIncomePercent = x.OtherIncomePercent,
+                    OtherLossesPercent = x.OtherLossesPercent,
+                    PerUnitIncrease = x.PerUnitIncrease,
+                    UnitsAppliedTo = x.UnitsAppliedTo,
+                    UtilityIncreases = x.UtilityIncreases,
+                    Vacancy = x.Vacancy,
+                    Year = x.Year
+                }).ToArrayAsync();
 
-            if (property.IncomeForecast is null)
-                property.IncomeForecast = new List<UnderwritingAnalysisIncomeForecast>();
+            property.ReplaceForecast(forecast);
 
-            if(property.IncomeForecast.Count != property.HoldYears + 1)
+            if(property.IncomeForecast.Count() != property.HoldYears + 1)
             {
+                var forecastList = new List<UnderwritingAnalysisIncomeForecast>();
                 var temp = property.IncomeForecast.ToArray();
-                property.IncomeForecast.Clear();
                 for(var i = 0; i < property.HoldYears + 1; i++)
                 {
                     var year = temp.FirstOrDefault(x => x.Year == i) ?? new UnderwritingAnalysisIncomeForecast
                     {
                         Year = i
                     };
-                    property.IncomeForecast.Add(year);
+                    forecastList.Add(year);
                 }
+                property.ReplaceForecast(forecastList);
             }
 
             var mortgages = await _dbContext.UnderwritingMortgages.Where(x => x.PropertyId == property.Id)
@@ -202,6 +206,13 @@ namespace MultiFamilyPortal.Services
                     else
                         property.AddOurItems(items);
                 }
+            }
+
+            if(property.ReversionCapRate == 0)
+            {
+                property.ReversionCapRate = property.CapRate - 0.01;
+                if (property.ReversionCapRate < 0)
+                    property.ReversionCapRate = 0.07;
             }
 
             return property;
@@ -587,6 +598,7 @@ namespace MultiFamilyPortal.Services
             property.PropertyClass = analysis.PropertyClass;
             property.PurchasePrice = analysis.PurchasePrice;
             property.RentableSqFt = analysis.RentableSqFt;
+            property.ReversionCapRate = analysis.ReversionCapRate;
             property.SECAttorney = analysis.SECAttorney;
             property.StartDate = analysis.StartDate;
             property.State = analysis.State;

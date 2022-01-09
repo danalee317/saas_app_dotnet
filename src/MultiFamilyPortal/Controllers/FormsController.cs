@@ -118,6 +118,7 @@ namespace MultiFamilyPortal.Controllers
                 Phone = form.Phone,
                 //Comments = form.Comments,
                 Timezone = form.Timezone,
+                Comments = form.Comments,
             });
 
             await _dbContext.SaveChangesAsync();

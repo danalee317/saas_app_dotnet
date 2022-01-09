@@ -38,5 +38,20 @@ namespace MultiFamilyPortal.Tests.Fixtures.Dtos
 
             Assert.Equal(10000, mortgage.PointCost);
         }
+
+        [Fact]
+        public void LoanAmountChangesTriggerDebtServiceUpdate()
+        {
+            var mortgage = new UnderwritingAnalysisMortgage();
+
+            Assert.Equal(0, mortgage.AnnualDebtService);
+
+            var notifications = new List<string>();
+            mortgage.PropertyChanged += (s, e) => notifications.Add(e.PropertyName);
+
+            mortgage.LoanAmount = 1000000;
+
+            Assert.Contains(notifications, x => x == "AnnualDebtService");
+        }
     }
 }

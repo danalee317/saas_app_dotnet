@@ -76,15 +76,17 @@ namespace MultiFamilyPortal.Converters
                         var listValue = readHelper.Read(ref reader, prop.PropertyType, options);
 
                         var addMethodAttr = prop.GetCustomAttribute<AddMethodAttribute>();
-                        if(!string.IsNullOrEmpty(addMethodAttr?.Name) &&
-                            type.GetMethods().Any(x => x.Name == addMethodAttr.Name))
+                        if(HasMethod(addMethodAttr?.Name, out var method))
                         {
-                            var method = type.GetMethod(addMethodAttr.Name);
                             method.Invoke(value, new object[] { listValue });
                         }
                         else if(prop.SetMethod is not null)
                         {
                             prop.SetValue(value, listValue);
+                        }
+                        else if(!string.IsNullOrEmpty(addMethodAttr?.Name))
+                        {
+                            throw new InvalidOperationException($"Could not locate method: {addMethodAttr.Name}");
                         }
 
                         continue;
@@ -193,6 +195,23 @@ namespace MultiFamilyPortal.Converters
                 return attr.Name;
 
             return prop.Name.Camelize();
+        }
+
+        private static bool HasMethod(string methodName, out MethodInfo method)
+        {
+            method = null;
+            if (string.IsNullOrEmpty(methodName))
+                return false;
+
+            var type = typeof(T);
+            method = type.GetRuntimeMethods().FirstOrDefault(x => x.Name == methodName);
+
+            if(method is null)
+            {
+                method = type.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
+            }
+
+            return method != null;
         }
     }
 }

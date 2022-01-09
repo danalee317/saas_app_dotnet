@@ -18,6 +18,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
     [JsonConverter(typeof(ReactiveObjectConverter<UnderwritingAnalysis>))]
     public class UnderwritingAnalysis : ReactiveObject, IDisposable
     {
+        private bool _disposedValue;
         private readonly CompositeDisposable _disposable;
         private ReadOnlyObservableCollection<UnderwritingAnalysisLineItem> _sellersLineItems;
         private ReadOnlyObservableCollection<UnderwritingAnalysisLineItem> _sellersIncomeItems;
@@ -36,51 +37,45 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         private readonly SourceCache<UnderwritingAnalysisIncomeForecast, int> _forecastCache;
         private readonly SourceCache<UnderwritingAnalysisProjection, int> _projectionCache;
 
-        private ObservableAsPropertyHelper<double> _raise;
-        private ObservableAsPropertyHelper<double> _debtCoverage;
-        private ObservableAsPropertyHelper<double> _closingCostOther;
-        private ObservableAsPropertyHelper<double> _closingCosts;
-        private ObservableAsPropertyHelper<double> _aquisitionFee;
-        private ObservableAsPropertyHelper<double> _costPerUnit;
-        private ObservableAsPropertyHelper<double> _netPresentValue;
-        private ObservableAsPropertyHelper<double> _initialRateOfReturn;
-        private ObservableAsPropertyHelper<double> _totalAnnualReturn;
+        private ReactiveCommand<Unit, Unit> _downpaymentCommand;
+        private ReactiveCommand<Unit, Unit> _calculateVacancyAndManagement;
+        private ReactiveCommand<MortgageUpdate, Unit> _calculateLoanAmount;
+        private ReactiveCommand<ManualMortgageUpdate, Unit> _updateLTV;
+        private ReactiveCommand<Unit, Unit> _updateIncomeForecast;
+        private ReactiveCommand<ProjectionUpdate, Unit> _updateProjections;
+        private ReactiveCommand<ManagementUpdate, Unit> _updateManagement;
+        private ReactiveCommand<VacancyUpdate, Unit> _vacancyUpdate;
 
-        // Seller
-        private ObservableAsPropertyHelper<double> _sellerCashOnCash;
-        private ObservableAsPropertyHelper<double> _sellerCapRate;
-        private ObservableAsPropertyHelper<double> _sellerNOI;
-
-        // Buyer
-        private ObservableAsPropertyHelper<double> _cashOnCash;
-        private ObservableAsPropertyHelper<double> _lossToLease;
-        private ObservableAsPropertyHelper<double> _capXTotal;
-        private ObservableAsPropertyHelper<double> _pricePerUnit;
-        private ObservableAsPropertyHelper<double> _pricePerSqFt;
+        private IObservable<IncomeLedger> _incomeLedger;
+        private IObservable<ExpenseLedger> _expenseLedger;
+        private IObservable<PropertyInfo> _projectionContext;
 
         public UnderwritingAnalysis()
         {
-            var primaryThrottle = TimeSpan.FromMilliseconds(50);
-            var secondaryThrottle = TimeSpan.FromMilliseconds(100);
             _disposable = new();
             Notes = new List<UnderwritingAnalysisNote>();
 
             _sellersCache = new SourceCache<UnderwritingAnalysisLineItem, Guid>(x => x.Id);
             _oursCache = new SourceCache<UnderwritingAnalysisLineItem, Guid>(x => x.Id);
             _mortgageCache = new SourceCache<UnderwritingAnalysisMortgage, Guid>(x => x.Id);
-            _modelsCache = new SourceCache<UnderwritingAnalysisModel, Guid>(x => x.Id); _forecastCache = new SourceCache<UnderwritingAnalysisIncomeForecast, int>(x => x.Year);
+            _modelsCache = new SourceCache<UnderwritingAnalysisModel, Guid>(x => x.Id);
+            _forecastCache = new SourceCache<UnderwritingAnalysisIncomeForecast, int>(x => x.Year);
             _projectionCache = new SourceCache<UnderwritingAnalysisProjection, int>(x => x.Year);
 
+            var loanType = this.WhenAnyValue(x => x.LoanType);
             _calculateVacancyAndManagement = ReactiveCommand.Create(OnCalculateGSRAndManagement)
                 .DisposeWith(_disposable);
             _downpaymentCommand = ReactiveCommand.Create(OnDownpaymentCommandExecuted)
                 .DisposeWith(_disposable);
-            _calculateLoanAmount = ReactiveCommand.Create(OnCalculateLoanAmount)
+            _calculateLoanAmount = ReactiveCommand.Create<MortgageUpdate>(OnCalculateLoanAmount, loanType.Select(x => x == UnderwritingLoanType.Automatic))
                 .DisposeWith(_disposable);
+            _updateLTV = ReactiveCommand.Create<ManualMortgageUpdate>(OnUpdateLTV, loanType.Select(x => x != UnderwritingLoanType.Automatic));
             _updateIncomeForecast = ReactiveCommand.Create(OnUpdateIncomeForecast)
                 .DisposeWith(_disposable);
-            _updateProjections = ReactiveCommand.Create(OnUpdateProjections)
+            _updateProjections = ReactiveCommand.Create<ProjectionUpdate>(OnUpdateProjections, this.WhenAnyValue(x => x.Units).Select(x => x > 0))
                 .DisposeWith(_disposable);
+            _updateManagement = ReactiveCommand.Create<ManagementUpdate>(OnManagementChanged);
+            _vacancyUpdate = ReactiveCommand.Create<VacancyUpdate>(OnVacancyChanged);
 
             var sellersRefCount = _sellersCache.Connect()
                 .RefCount()
@@ -92,14 +87,20 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .AutoRefresh(x => x.Category);
             var mortgageRefCount = _mortgageCache.Connect()
                 .RefCount()
-                .AutoRefresh(x => x.AnnualDebtService);
+                .AutoRefresh(x => x.AnnualDebtService)
+                .AutoRefresh(x => x.LoanAmount)
+                .AutoRefresh(x => x.InterestOnly)
+                .AutoRefresh(x => x.InterestRate)
+                .AutoRefresh(x => x.BalloonMonths)
+                .AutoRefresh(x => x.TermInYears);
             var modelRefCount = _modelsCache.Connect()
                 .RefCount();
             var forecastRef = _forecastCache.Connect()
                 .RefCount();
-            //.AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.NOI, x => x.HoldYears, x => x.StartDate, x => x.Units, (noi, hold, start, units) => Unit.Default));
+            var projectionsRef = _projectionCache.Connect()
+                .RefCount();
 
-            #region Sellers Numbers
+            #region Setup ReadOnlyObservableCollections
             sellersRefCount
                 .SortBy(x => x.Category)
                 .Bind(out _sellersLineItems)
@@ -123,15 +124,6 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .Subscribe()
                 .DisposeWith(_disposable);
 
-            sellersRefCount
-                .Batch(primaryThrottle)
-                .ToCollection()
-                .Select(x => CalculateNOI(x, Management, false))
-                .ToProperty(this, nameof(SellerNOI), out _sellerNOI)
-                .DisposeWith(_disposable);
-            #endregion Sellers Numbers
-
-            #region Our Numbers
             ourRefCount
                 .SortBy(x => x.Category)
                 .Bind(out _ourLineItems)
@@ -155,34 +147,6 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .Subscribe()
                 .DisposeWith(_disposable);
 
-            ourRefCount
-                .AutoRefreshOnObservable(_ =>
-                    this.WhenAnyValue(x => x.DeferredMaintenance, x => x.CapXTotal, x => x.SECAttorney, x => x.ClosingCostMiscellaneous))
-                .Batch(primaryThrottle)
-                .ToCollection()
-                .WithLatestFrom(this.WhenAnyValue(x => x.DeferredMaintenance, x => x.CapXTotal, x => x.SECAttorney, x => x.ClosingCostMiscellaneous, (deferredMaintenance, capX, secAttorney, closingMisc) => (deferredMaintenance, capX, secAttorney, closingMisc)), (collection, value) => (collection, value))
-                .Select(x => CalculateClosingCostOther(x.collection, x.value.deferredMaintenance, x.value.capX, x.value.secAttorney, x.value.closingMisc))
-                .ToProperty(this, nameof(ClosingCostOther), out _closingCostOther)
-                .DisposeWith(_disposable);
-
-            ourRefCount
-                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.GrossPotentialRent))
-                .Batch(primaryThrottle)
-                .ToCollection()
-                .WithLatestFrom(this.WhenAnyValue(x => x.GrossPotentialRent), (ours, gpr) => (ours, gpr))
-                .Select(x => CalculateLossToLease(x.gpr, x.ours))
-                .ToProperty(this, nameof(LossToLease), out _lossToLease)
-                .DisposeWith(_disposable);
-
-            ourRefCount
-                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.Management, x => x.MarketVacancy, x => x.PhysicalVacancy))
-                .Batch(primaryThrottle)
-                .ToCollection()
-                .Select(_ => Unit.Default)
-                .InvokeCommand(_calculateVacancyAndManagement)
-                .DisposeWith(_disposable);
-            #endregion
-
             mortgageRefCount
                 .Bind(out _mortgages)
                 .DisposeMany()
@@ -201,43 +165,127 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .Subscribe()
                 .DisposeWith(_disposable);
 
-            
-
-
-            mortgageRefCount
-                 .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.NOI))
-                 .Batch(primaryThrottle)
-                 .ToCollection()
-                 .WithLatestFrom(this.WhenAnyValue(x => x.NOI), (mortgages, noi) => (mortgages, noi))
-                 .Select(x => CalculateDebtCoverage(x.noi, x.mortgages))
-                 .ToProperty(this, nameof(DebtCoverage), out _debtCoverage)
-                 .DisposeWith(_disposable);
-
-            mortgageRefCount
-                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.PurchasePrice, x => x.LoanType, x => x.LTV))
-                .Batch(primaryThrottle)
-                .ToCollection()
-                .Select(_ => Unit.Default)
-                .InvokeCommand(_downpaymentCommand)
-                .DisposeWith(_disposable);
-
-            _projectionCache.Connect()
-                .RefCount()
+            projectionsRef
                 .Bind(out _projections)
                 .DisposeMany()
                 .Subscribe()
                 .DisposeWith(_disposable);
+            #endregion
 
-            forecastRef
-                .Select(x => Unit.Default)
-                .Throttle(primaryThrottle)
-                .InvokeCommand(_updateProjections)
+            #region Configure Summary Properties
+            ConfigureLedgerItem(ourRefCount, nameof(GrossScheduledRent), out _grossScheduledRent, UnderwritingCategory.GrossScheduledRent);
+            ConfigureLedgerItem(ourRefCount, nameof(VacanyTotal), out _vacancyTotal, UnderwritingCategory.PhysicalVacancy);
+            ConfigureLedgerItem(ourRefCount, nameof(ConcessionsNonPayment), out _concessionsNonPayment, UnderwritingCategory.ConsessionsNonPayment);
+            ConfigureLedgerItem(ourRefCount, nameof(UtilityReimbursement), out _utilityReimbursement, UnderwritingCategory.UtilityReimbursement);
+            ConfigureLedgerItem(ourRefCount, nameof(OtherIncome), out _otherIncome, UnderwritingCategory.OtherIncome, UnderwritingCategory.OtherIncomeBad);
+
+            ConfigureLedgerItem(ourRefCount, nameof(PropertyTaxes), out _propertyTaxes, UnderwritingCategory.Taxes);
+            ConfigureLedgerItem(ourRefCount, nameof(PropertyInsurance), out _propertyInsurance, UnderwritingCategory.Insurance);
+            ConfigureLedgerItem(ourRefCount, nameof(RepairsMaintenance), out _repairsMaintenance, UnderwritingCategory.RepairsMaintenance);
+            ConfigureLedgerItem(ourRefCount, nameof(GeneralAdmin), out _generalAdmin, UnderwritingCategory.GeneralAdmin);
+            ConfigureLedgerItem(ourRefCount, nameof(ManagementTotal), out _managementTotal, UnderwritingCategory.Management);
+            ConfigureLedgerItem(ourRefCount, nameof(Marketing), out _marketing, UnderwritingCategory.Marketing);
+            ConfigureLedgerItem(ourRefCount, nameof(Utilities), out _utilities, UnderwritingCategory.Utility);
+            ConfigureLedgerItem(ourRefCount, nameof(ContractServices), out _contractServices, UnderwritingCategory.ContractServices);
+            ConfigureLedgerItem(ourRefCount, nameof(Payroll), out _payroll, UnderwritingCategory.Payroll);
+
+            // Update Ledger Physical Vacancy
+            ourRefCount
+                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.GrossScheduledRent, x => x.MarketVacancy, x => x.PhysicalVacancy))
+                .ToCollection()
+                .WithLatestFrom(this.WhenAnyValue(x => x.GrossScheduledRent, x => x.MarketVacancy, x => x.PhysicalVacancy))
+                .Select(x => new VacancyUpdate(x.Second.Item1, x.Second.Item2, x.Second.Item3, x.First))
+                .InvokeCommand(_vacancyUpdate)
                 .DisposeWith(_disposable);
 
+            // Update Ledger Management
+            ourRefCount
+                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.EffectiveGrossIncome, x => x.Management))
+                .ToCollection()
+                .WithLatestFrom(this.WhenAnyValue(x => x.TotalRentalIncome, x => x.Management))
+                .Select(x => new ManagementUpdate(x.Second.Item1, x.Second.Item2, x.First))
+                .InvokeCommand(_updateManagement)
+                .DisposeWith(_disposable);
 
+            // AnnualDebtService - Calculated sum from the _mortgageCache AnnualDebtService
+            mortgageRefCount
+                .ToCollection()
+                .Select(x => x.Sum(m => m.AnnualDebtService))
+                .ToProperty(this, nameof(AnnualDebtService), out _annualDebtService);
 
-            this.WhenAnyValue(x => x.Units, x => x.PurchasePrice, CalculatePricePerUnit)
-                .ToProperty(this, nameof(PricePerUnit), out _pricePerUnit)
+            mortgageRefCount
+                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.PurchasePrice, x => x.LTV, x => x.LoanType))
+                .WithLatestFrom(this.WhenAnyValue(x => x.PurchasePrice, x => x.LTV, x => x.LoanType))
+                .Select(x => new MortgageUpdate(x.Second.Item1, x.Second.Item2, x.Second.Item3))
+                .InvokeCommand(_calculateLoanAmount)
+                .DisposeWith(_disposable);
+
+            mortgageRefCount
+                .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.PurchasePrice, x => x.LoanType))
+                .WithLatestFrom(this.WhenAnyValue(x => x.PurchasePrice, x => x.LoanType))
+                .Select(x => new ManualMortgageUpdate(x.Second.Item1, x.Second.Item2))
+                .InvokeCommand(_updateLTV)
+                .DisposeWith(_disposable);
+            #endregion Configure Summary Properties
+
+            this.WhenAnyValue(x => x.GrossScheduledRent, x => x.ConcessionsNonPayment, x => x.VacanyTotal, CalculateTotalRentalIncome)
+                .ToProperty(this, nameof(TotalRentalIncome), out _totalRentalIncome)
+                .DisposeWith(_disposable);
+
+            this.WhenAnyValue(x => x.TotalRentalIncome, x => x.UtilityReimbursement, x => x.OtherIncome, CalculateEffectiveGrossIncome)
+                .ToProperty(this, nameof(EffectiveGrossIncome), out _effectiveGrossIncome)
+                .DisposeWith(_disposable);
+
+            this.WhenAnyValue(x => x.RepairsMaintenance, x => x.GeneralAdmin, x => x.ManagementTotal, x => x.Marketing, x => x.Utilities, x => x.ContractServices, x => x.Payroll, CalculateOperatingExpenses)
+                .ToProperty(this, nameof(OperatingExpenses), out _operartingExpenses)
+                .DisposeWith(_disposable);
+
+            this.WhenAnyValue(x => x.OperatingExpenses, x => x.PropertyTaxes, x => x.PropertyInsurance, CalculateTotalExpenses)
+                .ToProperty(this, nameof(TotalExpenses), out _totalExpenses)
+                .DisposeWith(_disposable);
+
+            this.WhenAnyValue(x => x.EffectiveGrossIncome, x => x.TotalExpenses, (egi, te) => egi - te)
+                .ToProperty(this, nameof(NOI), out _noi)
+                .DisposeWith(_disposable);
+
+            this.WhenAnyValue(x => x.NOI, x => x.AnnualDebtService, CalculateDebtCoverage)
+                .ToProperty(this, nameof(DebtCoverage), out _debtCoverage)
+                .DisposeWith(_disposable);
+
+            this.WhenAnyValue(x => x.NOI, x => x.PurchasePrice, CalculateCapRate)
+                .ToProperty(this, nameof(CapRate), out _capRate)
+                .DisposeWith(_disposable);
+
+            sellersRefCount
+                .ToCollection()
+                .Select(x => CalculateNOI(x, Management, false))
+                .ToProperty(this, nameof(SellerNOI), out _sellerNOI)
+                .DisposeWith(_disposable);
+            
+            _incomeLedger = this.WhenAnyValue(x => x.GrossScheduledRent, x => x.VacanyTotal, x => x.ConcessionsNonPayment, x => x.OtherIncome, x => x.Utilities, x => x.TotalRentalIncome, x => x.EffectiveGrossIncome, (gsr, vt, cnp, oi, util, tri, egi) => new IncomeLedger(gsr, vt, cnp, oi, util, tri, egi));
+            _expenseLedger = this.WhenAnyValue(x => x.PropertyTaxes, x => x.PropertyInsurance, x => x.RepairsMaintenance, x => x.GeneralAdmin, x => x.Marketing, x => x.Utilities, x => x.Management, x => x.ContractServices, x => x.Payroll, (pt, pi, rm, ga, mark, util, man, cs, p) => new ExpenseLedger(pt, pi, rm, ga, mark, util, man, cs, p));
+            _projectionContext = this.WhenAnyValue(x => x.StartDate, x => x.Units, x => x.CapXTotal, x => x.PurchasePrice, x => x.NOI, x => x.AnnualDebtService, x => x.HoldYears, x => x.Management, x => x.PhysicalVacancy, x => x.ReversionCapRate, x => x.CapRate,
+
+                (start, units, capX, purchasePrice, noi, debtService, hold, man, vac, rCap, cap) => new PropertyInfo(start, units, capX, purchasePrice, noi, debtService, hold, man, vac, rCap, cap));
+            var projectionUpdate = this.WhenAnyObservable(x => x._incomeLedger, x => x._expenseLedger, x => x._projectionContext, (income, expense, gen) =>
+            new ProjectionContext(income, expense, gen));
+
+            // double ManagementRate, double VacancyRate, double ReversionCapRate, double CapRate
+
+            forecastRef
+                .AutoRefresh(x => x.FixedIncreaseOnRemainingUnits)
+                .AutoRefresh(x => x.IncreaseType)
+                .AutoRefresh(x => x.OtherIncomePercent)
+                .AutoRefresh(x => x.OtherLossesPercent)
+                .AutoRefresh(x => x.PerUnitIncrease)
+                .AutoRefresh(x => x.UnitsAppliedTo)
+                .AutoRefresh(x => x.UtilityIncreases)
+                .AutoRefresh(x => x.Vacancy)
+                .AutoRefreshOnObservable(_ => projectionUpdate)
+                .ToCollection()
+                .WithLatestFrom(projectionUpdate)
+                .Select(x => new ProjectionUpdate(x.Second, x.First))
+                .InvokeCommand(_updateProjections)
                 .DisposeWith(_disposable);
 
             this.WhenAnyValue(x => x.RentableSqFt, x => x.PurchasePrice, CalculatePricePerSqFt)
@@ -256,14 +304,13 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .ToProperty(this, nameof(SellerCashOnCash), out _sellerCashOnCash)
                 .DisposeWith(_disposable);
 
-            this.WhenAnyValue(x => x.AquisitionFeePercent, x => x.PurchasePrice,CalculateAquisitionFee)
+            this.WhenAnyValue(x => x.AquisitionFeePercent, x => x.PurchasePrice, CalculateAquisitionFee)
                 .ToProperty(this, nameof(AquisitionFee), out _aquisitionFee)
                 .DisposeWith(_disposable);
 
             this.WhenAnyValue(x => x.ClosingCosts, x => x.ClosingCostOther, x => x.AquisitionFee, x => x.PurchasePrice, x => x.LTV, CalculateRaise)
                 .ToProperty(this, nameof(Raise), out _raise)
                 .DisposeWith(_disposable);
-
 
             this.WhenAnyValue(x => x.PurchasePrice, x => x.ClosingCostPercent, CalculateClosingCosts)
                 .ToProperty(this, nameof(ClosingCosts), out _closingCosts)
@@ -273,20 +320,26 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .ToProperty(this, nameof(SellerCapRate), out _sellerCapRate)
                 .DisposeWith(_disposable);
 
-            this.WhenAnyValue(x => x.PurchasePrice, x => x.Units, (p, u) => p / u)
+            this.WhenAnyValue(x => x.PurchasePrice, x => x.Units, CalculateCostPerUnit)
                 .ToProperty(this, nameof(CostPerUnit), out _costPerUnit)
                 .DisposeWith(_disposable);
 
-            this.WhenAnyValue(x => x.LoanType, x => x.LTV, x => x.PurchasePrice, (lt, ltv, pp) => Unit.Default)
-                .Throttle(primaryThrottle)
-                .InvokeCommand(_calculateLoanAmount)
-                .DisposeWith(_disposable);
-
             this.WhenAnyValue(x => x.HoldYears, x => x.IncomeForecast, (h, i) => Unit.Default)
-                .Throttle(primaryThrottle)
                 .InvokeCommand(_updateIncomeForecast)
                 .DisposeWith(_disposable);
+
+            _mortgageCache.AddOrUpdate(new UnderwritingAnalysisMortgage
+            {
+                Id = Guid.NewGuid(),
+                InterestRate = 0.04,
+                Points = 0.01,
+                TermInYears = 30
+            });
+
+            StartDate = DateTime.Now.AddMonths(3);
         }
+
+        #region Settable Properties
 
         public Guid Id { get; set; }
 
@@ -369,7 +422,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         public double MarketVacancy { get; set; }
 
         [Reactive]
-        [DisplayFormat(DataFormatString = "{0:C}")]
+        [DisplayFormat(DataFormatString = "{0:P}")]
         public double Management { get; set; }
 
         [Reactive]
@@ -454,87 +507,13 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         [DisplayFormat(DataFormatString = "{0:C}")]
         public double Reversion { get; private set; }
 
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:C}")]
-        public double NetPresentValue => _netPresentValue?.Value ?? 0;
+        #endregion Settable Properties
 
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:P}")]
-        public double InitialRateOfReturn => _initialRateOfReturn?.Value ?? 0;
-
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:P}")]
-        public double TotalAnnualReturn => _totalAnnualReturn?.Value ?? 0;
-
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:C}")]
-        public double CapXTotal => _capXTotal?.Value ?? 0;
-
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:C}")]
-        public double CostPerUnit => _costPerUnit?.Value ?? 0;
-
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:C}")]
-        public double PricePerSqFt => _pricePerSqFt?.Value ?? 0;
-
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:C}")]
-        public double PricePerUnit => _pricePerUnit?.Value ?? 0;
-
-        [Reactive]
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:C}")]
-        public double NOI { get; private set; }
-
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:C}")]
-        public double SellerNOI => _sellerNOI?.Value ?? 0;
-
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:C}")]
-        public double LossToLease => _lossToLease?.Value ?? 0;
-
-        [Reactive]
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:P}")]
-        public double CapRate { get; private set; }
-
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:P}")]
-        public double SellerCapRate => _sellerCapRate?.Value ?? 0;
-
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:P}")]
-        public double CashOnCash => _cashOnCash?.Value ?? 0;
-
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:P}")]
-        public double SellerCashOnCash => _sellerCashOnCash?.Value ?? 0;
-
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:C}")]
-        public double AquisitionFee => _aquisitionFee?.Value ?? 0;
-
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:C}")]
-        public double ClosingCosts => _closingCosts?.Value ?? 0;
-
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:C}")]
-        public double ClosingCostOther => _closingCostOther?.Value ?? 0;
-
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:P}")]
-        public double DebtCoverage => _debtCoverage?.Value ?? 0;
-
-        [JsonIgnore]
-        [DisplayFormat(DataFormatString = "{0:C}")]
-        public double Raise => _raise?.Value ?? 0;
+        #region Collections
 
         public UnderwritingAnalysisDealAnalysis DealAnalysis { get; set; }
 
-        [AddMethod(nameof(AddSellerItems))]
+        [AddMethod(nameof(ReplaceSellerItems))]
         public IEnumerable<UnderwritingAnalysisLineItem> Sellers => _sellersLineItems;
 
         [JsonIgnore]
@@ -543,7 +522,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         [JsonIgnore]
         public IEnumerable<UnderwritingAnalysisLineItem> SellerExpense => _sellersExpenseItems;
 
-        [AddMethod(nameof(AddOurItems))]
+        [AddMethod(nameof(ReplaceOurItems))]
         public IEnumerable<UnderwritingAnalysisLineItem> Ours => _ourLineItems;
 
         [JsonIgnore]
@@ -552,7 +531,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         [JsonIgnore]
         public IEnumerable<UnderwritingAnalysisLineItem> OurExpense => _ourExpenseItems;
 
-        [AddMethod(nameof(AddMortgages))]
+        [AddMethod(nameof(ReplaceMortgages))]
         public IEnumerable<UnderwritingAnalysisMortgage> Mortgages => _mortgages;
 
         public List<UnderwritingAnalysisNote> Notes { get; set; }
@@ -568,12 +547,140 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         [JsonIgnore]
         public IEnumerable<UnderwritingAnalysisProjection> Projections => _projections;
 
-        private ReactiveCommand<Unit, Unit> _downpaymentCommand;
-        private ReactiveCommand<Unit, Unit> _calculateVacancyAndManagement;
-        private ReactiveCommand<Unit, Unit> _calculateLoanAmount;
-        private ReactiveCommand<Unit, Unit> _updateIncomeForecast;
-        private ReactiveCommand<Unit, Unit> _updateProjections;
-        private bool _disposedValue;
+        #endregion Collections
+
+        #region Calculated Properties
+        private ObservableAsPropertyHelper<double> _grossScheduledRent;
+        public double GrossScheduledRent => _grossScheduledRent?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _concessionsNonPayment;
+        public double ConcessionsNonPayment => _concessionsNonPayment?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _vacancyTotal;
+        public double VacanyTotal => _vacancyTotal?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _otherIncome;
+        public double OtherIncome => _otherIncome?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _utilityReimbursement;
+        public double UtilityReimbursement => _utilityReimbursement?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _totalRentalIncome;
+        public double TotalRentalIncome => _totalRentalIncome?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _effectiveGrossIncome;
+        public double EffectiveGrossIncome => _effectiveGrossIncome?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _annualDebtService;
+        public double AnnualDebtService => _annualDebtService?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _propertyTaxes;
+        public double PropertyTaxes => _propertyTaxes?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _propertyInsurance;
+        public double PropertyInsurance => _propertyInsurance?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _repairsMaintenance;
+        public double RepairsMaintenance => _repairsMaintenance?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _generalAdmin;
+        public double GeneralAdmin => _generalAdmin?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _marketing;
+        public double Marketing => _marketing?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _utilities;
+        public double Utilities => _utilities?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _contractServices;
+        public double ContractServices => _contractServices?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _managementTotal;
+        public double ManagementTotal => _managementTotal?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _payroll;
+        public double Payroll => _payroll?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _operartingExpenses;
+        public double OperatingExpenses => _operartingExpenses?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _totalExpenses;
+        public double TotalExpenses => _totalExpenses?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _netPresentValue;
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public double NetPresentValue => _netPresentValue?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _initialRateOfReturn;
+        [DisplayFormat(DataFormatString = "{0:P}")]
+        public double InitialRateOfReturn => _initialRateOfReturn?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _totalAnnualReturn;
+        [DisplayFormat(DataFormatString = "{0:P}")]
+        public double TotalAnnualReturn => _totalAnnualReturn?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _capXTotal;
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public double CapXTotal => _capXTotal?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _costPerUnit;
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public double CostPerUnit => _costPerUnit?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _pricePerSqFt;
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public double PricePerSqFt => _pricePerSqFt?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _noi;
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public double NOI => _noi?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _sellerNOI;
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public double SellerNOI => _sellerNOI?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _lossToLease;
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public double LossToLease => _lossToLease?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _capRate;
+        [DisplayFormat(DataFormatString = "{0:P}")]
+        public double CapRate => _capRate?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _sellerCapRate;
+        [DisplayFormat(DataFormatString = "{0:P}")]
+        public double SellerCapRate => _sellerCapRate?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _cashOnCash;
+        [DisplayFormat(DataFormatString = "{0:P}")]
+        public double CashOnCash => _cashOnCash?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _sellerCashOnCash;
+        [DisplayFormat(DataFormatString = "{0:P}")]
+        public double SellerCashOnCash => _sellerCashOnCash?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _aquisitionFee;
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public double AquisitionFee => _aquisitionFee?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _closingCosts;
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public double ClosingCosts => _closingCosts?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _closingCostOther;
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public double ClosingCostOther => _closingCostOther?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _debtCoverage;
+        [DisplayFormat(DataFormatString = "{0:P}")]
+        public double DebtCoverage => _debtCoverage?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _raise;
+        [DisplayFormat(DataFormatString = "{0:C}")]
+        public double Raise => _raise?.Value ?? 0;
+        #endregion Calculated Properties
+
+        #region Collection CRUD Helpers
 
         public void AddModel(UnderwritingAnalysisModel item)
         {
@@ -598,12 +705,28 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
         public void AddMortgage(UnderwritingAnalysisMortgage mortgage)
         {
-            _mortgageCache.AddOrUpdate(mortgage);
+            if (LoanType != UnderwritingLoanType.Automatic)
+                _mortgageCache.AddOrUpdate(mortgage);
+            else
+                _mortgageCache.Edit(x =>
+                {
+                    x.Clear();
+                    x.AddOrUpdate(mortgage);
+                });
         }
 
         public void AddMortgages(IEnumerable<UnderwritingAnalysisMortgage> item)
         {
             _mortgageCache.Edit(x => x.AddOrUpdate(item));
+        }
+
+        private void ReplaceMortgages(IEnumerable<UnderwritingAnalysisMortgage> items)
+        {
+            _mortgageCache.Edit(x =>
+            {
+                x.Clear();
+                x.AddOrUpdate(items);
+            });
         }
 
         public void RemoveMortgage(UnderwritingAnalysisMortgage mortgage)
@@ -624,6 +747,15 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         public void RemoveSellerItem(UnderwritingAnalysisLineItem item)
         {
             _sellersCache.Remove(item.Id);
+        }
+
+        public void ReplaceSellerItems(IEnumerable<UnderwritingAnalysisLineItem> items)
+        {
+            _sellersCache.Edit(x =>
+            {
+                x.Clear();
+                x.AddOrUpdate(items);
+            });
         }
 
         public void AddOurItem(UnderwritingAnalysisLineItem item)
@@ -664,33 +796,35 @@ namespace MultiFamilyPortal.Dtos.Underwriting
             });
         }
 
-        private void OnCalculateLoanAmount()
+        #endregion Collection CRUD Helpers
+
+        #region Command Handlers
+        private void OnCalculateLoanAmount(MortgageUpdate update)
         {
-            if (Mortgages is null || LoanType != UnderwritingLoanType.Automatic)
+            if (update.LoanType != UnderwritingLoanType.Automatic)
                 return;
 
-            if(PurchasePrice <= 0)
+            var loanAmount = update.PurchasePrice * update.LTV;
+            if(Mortgages.Count() == 1)
             {
-                if(Mortgages.Any())
-                    _mortgageCache.Clear();
-                return;
-            }
-
-            var loanAmount = PurchasePrice * LTV;
-            var mortgage = Mortgages.FirstOrDefault();
-            if(mortgage is null)
-            {
-                _mortgageCache.AddOrUpdate(new UnderwritingAnalysisMortgage
+                var mortgage = Mortgages.First();
+                if (mortgage.LoanAmount != loanAmount)
                 {
+                    mortgage.LoanAmount = loanAmount;
+                    _mortgageCache.AddOrUpdate(mortgage);
+                }
+            }
+            else
+            {
+                var mortgage = new UnderwritingAnalysisMortgage
+                {
+                    Id = Guid.NewGuid(),
                     InterestRate = 0.04,
                     LoanAmount = loanAmount,
                     Points = 0.01,
                     TermInYears = 30
-                });
-            }
-            else if(mortgage.LoanAmount != loanAmount)
-            {
-                mortgage.LoanAmount = loanAmount;
+                };
+                ReplaceMortgages(new[] { mortgage });
             }
         }
 
@@ -754,18 +888,6 @@ namespace MultiFamilyPortal.Dtos.Underwriting
             }
         }
 
-        private static double CalculateDebtCoverage(double noi, IEnumerable<UnderwritingAnalysisMortgage> mortgages)
-        {
-            if (noi <= 0 || mortgages is null)
-                return 0;
-
-            var mortgageTotal = mortgages.Sum(x => x.AnnualDebtService);
-            if (mortgageTotal > 0)
-                return noi / mortgageTotal;
-
-            return 0;
-        }
-
         private void OnUpdateIncomeForecast()
         {
             var list = new List<UnderwritingAnalysisIncomeForecast>();
@@ -786,47 +908,35 @@ namespace MultiFamilyPortal.Dtos.Underwriting
             }
         }
 
-        private void OnUpdateProjections()
+        private void OnUpdateProjections(ProjectionUpdate update)
         {
-            if (Units < 1)
+            if (!(update.Forecast?.Any() ?? false))
                 return;
 
             var list = new List<UnderwritingAnalysisProjection>();
-            var grossScheduledRent = Ours.Where(x => x.Category == UnderwritingCategory.GrossScheduledRent)
-                .Sum(x => x.AnnualizedTotal);
-            var concessionsNonPayment = Ours.Where(x => x.Category == UnderwritingCategory.ConsessionsNonPayment)
-                .Sum(x => x.AnnualizedTotal);
-            var otherIncome = Ours.Where(x => x.Category == UnderwritingCategory.OtherIncome || x.Category == UnderwritingCategory.OtherIncomeBad)
-                .Sum(x => x.AnnualizedTotal);
-            var utilityReimbursement = Ours.Where(x => x.Category == UnderwritingCategory.UtilityReimbursement)
-                .Sum(x => x.AnnualizedTotal);
+            var grossScheduledRent = update.Context.IncomeLedger.GrossScheduledRent;
+            var concessionsNonPayment = update.Context.IncomeLedger.Concessions;
+            var otherIncome = update.Context.IncomeLedger.OtherIncome;
+            var utilityReimbursement = update.Context.IncomeLedger.UtilityReimbursement;
 
-            var taxes = Ours.Where(x => x.Category == UnderwritingCategory.Taxes)
-                .Sum(x => x.AnnualizedTotal);
-            var insurance = Ours.Where(x => x.Category == UnderwritingCategory.Insurance)
-                .Sum(x => x.AnnualizedTotal);
-            var repairsMaint = Ours.Where(x => x.Category == UnderwritingCategory.RepairsMaintenance)
-                .Sum(x => x.AnnualizedTotal);
-            var generalAdmin = Ours.Where(x => x.Category == UnderwritingCategory.GeneralAdmin)
-                .Sum(x => x.AnnualizedTotal);
-            var marketing = Ours.Where(x => x.Category == UnderwritingCategory.Marketing)
-                .Sum(x => x.AnnualizedTotal);
-            var utility = Ours.Where(x => x.Category == UnderwritingCategory.UtilityReimbursement)
-                .Sum(x => x.AnnualizedTotal);
-            var contractServices = Ours.Where(x => x.Category == UnderwritingCategory.ContractServices)
-                .Sum(x => x.AnnualizedTotal);
-            var payroll = Ours.Where(x => x.Category == UnderwritingCategory.Payroll)
-                .Sum(x => x.AnnualizedTotal);
+            var taxes = update.Context.ExpenseLedger.Taxes;
+            var insurance = update.Context.ExpenseLedger.Insurance;
+            var repairsMaint = update.Context.ExpenseLedger.RepairsMaintenance;
+            var generalAdmin = update.Context.ExpenseLedger.GeneralAdmin;
+            var marketing = update.Context.ExpenseLedger.Marketing;
+            var utility = update.Context.ExpenseLedger.Utility;
+            var contractServices = update.Context.ExpenseLedger.ContractServices;
+            var payroll = update.Context.ExpenseLedger.Payroll;
 
-            var debtService = Mortgages.Sum(x => x.AnnualDebtService);
-            var capitalReserves = CapXTotal;
+            var debtService = update.Context.Info.DebtService;
+            var capitalReserves = update.Context.Info.CapX;
 
-            for (int i = 0; i < HoldYears + 1; i++)
+            for (int i = 0; i < update.Context.Info.Hold + 1; i++)
             {
                 var factor = 1.0;
                 if (i == 0)
                 {
-                    factor = (new DateTime(StartDate.Year, 1, 1) - StartDate.DateTime) / TimeSpan.FromDays(365);
+                    factor = (new DateTime(update.Context.Info.Start.Year, 1, 1) - update.Context.Info.Start) / TimeSpan.FromDays(365);
                 }
 
                 var forecast = IncomeForecast.ElementAtOrDefault(i);
@@ -838,9 +948,9 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                     var increase = forecast.IncreaseType switch
                     {
                         IncomeForecastIncreaseType.FixedAmount => forecast.UnitsAppliedTo * forecast.PerUnitIncrease,
-                        _ => (forecast.UnitsAppliedTo / Units) * (grossScheduledRent * forecast.PerUnitIncrease),
+                        _ => (forecast.UnitsAppliedTo / update.Context.Info.Units) * (grossScheduledRent * forecast.PerUnitIncrease),
                     };
-                    increase += (Units - forecast.UnitsAppliedTo) * forecast.FixedIncreaseOnRemainingUnits;
+                    increase += (update.Context.Info.Units - forecast.UnitsAppliedTo) * forecast.FixedIncreaseOnRemainingUnits;
                     grossScheduledRent += increase;
                 }
 
@@ -849,22 +959,23 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                     otherIncome += otherIncome * forecast.OtherIncomePercent;
                 }
 
-                if (forecast.OtherLossesPercent > 0)
-                {
-                    // TODO: Determine how we want to apply Other Losses
-                }
-
                 utility += forecast.UtilityIncreases;
 
-                var vacancyRate = forecast.Vacancy > 0 ? forecast.Vacancy : PhysicalVacancy;
+                var vacancyRate = forecast.Vacancy > 0 ? forecast.Vacancy : update.Context.Info.VacancyRate;
                 var vacancy = (grossScheduledRent * vacancyRate);
                 var netCollectedRent = grossScheduledRent - vacancy;
                 var management = Management * netCollectedRent;
 
                 var egi = grossScheduledRent - vacancy - concessionsNonPayment + otherIncome + utilityReimbursement;
                 var expenses = taxes + insurance + repairsMaint + generalAdmin + management + marketing + utility + contractServices + payroll;
+
+                if (forecast.OtherLossesPercent > 0)
+                {
+                    expenses -= egi * forecast.OtherLossesPercent;
+                }
+
                 var noi = egi - expenses;
-                var capRate = ReversionCapRate > 0 ? ReversionCapRate : CapRate - 0.01;
+                var capRate = update.Context.Info.ReversionCapRate > 0 ? update.Context.Info.ReversionCapRate : update.Context.Info.CapRate - 0.01;
                 if (capRate <= 0)
                     capRate = 0.06;
 
@@ -896,13 +1007,108 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 x.AddOrUpdate(list);
             });
 
-            var startYear = Projections.FirstOrDefault();
-            if(startYear != null)
-            {
-                NOI = startYear.NetOperatingIncome;
-                CapRate = CalculateCapRate(startYear.NetOperatingIncome, PurchasePrice);
-            }
             Reversion = Projections.LastOrDefault()?.SalesPrice ?? PurchasePrice;
+        }
+
+        private void OnUpdateLTV(ManualMortgageUpdate update)
+        {
+            if (update.LoanType == UnderwritingLoanType.Automatic)
+                return;
+
+            if (update.PurchasePrice == 0)
+                LTV = 0;
+
+            var totalLoans = Mortgages.Sum(x => x.LoanAmount);
+            var ltv = totalLoans / update.PurchasePrice;
+            if (LTV != ltv)
+                LTV = ltv;
+        }
+
+        private void OnManagementChanged(ManagementUpdate update)
+        {
+            var percent = Math.Max(0, update.ManagementPercent);
+            var income = Math.Max(0, update.TotalRentalIncome);
+            var total = income * percent;
+            var existingCount = update.Ledger.Count(x => x.Category == UnderwritingCategory.Management);
+            var item = new UnderwritingAnalysisLineItem
+            {
+                Id = Guid.NewGuid(),
+                Category = UnderwritingCategory.Management,
+                Description = UnderwritingCategory.Management.GetDisplayName(),
+                ExpenseType = ExpenseSheetType.T12,
+                Amount = total,
+            };
+
+            if (existingCount == 1)
+            {
+                var record = update.Ledger.First(x => x.Category == UnderwritingCategory.Management);
+                record.ExpenseType = ExpenseSheetType.T12;
+                record.Amount = total;
+            }
+            else if (existingCount > 1)
+            {
+                var toRemove = update.Ledger.Where(x => x.Category == UnderwritingCategory.Management);
+
+                _oursCache.Edit(x =>
+                {
+                    x.Remove(toRemove);
+                    x.AddOrUpdate(item);
+                });
+            }
+            else
+            {
+                _oursCache.AddOrUpdate(item);
+            }
+        }
+
+        private void OnVacancyChanged(VacancyUpdate update)
+        {
+            var rate = new[] { 0.05, update.MarketVacancy, update.PhysicalVacancy }
+                .Where(x => x >= 0.05)
+                .Min();
+
+            var total = Math.Max(0, update.GrossScheduledRent) * rate;
+            var existingCount = update.Ledger.Count(x => x.Category == UnderwritingCategory.PhysicalVacancy);
+            var item = new UnderwritingAnalysisLineItem
+            {
+                Id = Guid.NewGuid(),
+                Category = UnderwritingCategory.PhysicalVacancy,
+                Description = UnderwritingCategory.PhysicalVacancy.GetDisplayName(),
+                ExpenseType = ExpenseSheetType.T12,
+                Amount = total,
+            };
+
+            if (existingCount == 1)
+            {
+                var record = update.Ledger.First(x => x.Category == UnderwritingCategory.PhysicalVacancy);
+                record.ExpenseType = ExpenseSheetType.T12;
+                record.Amount = total;
+            }
+            else if(existingCount > 1)
+            {
+                var toRemove = update.Ledger.Where(x => x.Category == UnderwritingCategory.PhysicalVacancy);
+
+                _oursCache.Edit(x =>
+                {
+                    x.Remove(toRemove);
+                    x.AddOrUpdate(item);
+                });
+            }
+            else
+            {
+                _oursCache.AddOrUpdate(item);
+            }
+        }
+        #endregion Command Handlers
+
+        private void ConfigureLedgerItem(IObservable<IChangeSet<UnderwritingAnalysisLineItem, Guid>> changeSet, string name, out ObservableAsPropertyHelper<double> helper, params UnderwritingCategory[] categories)
+        {
+            changeSet
+                .Filter(x => categories.Any(c => c == x.Category))
+                .ToCollection()
+                .Select(x => GetSum(x, categories))
+                .ToProperty(this, name, out helper)
+                .DisposeWith(_disposable);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -934,5 +1140,48 @@ namespace MultiFamilyPortal.Dtos.Underwriting
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+
+        private record MortgageUpdate(double PurchasePrice, double LTV, UnderwritingLoanType LoanType);
+        private record ManualMortgageUpdate(double PurchasePrice, UnderwritingLoanType LoanType);
+        private record ManagementUpdate(double TotalRentalIncome, double ManagementPercent, IEnumerable<UnderwritingAnalysisLineItem> Ledger);
+        private record VacancyUpdate(double GrossScheduledRent, double MarketVacancy, double PhysicalVacancy, IEnumerable<UnderwritingAnalysisLineItem> Ledger);
+        private record IncomeLedger(double GrossScheduledRent,
+            double Vacancy,
+            double Concessions,
+            double OtherIncome,
+            double UtilityReimbursement,
+            double TotalRentalIncome,
+            double EffectiveGrossIncome);
+
+        private record ExpenseLedger(
+            double Taxes,
+            double Insurance,
+            double RepairsMaintenance,
+            double GeneralAdmin,
+            double Marketing,
+            double Utility,
+            double Management,
+            double ContractServices,
+            double Payroll);
+
+        private record PropertyInfo(
+            DateTimeOffset Start,
+            int Units,
+            double CapX,
+            double PurchasePrice,
+            double NOI,
+            double DebtService,
+            int Hold,
+            double ManagementRate,
+            double VacancyRate,
+            double ReversionCapRate,
+            double CapRate);
+
+        private record ProjectionContext(
+            IncomeLedger IncomeLedger,
+            ExpenseLedger ExpenseLedger,
+            PropertyInfo Info);
+
+        private record ProjectionUpdate(ProjectionContext Context, IEnumerable<UnderwritingAnalysisIncomeForecast> Forecast);
     }
 }

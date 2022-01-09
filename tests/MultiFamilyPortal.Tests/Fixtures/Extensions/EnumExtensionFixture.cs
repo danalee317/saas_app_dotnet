@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MultiFamilyPortal.Data.Models;
 using Xunit;
-using MultiFamilyPortal.Extensions;
-using MultiFamilyPortal.Data.Models;
 
 namespace MultiFamilyPortal.Tests.Fixtures.Extensions
 {

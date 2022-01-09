@@ -27,7 +27,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         public double Amount { get; set; }
 
         [Reactive]
-        public ExpenseSheetType ExpenseType { get; set; }
+        public ExpenseSheetType ExpenseType { get; set; } = ExpenseSheetType.T12;
 
         private ObservableAsPropertyHelper<double> _annualizedTotal;
         [JsonIgnore]

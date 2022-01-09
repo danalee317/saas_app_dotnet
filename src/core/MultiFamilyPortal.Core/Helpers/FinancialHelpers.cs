@@ -71,6 +71,11 @@ namespace MultiFamilyPortal.Helpers
             return noi / raise;
         }
 
+        public static double CalculateClosingCostOther(double annualOperatingExpenses, double insurance, double deferredMaintenance, double capXTotal, double secAttorney, double closingCostMiscellaneous)
+        {
+            return (annualOperatingExpenses / 6) + insurance + deferredMaintenance + capXTotal + secAttorney + closingCostMiscellaneous;
+        }
+
         public static double CalculateClosingCostOther(IEnumerable<UnderwritingAnalysisLineItem> lineItems, double deferredMaintenance, double capXTotal, double secAttorney, double closingCostMiscellaneous)
         {
             return (AnnualOperatingExpenses(lineItems) / 6) + InsuranceTotal(lineItems) + deferredMaintenance + capXTotal + secAttorney + closingCostMiscellaneous;
@@ -132,6 +137,49 @@ namespace MultiFamilyPortal.Helpers
         public static double CalculateClosingCosts(double purchasePrice, double percent)
         {
             return percent * purchasePrice;
+        }
+
+        public static double CalculateCostPerUnit(double purchasePrice, int units)
+        {
+            if (units <= 0)
+                return 0;
+
+            return purchasePrice / units;
+        }
+
+        public static double CalculateDebtCoverage(double noi, double mortgageTotal)
+        {
+            if (noi <= 0 || mortgageTotal <= 0)
+                return 0;
+
+            return noi / mortgageTotal;
+        }
+
+        public static double CalculateTotalExpenses(double operatingExpenses, double taxes, double insurance)
+        {
+            return operatingExpenses + taxes + insurance;
+        }
+
+        public static double CalculateOperatingExpenses(double repairs, double generalAdmin, double management, double marketing, double utilities, double contract, double payroll)
+        {
+            return repairs + generalAdmin + management + marketing + utilities + contract + payroll;
+        }
+
+        public static double CalculateTotalRentalIncome(double grossScheduledRent, double concessionsNonPayment, double vacancy)
+        {
+            return grossScheduledRent - concessionsNonPayment - vacancy;
+        }
+
+        public static double CalculateEffectiveGrossIncome(double totalRentalIncome, double utilityReimbursement, double otherIncome)
+        {
+            return totalRentalIncome + utilityReimbursement + otherIncome; ;
+        }
+
+        public static double GetSum(IEnumerable<UnderwritingAnalysisLineItem> ledger, params UnderwritingCategory[] categories)
+        {
+            var items = ledger.Where(x => categories.Any(c => c == x.Category));
+            var total = items.Sum(l => l.AnnualizedTotal);
+            return total;
         }
     }
 }

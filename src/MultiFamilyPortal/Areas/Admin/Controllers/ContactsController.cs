@@ -362,6 +362,10 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     await _dbContext.CrmContactAddresses.AddAsync(newAddress);
                 }
             }
+            else
+            {
+                contact.Addresses = null;
+            }
 
             if (updatedContact.Emails?.Any() ?? false)
             {

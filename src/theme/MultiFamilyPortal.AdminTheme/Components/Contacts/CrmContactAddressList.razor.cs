@@ -15,7 +15,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
 
         private void AddAddress()
         {
-            var address = new CRMContactAddress 
+            var address = new CRMContactAddress
             {
                 ContactId = Contact.Id,
                 Address1 =  _newAddress.Address1,
@@ -44,15 +44,16 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
         private void OnDeleteAddress(CRMContactAddress address)
         {
             if (address is not null && Contact.Addresses.Contains(address))
+            {
                 Contact.Addresses.Remove(address);
+                StateHasChanged();
+            }
+
         }
 
         private bool CanAddAddress()
         {
-            if (string.IsNullOrEmpty(_newAddress.City) || string.IsNullOrEmpty(_newAddress.State))
-                return false;
-
-            return true;
+            return !string.IsNullOrEmpty(_newAddress.City) && !string.IsNullOrEmpty(_newAddress.State);
         }
     }
 }

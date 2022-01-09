@@ -1,24 +1,25 @@
 @using Humanizer;
-<div class="input-group flex-nowrap ms-3" id="@Id">
-  <div class="input-group-prepend">
-    <select class="form-select input-group-text ms-one"
-            aria-label="Select Cost Types"
-            @bind="@Property.CapXType"
-            disabled ="@(!Enabled)">
-      @foreach (var costType in _costTypes)
-      {
-        <option class="me-3" value="@costType" selected=@(costType == Property.CapXType)>
-          @costType.Humanize(LetterCasing.Title)
-          &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
-        </option>
-      }
-    </select>
+<div class="mx-2 mx-md-3">
+  <div class="input-group flex-nowrap" id="@Id">
+    <div class="input-group-prepend">
+      <select class="form-select ms-one"
+              aria-label="Select Cost Types"
+              @bind="@Property.CapXType"
+              disabled="@(!Enabled)">
+        @foreach (var costType in _costTypes)
+        {
+          <option class="me-3" value="@costType" selected=@(costType == Property.CapXType)>
+            @costType.Humanize(LetterCasing.Title)
+            &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+          </option>
+        }
+      </select>
+    </div>
+    <input class="form-control me-one"
+           @bind-value="@_capx"
+           aria-label="Capx input"
+           disabled="@(!Enabled)"
+           @onblur="FormatToDecimal"
+           @onfocus="FormatToNumber"/>
   </div>
-  <input class="form-control me-one"
-         @bind-value="@_capx"
-         aria-label="Capx input"
-         disabled ="@(!Enabled)"
-         @onblur="FormatToPercentage"
-         @onfocus="FormatToNumber"/>
 </div>
-

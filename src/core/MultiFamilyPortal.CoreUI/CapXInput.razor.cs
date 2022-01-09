@@ -1,6 +1,5 @@
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
-using System.Globalization;
 using Microsoft.AspNetCore.Components;
 
 namespace MultiFamilyPortal.CoreUI
@@ -16,19 +15,16 @@ namespace MultiFamilyPortal.CoreUI
         [Parameter]
         public string Id { get; set; }
 
-        protected override void OnParametersSet() => _capx = Property.CapX.ToString("C0");
+        protected override void OnParametersSet() => _capx = Property.CapX.ToString("C2");
         private string _capx;
-        private readonly CostType[] _costTypes = {CostType.PerDoor, CostType.Total};
+        private readonly CostType[] _costTypes = { CostType.PerDoor, CostType.Total };
 
-        private void FormatToPercentage()
+        private void FormatToDecimal()
         {
-            Property.CapX = double.Parse(_capx, NumberStyles.AllowCurrencySymbol);
-            _capx = Property.CapX.ToString("C0");
+            Property.CapX = double.Parse(_capx);
+            _capx = Property.CapX.ToString("C2");
         }
 
-        private void FormatToNumber()
-        {
-            _capx = double.Parse(_capx, NumberStyles.AllowCurrencySymbol).ToString("N0");
-        }
+        private void FormatToNumber() => _capx = double.Parse(_capx[1..]).ToString("N2");
     }
 }

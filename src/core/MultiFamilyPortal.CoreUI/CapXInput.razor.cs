@@ -22,9 +22,9 @@ namespace MultiFamilyPortal.CoreUI
         private void FormatToDecimal()
         {
             Property.CapX = double.Parse(_capx);
-            _capx = Property.CapX.ToString("C2");
+            _capx = Property.CapX.ToString("C");
         }
 
-        private void FormatToNumber() => _capx = double.Parse(_capx[1..]).ToString("N2");
+        private void FormatToNumber() => _capx = double.Parse(_capx[1..]).ToString("N");
     }
 }

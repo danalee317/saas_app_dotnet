@@ -3,6 +3,10 @@
 :root {
   --portal-menu-bg: #2f4050;
   --portal-title-color: #0d6efd;
+  --portal-underwriting-success: #50c878;
+  --portal-underwriting-danger: salmon;
+  --portal-underwriting-info: #89CFF0;
+  --portal-underwriting-warning: #f0e87d;
 }
 
 html, body {

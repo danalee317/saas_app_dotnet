@@ -3,10 +3,10 @@
     <div class="col-12">
       <h1 class="text-center my-3 display-5">@Property.Name</h1>
     </div>
-    <div class="col-12 summary-section">
+    <div class="col-12 summary-section d-none d-md-block">
       <div class="row">
-        <div class="col-12 mb-3">
-          <div class="row gy-3">
+        <div class="col-12">
+          <div class="row">
             <UnderwritingInfoBar Title="Start Date"
                                  Color="ColorCode.Info"
                                  Value=@Property.StartDate.ToString("MM/dd/yyyy") />
@@ -37,7 +37,7 @@
           </div>
         </div>
         <div class="col-12">
-          <div class="row gy-3">
+          <div class="row">
             <UnderwritingInfoBar Title="Actual Cap Rate"
                                  Color="ColorCode.Success"
                                  Value=@_capRate.ToString("P2") />

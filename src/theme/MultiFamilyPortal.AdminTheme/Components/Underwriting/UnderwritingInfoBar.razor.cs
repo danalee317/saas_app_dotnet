@@ -16,10 +16,10 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
 
         private string GetColor() => Color switch
         {
-            ColorCode.Info => "var(--bs-info)",
-            ColorCode.Warning => "#ffd800",
-            ColorCode.Danger => "salmon",
-            ColorCode.Success => "#0e952f",
+            ColorCode.Info => "var(--portal-underwriting-info)",
+            ColorCode.Warning => "var(--portal-underwriting-warning)",
+            ColorCode.Danger => "var(--portal-underwriting-danger)",
+            ColorCode.Success => "var(--portal-underwriting-success)",
             _ => "var(--bs-light)"
         };
 

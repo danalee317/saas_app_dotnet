@@ -140,6 +140,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         public async Task<IActionResult> GetCrmContacts()
         {
             var contacts = await _dbContext.CrmContacts
+                .Include(x => x.Addresses)
                 .Include(x => x.Emails)
                 .Include(x => x.Phones)
                 .Include(x => x.Roles)
@@ -335,11 +336,11 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     if (address is null)
                         continue;
 
-                    address.Address1 = updated.Address1;
-                    address.Address2 = updated.Address2;
-                    address.City = updated.City;
-                    address.State = updated.State;
-                    address.PostalCode = updated.PostalCode;
+                    address.Address1 = updated.Address1?.Trim();
+                    address.Address2 = updated.Address2?.Trim();
+                    address.City = updated.City?.Trim();
+                    address.State = updated.State?.Trim();
+                    address.PostalCode = updated.PostalCode?.Trim();
                     address.Type = updated.Type;
                     address.Primary = updated.Primary;
                     _dbContext.CrmContactAddresses.Update(address);
@@ -360,6 +361,10 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     };
                     await _dbContext.CrmContactAddresses.AddAsync(newAddress);
                 }
+            }
+            else
+            {
+                contact.Addresses = null;
             }
 
             if (updatedContact.Emails?.Any() ?? false)

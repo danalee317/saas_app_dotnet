@@ -5,6 +5,12 @@
                     Id="Prefix"
                     Class="form-control" />
   </div>
+   <label for="Suffix" class="col-md-2 my-auto">Suffix</label>
+  <div class="col-md-4 form-group">
+    <TelerikTextBox @bind-Value=@Contact.Suffix
+                    Id="Suffix"
+                    Class="form-control" />
+  </div>
 </div>
 <div class="row gt-3 mt-2">
   <label for="FirstName" class="col-md-2 my-auto">First Name</label>
@@ -21,10 +27,10 @@
   </div>
 </div>
 <div class="row gt-3 mt-2 mb-3">
-  <label for="Suffix" class="col-md-2 my-auto">Suffix</label>
+  <label for="Suffix" class="col-md-2 my-auto">Middle Name</label>
   <div class="col-md-4 form-group">
-    <TelerikTextBox @bind-Value=@Contact.Suffix
-                    Id="Suffix"
+    <TelerikTextBox @bind-Value=@Contact.MiddleName
+                    Id="middleName"
                     Class="form-control" />
   </div>
   <label for="Dob" class="col-md-2 my-auto">Birthday</label>
@@ -66,22 +72,26 @@
 
 <hr />
 
-<!-- Phones -->
 
 <LoaderContainer Context=@Contact>
-  <CrmContactPhoneList Contact="@Contact" />
+  <div class="row gt-3">
+    <div class="col-md-6">
+      <CrmContactPhoneList Contact="@Contact" />
+     </div>
+    <div class="col-md-6">
+      <CrmContactEmailList Contact=@Contact />
+    </div>
+  </div>
 </LoaderContainer>
 
 <hr />
 
-<!-- Emails -->
 <LoaderContainer Context=@Contact>
-  <CrmContactEmailList Contact=@Contact />
+  <CrmContactAddressList Contact=@Contact />
 </LoaderContainer>
 
 <hr />
 
-<!-- Contact Types -->
 
 <div class="row gt-3 mt-2 mb-3">
   <div class="col-md-2 text-center my-auto">

@@ -14,9 +14,9 @@
         @foreach (var costType in _costTypes)
         {
           <option class="me-3" value="@costType" selected=@(costType == Property.CapXType)>
-            &nbsp &nbsp &nbsp
+            &nbsp 
             <span class="mx-2">@costType.Humanize(LetterCasing.Title)</span> 
-            &nbsp &nbsp &nbsp
+            &nbsp &nbsp &nbsp  &nbsp &nbsp &nbsp
           </option>
         }
       </select>

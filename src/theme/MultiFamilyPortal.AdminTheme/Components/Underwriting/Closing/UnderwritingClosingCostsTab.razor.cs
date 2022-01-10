@@ -4,7 +4,7 @@ using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
 
-namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
+namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Closing
 {
     public partial class UnderwritingClosingCostsTab
     {

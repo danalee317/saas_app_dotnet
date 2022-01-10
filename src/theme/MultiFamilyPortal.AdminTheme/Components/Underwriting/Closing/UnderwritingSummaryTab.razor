@@ -16,15 +16,7 @@
     <td class="py-2"><strong>Capital Expenditures</strong></td>
     <td class="py-2">@Property.CapXTotal.ToString("C")</td>
     <td class="py-2">
-      <div class="input-group mb-3">
-        @*<TelerikNumericTextBox @bind-Value=@Property.CapX
-                               Format="C"
-                               Class="form-control" />
-        <TelerikDropDownList Data=@_costTypes
-                             @bind-Value=@Property.CapXType
-                             Class="input-group-append" />*@
-      </div>
-      
+      <CapXInput Property="@Property" />
     </td>
     <td class="py-2">@Property.CapXTotal.ToString("C")</td>
   </tr>

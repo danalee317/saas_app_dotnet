@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Components;
 using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Dtos.Underwriting;
 
-namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
+namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Financials
 {
-    public partial class UnderwritingSellerInfoTab
+    public partial class UnderwritingBucketlistTab
     {
         [Parameter]
         public UnderwritingAnalysis Property { get; set; }

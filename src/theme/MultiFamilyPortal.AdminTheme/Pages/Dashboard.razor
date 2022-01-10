@@ -6,9 +6,9 @@
   <div class="container">
     <div class="row mb-3">
 
-      <div class="col-md-2 mb-3">
-          <SingleInfo Title="Underwriting" 
-                      TimeFrame="Monthly" 
+      <div class="col-md-2 col-6 mb-3">
+          <SingleInfo Title="Underwriting"
+                      TimeFrame="Monthly"
                       TimeFrameColor="primary"
                       Number=@_underwriting.MonthlyReports.ToString()
                       IndicatorTitle="Reports"
@@ -16,9 +16,9 @@
                       IsPositiveChange=@(_underwriting.MonthlyReports > (_underwriting.WeeklyGoal*4))/>
       </div>
 
-      <div class="col-md-2 mb-3">
-        <SingleInfo Title="Underwriting" 
-                    TimeFrame="Weekly" 
+      <div class="col-md-2 col-6 mb-3">
+        <SingleInfo Title="Underwriting"
+                    TimeFrame="Weekly"
                     TimeFrameColor="info"
                     Number=@_underwriting.WeeklyReports.ToString()
                     IndicatorTitle="Reports"
@@ -33,7 +33,7 @@
                      Underwriting=@_underwriting/>
       </div>
 
-      <div class="col-md-2 mb-2">
+      <div class="col-md-2 col-6 mb-2">
        <TimelessInfo Title="Blog Subscribers"
                      UpperTitle="Lifetime"
                      UpperNumber=@_blog.Total
@@ -43,7 +43,7 @@
                      LowerNumber=@_blog.Weekly/>
       </div>
 
-      <div class="col-md-2 mb-2">
+      <div class="col-md-2 col-6 mb-2">
         <TimelessInfo Title="Investors"
                      UpperTitle="Lifetime"
                      UpperNumber=@_investors.Total

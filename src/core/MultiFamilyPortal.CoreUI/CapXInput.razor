@@ -1,25 +1,24 @@
 @using Humanizer;
-<div class="mx-2 mx-md-3">
+<div class="mx-one">
   <div class="input-group flex-nowrap" id="@Id">
-    <div class="input-group-prepend">
-      <select class="form-select ms-one"
+    <input class="form-control"
+           @bind-value="@_capx"
+           aria-label="Capx input"
+           disabled="@(!Enabled)"
+           @onblur="FormatToDecimal"
+           @onfocus="FormatToNumber"/>
+      <select class="ms-one"
               aria-label="Select Cost Types"
               @bind="@Property.CapXType"
               disabled="@(!Enabled)">
         @foreach (var costType in _costTypes)
         {
           <option class="me-3" value="@costType" selected=@(costType == Property.CapXType)>
-            @costType.Humanize(LetterCasing.Title)
-            &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+            &nbsp &nbsp &nbsp
+            <span class="mx-2">@costType.Humanize(LetterCasing.Title)</span> 
+            &nbsp &nbsp &nbsp
           </option>
         }
       </select>
     </div>
-    <input class="form-control me-one"
-           @bind-value="@_capx"
-           aria-label="Capx input"
-           disabled="@(!Enabled)"
-           @onblur="FormatToDecimal"
-           @onfocus="FormatToNumber"/>
-  </div>
 </div>

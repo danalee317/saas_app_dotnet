@@ -106,7 +106,8 @@ namespace MultiFamilyPortal.AdminTheme.Models
         public void Add()
         {
             Id = Guid.NewGuid();
-            FloorPlan.Units.Add(_unit);
+            if(!FloorPlan.Units?.Any(x => x.Unit.ToUpper().Trim() == _unit?.Unit?.ToUpper()?.Trim()) == true)
+              FloorPlan.Units.Add(_unit);
         }
 
         public void Update()

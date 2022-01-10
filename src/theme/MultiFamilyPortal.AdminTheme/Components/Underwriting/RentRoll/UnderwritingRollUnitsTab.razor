@@ -98,7 +98,7 @@
       <Animation OptionsName="Page">
         @if(_newUnit != null)
         {
-          <UnderwritingRollUnitsControls Unit="@_newUnit"  />
+          <UnderwritingRollUnitsControls @bind-Unit="@_newUnit"  />
         }
       </Animation>
     </WindowContent>

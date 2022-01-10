@@ -5,25 +5,24 @@
 <Animation OptionsName="Page">
   <div class="container">
     <div class="row mb-3">
-
       <div class="col-md-2 mb-3">
-          <SingleInfo Title="Underwriting" 
-                      TimeFrame="Monthly" 
-                      TimeFrameColor="primary"
-                      Number=@_underwriting.MonthlyReports.ToString()
-                      IndicatorTitle="Reports"
-                      IndicatorPercentage=@_underwriting.MonthlyPercent.ToString("P0")
-                      IsPositiveChange=@(_underwriting.MonthlyReports > (_underwriting.WeeklyGoal*4))/>
-      </div>
-
-      <div class="col-md-2 mb-3">
-        <SingleInfo Title="Underwriting" 
-                    TimeFrame="Weekly" 
+        <SingleInfo Title="Underwriting"
+                    TimeFrame="Weekly"
                     TimeFrameColor="info"
                     Number=@_underwriting.WeeklyReports.ToString()
                     IndicatorTitle="Reports"
                     IndicatorPercentage=@_underwriting.WeeklyPercent.ToString("P0")
                     IsPositiveChange=@(_underwriting.WeeklyReports > _underwriting.WeeklyGoal) />
+      </div>
+
+      <div class="col-md-2 mb-3">
+        <SingleInfo Title="Underwriting"
+                    TimeFrame="Monthly"
+                    TimeFrameColor="primary"
+                    Number=@_underwriting.MonthlyReports.ToString()
+                    IndicatorTitle="Reports"
+                    IndicatorPercentage=@_underwriting.MonthlyPercent.ToString("P0")
+                    IsPositiveChange=@(_underwriting.MonthlyReports > (_underwriting.WeeklyGoal*4))/>
       </div>
 
       <div class="col-md-4 mb-3">

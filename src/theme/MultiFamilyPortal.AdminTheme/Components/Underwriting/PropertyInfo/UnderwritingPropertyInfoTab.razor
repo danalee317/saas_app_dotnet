@@ -136,18 +136,17 @@
                     Enabled=@_editable
                     Class="form-control" />
   </div>
-  <label for="DesiredYield" class="col-sm-2 col-form col-form-label">Desired Yield</label>
-  <div class="col-sm-4">
-    <PercentageInput @bind-Value=@Property.DesiredYield
-                     Enabled=@_editable
-                     Id="DesiredYield" />
-  </div>
-  <div class="col-sm-6"></div>
   <label for="ReversionCapRate" class="col-sm-2 col-form col-form-label">Reversion Cap Rate</label>
   <div class="col-sm-4">
     <PercentageInput @bind-Value=@Property.ReversionCapRate
                      Enabled=@_editable
                      Id="ReversionCapRate" />
+  </div>
+  <label for="DesiredYield" class="col-sm-2 col-form col-form-label">Desired Yield</label>
+  <div class="col-sm-4">
+    <PercentageInput @bind-Value=@Property.DesiredYield
+                     Enabled=@_editable
+                     Id="DesiredYield" />
   </div>
 </div>
 

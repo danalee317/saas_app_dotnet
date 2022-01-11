@@ -11,6 +11,9 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
         [Parameter]
         public EventCallback<DisplayUnit> UnitChanged { get; set; }
 
+        [Parameter]
+        public EventCallback OnAddFloorUnits { get; set; }
+
         private bool _confirmation = false;
         private bool _canSave => !string.IsNullOrEmpty(Unit?.UnitName);
 
@@ -37,13 +40,14 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
             await UnitChanged.InvokeAsync(null);
         }
 
-        private void AddAnother()
+        private async Task AddAnotherAsync()
         {
             if (!_canSave)
                 return;
 
             Unit.Add();
             Unit = new DisplayUnit(Unit.FloorPlan);
+            await OnAddFloorUnits.InvokeAsync();
         }
     }
 }

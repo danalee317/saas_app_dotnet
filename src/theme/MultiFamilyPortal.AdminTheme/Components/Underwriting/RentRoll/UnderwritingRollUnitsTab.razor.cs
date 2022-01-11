@@ -16,12 +16,16 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
         [CascadingParameter]
         private ClaimsPrincipal _user { get; set; }
 
-        private bool _editable;
-
-        private IEnumerable<DisplayUnit> _allUnits;
+        private IEnumerable<UnderwritingAnalysisModel> _allFloors = Array.Empty<UnderwritingAnalysisModel>();
         private ObservableRangeCollection<DisplayUnit> _filteredUnits = new ();
+        private IEnumerable<DisplayUnit> _allUnits;
         private DisplayUnit _unit;
         private string _query;
+        private bool _showAddUnit = false;
+        private bool _editable;
+        private DisplayUnit _newUnit = null;
+
+        private UnderwritingAnalysisModel _floor = null;
 
         protected override void OnInitialized()
         {
@@ -47,28 +51,48 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
                     x.UnitName.Contains(_query, StringComparison.CurrentCultureIgnoreCase) ||
                     x.Renter.Contains(_query, StringComparison.CurrentCultureIgnoreCase));
 
-            _filteredUnits.ReplaceRange(filtered);
+            _filteredUnits.ReplaceRange(filtered.OrderBy(x => x.FloorPlanName).ThenBy(x => x.UnitName));
         }
 
+        private void ListAllModels() => _allFloors = Property.Models.Where(x => x.TotalUnits > x.Units.Count());
+        
+        private void UpdateUnit(GridCommandEventArgs args) => _unit = args.Item as DisplayUnit;
 
-        private void UpdateUnit(GridCommandEventArgs args)
+        private void OnAddFloorUnits()
         {
-            _unit = args.Item as DisplayUnit;
+            ListAllModels();
+            _showAddUnit = true;
         }
 
-        private async Task UpdateUnitList(UnderwritingAnalysisUnit unit)
+        private void ChooseFloor(ChangeEventArgs args)
         {
-            //await OnPropertyChanged.InvokeAsync(Property);
-            //_showAddUnit = false;
+            if(string.IsNullOrEmpty(args.Value.ToString()))
+            {
+                _newUnit = null;
+                return;
+            }
+
+            _floor = _allFloors.FirstOrDefault(x => x.Id.ToString() == args.Value.ToString());
+            _newUnit = new DisplayUnit(_floor);
         }
 
         private async Task RemoveUnit(UnderwritingAnalysisUnit unit)
         {
             var model = Property.Models.FirstOrDefault(m => m.Units.Contains(unit));
             model?.Units.Remove(unit);
+        }
 
-            //await OnPropertyChanged.InvokeAsync(Property);
-            //_showAddUnit = false;
+        private void HideWindow(DisplayUnit unit)
+        {
+            UpdateRentRoll();
+            _showAddUnit = false;
+            _newUnit = unit;
+        }
+
+        private void RefreshFloors()
+        {
+            UpdateRentRoll();
+            _newUnit = new DisplayUnit(_floor);
         }
     }
 }

@@ -4,6 +4,15 @@
              Pageable="true"
              Resizable="true"
              Reorderable="true">
+<GridToolBar>
+    <span class="k-toolbar-spacer"></span>
+    @if(_editable)
+    {
+      <GridCommandButton Primary=@true
+                         IconClass="fa-duotone fa-plus"
+                         OnClick="@OnAddFloorUnits">Add</GridCommandButton>
+    }
+  </GridToolBar>
   <GridColumns>
     <GridColumn Field="@(nameof(DisplayUnit.UnitName))" Title="Unit" />
     <GridColumn Field="@(nameof(DisplayUnit.Renter))" Title="Tenant Name" Width="15%">
@@ -45,7 +54,7 @@
                  Visible=@(_unit != null)
                  Width="600px">
     <WindowTitle>
-      <strong>Edit @_unit.UnitName</strong>
+      <strong>Edit @_unit?.UnitName</strong>
     </WindowTitle>
     <WindowActions>
       <WindowAction Name="Close" />
@@ -59,6 +68,42 @@
           <div class="my-3"><ComingSoon /></div>
         </TabStripTab>
       </TelerikTabStrip>
+    </WindowContent>
+  </TelerikWindow>
+}
+
+@if (_showAddUnit)
+{
+  <TelerikWindow Centered="true"
+                 Modal="true"
+                 Visible=@_showAddUnit
+                 Width="600px">
+    <WindowTitle>
+      <strong>Add New Unit(s)</strong>
+    </WindowTitle>
+    <WindowActions>
+      <WindowAction Name="Close" OnClick=@(() => _showAddUnit = false) />
+    </WindowActions>
+    <WindowContent>
+      <div class="row">
+        <div class="col-12 my-3">
+          <select class="form-select" aria-label="Select Floor Plan" @onchange="ChooseFloor">
+            <option value="">Select Floor Plan</option>
+            @foreach (var floor in _allFloors)
+            {
+              <option selected="@Equals(floor?.Id, _floor?.Id)" value="@floor.Id">@floor.Name</option>
+           }
+          </select>
+        </div>
+      </div>
+      <Animation OptionsName="Page">
+        @if(_newUnit != null)
+        {
+          <UnderwritingRollUnitsControls Unit="@_newUnit" 
+                                         UnitChanged="@HideWindow"
+                                         OnAddFloorUnits="RefreshFloors"/>
+        }
+      </Animation>
     </WindowContent>
   </TelerikWindow>
 }

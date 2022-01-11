@@ -27,6 +27,7 @@ namespace MultiFamilyPortal.CoreUI
                     FileIconType.Word => "file.docx",
                     FileIconType.PDF => "file.pdf",
                     FileIconType.Image => "file.png",
+                    FileIconType.Zip => "file.zip",
                     _ => "file.unknown"
                 };
                 if (fileName == "file.unknown")

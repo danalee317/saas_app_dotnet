@@ -1,6 +1,6 @@
-﻿@if(!string.IsNullOrEmpty(_reportName))
+@if(!string.IsNullOrEmpty(_reportName))
 {
-  <span @onclick=@(() => _reportName = null)>Back</span>
+  <BackButton OnNavigateBack=@(() => _reportName = null) />
   <br />
   @*
     Add the PDF Viewer or custom component view here
@@ -8,7 +8,7 @@
 }
 else if(_comingSoon)
 {
-  <span @onclick=@(() => _comingSoon = false)>Back</span>
+  <BackButton OnNavigateBack=@(() => _comingSoon = false) />
   <br />
   <ComingSoon />
 }

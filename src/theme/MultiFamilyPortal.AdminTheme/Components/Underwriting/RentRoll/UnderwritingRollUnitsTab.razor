@@ -54,7 +54,7 @@
                  Visible=@(_unit != null)
                  Width="600px">
     <WindowTitle>
-      <strong>Edit @_unit.UnitName</strong>
+      <strong>Edit @_unit?.UnitName</strong>
     </WindowTitle>
     <WindowActions>
       <WindowAction Name="Close" />
@@ -90,7 +90,7 @@
           <select class="form-select" aria-label="Select Floor Plan" @onchange="ChooseFloor">
             @foreach (var floor in _allFloors)
             {
-              <option selected="@(floor?.Id == _floor?.Id)" value="@floor.Id">@floor.Name</option>
+              <option selected="@Equals(floor?.Id, _floor?.Id)" value="@floor.Id">@floor.Name</option>
            }
           </select>
         </div>
@@ -98,7 +98,9 @@
       <Animation OptionsName="Page">
         @if(_newUnit != null)
         {
-          <UnderwritingRollUnitsControls @bind-Unit="@_newUnit"  />
+          <UnderwritingRollUnitsControls Unit="@_newUnit" 
+                                         UnitChanged="@HideWindow"
+                                         OnAddFloorUnits="RefreshFloors"/>
         }
       </Animation>
     </WindowContent>

@@ -51,7 +51,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
                     x.UnitName.Contains(_query, StringComparison.CurrentCultureIgnoreCase) ||
                     x.Renter.Contains(_query, StringComparison.CurrentCultureIgnoreCase));
 
-            _filteredUnits.ReplaceRange(filtered);
+            _filteredUnits.ReplaceRange(filtered.OrderBy(x => x.FloorPlanName).ThenBy(x => x.UnitName));
         }
 
         private void ListAllModels() => _allFloors = Property.Models.Where(x => x.TotalUnits > x.Units.Count());
@@ -60,20 +60,33 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
 
         private void OnAddFloorUnits()
         {
-             ListAllModels();
+            ListAllModels();
             _showAddUnit = true;
         }
 
         private void ChooseFloor(ChangeEventArgs args)
         {
-           _floor = _allFloors.FirstOrDefault(x => x.Id.ToString() == args.Value.ToString());
-           _newUnit = new DisplayUnit(_floor);
+            _floor = _allFloors.FirstOrDefault(x => x.Id.ToString() == args.Value.ToString());
+            _newUnit = new DisplayUnit(_floor);
         }
 
         private async Task RemoveUnit(UnderwritingAnalysisUnit unit)
         {
             var model = Property.Models.FirstOrDefault(m => m.Units.Contains(unit));
             model?.Units.Remove(unit);
+        }
+
+        private void HideWindow(DisplayUnit unit)
+        {
+            UpdateRentRoll();
+            _showAddUnit = false;
+            _newUnit = unit;
+        }
+
+        private void RefreshFloors()
+        {
+            UpdateRentRoll();
+            _newUnit = new DisplayUnit(_floor);
         }
     }
 }

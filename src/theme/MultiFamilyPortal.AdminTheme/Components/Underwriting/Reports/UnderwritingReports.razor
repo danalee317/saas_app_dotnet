@@ -1,16 +1,24 @@
-@if(!string.IsNullOrEmpty(_reportName))
+﻿@if(!string.IsNullOrEmpty(_reportName))
 {
   <BackButton OnNavigateBack=@(() => _reportName = null) />
   <br />
+  @if(_reportName == "investment-tiers")
+  {
+    <UnderwritingInvestmentTiers Property=@Property />
+  }
+  else
+  {
   @*
     Add the PDF Viewer or custom component view here
   *@
+  }
 }
 else if(_comingSoon)
 {
   <BackButton OnNavigateBack=@(() => _comingSoon = false) />
-  <br />
-  <ComingSoon />
+  <div class="row gt-3 p-3">
+    <ComingSoon />
+  </div>
 }
 else
 {

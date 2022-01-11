@@ -4,10 +4,12 @@
 
 @if(Property is null)
 {
+  <SiteTitle Title="Underwriting" />
   <TelerikLoader Type="LoaderType.ConvergingSpinner" />
 }
 else
 {
+  <SiteTitle Title=@Property.Name />
   <Animation OptionsName="Page">
    <UnderwritingSummary Property=@Property />
 

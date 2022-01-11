@@ -287,26 +287,6 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             return Ok(response);
         }
 
-        [HttpGet("property/exportUnderwriting/{propertyId:guid}")]
-        public async Task<IActionResult> ExportUnderwriting(Guid propertyId)
-        {
-            var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
-
-            var fileName = $"{property.Name}.zip";
-            var files = await GetAnalysisFiles(propertyId);
-            var rootArchive = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-            Directory.CreateDirectory(rootArchive);
-
-            var v1Data = UnderwritingService.GenerateUnderwritingSpreadsheet(property, files);
-            System.IO.File.WriteAllBytes(Path.Combine(rootArchive, $"{property.Name}.xlsx"), v1Data);
-            var v2Data = UnderwritingV2Service.GenerateUnderwritingSpreadsheet(property, files);
-            System.IO.File.WriteAllBytes(Path.Combine(rootArchive, $"{property.Name}-v2.xlsx"), v2Data);
-            var filePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.zip");
-            ZipFile.CreateFromDirectory(rootArchive, filePath, CompressionLevel.Fastest, false);
-
-            return File(System.IO.File.ReadAllBytes(filePath), MediaTypeNames.Application.Zip, fileName);
-        }
-
         [HttpGet("property/{propertyId:guid}")]
         public async Task<IActionResult> GetProperty(Guid propertyId)
         {

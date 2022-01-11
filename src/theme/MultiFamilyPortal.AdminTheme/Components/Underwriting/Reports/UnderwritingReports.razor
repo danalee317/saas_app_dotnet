@@ -1,0 +1,81 @@
+﻿@if(!string.IsNullOrEmpty(_reportName))
+{
+  <span @onclick=@(() => _reportName = null)>Back</span>
+  <br />
+  @*
+    Add the PDF Viewer or custom component view here
+  *@
+}
+else if(_comingSoon)
+{
+  <span @onclick=@(() => _comingSoon = false)>Back</span>
+  <br />
+  <ComingSoon />
+}
+else
+{
+  <SiteTitle Title="Reports" />
+
+  <div class="container">
+    <div class="row px-2 py-3">
+      <div class="col-md-4">
+        <h3>Underwriting</h3>
+
+        <ul>
+          <li>
+            <span class="file-pdf" @onclick=@(() => SelectReport("full-report"))>Full Report</span>
+          </li>
+          <li>
+            <span class="file-pdf" @onclick=@(() => SelectReport("deal-summary"))>Deal Summary</span>
+          </li>
+          <li>
+            <span class="file-pdf" @onclick=@(() => SelectReport("assumptions"))>Assumptions</span>
+          </li>
+          <li>
+            <span class="file-pdf" @onclick=@(() => SelectReport("cash-flow"))>Cash Flow</span>
+          </li>
+          <li>
+            <span class="file-pdf" @onclick=@(() => SelectReport("rent-roll"))>Rent Roll</span>
+          </li>
+          <li>
+            <span class="file-pdf" @onclick=@(() => SelectReport("lease-exposure"))>Lease Exposure</span>
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <h3>Investors</h3>
+        <ul>
+          <li>
+            <span class="file-pdf" @onclick=@(() => SelectReport("100k-projections"))>100k Investment Projections</span>
+          </li>
+          <li>
+            <span class="file-pdf" @onclick=@(() => SelectReport("manager-report"))>Manager Report</span>
+          </li>
+          <li>
+            <span class="file-pdf" @onclick=@(() => SelectReport("investment-tiers"))>Investment Tiers</span>
+          </li>
+        </ul>
+      </div>
+      @if(_tenant.IsREMentorStudent)
+      {
+        <div class="col-md-4">
+          <h3>RE Mentor</h3>
+          <ul>
+            <li>
+              <a class="file-xlsx" href="/api/reports/rementor-underwriting-template/@Property.Id" target="_blank">Underwriting Template</a>
+            </li>
+            <li>
+              <a class="file-xlsx" href="/api/reports/rementor-underwriting-template-v2/@Property.Id" target="_blank">Underwriting Template v2</a>
+            </li>
+            <li>
+              <a class="file-xlsx" href="/api/reports/rementor-bucketlist/@Property.Id" target="_blank">Bucketlist</a>
+            </li>
+            <li>
+              <a class="file-zip" href="/api/reports/rementor-templates/@Property.Id" target="_blank">All Templates</a>
+            </li>
+          </ul>
+        </div>
+      }
+    </div>
+  </div>
+}

@@ -132,4 +132,12 @@
                      Width="100%"
                      Class="bucketlist" />
   </div>
+  <label class="col-md-2 py-auto">Lending Terms</label>
+  <div class="col-md-4 px-2 py-1">
+    <TelerikTextArea @bind-Value=@Property.LendingNotes
+                     Enabled=@_editable
+                     AutoSize=@false
+                     Width="100%"
+                     Class="bucketlist" />
+  </div>
 </div>

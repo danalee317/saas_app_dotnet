@@ -90,6 +90,7 @@ namespace MultiFamilyPortal.Services
                     PayrollNotes = x.PayrollNotes,
                     GeneralAdminNotes = x.GeneralAdminNotes,
                     ManagementNotes = x.ManagementNotes,
+                    LendingNotes = x.LendingNotes,
                 })
                 .FirstOrDefaultAsync(x => x.Id == propertyId);
 
@@ -626,6 +627,7 @@ namespace MultiFamilyPortal.Services
             property.PayrollNotes = analysis.PayrollNotes;
             property.GeneralAdminNotes = analysis.GeneralAdminNotes;
             property.ManagementNotes = analysis.ManagementNotes;
+            property.LendingNotes = analysis.LendingNotes;
 
             #endregion Bucketlist Notes
 

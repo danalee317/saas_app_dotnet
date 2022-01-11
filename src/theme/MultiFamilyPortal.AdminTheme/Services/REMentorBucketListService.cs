@@ -29,7 +29,7 @@ namespace MultiFamilyPortal.AdminTheme.Services
                 .SetValue("C64", property.PayrollNotes)
                 .SetValue("B67", property.GeneralAdminNotes)
                 .SetValue("C73", property.ManagementNotes)
-                .SetValue("B77", "Not currently available")
+                .SetValue("B77", property.LendingNotes)
                 .SetValue("C81", property.OperatingExpenses / 6)
                 .SetValue("C82", property.PropertyInsurance)
                 .SetValue("C83", property.DeferredMaintenance)

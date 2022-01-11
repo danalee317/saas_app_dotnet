@@ -3,5 +3,22 @@
 <SiteTitle Title="Portfolio - Assets Under Management"/>
 <Animation OptionsName="Page">
   <h3>Portfolio - Assets Under Management</h3>
-  <ComingSoon />
+  <br />
+  <TelerikGrid Data=@_portfolio
+               Pageable=@true
+               PageSize=@(15)>
+    <GridColumns>
+      <GridColumn Field="Name" />
+      <GridColumn Field="City" />
+      <GridColumn Field="State" />
+      <GridColumn Field="PurchasePrice" DisplayFormat="{0:C0}" TextAlign=@ColumnTextAlign.Center />
+      <GridColumn Field="Units" TextAlign=@ColumnTextAlign.Center />
+    </GridColumns>
+    <NoDataTemplate>
+      <div class="text-center">
+        <h2>No Properties</h2>
+        <img src="/_content/MultiFamilyPortal.AdminTheme/img/our_neighborhood.svg" class="img-fluid" style="max-width:550px" />
+      </div>
+    </NoDataTemplate>
+  </TelerikGrid>
 </Animation>

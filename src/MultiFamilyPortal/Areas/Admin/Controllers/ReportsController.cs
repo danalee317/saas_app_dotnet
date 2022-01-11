@@ -93,10 +93,9 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         public async Task<IActionResult> GetREMentorUnderwritingTemplate(Guid propertyId)
         {
             (var property, var files, var rootArchive) = await SetupREMentorFiles(propertyId);
-            var fileName = $"{property.Name}.xlsx";
             var filePath = GenerateREMentorUnderwritingTemplate(rootArchive, property, files);
-
-            var fileInfo = FileTypeLookup.GetFileTypeInfo($"{property.Name}.xlsx");
+            var fileName = Path.GetFileName(filePath);
+            var fileInfo = FileTypeLookup.GetFileTypeInfo(fileName);
             return File(System.IO.File.ReadAllBytes(filePath), fileInfo.MimeType, fileName);
         }
 
@@ -104,9 +103,8 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         public async Task<IActionResult> GetREMentorUnderwritingTemplateV2(Guid propertyId)
         {
             (var property, var files, var rootArchive) = await SetupREMentorFiles(propertyId);
-            var fileName = $"{property.Name}-v2.xlsx"; 
             var filePath = GenerateREMentorUnderwritingTemplateV2(rootArchive, property, files);
-
+            var fileName = Path.GetFileName(filePath);
             var fileInfo = FileTypeLookup.GetFileTypeInfo(fileName);
             return File(System.IO.File.ReadAllBytes(filePath), fileInfo.MimeType, fileName);
         }
@@ -115,12 +113,11 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         public async Task<IActionResult> GetREMentorBucketlist(Guid propertyId)
         {
             (var property, var files, var rootArchive) = await SetupREMentorFiles(propertyId);
-            var fileName = $"{property.Name}-bucketlist.xlsx";
 
-            // TODO: Generate Bucketlist
-
+            var filePath = GenerateREMentorBucketlist(rootArchive, property);
+            var fileName = Path.GetFileName(filePath);
             var fileInfo = FileTypeLookup.GetFileTypeInfo(fileName);
-            return File(Array.Empty<byte>(), fileInfo.MimeType, fileName);
+            return File(System.IO.File.ReadAllBytes(filePath), fileInfo.MimeType, fileName);
         }
 
         [HttpGet("rementor-templates/{propertyId:guid}")]
@@ -131,6 +128,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             var fileName = $"{property.Name}.zip";
             GenerateREMentorUnderwritingTemplate(rootArchive, property, files);
             GenerateREMentorUnderwritingTemplateV2(rootArchive, property, files);
+            GenerateREMentorBucketlist(rootArchive, property);
 
             var filePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.zip");
             ZipFile.CreateFromDirectory(rootArchive, filePath, CompressionLevel.Fastest, false);
@@ -150,6 +148,14 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         {
             var data = UnderwritingV2Service.GenerateUnderwritingSpreadsheet(property, files);
             var filePath = Path.Combine(rootArchive, $"{property.Name}-v2.xlsx");
+            System.IO.File.WriteAllBytes(filePath, data);
+            return filePath;
+        }
+
+        private string GenerateREMentorBucketlist(string rootArchive, UnderwritingAnalysis property)
+        {
+            var data = REMentorBucketListService.GenerateBucketlist(property);
+            var filePath = Path.Combine(rootArchive, $"{property.Name}-Bucketlist.xlsx");
             System.IO.File.WriteAllBytes(filePath, data);
             return filePath;
         }

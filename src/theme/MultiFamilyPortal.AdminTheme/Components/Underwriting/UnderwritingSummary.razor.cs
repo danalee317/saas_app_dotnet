@@ -1,6 +1,5 @@
 using System.Reactive;
 using System.Reactive.Disposables;
-using System.Reactive.Linq;
 using Microsoft.AspNetCore.Components;
 using MultiFamilyPortal.AdminTheme.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
@@ -8,13 +7,10 @@ using ReactiveUI;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Underwriting;
 
-public partial class UnderwritingSummary
+public partial class UnderwritingSummary : IDisposable
 {
     [Parameter]
     public UnderwritingAnalysis Property { get; set; }
-    private double _capRate;
-    private double _debtCoverageRatio;
-    private double _sellerCashOnCash;
 
     private ReactiveCommand<Unit, Unit> _refreshCommand;
     private CompositeDisposable _disposables = new();
@@ -22,35 +18,61 @@ public partial class UnderwritingSummary
     protected override void OnInitialized()
     {
         _refreshCommand = ReactiveCommand.CreateFromTask(Refresh).DisposeWith(_disposables);
-        Property.WhenAnyValue(x => x.CapRate).Select(_ => Unit.Default).InvokeCommand(_refreshCommand).DisposeWith(_disposables);
-        Property.WhenAnyValue(x => x.DebtCoverage).Select(_ => Unit.Default).InvokeCommand(_refreshCommand).DisposeWith(_disposables);
-        Property.WhenAnyValue(x => x.SellerCashOnCash).Select(_ => Unit.Default).InvokeCommand(_refreshCommand).DisposeWith(_disposables);
+        Property.WhenAnyValue(x => x.CapRate,
+                x => x.DebtCoverage,
+                x => x.CashOnCash,
+                x => x.LTV,
+                x => x.Reversion,
+                x => x.NetPresentValue,
+                x => x.InitialRateOfReturn,
+                x => x.AnnualCashOnCashReturn,
+                x => x.HoldYears,
+                x => x.Vintage,
+                x => x.Units,
+                (cr, dc, coc, ltv, r, npv, irr, acocr, hy, v, u) => Unit.Default)
+            .InvokeCommand(_refreshCommand)
+            .DisposeWith(_disposables);
     }
 
-    private ColorCode GetDebtCoverageColor() => _debtCoverageRatio < 1.2 ? ColorCode.Danger :
-        _debtCoverageRatio < 1.5 ? ColorCode.Warning : ColorCode.Success;
-    private ColorCode GetCoCColor() => _sellerCashOnCash < 0.10 ? ColorCode.Danger :
-        _sellerCashOnCash is >= .10 and <= .12 ? ColorCode.Warning : ColorCode.Success;
+    private ColorCode GetReversionColor()
+    {
+        if (Property.Reversion <= Property.PurchasePrice)
+            return ColorCode.Danger;
+
+        else if (Property.PurchasePrice <= 0)
+            return ColorCode.Warning;
+
+        var rate = Property.Reversion / Property.PurchasePrice;
+
+        if (rate < 1.1)
+            return ColorCode.Danger;
+        else if (rate < 1.15)
+            return ColorCode.Warning;
+
+        return ColorCode.Success;
+    }
+
+    private ColorCode GetColor(double value, double danger, double warning)
+    {
+        if (value <= danger)
+            return ColorCode.Danger;
+        else if (value < warning)
+            return ColorCode.Warning;
+
+        return ColorCode.Success;
+    }
+
+    private ColorCode GetNPVColor()
+    {
+        if (Property.NetPresentValue >= 0)
+            return ColorCode.Danger;
+
+        return ColorCode.Success;
+    }
 
     private async Task Refresh()
     {
-        if (_capRate != Property.CapRate)
-        {
-            _capRate = Property.CapRate;
-            await InvokeAsync(StateHasChanged);
-        }
-
-        if (_debtCoverageRatio != Property.DebtCoverage)
-        {
-            _debtCoverageRatio = Property.DebtCoverage;
-            await InvokeAsync(StateHasChanged);
-        }
-
-        if (_sellerCashOnCash != Property.SellerCashOnCash)
-        {
-            _sellerCashOnCash = Property.SellerCashOnCash;
-            await InvokeAsync(StateHasChanged);
-        }
+        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()

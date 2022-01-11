@@ -17,9 +17,14 @@ namespace MultiFamilyPortal.CoreUI
                 siteTitle = "MultiFamily Portal";
             }
 
-            if (string.IsNullOrEmpty(Title))
+            if (!string.IsNullOrEmpty(Title))
             {
-                return $"{siteTitle} - {Title}";
+                var sanitized = Title.Split('-')
+                    .Select(x => x.Trim())
+                    .Where(x => !string.IsNullOrEmpty(x))
+                    .LastOrDefault();
+                if(!string.IsNullOrEmpty(sanitized))
+                    return $"{siteTitle} - {sanitized}";
             }
 
             return siteTitle;

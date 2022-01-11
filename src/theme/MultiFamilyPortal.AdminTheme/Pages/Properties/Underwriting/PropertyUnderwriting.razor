@@ -62,7 +62,7 @@ else
             <WizardStep Label="Reports"
                         IconClass="fa-duotone fa-file-chart-column">
               <Content>
-                <UnderwritingReports Property=@Property />
+                <ReportsWizardStep Property=@Property />
               </Content>
             </WizardStep>
           </WizardSteps>
@@ -83,7 +83,6 @@ else
                 Update
               </TelerikButton>
             </AuthorizedPolicy>
-            <a class="btn btn-secondary" href="/api/admin/underwriting/property/exportUnderwriting/@propertyId" target="_blank">Download Underwriting</a>
           </WizardButtons>
         </TelerikWizard>
       </div>

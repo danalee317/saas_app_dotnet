@@ -19,12 +19,16 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
     public class ReportsController : ControllerBase
     {
         private IMFPContext _dbContext { get; }
+        private IReport _report { get; }
+        private IStorageService _storageService { get; }
         private IUnderwritingService _underwritingService { get; }
 
-        public ReportsController(IMFPContext dbContext, IUnderwritingService underwritingService)
+        public ReportsController(IMFPContext dbContext, IUnderwritingService underwritingService, IReport report, IStorageService storageService)
         {
             _dbContext = dbContext;
             _underwritingService = underwritingService;
+            _report = report;
+            _storageService = storageService;
         }
 
         [HttpGet("full-report/{propertyId:guid}")]
@@ -73,6 +77,14 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         public async Task<IActionResult> GetManagerReport(Guid propertyId)
         {
             var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
+
+            /* TODO
+               1. Generate Values
+               2. Generate Report
+               3. Save Report as execel and pdf -> Documents/Project_Name/Reports/Report_Name
+               4. Return Report -> Return File or file path?
+            */
+            
             return NotFound();
         }
 

@@ -36,6 +36,7 @@ namespace MultiFamilyPortal.Extensions
                 .AddScoped<IStartupTask, BrandStartupTask>()
                 .AddScoped<IBrandService, BrandService>()
                 .AddScoped<IUnderwritingService, UnderwritingService>()
+                .AddScoped<IReport, ReportGenerator>()
                 .AddScoped(sp =>
                 {
                     var context = sp.GetRequiredService<ITenantSettingsContext>();

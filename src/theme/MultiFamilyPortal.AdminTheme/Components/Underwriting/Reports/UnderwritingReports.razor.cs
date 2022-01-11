@@ -22,6 +22,8 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Reports
 
             if (_comingSoon)
                 _reportName = null;
+
+              //  Property.Rep
         }
     }
 }

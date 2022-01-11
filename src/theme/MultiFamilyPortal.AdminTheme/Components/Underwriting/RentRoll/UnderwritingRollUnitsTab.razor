@@ -88,6 +88,7 @@
       <div class="row">
         <div class="col-12 my-3">
           <select class="form-select" aria-label="Select Floor Plan" @onchange="ChooseFloor">
+            <option value="">Select Floor Plan</option>
             @foreach (var floor in _allFloors)
             {
               <option selected="@Equals(floor?.Id, _floor?.Id)" value="@floor.Id">@floor.Name</option>

@@ -66,6 +66,12 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
 
         private void ChooseFloor(ChangeEventArgs args)
         {
+            if(string.IsNullOrEmpty(args.Value.ToString()))
+            {
+                _newUnit = null;
+                return;
+            }
+
             _floor = _allFloors.FirstOrDefault(x => x.Id.ToString() == args.Value.ToString());
             _newUnit = new DisplayUnit(_floor);
         }

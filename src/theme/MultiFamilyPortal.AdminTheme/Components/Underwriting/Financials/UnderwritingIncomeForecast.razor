@@ -25,6 +25,9 @@
              OnUpdate=@OnForecastUpdated>
   <GridColumns>
     <GridColumn Field="Year" Editable=@false TextAlign=@ColumnTextAlign.Center>
+      <HeaderTemplate>
+        <span class="table-header">Year</span>
+      </HeaderTemplate>
       <Template>
         @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
         @if(forecast.Year == 0)
@@ -37,7 +40,10 @@
         }
       </Template>
     </GridColumn>
-    <GridColumn Field="IncreaseType" Title="Increase Type"TextAlign=@ColumnTextAlign.Center>
+    <GridColumn Field="IncreaseType" TextAlign=@ColumnTextAlign.Center>
+      <HeaderTemplate>
+        <span class="table-header">Increase Type</span>
+      </HeaderTemplate>
       <Template>
         @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
         @forecast.IncreaseType.Humanize(LetterCasing.Title)
@@ -59,7 +65,10 @@
         </TelerikDropDownList>
       </EditorTemplate>
     </GridColumn>
-    <GridColumn Field="PerUnitIncrease" Title="Per Unit Increase"TextAlign=@ColumnTextAlign.Center>
+    <GridColumn Field="PerUnitIncrease" TextAlign=@ColumnTextAlign.Center>
+      <HeaderTemplate>
+        <span class="table-header">Per Unit<br />Increase</span>
+      </HeaderTemplate>
       <Template>
         @{
             var forecast = context as UnderwritingAnalysisIncomeForecast;
@@ -84,9 +93,11 @@
     </GridColumn>
     <GridColumn Field="UnitsAppliedTo" Title="Units Applied To" TextAlign=@ColumnTextAlign.Center />
     <GridColumn Field="FixedIncreaseOnRemainingUnits"
-                Title="Fixed Increase On Remaining Units"
                 DisplayFormat="{0:C}"
                 TextAlign=@ColumnTextAlign.Center>
+      <HeaderTemplate>
+        <span class="table-header">Increase on<br />Remaining Units</span>
+      </HeaderTemplate>
       <EditorTemplate>
         @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
         <TelerikNumericTextBox @bind-Value=@forecast.FixedIncreaseOnRemainingUnits
@@ -98,24 +109,31 @@
     <GridColumn Field="Vacancy"
                 DisplayFormat="{0:P}"
                 TextAlign=@ColumnTextAlign.Center>
+      <HeaderTemplate>
+        <span class="table-header">Vacancy</span>
+      </HeaderTemplate>
       <EditorTemplate>
         @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
         <PercentageInput @bind-Value=@forecast.Vacancy />
       </EditorTemplate>
     </GridColumn>
     <GridColumn Field="OtherLossesPercent"
-                Title="Other Losses Percent"
                 DisplayFormat="{0:P}"
                 TextAlign=@ColumnTextAlign.Center>
+      <HeaderTemplate>
+        <span class="table-header">Other Losses<br />Percent</span>
+      </HeaderTemplate>
       <EditorTemplate>
         @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
         <PercentageInput @bind-Value=@forecast.OtherLossesPercent />
       </EditorTemplate>
     </GridColumn>
     <GridColumn Field="UtilityIncreases"
-                Title="Utility Increases"
                 DisplayFormat="{0:C}"
                 TextAlign=@ColumnTextAlign.Center>
+      <HeaderTemplate>
+        <span class="table-header">Utility Increases</span>
+      </HeaderTemplate>
       <EditorTemplate>
         @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
         <TelerikNumericTextBox @bind-Value=@forecast.UtilityIncreases
@@ -125,9 +143,11 @@
       </EditorTemplate>
     </GridColumn>
     <GridColumn Field="OtherIncomePercent"
-                Title="Other Income Percent"
                 DisplayFormat="{0:P}"
                 TextAlign=@ColumnTextAlign.Center>
+      <HeaderTemplate>
+        <span class="table-header">Other Income<br />Percent</span>
+      </HeaderTemplate>
       <EditorTemplate>
         @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
         <PercentageInput @bind-Value=@forecast.OtherIncomePercent />

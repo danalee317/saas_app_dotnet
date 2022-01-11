@@ -678,6 +678,9 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         private ObservableAsPropertyHelper<double> _raise;
         [DisplayFormat(DataFormatString = "{0:C}")]
         public double Raise => _raise?.Value ?? 0;
+
+        private ObservableAsPropertyHelper<double> _annualCashOnCashReturn;
+        public double AnnualCashOnCashReturn => _annualCashOnCashReturn?.Value ?? 0;
         #endregion Calculated Properties
 
         #region Collection CRUD Helpers

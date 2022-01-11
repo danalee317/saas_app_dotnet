@@ -496,6 +496,8 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
         public string ManagementNotes { get; set; }
 
+        public string LendingNotes { get; set; }
+
         #endregion Bucketlist Notes
 
         [Reactive]

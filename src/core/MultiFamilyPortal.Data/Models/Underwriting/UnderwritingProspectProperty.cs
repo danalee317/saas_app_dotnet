@@ -124,6 +124,8 @@ namespace MultiFamilyPortal.Data.Models
 
         public string ManagementNotes { get; set; }
 
+        public string LendingNotes { get; set; }
+
         #endregion Bucketlist Notes
 
         public Guid? AssetId { get; set; }

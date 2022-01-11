@@ -20,39 +20,40 @@ else
     <div class="row px-2 py-3">
       <div class="col-md-4">
         <h3>Underwriting</h3>
-
-        <ul>
+        <hr />
+        <ul class="file-list">
           <li>
-            <span @onclick=@(() => SelectReport("full-report"))><FileIcon FileType=@FileIconType.PDF /> Full Report</span>
+            <span class="file-link" @onclick=@(() => SelectReport("full-report"))><FileIcon FileType=@FileIconType.PDF /> Full Report</span>
           </li>
           <li>
-            <span @onclick=@(() => SelectReport("deal-summary"))><FileIcon FileType=@FileIconType.PDF /> Deal Summary</span>
+            <span class="file-link" @onclick=@(() => SelectReport("deal-summary"))><FileIcon FileType=@FileIconType.PDF /> Deal Summary</span>
           </li>
           <li>
-            <span @onclick=@(() => SelectReport("assumptions"))><FileIcon FileType=@FileIconType.PDF /> Assumptions</span>
+            <span class="file-link" @onclick=@(() => SelectReport("assumptions"))><FileIcon FileType=@FileIconType.PDF /> Assumptions</span>
           </li>
           <li>
-            <span @onclick=@(() => SelectReport("cash-flow"))><FileIcon FileType=@FileIconType.PDF /> Cash Flow</span>
+            <span class="file-link" @onclick=@(() => SelectReport("cash-flow"))><FileIcon FileType=@FileIconType.PDF /> Cash Flow</span>
           </li>
           <li>
-            <span @onclick=@(() => SelectReport("rent-roll"))><FileIcon FileType=@FileIconType.PDF /> Rent Roll</span>
+            <span class="file-link" @onclick=@(() => SelectReport("rent-roll"))><FileIcon FileType=@FileIconType.PDF /> Rent Roll</span>
           </li>
           <li>
-            <span @onclick=@(() => SelectReport("lease-exposure"))><FileIcon FileType=@FileIconType.PDF /> Lease Exposure</span>
+            <span class="file-link" @onclick=@(() => SelectReport("lease-exposure"))><FileIcon FileType=@FileIconType.PDF /> Lease Exposure</span>
           </li>
         </ul>
       </div>
       <div class="col-md-4">
         <h3>Investors</h3>
-        <ul>
+        <hr />
+        <ul class="file-list">
           <li>
-            <span @onclick=@(() => SelectReport("100k-projections"))><FileIcon FileType=@FileIconType.PDF /> 100k Investment Projections</span>
+            <span class="file-link" @onclick=@(() => SelectReport("100k-projections"))><FileIcon FileType=@FileIconType.PDF /> 100k Investment Projections</span>
           </li>
           <li>
-            <span @onclick=@(() => SelectReport("manager-report"))><FileIcon FileType=@FileIconType.PDF /> Manager Report</span>
+            <span class="file-link" @onclick=@(() => SelectReport("manager-report"))><FileIcon FileType=@FileIconType.PDF /> Manager Report</span>
           </li>
           <li>
-            <span @onclick=@(() => SelectReport("investment-tiers"))><FileIcon FileType=@FileIconType.PDF /> Investment Tiers</span>
+            <span class="file-link" @onclick=@(() => SelectReport("investment-tiers"))><FileIcon FileType=@FileIconType.PDF /> Investment Tiers</span>
           </li>
         </ul>
       </div>
@@ -60,18 +61,19 @@ else
       {
         <div class="col-md-4">
           <h3>RE Mentor</h3>
-          <ul>
+          <hr />
+          <ul class="file-list">
             <li>
-              <a href="/api/reports/rementor-underwriting-template/@Property.Id" target="_blank"><FileIcon FileType=@FileIconType.Excel /> Underwriting Template</a>
+              <a class="file-link" href="/api/reports/rementor-underwriting-template/@Property.Id" target="_blank"><FileIcon FileType=@FileIconType.Excel /> Underwriting Template</a>
             </li>
             <li>
-              <a href="/api/reports/rementor-underwriting-template-v2/@Property.Id" target="_blank"><FileIcon FileType=@FileIconType.Excel /> Underwriting Template v2</a>
+              <a class="file-link" href="/api/reports/rementor-underwriting-template-v2/@Property.Id" target="_blank"><FileIcon FileType=@FileIconType.Excel /> Underwriting Template v2</a>
             </li>
             <li>
-              <a href="/api/reports/rementor-bucketlist/@Property.Id" target="_blank"><FileIcon FileType=@FileIconType.Excel /> Bucketlist</a>
+              <a class="file-link" href="/api/reports/rementor-bucketlist/@Property.Id" target="_blank"><FileIcon FileType=@FileIconType.Excel /> Bucketlist</a>
             </li>
             <li>
-              <a href="/api/reports/rementor-templates/@Property.Id" target="_blank"><FileIcon FileType=@FileIconType.Zip /> All Templates</a>
+              <a class="file-link" href="/api/reports/rementor-templates/@Property.Id" target="_blank"><FileIcon FileType=@FileIconType.Zip /> All Templates</a>
             </li>
           </ul>
         </div>

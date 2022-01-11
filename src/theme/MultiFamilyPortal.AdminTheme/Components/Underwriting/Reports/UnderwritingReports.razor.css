@@ -1,9 +1,14 @@
-﻿.file-pdf {
-
+﻿.file-link {
+  color: var(--bs-primary);
+  text-decoration: none;
+  cursor: pointer;
 }
 
-.file-xlsx {
+.file-list {
+  list-style-type: none;
+  padding: 0;
 }
 
-.file-zip {
+.file-list > li {
+  margin-top: 10px;
 }

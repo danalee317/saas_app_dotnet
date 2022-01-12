@@ -43,8 +43,6 @@ public class ReportGenerator : IReport
             textFragment.Position.Translate(page.Size.Width / 2 - 100, 100);
             textFragment.FontSize = 25;
 
-
-
             var table = new Table();
             table.DefaultCellProperties.Padding = new Thickness(23);
             var blackBorder = new Border(1, new RgbColor(0, 0, 0));
@@ -69,7 +67,6 @@ public class ReportGenerator : IReport
             {
                 var cell = r0.Cells.AddTableCell();
                 cell.Blocks.AddBlock().InsertText($"Year {year}");
-                //cell.SetHorizontalAlignment(RadHorizontalAlignment.Center);
             }
             var totalhcell = r0.Cells.AddTableCell();
             totalhcell.Blocks.AddBlock().InsertText("Total");
@@ -147,6 +144,10 @@ public class ReportGenerator : IReport
             var totaltotalcell = r5.Cells.AddTableCell();
             totaltotalcell.Blocks.AddBlock().InsertText(((mmr.ManagerEquity * mmr.CashFlowPercentage * mmr.HoldYears) + mmr.EqualityOnSaleOfProperty).ToString("N2"));
 
+            var dateBox = page.Content.AddTextFragment();
+            dateBox.Text = $"{property.Name} - {DateTime.Now.ToString("MM/dd/yyyy")}";
+            dateBox.Position.Translate(page.Size.Width - 250, page.Size.Height - 10);
+
             editor.Position.Translate(10, 200);
             editor.DrawTable(table);
         }
@@ -162,8 +163,7 @@ public class ReportGenerator : IReport
             MimeType = FileTypeLookup.GetFileTypeInfo(name).MimeType
         };
     }
-
-
+    
     private byte[] ExportToPDF(RadFixedDocument document)
     {
         try

@@ -4,7 +4,6 @@ namespace MultiFamilyPortal.Dtos.Underwriting.Reports
     {
         public ManagersReturnsReport(UnderwritingAnalysis analysis)
         {
-            
             /* Do the math here  */
             /*  AquisitionFee  = analysis.AquisitionFee;
              EqualityOnSaleOfProperty= 0.0;
@@ -17,7 +16,6 @@ namespace MultiFamilyPortal.Dtos.Underwriting.Reports
             ManagerEquity = 11852679;
             EqualityOnSaleOfProperty = -6214973;
             HoldYears = 10;
-
         }
 
         public double AcquisitionFee { get; }

@@ -19,16 +19,14 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
     public class ReportsController : ControllerBase
     {
         private IMFPContext _dbContext { get; }
-        private IReport _report { get; }
-        private IStorageService _storageService { get; }
+        private IReport _generator { get; }
         private IUnderwritingService _underwritingService { get; }
 
-        public ReportsController(IMFPContext dbContext, IUnderwritingService underwritingService, IReport report, IStorageService storageService)
+        public ReportsController(IMFPContext dbContext, IUnderwritingService underwritingService, IReport report)
         {
             _dbContext = dbContext;
             _underwritingService = underwritingService;
-            _report = report;
-            _storageService = storageService;
+            _generator = report;
         }
 
         [HttpGet("full-report/{propertyId:guid}")]
@@ -76,24 +74,11 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         [HttpGet("manager-report/{propertyId:guid}")]
         public async Task<IActionResult> GetManagerReport(Guid propertyId)
         {
-            var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
-            var name = $"Managers_Returns_Report.pdf";
-            var path = Path.Combine(property.Name + "Reports");
-            var fileInfo = FileTypeLookup.GetFileTypeInfo(name);
+            var result = await _generator.ManagersReturns(propertyId);
+            if(result.Data?.Length == 0)
+                return NotFound();
 
-            try
-            {
-                var document = _report.ManagersReturns(new ManagersReturnsReport(property));
-                var pdf = _report.ExportToPDF(document);
-                MemoryStream stream = new MemoryStream(pdf);
-                await _storageService.PutAsync(Path.Combine(path, name),stream, fileInfo.MimeType, true);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e);
-            }
-
-            return File(await _storageService.GetAsync(Path.Combine(path, name)), fileInfo.MimeType, name);
+            return File(result.Data, result.MimeType, result.FileName);
         }
 
         [HttpGet("investment-tiers/{propertyId:guid}/{group}")]

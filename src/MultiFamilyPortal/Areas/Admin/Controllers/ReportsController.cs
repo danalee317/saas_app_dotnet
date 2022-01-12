@@ -77,15 +77,23 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         public async Task<IActionResult> GetManagerReport(Guid propertyId)
         {
             var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
+            var name = $"Managers_Returns_Report.pdf";
+            var path = Path.Combine(property.Name + "Reports");
+            var fileInfo = FileTypeLookup.GetFileTypeInfo(name);
 
-            /* TODO
-               1. Generate Values
-               2. Generate Report
-               3. Save Report as execel and pdf -> Documents/Project_Name/Reports/Report_Name
-               4. Return Report -> Return File or file path?
-            */
-            
-            return NotFound();
+            try
+            {
+                var document = _report.ManagersReturns(new ManagersReturnsReport(property));
+                var pdf = _report.ExportToPDF(document);
+                MemoryStream stream = new MemoryStream(pdf);
+                await _storageService.PutAsync(Path.Combine(path, name),stream, fileInfo.MimeType, true);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+
+            return File(await _storageService.GetAsync(Path.Combine(path, name)), fileInfo.MimeType, name);
         }
 
         [HttpGet("investment-tiers/{propertyId:guid}/{group}")]
@@ -96,7 +104,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         }
 
         [HttpPost("investment-tiers/{propertyId:guid}/{group}")]
-        public async Task<IActionResult> UpdateInvestmentTiers(Guid propertyId, string group, [FromBody]IEnumerable<UnderwritingInvestmentTier> investmentTiers)
+        public async Task<IActionResult> UpdateInvestmentTiers(Guid propertyId, string group, [FromBody] IEnumerable<UnderwritingInvestmentTier> investmentTiers)
         {
             return RedirectToAction(nameof(GetInvestmentTiers));
         }

@@ -12,18 +12,23 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Reports
         [CascadingParameter]
         private Tenant _tenant { get; set; }
 
+        [Inject]
+        NavigationManager NavigationManager { get; set; }
+
         private string _reportName;
+        private string _reportLink;
         private bool _comingSoon;
 
         private void SelectReport(string name)
         {
-            _comingSoon = true;
+            _comingSoon = false;
             _reportName = name;
+            _reportLink = $"{NavigationManager.BaseUri}api/reports/{_reportName}/{Property.Id}";
+
+            Console.WriteLine($"\n\n\nReport Link: {_reportLink}");
 
             if (_comingSoon)
                 _reportName = null;
-
-              //  Property.Rep
         }
     }
 }

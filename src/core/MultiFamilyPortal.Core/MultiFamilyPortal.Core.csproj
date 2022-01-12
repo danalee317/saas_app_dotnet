@@ -32,8 +32,6 @@
     <PackageReference Include="Telerik.Documents.Core" Version="2021.3.1109" />
     <PackageReference Include="Telerik.Documents.Fixed" Version="2021.3.1109" />
     <PackageReference Include="Telerik.Documents.Flow.FormatProviders.Pdf" Version="2021.3.1109" />
-    <PackageReference Include="Telerik.Documents.Spreadsheet.FormatProviders.Pdf" Version="2021.3.1109" />
-    <PackageReference Include="Telerik.Documents.Spreadsheet.FormatProviders.Xls" Version="2021.3.1109" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,8 +4,8 @@ namespace MultiFamilyPortal.Dtos.Underwriting.Reports
     {
         public ManagersReturnsReport(UnderwritingAnalysis analysis)
         {
-            EqualityOnSaleOfProperty = -6214973; // TODO: calculate
-            ManagerEquity = (analysis.NOI - analysis.CapXTotal - analysis.AnnualDebtService) * analysis.OurEquityOfCF;
+            EqualityOnSaleOfProperty = analysis.Projections.Select(x => x.Equity).Sum();
+            ManagerEquity = (analysis.NOI - analysis.CapXTotal - analysis.Projections.Select(x => x.RemainingDebt).Sum()) * analysis.OurEquityOfCF;
             CashFlowPercentage = analysis.OurEquityOfCF;
             HoldYears = analysis.HoldYears;
             AcquisitionFee = analysis.AquisitionFee;

@@ -35,11 +35,11 @@ public class ReportGenerator : IReport
         try
         {
             var mmr = new ManagersReturnsReport(property);
-            page.Size = new Size((564 + 125 * mmr.HoldYears), 793);
+            page.Size = new Size((570 + 135 * mmr.HoldYears), 793);
             FixedContentEditor editor = new FixedContentEditor(page);
 
             var textFragment = page.Content.AddTextFragment();
-            textFragment.Text = "Managers Returns";
+            textFragment.Text = "Manager Return";
             textFragment.Position.Translate(page.Size.Width / 2 - 100, 100);
             textFragment.FontSize = 25;
 
@@ -69,7 +69,7 @@ public class ReportGenerator : IReport
                 cell.Blocks.AddBlock().InsertText($"Year {year}");
             }
             var totalhcell = r0.Cells.AddTableCell();
-            totalhcell.Blocks.AddBlock().InsertText("Total");
+            totalhcell.Blocks.AddBlock().InsertText("Total ($)");
 
             // row 1
             var afcell = r1.Cells.AddTableCell();
@@ -129,7 +129,7 @@ public class ReportGenerator : IReport
 
             // row 5
             var totalcell = r5.Cells.AddTableCell();
-            totalcell.Blocks.AddBlock().InsertText("Total");
+            totalcell.Blocks.AddBlock().InsertText("Total ($)");
             var emptyr5cell = r5.Cells.AddTableCell();
             emptyr5cell.Blocks.AddBlock();
             var totalValuecell = r5.Cells.AddTableCell();
@@ -148,7 +148,7 @@ public class ReportGenerator : IReport
             dateBox.Text = $"{property.Name} - {DateTime.Now.ToString("MM/dd/yyyy")}";
             dateBox.Position.Translate(page.Size.Width - 250, page.Size.Height - 10);
 
-            editor.Position.Translate(10, 200);
+            editor.Position.Translate(page.Size.Width/2 - table.Measure().Width/2, page.Size.Height/2 - table.Measure().Height/2);
             editor.DrawTable(table);
         }
         catch (Exception ex)
@@ -163,7 +163,7 @@ public class ReportGenerator : IReport
             MimeType = FileTypeLookup.GetFileTypeInfo(name).MimeType
         };
     }
-    
+
     private byte[] ExportToPDF(RadFixedDocument document)
     {
         try

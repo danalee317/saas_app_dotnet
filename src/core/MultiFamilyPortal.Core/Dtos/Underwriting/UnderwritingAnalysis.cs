@@ -267,8 +267,12 @@ namespace MultiFamilyPortal.Dtos.Underwriting
             _projectionContext = this.WhenAnyValue(x => x.StartDate, x => x.Units, x => x.CapXTotal, x => x.PurchasePrice, x => x.NOI, x => x.AnnualDebtService, x => x.HoldYears, x => x.Management, x => x.PhysicalVacancy, x => x.ReversionCapRate, x => x.CapRate,
 
                 (start, units, capX, purchasePrice, noi, debtService, hold, man, vac, rCap, cap) => new PropertyInfo(start, units, capX, purchasePrice, noi, debtService, hold, man, vac, rCap, cap));
-            var projectionUpdate = this.WhenAnyObservable(x => x._incomeLedger, x => x._expenseLedger, x => x._projectionContext, (income, expense, gen) =>
-            new ProjectionContext(income, expense, gen));
+
+            var projectionUpdate = mortgageRefCount
+                .AutoRefreshOnObservable(_ => this.WhenAnyObservable(x => x._incomeLedger, x => x._expenseLedger, x => x._projectionContext, (income, expense, context) => (income, expense, context)))
+                .ToCollection()
+                .WithLatestFrom(this.WhenAnyObservable(x => x._incomeLedger, x => x._expenseLedger, x => x._projectionContext, (income, expense, context) => (income, expense, context)))
+                .Select(x => new ProjectionContext(x.Second.income, x.Second.expense, x.Second.context, x.First));
 
             // double ManagementRate, double VacancyRate, double ReversionCapRate, double CapRate
 
@@ -936,8 +940,33 @@ namespace MultiFamilyPortal.Dtos.Underwriting
             var debtService = update.Context.Info.DebtService;
             var capitalReserves = update.Context.Info.CapX;
 
+            var loanStart = update.Context.Info.Start.AddMonths(2);
+            var firstYearOffset = 0;
+            if(loanStart.Year > update.Context.Info.Start.Year)
+            {
+                firstYearOffset -= loanStart.Month;
+            }
+
+            var months = 0;
             for (int i = 0; i < update.Context.Info.Hold + 1; i++)
             {
+                if (i == 0)
+                {
+                    if (firstYearOffset == 0)
+                        months = 13 - loanStart.Month;
+                    else
+                        months = 0;
+                }
+                else if (i == 1 && firstYearOffset != 0)
+                {
+                    // First Year Offset is negative
+                    months = 12 - firstYearOffset;
+                }
+                else
+                {
+                    months += 12;
+                }
+
                 var factor = 1.0;
                 if (i == 0)
                 {
@@ -997,6 +1026,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                     Marketing = marketing * factor,
                     OtherIncome = otherIncome * factor,
                     Payroll = payroll * factor,
+                    RemainingDebt = update.Context.Loans.Sum(x => x.CalculateRemainingBalance(months)),
                     RepairsMaintenance = repairsMaint * factor,
                     SalesPrice = noi / capRate,
                     Taxes = taxes * factor,
@@ -1185,7 +1215,8 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         private record ProjectionContext(
             IncomeLedger IncomeLedger,
             ExpenseLedger ExpenseLedger,
-            PropertyInfo Info);
+            PropertyInfo Info,
+            IEnumerable<UnderwritingAnalysisMortgage> Loans);
 
         private record ProjectionUpdate(ProjectionContext Context, IEnumerable<UnderwritingAnalysisIncomeForecast> Forecast);
     }

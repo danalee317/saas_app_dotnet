@@ -48,6 +48,20 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         [JsonIgnore]
         public double AnnualDebtService => _annualDebtServiceHelper.Value;
 
+        internal double CalculateRemainingBalance(int months)
+        {
+            if (months <= 0 || (InterestOnly && BalloonMonths <= months))
+                return LoanAmount;
+
+            var pv = LoanAmount;
+            var n = months - (InterestOnly ? BalloonMonths : 0);
+            var r = InterestRate / 12;
+            var p = AnnualDebtService / 12;
+
+            var fv = pv * Math.Pow(1 + r, n) - p * ((Math.Pow(1 + r, n) - 1) / r);
+            return Math.Round(fv, 2);
+        }
+
         private static double CalculatePayment(double LoanAmount, double InterestRate, int TermInYears, bool InterestOnly, int balloonMonths)
         {
             var termOfLoan = TermInYears * 12;

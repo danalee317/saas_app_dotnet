@@ -53,5 +53,18 @@ namespace MultiFamilyPortal.Tests.Fixtures.Dtos
 
             Assert.Contains(notifications, x => x == "AnnualDebtService");
         }
+
+        [Theory]
+        [InlineData(0, 1600000)]
+        [InlineData(36, 1511979.6)]
+        public void CalculatesRemainingBalance(int months, double expected)
+        {
+            var mortgage = new UnderwritingAnalysisMortgage
+            {
+                LoanAmount = 1600000
+            };
+
+            Assert.Equal(expected, mortgage.CalculateRemainingBalance(months));
+        }
     }
 }

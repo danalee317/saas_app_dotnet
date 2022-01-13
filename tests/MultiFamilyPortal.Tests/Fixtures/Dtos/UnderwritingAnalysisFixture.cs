@@ -26,16 +26,15 @@ namespace MultiFamilyPortal.Tests.Fixtures.Dtos
         }
 
         [Fact]
-        public async Task DefaultCapRateEqualsZero()
+        public void DefaultCapRateEqualsZero()
         {
             var analysis = new UnderwritingAnalysis();
 
-            await Task.Delay(200);
             Assert.Equal(0, analysis.CapRate);
         }
 
         [Fact]
-        public async Task CapRateEqualsZeroWithOnlyIncome()
+        public void CapRateEqualsZeroWithOnlyIncome()
         {
             var analysis = new UnderwritingAnalysis();
             analysis.AddOurItem(new UnderwritingAnalysisLineItem
@@ -45,12 +44,11 @@ namespace MultiFamilyPortal.Tests.Fixtures.Dtos
                 ExpenseType = ExpenseSheetType.T12
             });
 
-            await Task.Delay(200);
             Assert.Equal(0, analysis.CapRate);
         }
 
         [Fact]
-        public async Task CapRateEquals10WithPurchasePriceAndIncomeOf100k()
+        public void CapRateEquals10WithPurchasePriceAndIncomeOf100k()
         {
             var analysis = new UnderwritingAnalysis
             {
@@ -63,7 +61,6 @@ namespace MultiFamilyPortal.Tests.Fixtures.Dtos
                 ExpenseType = ExpenseSheetType.T12
             });
 
-            await Task.Delay(200);
             Assert.Equal(0.095, analysis.CapRate);
         }
 
@@ -304,6 +301,39 @@ namespace MultiFamilyPortal.Tests.Fixtures.Dtos
             analysis.AddOurItems(_ledger);
 
             Assert.Equal(55000, analysis.Payroll);
+        }
+
+        [Fact]
+        public void CalculatesRemainingLoanAmount()
+        {
+            var analysis = new UnderwritingAnalysis
+            {
+                PurchasePrice = 2000000,
+                StartDate = DateTimeOffset.Now.AddMonths(3),
+                HoldYears = 5,
+                Units = 40
+            };
+            analysis.AddOurItems(_ledger);
+
+            var firstYear = analysis.Projections.First();
+            var lastYear = analysis.Projections.Last();
+
+            Assert.Equal(91663.74, lastYear.DebtService);
+            var paydown = analysis.Projections.ToDictionary(x => x.Year, x => x.RemainingDebt);
+            for (int i = 1; i < 6; i++)
+            {
+                var previous = paydown[analysis.StartDate.Year + i - 1];
+                var current = paydown[analysis.StartDate.Year + i];
+                Assert.True(current < previous);
+            }
+
+            var equity = analysis.Projections.ToDictionary(x => x.Year, x => x.Equity);
+            for (int i = 1; i < 6; i++)
+            {
+                var previous = equity[analysis.StartDate.Year + i - 1];
+                var current = equity[analysis.StartDate.Year + i];
+                Assert.True(current > previous);
+            }
         }
 
         private static readonly IEnumerable<UnderwritingAnalysisLineItem> _ledger = new[]

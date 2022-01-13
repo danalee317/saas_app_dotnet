@@ -44,10 +44,14 @@
         public double CashFlowBeforeDebtService =>
             NetOperatingIncome - CapitalReserves;
 
+        public double RemainingDebt { get; init; }
+
         public double DebtService { get; init; }
 
         public double TotalCashFlow => CashFlowBeforeDebtService - DebtService;
 
         public double SalesPrice { get; init; }
+
+        public double Equity => SalesPrice - RemainingDebt;
     }
 }

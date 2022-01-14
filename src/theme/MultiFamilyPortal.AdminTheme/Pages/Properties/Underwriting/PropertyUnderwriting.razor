@@ -35,31 +35,31 @@ else
             <WizardStepperSettings Linear=@false />
           </WizardSettings>
           <WizardSteps>
-            <WizardStep Label="Property Info"
+            <WizardStep Label="@(_isSmallScreen ? null : "Property Info")"
                         IconClass="fa-duotone fa-city">
               <Content>
                 <PropertyInfoWizardStep Property=@Property />
               </Content>
             </WizardStep>
-            <WizardStep Label="Financials"
+            <WizardStep Label="@(_isSmallScreen ? null : "Financials")"
                         IconClass="fa-duotone fa-money-bills">
               <Content>
                 <FinancialsWizardStep Property=@Property ExpensesUpdated=@OnExpensesUpdated />
               </Content>
             </WizardStep>
-            <WizardStep Label="Closing"
+            <WizardStep Label="@(_isSmallScreen ? null : "Closing")"
                         IconClass="fa-duotone fa-piggy-bank">
               <Content>
                 <ClosingWizardStep Property=@Property />
               </Content>
             </WizardStep>
-            <WizardStep Label="Rent Roll"
+            <WizardStep Label="@(_isSmallScreen ? null : "Rent Roll")"
                         IconClass="fa-duotone fa-list">
               <Content>
                 <RentRollWizardStep Property=@Property />
               </Content>
             </WizardStep>
-            <WizardStep Label="Reports"
+            <WizardStep Label="@(_isSmallScreen ? null : "Reports")"
                         IconClass="fa-duotone fa-file-chart-column">
               <Content>
                 <ReportsWizardStep Property=@Property />
@@ -88,6 +88,13 @@ else
       </div>
     </div>
   </Animation>
+
+  @* Resize a container based on the browser size *@
+
+<TelerikMediaQuery Media="@_mediaQuery" OnChange="@((doesMatch) => _isSmallScreen = doesMatch)"></TelerikMediaQuery>
+
 }
 
 <PortalNotification @ref="notification" />
+
+

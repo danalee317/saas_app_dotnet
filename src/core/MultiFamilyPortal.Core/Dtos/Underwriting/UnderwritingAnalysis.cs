@@ -332,6 +332,14 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .InvokeCommand(_updateIncomeForecast)
                 .DisposeWith(_disposable);
 
+            this.WhenAnyValue(x => x.GrossPotentialRent, x => x.GrossScheduledRent, CalculateLossToLease)
+                .ToProperty(this, nameof(LossToLease), out _lossToLease)
+                .DisposeWith(_disposable);
+
+            this.WhenAnyValue(x => x.OperatingExpenses, x => x.PropertyInsurance, x => x.DeferredMaintenance, x => x.CapXTotal, x => x.SECAttorney, x => x.ClosingCostMiscellaneous, CalculateClosingCostOther)
+                .ToProperty(this, nameof(ClosingCostOther), out _closingCostOther)
+                .DisposeWith(_disposable);
+
             _mortgageCache.AddOrUpdate(new UnderwritingAnalysisMortgage
             {
                 Id = Guid.NewGuid(),

@@ -99,12 +99,11 @@ namespace MultiFamilyPortal.Helpers
                 .Sum(x => x.AnnualizedTotal);
         }
 
-        public static double CalculateLossToLease(double grossPotentialRent, IEnumerable<UnderwritingAnalysisLineItem> lineItems)
+        public static double CalculateLossToLease(double grossPotentialRent, double grossScheduledRent)
         {
-            if (grossPotentialRent <= 0 || lineItems is null || !lineItems.Any())
+            if (grossPotentialRent < grossScheduledRent || grossPotentialRent <= 0)
                 return 0;
 
-            var grossScheduledRent = lineItems.Where(x => x.Category == UnderwritingCategory.GrossScheduledRent).Sum(x => x.AnnualizedTotal);
             return grossPotentialRent - grossScheduledRent;
         }
 

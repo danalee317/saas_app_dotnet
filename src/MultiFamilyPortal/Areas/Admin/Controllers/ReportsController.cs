@@ -75,8 +75,6 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         public async Task<IActionResult> GetManagerReport(Guid propertyId)
         {
             var result = await _generator.ManagersReturns(propertyId);
-            if(result is null)
-                return NotFound();
                 
             if(result.Data?.Length == 0)
                 return NotFound();

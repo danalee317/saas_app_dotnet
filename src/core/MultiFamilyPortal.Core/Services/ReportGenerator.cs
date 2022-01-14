@@ -28,7 +28,7 @@ public class ReportGenerator : IReportGenerator
         var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
 
         if (property is null)
-            return null;
+            return await NotFound();
 
         var name = $"Managers_Returns_Report.pdf";
 
@@ -106,7 +106,7 @@ public class ReportGenerator : IReportGenerator
 
             // row 3
             var cfcell = r3.Cells.AddTableCell();
-            cfcell.Blocks.AddBlock().InsertText($"Cash Flow");
+            cfcell.Blocks.AddBlock().InsertText($"Total Cash Flow");
             foreach (var yearlycashFlow in mmr.CashFlow)
             {
                 var cell = r3.Cells.AddTableCell();
@@ -117,7 +117,7 @@ public class ReportGenerator : IReportGenerator
 
             // row 4
             var cfpcell = r4.Cells.AddTableCell();
-            cfpcell.Blocks.AddBlock().InsertText($"Cash Flow ({mmr.CashFlowPercentage.ToString("P2")})");
+            cfpcell.Blocks.AddBlock().InsertText($"Total Cash Flow ({mmr.CashFlowPercentage.ToString("P2")})");
             var totalMCF = 0d;
             foreach (var yearlycashFlow in mmr.CashFlow)
             {
@@ -203,7 +203,7 @@ public class ReportGenerator : IReportGenerator
     {
         try
         {
-            PdfFormatProvider provider = new PdfFormatProvider();
+            PdfFormatProvider provider = new();
             PdfExportSettings settings = new PdfExportSettings
             {
                 ImageQuality = ImageQuality.High,
@@ -219,12 +219,17 @@ public class ReportGenerator : IReportGenerator
         }
     }
 
-    public Task<ReportResponse> OverallProjections(Guid propertyId) => throw new NotImplementedException();
-    public Task<ReportResponse> CashFlow(Guid propertyId) => throw new NotImplementedException();
-    public Task<ReportResponse> ThreeTier(Guid propertyId) => throw new NotImplementedException();
-    public Task<ReportResponse> CulmativeInvestment(Guid propertyId) => throw new NotImplementedException();
-    public Task<ReportResponse> AOneandAtwo(Guid propertyId) => throw new NotImplementedException();
-    public Task<ReportResponse> ThousandInvestmentProjects(Guid propertyId) => throw new NotImplementedException();
-    public Task<ReportResponse> NetPresentValue(Guid propertyId) => throw new NotImplementedException();
-    public Task<ReportResponse> LeveragedRateOfReturns(Guid propertyId) => throw new NotImplementedException();
+    public Task<ReportResponse> OverallProjections(Guid propertyId) => NotFound();
+    public Task<ReportResponse> CashFlow(Guid propertyId)
+    {
+        return NotFound();
+    }
+
+    public Task<ReportResponse> ThreeTier(Guid propertyId) => NotFound();
+    public Task<ReportResponse> CulmativeInvestment(Guid propertyId) => NotFound();
+    public Task<ReportResponse> AOneandAtwo(Guid propertyId) => NotFound();
+    public Task<ReportResponse> ThousandInvestmentProjects(Guid propertyId) => NotFound();
+    public Task<ReportResponse> NetPresentValue(Guid propertyId) => NotFound();
+    public Task<ReportResponse> LeveragedRateOfReturns(Guid propertyId) => NotFound();
+    private static async Task<ReportResponse> NotFound() => new() { Data = Array.Empty<byte>() };
 }

@@ -65,7 +65,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 Total = request.Total,
                 Type = request.Type,
                 UserId = user.Id,
-                Notes = request.Notes.Trim()
+                Notes = request.Notes?.Trim()
             };
 
             await _dbContext.ActivityLogs.AddAsync(activity);
@@ -91,7 +91,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             activity.Description = request.Description.Trim();
             activity.Total = request.Total;
             activity.Type = request.Type;
-            activity.Notes = request.Notes.Trim();
+            activity.Notes = request.Notes?.Trim();
             _dbContext.ActivityLogs.Update(activity);
             await _dbContext.SaveChangesAsync();
             return Ok();

@@ -117,7 +117,7 @@ public class ReportGenerator : IReportGenerator
 
             // row 4
             var cfpcell = r4.Cells.AddTableCell();
-            cfpcell.Blocks.AddBlock().InsertText($"Total Cash Flow ({mmr.CashFlowPercentage.ToString("P2")})");
+            cfpcell.Blocks.AddBlock().InsertText($"Cash Flow ({mmr.CashFlowPercentage.ToString("P2")})");
             var totalMCF = 0d;
             foreach (var yearlycashFlow in mmr.CashFlow)
             {

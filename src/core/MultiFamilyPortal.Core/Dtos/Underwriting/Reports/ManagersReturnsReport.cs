@@ -4,9 +4,9 @@ namespace MultiFamilyPortal.Dtos.Underwriting.Reports
     {
         public ManagersReturnsReport(UnderwritingAnalysis analysis)
         {
-            ManagerEquity = analysis.Projections.OrderBy(x => x.Year).FirstOrDefault().Equity;
-            EqualityOnSaleOfProperty = analysis.Projections.OrderBy(x => x.Year).LastOrDefault().Equity;
-            CashFlow = analysis.Projections.OrderBy(x => x.Year).Select(x => x.TotalCashFlow).ToList();
+            ManagerEquity = analysis.Projections.FirstOrDefault().Equity;
+            EqualityOnSaleOfProperty = analysis.Projections.LastOrDefault().Equity;
+            CashFlow = analysis.Projections.Select(x => x.TotalCashFlow).ToList();
             CashFlowPercentage = analysis.OurEquityOfCF;
             HoldYears = analysis.HoldYears;
             AcquisitionFee = analysis.AquisitionFee;

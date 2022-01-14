@@ -15,7 +15,11 @@ namespace MultiFamilyPortal.CoreUI
         [Parameter]
         public string Id { get; set; }
 
-        protected override void OnParametersSet() => _capx = Property.CapX.ToString("C2");
+        protected override void OnParametersSet()
+        {
+            _capx = Property.CapX.ToString("C2");
+            CostType = Property.CapXType;
+        }
         private string _capx;
         private readonly CostType[] _costTypes = { CostType.PerDoor, CostType.Total };
 
@@ -26,5 +30,28 @@ namespace MultiFamilyPortal.CoreUI
         }
 
         private void FormatToNumber() => _capx = double.Parse(_capx[1..]).ToString("N");
+
+        private CostType CostType
+        {
+            get => Property.CapXType;
+            set
+            {
+                ProcessCapXType(value, Property.CapXType);
+                Property.CapXType = value;
+            }
+        }
+
+        private void ProcessCapXType(CostType newValue, CostType oldvalue)
+        {
+            if(newValue != oldvalue)
+            {
+                if (newValue == CostType.PerDoor)
+                    Property.CapX = Property.CapX / Property.Units;
+                else
+                    Property.CapX = Property.CapX * Property.Units;
+                
+                _capx = Property.CapX.ToString("C2");
+            }
+        }
     }
 }

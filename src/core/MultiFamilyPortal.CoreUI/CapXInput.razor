@@ -9,7 +9,7 @@
            @onfocus="FormatToNumber"/>
       <select class="ms-one"
               aria-label="Select Cost Types"
-              @bind="@Property.CapXType"
+              @bind="@CostType"
               disabled="@(!Enabled)">
         @foreach (var costType in _costTypes)
         {

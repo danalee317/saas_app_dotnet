@@ -19,12 +19,14 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
     public class ReportsController : ControllerBase
     {
         private IMFPContext _dbContext { get; }
+        private IReportGenerator _generator { get; }
         private IUnderwritingService _underwritingService { get; }
 
-        public ReportsController(IMFPContext dbContext, IUnderwritingService underwritingService)
+        public ReportsController(IMFPContext dbContext, IUnderwritingService underwritingService, IReportGenerator report)
         {
             _dbContext = dbContext;
             _underwritingService = underwritingService;
+            _generator = report;
         }
 
         [HttpGet("full-report/{propertyId:guid}")]
@@ -72,8 +74,12 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         [HttpGet("manager-report/{propertyId:guid}")]
         public async Task<IActionResult> GetManagerReport(Guid propertyId)
         {
-            var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
-            return NotFound();
+            var result = await _generator.ManagersReturns(propertyId);
+                
+            if(result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
         }
 
         [HttpGet("investment-tiers/{propertyId:guid}/{group}")]
@@ -84,7 +90,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         }
 
         [HttpPost("investment-tiers/{propertyId:guid}/{group}")]
-        public async Task<IActionResult> UpdateInvestmentTiers(Guid propertyId, string group, [FromBody]IEnumerable<UnderwritingInvestmentTier> investmentTiers)
+        public async Task<IActionResult> UpdateInvestmentTiers(Guid propertyId, string group, [FromBody] IEnumerable<UnderwritingInvestmentTier> investmentTiers)
         {
             return RedirectToAction(nameof(GetInvestmentTiers));
         }

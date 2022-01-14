@@ -80,11 +80,12 @@ namespace MultiFamilyPortal.AdminTheme.Pages
             await InvokeAsync(StateHasChanged);
         }
 
-        private void CreateActivity()
+        private async Task CreateActivityAsync()
         {
+            var date = await _timezone.GetLocalFullDate();
             _newActivity = new ActivityResponse
             {
-                Date = DateTime.Now.Date
+                Date = date.Date
             };
         }
 

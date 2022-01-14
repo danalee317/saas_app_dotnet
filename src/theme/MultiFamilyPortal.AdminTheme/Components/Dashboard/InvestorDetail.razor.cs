@@ -24,13 +24,16 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
         private ITimeZoneService _timezoneService { get; set; }
 
         private string _localTime;
+        private string _timezone;
 
         protected override void OnParametersSet()
         {
             if (Investor == null)
                 return;
 
-            string investorTimeZone = HandleTimeZone(Investor.Timezone);
+            var investorTimeZone = HandleTimeZone(Investor.Timezone);
+            _timezone = GetIntialsTimezone(investorTimeZone);
+            _timezone = string.IsNullOrEmpty(_timezone)? "Unknown": _timezone;
 
             if (string.IsNullOrEmpty(investorTimeZone))
                 _localTime = "Unknown";
@@ -92,6 +95,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
                 default:
                     return timezone.Name;
             }
+        }
+
+        private string GetIntialsTimezone(string timezone)
+        {
+           return _timezoneService.Timezones.FirstOrDefault(x => x.Name== timezone)?.Intials;
         }
     }
 }

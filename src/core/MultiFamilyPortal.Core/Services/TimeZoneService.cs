@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 using MultiFamilyPortal.Dtos;
 
 namespace MultiFamilyPortal.Services

@@ -34,6 +34,8 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
 
         private PortalNotification notification { get; set; }
         private bool _editable;
+        private bool _isSmallScreen { get; set; }
+        private string _mediaQuery { get; set; } = "(max-width: 767px)";
 
         private readonly IEnumerable<UnderwritingStatus> AvailableStatus = Enum.GetValues<UnderwritingStatus>();
 

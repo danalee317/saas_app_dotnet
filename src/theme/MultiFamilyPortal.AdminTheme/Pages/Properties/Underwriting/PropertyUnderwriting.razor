@@ -11,20 +11,22 @@ else
 {
   <SiteTitle Title=@Property.Name />
   <Animation OptionsName="Page">
-   <UnderwritingSummary Property=@Property />
-
-    <div class="row my-2">
-      <div class="col-md-3 col-sm-6 offset-md-9 offset-sm-6">
-        <TelerikDropDownList Data=@AvailableStatus
-                             @bind-Value=@Property.Status
-                             Enabled=@_editable>
-          <ValueTemplate>
-            @context.Humanize(LetterCasing.Title)
-          </ValueTemplate>
-          <ItemTemplate>
-            @context.Humanize(LetterCasing.Title)
-          </ItemTemplate>
-        </TelerikDropDownList>
+    <UnderwritingSummary Property=@Property />
+    <div class="container">
+      <div class="row my-2">
+        <div class="col-md-4 offset-md-8 col-xl-3 offset-xl-9 offset-1 col-10">
+          <select class="form-select"
+                  aria-label="Select Underwriting Status"
+                  disabled ="@(!_editable)"
+                  @bind-value="@Property.Status" >
+            @foreach (var status in AvailableStatus)
+            {
+              <option value="@status" selected="@(status == Property.Status)">
+                @status.Humanize(LetterCasing.Title)
+              </option>
+            }
+          </select>
+        </div>
       </div>
     </div>
 

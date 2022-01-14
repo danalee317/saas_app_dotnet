@@ -65,7 +65,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                 Total = request.Total,
                 Type = request.Type,
                 UserId = user.Id,
-                Notes = request.Notes.Trim()
+                Notes = request.Notes?.Trim()
             };
 
             await _dbContext.ActivityLogs.AddAsync(activity);

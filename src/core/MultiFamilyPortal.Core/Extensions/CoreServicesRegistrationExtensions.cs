@@ -4,7 +4,6 @@ using Azure.Storage.Blobs;
 using BlazorAnimation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,7 +35,7 @@ namespace MultiFamilyPortal.Extensions
                 .AddScoped<IStartupTask, BrandStartupTask>()
                 .AddScoped<IBrandService, BrandService>()
                 .AddScoped<IUnderwritingService, UnderwritingService>()
-                .AddScoped<IReport, ReportGenerator>()
+                .AddScoped<IReportGenerator, ReportGenerator>()
                 .AddScoped(sp =>
                 {
                     var context = sp.GetRequiredService<ITenantSettingsContext>();

@@ -4,8 +4,9 @@ namespace MultiFamilyPortal.Dtos.Underwriting.Reports
     {
         public ManagersReturnsReport(UnderwritingAnalysis analysis)
         {
-            EqualityOnSaleOfProperty = analysis.Projections.Select(x => x.Equity).Sum();
-            ManagerEquity = (analysis.NOI - analysis.CapXTotal - analysis.Projections.Select(x => x.RemainingDebt).Sum()) * analysis.OurEquityOfCF;
+            ManagerEquity = analysis.Projections.OrderBy(x => x.Year).FirstOrDefault().Equity;
+            EqualityOnSaleOfProperty = analysis.Projections.OrderBy(x => x.Year).LastOrDefault().Equity;
+            CashFlow = analysis.Projections.OrderBy(x => x.Year).Select(x => x.TotalCashFlow).ToList();
             CashFlowPercentage = analysis.OurEquityOfCF;
             HoldYears = analysis.HoldYears;
             AcquisitionFee = analysis.AquisitionFee;
@@ -13,6 +14,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting.Reports
 
         public double AcquisitionFee { get; }
         public double ManagerEquity { get; }
+        public IEnumerable<double> CashFlow { get; }
         public double CashFlowPercentage { get; }
         public double EqualityOnSaleOfProperty { get; }
         public int HoldYears { get; }

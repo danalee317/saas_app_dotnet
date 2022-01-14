@@ -19,10 +19,10 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
     public class ReportsController : ControllerBase
     {
         private IMFPContext _dbContext { get; }
-        private IReport _generator { get; }
+        private IReportGenerator _generator { get; }
         private IUnderwritingService _underwritingService { get; }
 
-        public ReportsController(IMFPContext dbContext, IUnderwritingService underwritingService, IReport report)
+        public ReportsController(IMFPContext dbContext, IUnderwritingService underwritingService, IReportGenerator report)
         {
             _dbContext = dbContext;
             _underwritingService = underwritingService;
@@ -75,6 +75,9 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         public async Task<IActionResult> GetManagerReport(Guid propertyId)
         {
             var result = await _generator.ManagersReturns(propertyId);
+            if(result is null)
+                return NotFound();
+                
             if(result.Data?.Length == 0)
                 return NotFound();
 

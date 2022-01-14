@@ -5,6 +5,9 @@
   LocalTime: function () {
     return new Date().getTimezoneOffset();
   },
+  LocalDate: function(){
+    return new Date().toString();
+  },
   GoogleCaptcha: function (dotNetObject, selector, sitekeyValue) {
     return grecaptcha.render(selector, {
       'sitekey': sitekeyValue,

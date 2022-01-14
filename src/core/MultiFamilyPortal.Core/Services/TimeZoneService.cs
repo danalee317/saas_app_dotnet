@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using System.Globalization;
+using Microsoft.JSInterop;
 using MultiFamilyPortal.Dtos;
 
 namespace MultiFamilyPortal.Services
@@ -8,6 +9,8 @@ namespace MultiFamilyPortal.Services
         private IJSRuntime _jsRuntime { get; }
 
         private TimeSpan? _userOffset;
+
+        private DateTime? _dateTime = null;
 
         public TimeZoneService(IJSRuntime jsRuntime)
         {
@@ -23,6 +26,13 @@ namespace MultiFamilyPortal.Services
             }
 
             return dateTime.ToOffset(_userOffset.Value);
+        }
+
+        public async ValueTask<DateTime> GetLocalFullDate()
+        {
+            if (_dateTime is null)
+                 _dateTime = ConvertJsDate(await _jsRuntime.InvokeAsync<string>("MFPortal.LocalDate"));
+            return (DateTime)_dateTime;
         }
 
         public DateTime GetLocalTimeByTimeZone(string timezone) => TimeZoneInfo.ConvertTime(DateTime.Now, TimeZoneInfo.Local, TimeZoneInfo.FindSystemTimeZoneById(timezone));
@@ -157,5 +167,20 @@ namespace MultiFamilyPortal.Services
             new TimezoneData { Name = "Samoa Standard Time", Intials = "SST", UTC = "UTC-11", },
             new TimezoneData { Name = "Line Islands Standard Time", Intials = "LINT", UTC = "UTC+14", }
         };
+
+        private static DateTime ConvertJsDate(string jsDate)
+        {
+            const string formatString = "ddd MMM d yyyy HH:mm:ss";
+
+            var gmtIndex = jsDate.IndexOf(" GMT");
+            switch (gmtIndex)
+            {
+                case > -1:
+                    jsDate = jsDate.Remove(gmtIndex);
+                    return DateTime.ParseExact(jsDate, formatString, null);
+                default:
+                    return DateTime.Parse(jsDate);
+            }
+        }
     }
 }

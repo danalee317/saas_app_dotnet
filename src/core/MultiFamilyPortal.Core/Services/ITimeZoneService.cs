@@ -6,6 +6,8 @@ namespace MultiFamilyPortal.Services
     {
         ValueTask<DateTimeOffset> GetLocalDateTime(DateTimeOffset dateTime);
 
+        ValueTask<DateTime> GetLocalFullDate();
+
         DateTime GetLocalTimeByTimeZone(string timezone);
 
         List<TimezoneData> Timezones { get; }

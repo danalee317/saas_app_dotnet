@@ -18,7 +18,7 @@ else
           <select class="form-select"
                   aria-label="Select Underwriting Status"
                   disabled ="@(!_editable)"
-                  @bind-value="@Property.Status" >
+                  @bind="@Property.Status" >
             @foreach (var status in AvailableStatus)
             {
               <option value="@status" selected="@(status == Property.Status)">

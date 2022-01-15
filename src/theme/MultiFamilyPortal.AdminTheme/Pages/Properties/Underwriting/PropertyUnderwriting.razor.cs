@@ -64,9 +64,20 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
 
         private void Previous() => currentIndex--;
 
-        private void OnTabChanged()
+        private async Task OnAddToPortfolio()
         {
-            //Property.Update();
+            using var response = await _client.PostAsJsonAsync($"/api/admin/underwriting/convert-to-portfolio/{propertyId}", Property);
+
+            if(response.IsSuccessStatusCode)
+            {
+                Property = await response.Content.ReadFromJsonAsync<UnderwritingAnalysis>();
+                notification.ShowSuccess("The property has been added to your portfolio!");
+                // TODO: Navigate to the Asset Under Management Detail page
+            }
+            else
+            {
+                notification.ShowWarning("We were unable to add the property to your portfolio. Please try again.");
+            }
         }
 
         private void OnExpensesUpdated()

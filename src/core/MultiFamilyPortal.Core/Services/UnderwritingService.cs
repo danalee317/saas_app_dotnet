@@ -572,6 +572,7 @@ namespace MultiFamilyPortal.Services
             property.Address = analysis.Address;
             property.AquisitionFeePercent = analysis.AquisitionFeePercent;
             property.AskingPrice = analysis.AskingPrice;
+            property.AssetId = analysis.AssetId;
             property.CapRate = analysis.CapRate;
             property.CapX = analysis.CapX;
             property.CapXType = analysis.CapXType;

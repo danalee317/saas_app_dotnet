@@ -423,76 +423,115 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             return new EmptyResult();
         }
 
-
-        [HttpPost("upload/remove/{id:guid}")]
-        public ActionResult Remove(Guid id, string fileToRemove) // must match RemoveField which defaults to "files"
+        [HttpPost("convert-to-portfolio/{propertyId:guid}")]
+        public async Task<IActionResult> ConvertToPortfolio(Guid propertyId, UnderwritingAnalysis analysis)
         {
-            if (fileToRemove != null)
+            if (propertyId == default || propertyId != analysis.Id)
+                return BadRequest();
+
+            var email = User.FindFirstValue(ClaimTypes.Email);
+
+            if (await _dbContext.AssetsUnderManagement.AnyAsync(x => x.UnderwritingId == propertyId))
+                return BadRequest();
+
+            var asset = new AssetUnderManagement
             {
-                try
-                {
-                    //var fileName = Path.GetFileName(fileToRemove);
-                    //var physicalPath = Path.Combine(HostingEnvironment.WebRootPath, fileName);
+                Name = analysis.Name,
+                Address = analysis.Address ?? "Undisclosed",
+                City = analysis.City ?? "Undisclosed",
+                State = analysis.State ?? "Undisclosed",
+                Zip = analysis.Zip ?? "Undisclosed",
+                InvestorState = AssetInvestorState.Limited,
+                PurchasePrice = analysis.PurchasePrice,
+                Status = AssetState.UnderContract,
+                UnderwritingId = propertyId,
+                Units = analysis.Units,
+            };
 
-                    //if (System.IO.File.Exists(physicalPath))
-                    //{
-                    //    // Implement security mechanisms here - prevent path traversals,
-                    //    // check for allowed extensions, types, permissions, etc.
-                    //    // this sample always deletes the file from the root and is not sufficient for a real application.
-
-                    //    System.IO.File.Delete(physicalPath);
-                    //}
-                }
-                catch(Exception ex)
-                {
-                    // Implement error handling here, this example merely indicates an upload failure.
-                    Response.StatusCode = 500;
-                    Response.WriteAsync(ex.Message); // custom error message
-                }
+            try
+            {
+                await _dbContext.AssetsUnderManagement.AddAsync(asset);
+                await _dbContext.SaveChangesAsync();
+                analysis.AssetId = asset.Id;
+                var updated = await _underwritingService.UpdateProperty(propertyId, analysis, email);
+                return Ok(updated);
             }
-
-            // Return an empty string message in this case
-            return new EmptyResult();
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
         }
 
-        [HttpGet("property/{propertyId:guid}/investmentTiers/{groupName}")]
-        public async Task<IActionResult> GetInvestmentTiers(Guid propertyId, string groupName)
-        {
-            if (!await _dbContext.UnderwritingPropertyProspects.AnyAsync(x => x.Id == propertyId))
-                return NotFound();
 
-            var tiers = await _dbContext.UnderwritingTiers.Where(x => x.PropertyId == propertyId && x.Group == groupName).ToListAsync();
+        //[HttpPost("upload/remove/{id:guid}")]
+        //public ActionResult Remove(Guid id, string fileToRemove) // must match RemoveField which defaults to "files"
+        //{
+        //    if (fileToRemove != null)
+        //    {
+        //        try
+        //        {
+        //            //var fileName = Path.GetFileName(fileToRemove);
+        //            //var physicalPath = Path.Combine(HostingEnvironment.WebRootPath, fileName);
 
-            return Ok(tiers);
-        }
+        //            //if (System.IO.File.Exists(physicalPath))
+        //            //{
+        //            //    // Implement security mechanisms here - prevent path traversals,
+        //            //    // check for allowed extensions, types, permissions, etc.
+        //            //    // this sample always deletes the file from the root and is not sufficient for a real application.
+
+        //            //    System.IO.File.Delete(physicalPath);
+        //            //}
+        //        }
+        //        catch(Exception ex)
+        //        {
+        //            // Implement error handling here, this example merely indicates an upload failure.
+        //            Response.StatusCode = 500;
+        //            Response.WriteAsync(ex.Message); // custom error message
+        //        }
+        //    }
+
+        //    // Return an empty string message in this case
+        //    return new EmptyResult();
+        //}
+
+        //[HttpGet("property/{propertyId:guid}/investmentTiers/{groupName}")]
+        //public async Task<IActionResult> GetInvestmentTiers(Guid propertyId, string groupName)
+        //{
+        //    if (!await _dbContext.UnderwritingPropertyProspects.AnyAsync(x => x.Id == propertyId))
+        //        return NotFound();
+
+        //    var tiers = await _dbContext.UnderwritingTiers.Where(x => x.PropertyId == propertyId && x.Group == groupName).ToListAsync();
+
+        //    return Ok(tiers);
+        //}
 
         [HttpPut("property/{propertyId:guid}/investmentTiers/{groupName}")]
-        public async Task<IActionResult> UpdateInvestmentTiers(Guid propertyId, string groupName, [FromBody] IEnumerable<UnderwritingInvestmentTier> tiers)
-        {
-            if (tiers is null)
-                return BadRequest();
-            else if (!await _dbContext.UnderwritingPropertyProspects.AnyAsync(x => x.Id == propertyId))
-                return NotFound();
+        //public async Task<IActionResult> UpdateInvestmentTiers(Guid propertyId, string groupName, [FromBody] IEnumerable<UnderwritingInvestmentTier> tiers)
+        //{
+        //    if (tiers is null)
+        //        return BadRequest();
+        //    else if (!await _dbContext.UnderwritingPropertyProspects.AnyAsync(x => x.Id == propertyId))
+        //        return NotFound();
 
-            var existing = await _dbContext.UnderwritingTiers.Where(x => x.PropertyId == propertyId && x.Group == groupName).ToListAsync();
-            _dbContext.UnderwritingTiers.RemoveRange(existing);
-            await _dbContext.SaveChangesAsync();
-            if(existing.Any())
-            {
-                await _dbContext.UnderwritingTiers.AddRangeAsync(tiers.Select(x => new UnderwritingTier
-                {
-                    Group = groupName,
-                    PropertyId = propertyId,
-                    Investment = x.Investment,
-                    Name = x.Name,
-                    PreferredRoR = x.PreferredRoR,
-                    RoROnSale = x.RoROnSale,
-                }));
-                await _dbContext.SaveChangesAsync();
-            }
+        //    var existing = await _dbContext.UnderwritingTiers.Where(x => x.PropertyId == propertyId && x.Group == groupName).ToListAsync();
+        //    _dbContext.UnderwritingTiers.RemoveRange(existing);
+        //    await _dbContext.SaveChangesAsync();
+        //    if(existing.Any())
+        //    {
+        //        await _dbContext.UnderwritingTiers.AddRangeAsync(tiers.Select(x => new UnderwritingTier
+        //        {
+        //            Group = groupName,
+        //            PropertyId = propertyId,
+        //            Investment = x.Investment,
+        //            Name = x.Name,
+        //            PreferredRoR = x.PreferredRoR,
+        //            RoROnSale = x.RoROnSale,
+        //        }));
+        //        await _dbContext.SaveChangesAsync();
+        //    }
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
         private async Task<IEnumerable<UnderwritingAnalysisFile>> GetAnalysisFiles(Guid propertyId)
         {

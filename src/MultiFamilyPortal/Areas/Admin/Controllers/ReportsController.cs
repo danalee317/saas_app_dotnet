@@ -143,17 +143,20 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         [HttpGet("investment-tiers/groups/{propertyId:guid}")]
         public async Task<IActionResult> GetInvestmentTierGroups(Guid propertyId)
         {
-            var groups = await _dbContext.UnderwritingTiers
+            var tiers = await _dbContext.UnderwritingTiers
                 .Where(x => x.PropertyId == propertyId)
-                .Select(x => new UnderwritingInvestmentTier
-                {
-                    Id = x.Id,
-                    Investment = x.Investment,
-                    Name = x.Name,
-                    PreferredRoR = x.PreferredRoR,
-                    RoROnSale = x.RoROnSale,
-                })
                 .ToArrayAsync();
+
+            var groups = tiers.GroupBy(x => x.Group)
+                .ToDictionary(x => x.Key,
+                x => x.Select(t => new UnderwritingInvestmentTier
+                {
+                    Id = t.Id,
+                    Investment = t.Investment,
+                    Name = t.Name,
+                    PreferredRoR = t.PreferredRoR,
+                    RoROnSale = t.RoROnSale,
+                }));
 
             return Ok(groups);
         }
@@ -179,8 +182,12 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             var existing = await _dbContext.UnderwritingTiers
                 .Where(x => x.Group == group && x.PropertyId == propertyId)
                 .ToArrayAsync();
-            _dbContext.UnderwritingTiers.RemoveRange(existing);
-            await _dbContext.SaveChangesAsync();
+
+            if(existing.Any())
+            {
+                _dbContext.UnderwritingTiers.RemoveRange(existing);
+                await _dbContext.SaveChangesAsync();
+            }
 
             if (investmentTiers is null)
                 return Ok(Array.Empty<UnderwritingInvestmentTier>());

@@ -28,7 +28,7 @@ public class ReportGenerator : IReportGenerator
         var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
 
         if (property is null)
-            return await NotFound();
+            return NotFound();
 
         var name = $"Managers_Returns_Report.pdf";
 
@@ -219,17 +219,17 @@ public class ReportGenerator : IReportGenerator
         }
     }
 
-    public Task<ReportResponse> OverallProjections(Guid propertyId) => NotFound();
-    public Task<ReportResponse> CashFlow(Guid propertyId)
+    public async Task<ReportResponse> OverallProjections(Guid propertyId) => NotFound();
+    public async Task<ReportResponse> CashFlow(Guid propertyId)
     {
         return NotFound();
     }
 
-    public Task<ReportResponse> ThreeTier(Guid propertyId) => NotFound();
-    public Task<ReportResponse> CulmativeInvestment(Guid propertyId) => NotFound();
-    public Task<ReportResponse> AOneandAtwo(Guid propertyId) => NotFound();
-    public Task<ReportResponse> ThousandInvestmentProjects(Guid propertyId) => NotFound();
-    public Task<ReportResponse> NetPresentValue(Guid propertyId) => NotFound();
-    public Task<ReportResponse> LeveragedRateOfReturns(Guid propertyId) => NotFound();
-    private static async Task<ReportResponse> NotFound() => new() { Data = Array.Empty<byte>() };
+    public async Task<ReportResponse> ThreeTier(Guid propertyId) => NotFound();
+    public async Task<ReportResponse> CulmativeInvestment(Guid propertyId) => NotFound();
+    public async Task<ReportResponse> AOneandAtwo(Guid propertyId) => NotFound();
+    public async Task<ReportResponse> ThousandInvestmentProjects(Guid propertyId) => NotFound();
+    public async Task<ReportResponse> NetPresentValue(Guid propertyId) => NotFound();
+    public async Task<ReportResponse> LeveragedRateOfReturns(Guid propertyId) => NotFound();
+    private static ReportResponse NotFound() => new() { Data = Array.Empty<byte>() };
 }

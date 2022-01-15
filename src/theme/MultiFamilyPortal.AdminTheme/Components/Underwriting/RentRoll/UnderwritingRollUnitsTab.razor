@@ -60,14 +60,7 @@
       <WindowAction Name="Close" />
     </WindowActions>
     <WindowContent>
-      <TelerikTabStrip TabPosition="TabPosition.Top" Class="res-tabstrip">
-        <TabStripTab Title="Units">
-          <UnderwritingRollUnitsControls @bind-Unit=@_unit />
-        </TabStripTab>
-        <TabStripTab Title="Ledger">
-          <div class="my-3"><ComingSoon /></div>
-        </TabStripTab>
-      </TelerikTabStrip>
+      <UnderwritingRollUnitsControls @bind-Unit=@_unit />
     </WindowContent>
   </TelerikWindow>
 }

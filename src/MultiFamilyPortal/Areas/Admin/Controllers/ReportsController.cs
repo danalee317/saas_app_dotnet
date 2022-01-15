@@ -33,51 +33,42 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         [HttpGet("full-report/{propertyId:guid}")]
         public async Task<IActionResult> GetFullReport(Guid propertyId)
         {
-            var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
-            return NotFound();
+            var result = await _generator.FullReport(propertyId);
+
+            if (result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
         }
 
         [HttpGet("deal-summary/{propertyId:guid}")]
         public async Task<IActionResult> GetDealSummary(Guid propertyId)
         {
-            var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
-            return NotFound();
+            var result = await _generator.DealSummary(propertyId);
+
+            if (result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
         }
 
         [HttpGet("assumptions/{propertyId:guid}")]
         public async Task<IActionResult> GetAssumptions(Guid propertyId)
         {
-            var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
-            return NotFound();
+            var result = await _generator.Assumptions(propertyId);
+
+            if (result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
         }
 
         [HttpGet("cash-flow/{propertyId:guid}")]
         public async Task<IActionResult> GetCashFlow(Guid propertyId)
         {
-            var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
-            return NotFound();
-        }
+            var result = await _generator.CashFlow(propertyId);
 
-        [HttpGet("lease-exposure/{propertyId:guid}")]
-        public async Task<IActionResult> GetLeaseExposure(Guid propertyId)
-        {
-            var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
-            return NotFound();
-        }
-
-        [HttpGet("100k-projections/{propertyId:guid}")]
-        public async Task<IActionResult> Get100kProjections(Guid propertyId)
-        {
-            var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
-            return NotFound();
-        }
-
-        [HttpGet("manager-report/{propertyId:guid}")]
-        public async Task<IActionResult> GetManagerReport(Guid propertyId)
-        {
-            var result = await _generator.ManagersReturns(propertyId);
-                
-            if(result.Data?.Length == 0)
+            if (result.Data?.Length == 0)
                 return NotFound();
 
             return File(result.Data, result.MimeType, result.FileName);
@@ -105,20 +96,67 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             return File(result.Data, result.MimeType, result.FileName);
         }
 
+        [HttpGet("rent-roll/{propertyId:guid}")]
+        public async Task<IActionResult> GetRentRoll(Guid propertyId)
+        {
+            var result = await _generator.RentRoll(propertyId);
+
+            if (result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
+        }
+
+        [HttpGet("lease-exposure/{propertyId:guid}")]
+        public async Task<IActionResult> GetLeaseExposure(Guid propertyId)
+        {
+            var result = await _generator.LeaseExposure(propertyId);
+
+            if (result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
+        }
+
+        [HttpGet("100k-projections/{propertyId:guid}")]
+        public async Task<IActionResult> Get100kProjections(Guid propertyId)
+        {
+            var result = await _generator.OneHundredThousandInvestmentProjections(propertyId);
+
+            if (result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
+        }
+
+        [HttpGet("manager-report/{propertyId:guid}")]
+        public async Task<IActionResult> GetManagerReport(Guid propertyId)
+        {
+            var result = await _generator.ManagersReturns(propertyId);
+                
+            if(result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
+        }
+
         [HttpGet("investment-tiers/groups/{propertyId:guid}")]
         public async Task<IActionResult> GetInvestmentTierGroups(Guid propertyId)
         {
-            var groups = await _dbContext.UnderwritingTiers
+            var tiers = await _dbContext.UnderwritingTiers
                 .Where(x => x.PropertyId == propertyId)
-                .Select(x => new UnderwritingInvestmentTier
-                {
-                    Id = x.Id,
-                    Investment = x.Investment,
-                    Name = x.Name,
-                    PreferredRoR = x.PreferredRoR,
-                    RoROnSale = x.RoROnSale,
-                })
                 .ToArrayAsync();
+
+            var groups = tiers.GroupBy(x => x.Group)
+                .ToDictionary(x => x.Key,
+                x => x.Select(t => new UnderwritingInvestmentTier
+                {
+                    Id = t.Id,
+                    Investment = t.Investment,
+                    Name = t.Name,
+                    PreferredRoR = t.PreferredRoR,
+                    RoROnSale = t.RoROnSale,
+                }));
 
             return Ok(groups);
         }
@@ -144,8 +182,12 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             var existing = await _dbContext.UnderwritingTiers
                 .Where(x => x.Group == group && x.PropertyId == propertyId)
                 .ToArrayAsync();
-            _dbContext.UnderwritingTiers.RemoveRange(existing);
-            await _dbContext.SaveChangesAsync();
+
+            if(existing.Any())
+            {
+                _dbContext.UnderwritingTiers.RemoveRange(existing);
+                await _dbContext.SaveChangesAsync();
+            }
 
             if (investmentTiers is null)
                 return Ok(Array.Empty<UnderwritingInvestmentTier>());

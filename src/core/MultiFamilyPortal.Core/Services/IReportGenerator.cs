@@ -4,14 +4,20 @@ namespace MultiFamilyPortal.Services;
 
 public interface IReportGenerator
 {
-    Task<ReportResponse> OverallProjections(Guid propertyId);
+    #region Underwriting Reports
+    Task<ReportResponse> FullReport(Guid propertyId);
+    Task<ReportResponse> DealSummary(Guid propertyId);
+    Task<ReportResponse> Assumptions(Guid propertyId);
     Task<ReportResponse> CashFlow(Guid propertyId);
-    Task<ReportResponse> ManagersReturns(Guid propertyId);
-    Task<ReportResponse> TieredInvestmentGroup(Guid propertyId, string groupName);
-    Task<ReportResponse> CulmativeInvestment(Guid propertyId);
     Task<ReportResponse> IncomeForecast(Guid propertyId);
     Task<ReportResponse> CapitalExpenses(Guid propertyId);
-    Task<ReportResponse> ThousandInvestmentProjects(Guid propertyId);
-    Task<ReportResponse> NetPresentValue(Guid propertyId);
-    Task<ReportResponse> LeveragedRateOfReturns(Guid propertyId);
+    Task<ReportResponse> RentRoll(Guid propertyId);
+    Task<ReportResponse> LeaseExposure(Guid propertyId);
+    #endregion Underwriting Reports
+
+    #region Investor Reports
+    Task<ReportResponse> OneHundredThousandInvestmentProjections(Guid propertyId);
+    Task<ReportResponse> ManagersReturns(Guid propertyId);
+    Task<ReportResponse> TieredInvestmentGroup(Guid propertyId, string groupName);
+    #endregion Investor Reports
 }

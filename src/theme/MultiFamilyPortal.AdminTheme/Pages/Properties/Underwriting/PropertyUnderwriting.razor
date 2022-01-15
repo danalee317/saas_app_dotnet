@@ -18,10 +18,18 @@ else
     <UnderwritingSummary Property=@Property />
     <div class="container">
       <div class="row my-2">
-        <div class="col-md-4 offset-md-8 col-xl-3 offset-xl-9 offset-1 col-10">
+        <div class="col-md-4 col-xl-3 col-12 portfolio-btn my-1">
+          @if(Property.Status == Data.Models.UnderwritingStatus.OfferAccepted && _editable)
+          {
+            <TelerikButton Primary=@true
+                           Enabled=@(Property.AssetId is null)
+                           OnClick=@OnAddToPortfolio>Add to Portfolio</TelerikButton>
+          }
+        </div>
+        <div class="col-md-4 offset-md-4 col-xl-3 offset-xl-6 offset-1 col-10 my-1">
           <select class="form-select"
                   aria-label="Select Underwriting Status"
-                  disabled ="@(!_editable)"
+                  disabled ="@(!_editable || Property.AssetId is not null)"
                   @bind="@Property.Status" >
             @foreach (var status in AvailableStatus)
             {
@@ -80,15 +88,15 @@ else
             @if(showNext)
             {
               <TelerikButton ButtonType="ButtonType.Button" Primary="true" OnClick=@Next>Next</TelerikButton>
+              <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
+                <TelerikButton Title="Update"
+                               Primary="true"
+                               ButtonType=@ButtonType.Button
+                               OnClick=@OnUpdateProperty>
+                  Update
+                </TelerikButton>
+              </AuthorizedPolicy>
             }
-            <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
-              <TelerikButton Title="Update"
-                             Primary="true"
-                             ButtonType=@ButtonType.Button
-                             OnClick=@OnUpdateProperty>
-                Update
-              </TelerikButton>
-            </AuthorizedPolicy>
           </WizardButtons>
         </TelerikWizard>
       </div>
@@ -98,9 +106,6 @@ else
   @* Resize a container based on the browser size *@
 
 <TelerikMediaQuery Media="@_mediaQuery" OnChange="@((doesMatch) => _isSmallScreen = doesMatch)"></TelerikMediaQuery>
-
 }
 
 <PortalNotification @ref="notification" />
-
-

@@ -24,7 +24,7 @@ public partial class UnderwritingSummary : IDisposable
                 x => x.LTV,
                 x => x.Reversion,
                 x => x.NetPresentValue,
-                x => x.InitialRateOfReturn,
+                x => x.InternalRateOfReturn,
                 x => x.AnnualCashOnCashReturn,
                 x => x.HoldYears,
                 x => x.Vintage,
@@ -50,6 +50,20 @@ public partial class UnderwritingSummary : IDisposable
             return ColorCode.Warning;
 
         return ColorCode.Success;
+    }
+
+    private ColorCode GetRaiseColor()
+    {
+        if (Property.PurchasePrice == 0 || Property.Raise == 0)
+            return ColorCode.Info;
+
+        var value = Property.Raise / Property.PurchasePrice;
+        if (value < 0.35)
+            return ColorCode.Info;
+        else if (value < 0.45)
+            return ColorCode.Warning;
+
+        return ColorCode.Danger;
     }
 
     private ColorCode GetColor(double value, double danger, double warning)

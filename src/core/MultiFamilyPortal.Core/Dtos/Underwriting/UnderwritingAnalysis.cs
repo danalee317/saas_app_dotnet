@@ -49,6 +49,8 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         private IObservable<IncomeLedger> _incomeLedger;
         private IObservable<ExpenseLedger> _expenseLedger;
         private IObservable<PropertyInfo> _projectionContext;
+        private IObservable<CoreInfo> _coreInfo;
+        private IObservable<AdditionalInfo> _additionalInfo;
 
         public UnderwritingAnalysis()
         {
@@ -261,12 +263,23 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .Select(x => CalculateNOI(x, Management, false))
                 .ToProperty(this, nameof(SellerNOI), out _sellerNOI)
                 .DisposeWith(_disposable);
-            
+
             _incomeLedger = this.WhenAnyValue(x => x.GrossScheduledRent, x => x.VacanyTotal, x => x.ConcessionsNonPayment, x => x.OtherIncome, x => x.Utilities, x => x.TotalRentalIncome, x => x.EffectiveGrossIncome, (gsr, vt, cnp, oi, util, tri, egi) => new IncomeLedger(gsr, vt, cnp, oi, util, tri, egi));
             _expenseLedger = this.WhenAnyValue(x => x.PropertyTaxes, x => x.PropertyInsurance, x => x.RepairsMaintenance, x => x.GeneralAdmin, x => x.Marketing, x => x.Utilities, x => x.Management, x => x.ContractServices, x => x.Payroll, (pt, pi, rm, ga, mark, util, man, cs, p) => new ExpenseLedger(pt, pi, rm, ga, mark, util, man, cs, p));
-            _projectionContext = this.WhenAnyValue(x => x.StartDate, x => x.Units, x => x.CapXTotal, x => x.PurchasePrice, x => x.NOI, x => x.AnnualDebtService, x => x.HoldYears, x => x.Management, x => x.PhysicalVacancy, x => x.ReversionCapRate, x => x.CapRate,
-
-                (start, units, capX, purchasePrice, noi, debtService, hold, man, vac, rCap, cap) => new PropertyInfo(start, units, capX, purchasePrice, noi, debtService, hold, man, vac, rCap, cap));
+            _coreInfo = this.WhenAnyValue(x => x.StartDate,
+                x => x.Units,
+                x => x.CapXTotal,
+                x => x.PurchasePrice,
+                x => x.NOI,
+                x => x.AnnualDebtService, (StartDate, Units, CapX, PurchasePrice, NOI, AnnualDebtService) => new CoreInfo(StartDate.Date, Units, CapX, PurchasePrice, NOI, AnnualDebtService));
+            _additionalInfo = this.WhenAnyValue(x => x.HoldYears,
+                x => x.Management,
+                x => x.PhysicalVacancy,
+                x => x.ReversionCapRate,
+                x => x.CapRate,
+                x => x.Raise,
+                x => x.DesiredYield, (Hold, Management, PhysicalVacancy, ReversionCapRate, CapRate, Raise, DesiredYield) => new AdditionalInfo(Hold, Management, PhysicalVacancy, ReversionCapRate, CapRate, Raise, DesiredYield));
+            _projectionContext = this.WhenAnyObservable(x => x._coreInfo, x => x._additionalInfo, (core, additional) => new PropertyInfo(core.StartDate, core.Units, core.CapX, core.PurchasePrice, core.NOI, core.AnnualDebtService, additional.Hold, additional.Management, additional.PhysicalVacancy, additional.ReversionCapRate, additional.CapRate, additional.Raise, additional.DesiredYield));
 
             var projectionUpdate = mortgageRefCount
                 .AutoRefreshOnObservable(_ => this.WhenAnyObservable(x => x._incomeLedger, x => x._expenseLedger, x => x._projectionContext, (income, expense, context) => (income, expense, context)))
@@ -276,7 +289,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
             // double ManagementRate, double VacancyRate, double ReversionCapRate, double CapRate
 
-            forecastRef
+            var projectionUpdateObservable = forecastRef
                 .AutoRefresh(x => x.FixedIncreaseOnRemainingUnits)
                 .AutoRefresh(x => x.IncreaseType)
                 .AutoRefresh(x => x.OtherIncomePercent)
@@ -288,7 +301,23 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 .AutoRefreshOnObservable(_ => projectionUpdate)
                 .ToCollection()
                 .WithLatestFrom(projectionUpdate)
-                .Select(x => new ProjectionUpdate(x.Second, x.First))
+                .Select(x => new ProjectionUpdate(x.Second, x.First));
+
+            projectionsRef
+                .ToCollection()
+                .WithLatestFrom(_projectionContext)
+                .Select(x => CalculateNetPresentValue(x.First, x.Second))
+                .ToProperty(this, nameof(NetPresentValue), out _netPresentValue)
+                .DisposeWith(_disposable);
+
+            projectionsRef
+                .ToCollection()
+                .WithLatestFrom(_projectionContext)
+                .Select(x => CalculateInternalRateOfReturn(x.First, x.Second))
+                .ToProperty(this, nameof(InternalRateOfReturn), out _internalRateOfReturn)
+                .DisposeWith(_disposable);
+
+            projectionUpdateObservable
                 .InvokeCommand(_updateProjections)
                 .DisposeWith(_disposable);
 
@@ -625,9 +654,9 @@ namespace MultiFamilyPortal.Dtos.Underwriting
         [DisplayFormat(DataFormatString = "{0:C}")]
         public double NetPresentValue => _netPresentValue?.Value ?? 0;
 
-        private ObservableAsPropertyHelper<double> _initialRateOfReturn;
+        private ObservableAsPropertyHelper<double> _internalRateOfReturn;
         [DisplayFormat(DataFormatString = "{0:P}")]
-        public double InitialRateOfReturn => _initialRateOfReturn?.Value ?? 0;
+        public double InternalRateOfReturn => _internalRateOfReturn?.Value ?? 0;
 
         private ObservableAsPropertyHelper<double> _totalAnnualReturn;
         [DisplayFormat(DataFormatString = "{0:P}")]
@@ -1006,7 +1035,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                 var vacancyRate = forecast.Vacancy > 0 ? forecast.Vacancy : update.Context.Info.VacancyRate;
                 var vacancy = (grossScheduledRent * vacancyRate);
                 var netCollectedRent = grossScheduledRent - vacancy;
-                var management = Management * netCollectedRent;
+                var management = update.Context.Info.ManagementRate * netCollectedRent;
 
                 var egi = grossScheduledRent - vacancy - concessionsNonPayment + otherIncome + utilityReimbursement;
                 var expenses = taxes + insurance + repairsMaint + generalAdmin + management + marketing + utility + contractServices + payroll;
@@ -1040,7 +1069,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
                     Taxes = taxes * factor,
                     UtilityReimbursement = utilityReimbursement * factor,
                     Vacancy = vacancy * factor,
-                    Year = StartDate.Year + i
+                    Year = update.Context.Info.Start.Year + i
                 });
             }
 
@@ -1207,8 +1236,11 @@ namespace MultiFamilyPortal.Dtos.Underwriting
             double ContractServices,
             double Payroll);
 
-        private record PropertyInfo(
-            DateTimeOffset Start,
+        private record CoreInfo(DateTime StartDate, int Units, double CapX, double PurchasePrice, double NOI, double AnnualDebtService);
+        private record AdditionalInfo(int Hold, double Management, double PhysicalVacancy, double ReversionCapRate, double CapRate, double Raise, double DesiredYield);
+
+        internal record PropertyInfo(
+            DateTime Start,
             int Units,
             double CapX,
             double PurchasePrice,
@@ -1218,7 +1250,9 @@ namespace MultiFamilyPortal.Dtos.Underwriting
             double ManagementRate,
             double VacancyRate,
             double ReversionCapRate,
-            double CapRate);
+            double CapRate,
+            double Raise,
+            double DesiredYield);
 
         private record ProjectionContext(
             IncomeLedger IncomeLedger,

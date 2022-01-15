@@ -22,18 +22,21 @@
             <UnderwritingInfoBar Title="Price Per Door"
                                  Color="ColorCode.Info"
                                  Value=@Property.CostPerUnit.ToString("C") />
+            <UnderwritingInfoBar Title="Total SqFt"
+                                 Color="ColorCode.Info"
+                                 Value=@Property.RentableSqFt.ToString("N0") />
+            <UnderwritingInfoBar Title="Price per SqFt"
+                                 Color="ColorCode.Info"
+                                 Value=@Property.PricePerSqFt.ToString("C") />
             <UnderwritingInfoBar Title="Reversion Cap"
                                  Color="ColorCode.Info"
                                  Value=@Property.ReversionCapRate.ToString("P") />
-            <UnderwritingInfoBar Title="Year Built"
-                                 Color="ColorCode.Info"
-                                 Value=@Property.Vintage.ToString("0000") />
-            <UnderwritingInfoBar Title="Total Square Ft"
-                                 Color="ColorCode.Info"
-                                 Value=@Property.RentableSqFt.ToString("N0") />
-            <UnderwritingInfoBar Title="Ann. CoC Return"
+            <UnderwritingInfoBar Title="Reversion Value"
+                                 Color=@GetReversionColor()
+                                 Value=@Property.Reversion.ToString("C0") />
+            @*<UnderwritingInfoBar Title="Ann. CoC Return"
                                  Color=@GetColor(Property.AnnualCashOnCashReturn, 0.09, .12)
-                                 Value=@Property.AnnualCashOnCashReturn.ToString("P") />
+                                 Value=@Property.AnnualCashOnCashReturn.ToString("P") />*@
           </div>
         </div>
         <div class="col-12">
@@ -47,24 +50,27 @@
             <UnderwritingInfoBar Title="Purchase CoC"
                                  Color=@GetColor(Property.CashOnCash, 0.09, .12)
                                  Value=@Property.CashOnCash.ToString("P2") />
-            <UnderwritingInfoBar Title="Desired Yield"
-                                 Color="ColorCode.Info"
-                                 Value=@Property.DesiredYield.ToString("P2") />
+            <UnderwritingInfoBar Title="Raise"
+                                 Color=@GetRaiseColor()
+                                 Value=@Property.Raise.ToString("C") />
             <UnderwritingInfoBar Title="LTV"
                                  Color=@GetColor(Property.LTV, 0.7, 0.75)
                                  Value=@Property.LTV.ToString("P2") />
-            <UnderwritingInfoBar Title="Reversion Value"
-                                 Color=@GetReversionColor()
-                                 Value=@Property.Reversion.ToString("C0") />
+            <UnderwritingInfoBar Title="Year Built"
+                                 Color="ColorCode.Info"
+                                 Value=@Property.Vintage.ToString("0000") />
+            <UnderwritingInfoBar Title="Desired Yield"
+                                 Color="ColorCode.Info"
+                                 Value=@Property.DesiredYield.ToString("P2") />
             <UnderwritingInfoBar Title="NPV"
                                  Color=@GetNPVColor()
                                  Value=@Property.NetPresentValue.ToString("C0") />
             <UnderwritingInfoBar Title="IRR"
-                                 Color=@GetColor(Property.InitialRateOfReturn, 0.09, .12)
-                                 Value=@Property.InitialRateOfReturn.ToString("P") />
-            <UnderwritingInfoBar Title="Total Ann. Return"
+                                 Color=@GetColor(Property.InternalRateOfReturn, 0.09, .12)
+                                 Value=@Property.InternalRateOfReturn.ToString("P") />
+            @*<UnderwritingInfoBar Title="Total Ann. Return"
                                  Color=@GetColor(Property.TotalAnnualReturn, 0.09, .12)
-                                 Value=@Property.TotalAnnualReturn.ToString("P") />
+                                 Value=@Property.TotalAnnualReturn.ToString("P") />*@
           </div>
         </div>
       </div>

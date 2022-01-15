@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.Dtos;
+using MultiFamilyPortal.Dtos.Underwriting;
 using MultiFamilyPortal.Dtos.Underwriting.Reports;
 using Telerik.Documents.Primitives;
 using Telerik.Windows.Documents.Fixed.FormatProviders.Pdf;
@@ -23,14 +24,172 @@ public class ReportGenerator : IReportGenerator
         _underwritingService = underwritingService;
     }
 
-    public async Task<ReportResponse> ManagersReturns(Guid propertyId)
+    #region Underwriting Reports
+    public async Task<ReportResponse> FullReport(Guid propertyId)
     {
         var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
 
         if (property is null)
             return NotFound();
 
-        var name = $"Managers_Returns_Report.pdf";
+        var document = new RadFixedDocument();
+        GenerateDealSummary(property, document);
+        GenerateAssumptions(property, document);
+        GenerateCashFlow(property, document);
+        GenerateIncomeForecast(property, document);
+        GenerateCapitalExpenses(property, document);
+
+        var name = $"Overall_Projections.pdf";
+        return new ReportResponse()
+        {
+            FileName = name,
+            Data = ExportToPdf(document),
+            MimeType = FileTypeLookup.GetFileTypeInfo(name).MimeType
+        };
+    }
+
+    public async Task<ReportResponse> DealSummary(Guid propertyId)
+    {
+        var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
+
+        if (property is null)
+            return NotFound();
+
+        var document = new RadFixedDocument();
+        GenerateDealSummary(property, document);
+
+        var name = $"Deal_Summary.pdf";
+        return new ReportResponse()
+        {
+            FileName = name,
+            Data = ExportToPdf(document),
+            MimeType = FileTypeLookup.GetFileTypeInfo(name).MimeType
+        };
+    }
+
+    public async Task<ReportResponse> Assumptions(Guid propertyId)
+    {
+        var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
+
+        if (property is null)
+            return NotFound();
+
+        var document = new RadFixedDocument();
+        GenerateAssumptions(property, document);
+
+        var name = $"Assumptions.pdf";
+        return new ReportResponse()
+        {
+            FileName = name,
+            Data = ExportToPdf(document),
+            MimeType = FileTypeLookup.GetFileTypeInfo(name).MimeType
+        };
+    }
+
+    public async Task<ReportResponse> CashFlow(Guid propertyId)
+    {
+        var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
+
+        if (property is null)
+            return NotFound();
+
+        var document = new RadFixedDocument();
+        GenerateCashFlow(property, document);
+
+        var name = $"Cash_Flow.pdf";
+        return new ReportResponse()
+        {
+            FileName = name,
+            Data = ExportToPdf(document),
+            MimeType = FileTypeLookup.GetFileTypeInfo(name).MimeType
+        };
+    }
+
+    public async Task<ReportResponse> IncomeForecast(Guid propertyId)
+    {
+        var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
+
+        if (property is null)
+            return NotFound();
+
+        var document = new RadFixedDocument();
+        GenerateIncomeForecast(property, document);
+
+        var name = $"Income_Forecast.pdf";
+        return new ReportResponse()
+        {
+            FileName = name,
+            Data = ExportToPdf(document),
+            MimeType = FileTypeLookup.GetFileTypeInfo(name).MimeType
+        };
+    }
+
+    public async Task<ReportResponse> CapitalExpenses(Guid propertyId)
+    {
+        var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
+
+        if (property is null)
+            return NotFound();
+
+        var document = new RadFixedDocument();
+        GenerateCapitalExpenses(property, document);
+
+        var name = $"Capital_Expenses.pdf";
+        return new ReportResponse()
+        {
+            FileName = name,
+            Data = ExportToPdf(document),
+            MimeType = FileTypeLookup.GetFileTypeInfo(name).MimeType
+        };
+    }
+
+    public async Task<ReportResponse> RentRoll(Guid propertyId)
+    {
+        var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
+
+        if (property is null)
+            return NotFound();
+
+        var document = new RadFixedDocument();
+        GenerateRentRoll(property, document);
+
+        var name = $"Rent_Roll.pdf";
+        return new ReportResponse()
+        {
+            FileName = name,
+            Data = ExportToPdf(document),
+            MimeType = FileTypeLookup.GetFileTypeInfo(name).MimeType
+        };
+    }
+
+    public async Task<ReportResponse> LeaseExposure(Guid propertyId)
+    {
+        var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
+
+        if (property is null)
+            return NotFound();
+
+        var document = new RadFixedDocument();
+        GenerateLeaseExposure(property, document);
+
+        var name = $"Lease_Exposure.pdf";
+        return new ReportResponse()
+        {
+            FileName = name,
+            Data = ExportToPdf(document),
+            MimeType = FileTypeLookup.GetFileTypeInfo(name).MimeType
+        };
+    }
+
+    #endregion Underwriting Reports
+
+    #region Investor Reports
+    public async Task<ReportResponse> ManagersReturns(Guid propertyId)
+    {
+        var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
+
+        if (property is null)
+            return NotFound();
 
         var document = new RadFixedDocument();
         var page = document.Pages.AddPage();
@@ -188,9 +347,10 @@ public class ReportGenerator : IReportGenerator
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.ToString());
+            _logger.LogError(ex, "An error occurred while generating the Manager Report");
         }
 
+        var name = $"Managers_Returns_Report.pdf";
         return new ReportResponse()
         {
             FileName = name,
@@ -199,10 +359,74 @@ public class ReportGenerator : IReportGenerator
         };
     }
 
+    public async Task<ReportResponse> CulmativeInvestment(Guid propertyId)
+    {
+        var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
+
+        if (property is null)
+            return NotFound();
+
+        var document = new RadFixedDocument();
+
+        return NotFound();
+    }
+
+    public async Task<ReportResponse> OneHundredThousandInvestmentProjections(Guid propertyId)
+    {
+        var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
+
+        if (property is null)
+            return NotFound();
+
+        var document = new RadFixedDocument();
+
+        return NotFound();
+    }
+
+    public async Task<ReportResponse> NetPresentValue(Guid propertyId)
+    {
+        var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
+
+        if (property is null)
+            return NotFound();
+
+        var document = new RadFixedDocument();
+
+        return NotFound();
+    }
+
+    public async Task<ReportResponse> LeveragedRateOfReturns(Guid propertyId)
+    {
+        var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
+
+        if (property is null)
+            return NotFound();
+
+        var document = new RadFixedDocument();
+
+        return NotFound();
+    }
+
+    public async Task<ReportResponse> TieredInvestmentGroup(Guid propertyId, string groupName)
+    {
+        var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
+
+        if (property is null)
+            return NotFound();
+
+        var document = new RadFixedDocument();
+
+        return NotFound();
+    }
+    #endregion Investor Reports
+
     private byte[] ExportToPdf(RadFixedDocument document)
     {
         try
         {
+            if (!document.Pages.Any())
+                return Array.Empty<byte>();
+
             PdfFormatProvider provider = new();
             PdfExportSettings settings = new PdfExportSettings
             {
@@ -215,22 +439,46 @@ public class ReportGenerator : IReportGenerator
         catch (Exception ex)
         {
             _logger.LogError(ex.ToString());
-            return null;
+            return Array.Empty<byte>();
         }
     }
 
-    public async Task<ReportResponse> OverallProjections(Guid propertyId) => NotFound();
-    public async Task<ReportResponse> CashFlow(Guid propertyId)
+    #region Underwriting Report Generators
+    private void GenerateDealSummary(UnderwritingAnalysis property, RadFixedDocument document)
     {
-        return NotFound();
+
     }
 
-    public async Task<ReportResponse> TieredInvestmentGroup(Guid propertyId, string groupName) => NotFound();
-    public async Task<ReportResponse> IncomeForecast(Guid propertyId) => NotFound();
-    public async Task<ReportResponse> CapitalExpenses(Guid propertyId) => NotFound();
-    public async Task<ReportResponse> CulmativeInvestment(Guid propertyId) => NotFound();
-    public async Task<ReportResponse> ThousandInvestmentProjects(Guid propertyId) => NotFound();
-    public async Task<ReportResponse> NetPresentValue(Guid propertyId) => NotFound();
-    public async Task<ReportResponse> LeveragedRateOfReturns(Guid propertyId) => NotFound();
+    private void GenerateAssumptions(UnderwritingAnalysis property, RadFixedDocument document)
+    {
+
+    }
+
+    private void GenerateCashFlow(UnderwritingAnalysis property, RadFixedDocument document)
+    {
+
+    }
+
+    private void GenerateIncomeForecast(UnderwritingAnalysis property, RadFixedDocument document)
+    {
+
+    }
+
+    private void GenerateCapitalExpenses(UnderwritingAnalysis property, RadFixedDocument document)
+    {
+
+    }
+
+    private void GenerateRentRoll(UnderwritingAnalysis property, RadFixedDocument document)
+    {
+
+    }
+
+    private void GenerateLeaseExposure(UnderwritingAnalysis property, RadFixedDocument document)
+    {
+
+    }
+    #endregion Underwriting Report Generators
+
     private static ReportResponse NotFound() => new() { Data = Array.Empty<byte>() };
 }

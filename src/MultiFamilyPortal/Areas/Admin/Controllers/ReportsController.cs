@@ -33,51 +33,42 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         [HttpGet("full-report/{propertyId:guid}")]
         public async Task<IActionResult> GetFullReport(Guid propertyId)
         {
-            var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
-            return NotFound();
+            var result = await _generator.FullReport(propertyId);
+
+            if (result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
         }
 
         [HttpGet("deal-summary/{propertyId:guid}")]
         public async Task<IActionResult> GetDealSummary(Guid propertyId)
         {
-            var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
-            return NotFound();
+            var result = await _generator.DealSummary(propertyId);
+
+            if (result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
         }
 
         [HttpGet("assumptions/{propertyId:guid}")]
         public async Task<IActionResult> GetAssumptions(Guid propertyId)
         {
-            var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
-            return NotFound();
+            var result = await _generator.Assumptions(propertyId);
+
+            if (result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
         }
 
         [HttpGet("cash-flow/{propertyId:guid}")]
         public async Task<IActionResult> GetCashFlow(Guid propertyId)
         {
-            var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
-            return NotFound();
-        }
+            var result = await _generator.CashFlow(propertyId);
 
-        [HttpGet("lease-exposure/{propertyId:guid}")]
-        public async Task<IActionResult> GetLeaseExposure(Guid propertyId)
-        {
-            var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
-            return NotFound();
-        }
-
-        [HttpGet("100k-projections/{propertyId:guid}")]
-        public async Task<IActionResult> Get100kProjections(Guid propertyId)
-        {
-            var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
-            return NotFound();
-        }
-
-        [HttpGet("manager-report/{propertyId:guid}")]
-        public async Task<IActionResult> GetManagerReport(Guid propertyId)
-        {
-            var result = await _generator.ManagersReturns(propertyId);
-                
-            if(result.Data?.Length == 0)
+            if (result.Data?.Length == 0)
                 return NotFound();
 
             return File(result.Data, result.MimeType, result.FileName);
@@ -100,6 +91,50 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             var result = await _generator.CapitalExpenses(propertyId);
 
             if (result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
+        }
+
+        [HttpGet("rent-roll/{propertyId:guid}")]
+        public async Task<IActionResult> GetRentRoll(Guid propertyId)
+        {
+            var result = await _generator.RentRoll(propertyId);
+
+            if (result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
+        }
+
+        [HttpGet("lease-exposure/{propertyId:guid}")]
+        public async Task<IActionResult> GetLeaseExposure(Guid propertyId)
+        {
+            var result = await _generator.LeaseExposure(propertyId);
+
+            if (result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
+        }
+
+        [HttpGet("100k-projections/{propertyId:guid}")]
+        public async Task<IActionResult> Get100kProjections(Guid propertyId)
+        {
+            var result = await _generator.OneHundredThousandInvestmentProjections(propertyId);
+
+            if (result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
+        }
+
+        [HttpGet("manager-report/{propertyId:guid}")]
+        public async Task<IActionResult> GetManagerReport(Guid propertyId)
+        {
+            var result = await _generator.ManagersReturns(propertyId);
+                
+            if(result.Data?.Length == 0)
                 return NotFound();
 
             return File(result.Data, result.MimeType, result.FileName);

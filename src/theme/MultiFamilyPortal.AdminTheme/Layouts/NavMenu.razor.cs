@@ -20,6 +20,7 @@ namespace MultiFamilyPortal.AdminTheme.Layouts
 
         private bool collapseNavMenu = true;
         private bool collapseSubMenu = true;
+        private bool optionSet;
         private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
         protected override void OnInitialized()
@@ -37,6 +38,8 @@ namespace MultiFamilyPortal.AdminTheme.Layouts
             {
                 UpdateSelectedOption(location.AbsolutePath);
             }
+
+            optionSet = false;
         }
 
         private void UpdateSelectedOption(string uri)
@@ -61,10 +64,16 @@ namespace MultiFamilyPortal.AdminTheme.Layouts
             }
 
             _selected = option;
+            optionSet = true;
         }
 
         private void ToggleNavMenu()
         {
+            if(optionSet)
+            {
+                optionSet = false;
+                return;
+            }
             collapseNavMenu = !collapseNavMenu;
         }
     }

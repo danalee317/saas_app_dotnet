@@ -24,15 +24,15 @@ namespace MultiFamilyPortal.SaaSAdmin.Components
         public EventCallback OnTenantUpdated { get; set; }
 
         [Inject]
-        private IConfiguration _configuration { get; set; }
+        private IConfiguration _configuration { get; set; } = default!;
 
         [Inject]
-        private TenantContext _tenantContext { get; set; }
+        private TenantContext _tenantContext { get; set; } = default!;
 
         private IEnumerable<Setting> _settings = Array.Empty<Setting>();
         private bool didLoad;
         private string status = "Loading...";
-        private Tenant _editableTenant;
+        private Tenant? _editableTenant;
         private bool updating;
 
         protected override async Task OnInitializedAsync()
@@ -144,10 +144,12 @@ namespace MultiFamilyPortal.SaaSAdmin.Components
             }
         }
 
+#nullable disable
         private class TempOptions<T> : IOptions<T>
             where T : class
         {
             public T Value { get; set; }
         }
+#nullable restore
     }
 }

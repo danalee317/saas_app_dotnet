@@ -1,4 +1,6 @@
-﻿using MultiFamilyPortal.Data.Models;
+﻿using Microsoft.VisualBasic;
+using MultiFamilyPortal.Data.Models;
+using MultiFamilyPortal.Dtos;
 using MultiFamilyPortal.Dtos.Underwriting;
 
 namespace MultiFamilyPortal.Helpers
@@ -99,12 +101,11 @@ namespace MultiFamilyPortal.Helpers
                 .Sum(x => x.AnnualizedTotal);
         }
 
-        public static double CalculateLossToLease(double grossPotentialRent, IEnumerable<UnderwritingAnalysisLineItem> lineItems)
+        public static double CalculateLossToLease(double grossPotentialRent, double grossScheduledRent)
         {
-            if (grossPotentialRent <= 0 || lineItems is null || !lineItems.Any())
+            if (grossPotentialRent < grossScheduledRent || grossPotentialRent <= 0)
                 return 0;
 
-            var grossScheduledRent = lineItems.Where(x => x.Category == UnderwritingCategory.GrossScheduledRent).Sum(x => x.AnnualizedTotal);
             return grossPotentialRent - grossScheduledRent;
         }
 
@@ -180,6 +181,42 @@ namespace MultiFamilyPortal.Helpers
             var items = ledger.Where(x => categories.Any(c => c == x.Category));
             var total = items.Sum(l => l.AnnualizedTotal);
             return total;
+        }
+
+        public static double CalculateNetPresentValue(IEnumerable<UnderwritingAnalysisProjection> projections, UnderwritingAnalysis.PropertyInfo info)
+        {
+            var cashFlow = projections.Sum(x => x.TotalCashFlow);
+            if(info.DesiredYield <= 0 || cashFlow == 0 || info.Raise == 0)
+                return 0;
+
+            var holdMonths = (info.Hold * 12) + (12 - info.Start.Month);
+            return (cashFlow / Math.Pow(1 + info.DesiredYield, holdMonths)) - info.Raise;
+        }
+
+        public static double CalculateInternalRateOfReturn(IEnumerable<UnderwritingAnalysisProjection> projections, UnderwritingAnalysis.PropertyInfo info)
+        {
+            if (info.Raise == 0 || projections.All(x => x.TotalCashFlow == 0))
+                return 0;
+
+            var cashFlows = new double[projections.Count() + 1];
+            cashFlows[0] = info.Raise * -1;
+            for(var i = 0; i < projections.Count(); i++)
+                cashFlows[i + 1] = projections.ElementAt(i).TotalCashFlow;
+
+            var yield = 0.1;
+            //while(yield > 0.01)
+            //{
+            //    try
+            //    {
+            //        return Financial.IRR(ref cashFlows, yield);
+            //    }
+            //    catch
+            //    {
+            //        yield -= 0.01;
+            //    }
+            //}
+
+            return -1;
         }
     }
 }

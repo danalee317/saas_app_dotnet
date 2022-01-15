@@ -5,7 +5,11 @@
 @if(Property is null)
 {
   <SiteTitle Title="Underwriting" />
-  <TelerikLoader Type="LoaderType.ConvergingSpinner" />
+  <div class="container text-center py-5 my-5">
+    <TelerikLoader Type="LoaderType.ConvergingSpinner" />
+    <br />
+    <span class="py-2">Loading...</span>
+  </div>
 }
 else
 {

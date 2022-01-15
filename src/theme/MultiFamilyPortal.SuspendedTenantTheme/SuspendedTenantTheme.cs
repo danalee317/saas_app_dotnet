@@ -1,5 +1,6 @@
 ﻿using MultiFamilyPortal.Themes;
 
+#nullable disable
 namespace MultiFamilyPortal.SuspendedTenantTheme
 {
     public class SuspendedTenantTheme : IPortalTheme
@@ -10,3 +11,4 @@ namespace MultiFamilyPortal.SuspendedTenantTheme
         public string[] RequiredStyles { get; } = new[] { "_content/MultiFamilyPortal.SuspendedTenantTheme/css/site.css" };
     }
 }
+#nullable restore

@@ -191,6 +191,7 @@ namespace MultiFamilyPortal.Collections
             return itemAdded;
         }
 
+#nullable disable
         private void RaiseChangeNotificationEvents(NotifyCollectionChangedAction action, List<T> changedItems = null, int startingIndex = -1)
         {
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(Count)));
@@ -205,5 +206,6 @@ namespace MultiFamilyPortal.Collections
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, changedItems: changedItems, startingIndex: startingIndex));
             }
         }
+#nullable restore
     }
 }

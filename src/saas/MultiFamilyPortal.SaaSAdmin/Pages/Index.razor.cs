@@ -16,7 +16,7 @@ namespace MultiFamilyPortal.SaaSAdmin.Pages
         [Inject]
         private IWebHostEnvironment _hostEnvironment { get; set; } = default!;
 
-        private IEnumerable<Tenant> _tenants;
+        private IEnumerable<Tenant> _tenants = default!;
         private readonly ObservableRangeCollection<Tenant> _filteredTenants = new ObservableRangeCollection<Tenant>();
 
         private Tenant? newTenant;

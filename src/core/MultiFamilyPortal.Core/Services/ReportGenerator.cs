@@ -225,9 +225,10 @@ public class ReportGenerator : IReportGenerator
         return NotFound();
     }
 
-    public async Task<ReportResponse> ThreeTier(Guid propertyId) => NotFound();
+    public async Task<ReportResponse> TieredInvestmentGroup(Guid propertyId, string groupName) => NotFound();
+    public async Task<ReportResponse> IncomeForecast(Guid propertyId) => NotFound();
+    public async Task<ReportResponse> CapitalExpenses(Guid propertyId) => NotFound();
     public async Task<ReportResponse> CulmativeInvestment(Guid propertyId) => NotFound();
-    public async Task<ReportResponse> AOneandAtwo(Guid propertyId) => NotFound();
     public async Task<ReportResponse> ThousandInvestmentProjects(Guid propertyId) => NotFound();
     public async Task<ReportResponse> NetPresentValue(Guid propertyId) => NotFound();
     public async Task<ReportResponse> LeveragedRateOfReturns(Guid propertyId) => NotFound();

@@ -41,6 +41,12 @@ else
             <span class="file-link" @onclick=@(() => SelectReport("cash-flow"))><FileIcon FileType=@FileIconType.PDF /> Cash Flow</span>
           </li>
           <li>
+            <span class="file-link" @onclick=@(() => SelectReport("income-forecast"))><FileIcon FileType=@FileIconType.PDF /> Income Forecast</span>
+          </li>
+          <li>
+            <span class="file-link" @onclick=@(() => SelectReport("capital-expenses"))><FileIcon FileType=@FileIconType.PDF /> Capital Expenses</span>
+          </li>
+          <li>
             <span class="file-link" @onclick=@(() => SelectReport("rent-roll"))><FileIcon FileType=@FileIconType.PDF /> Rent Roll</span>
           </li>
           <li>

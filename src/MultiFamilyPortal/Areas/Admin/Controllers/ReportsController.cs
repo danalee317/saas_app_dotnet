@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using MultiFamilyPortal.AdminTheme.Services;
 using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Data;
+using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
 using MultiFamilyPortal.Dtos.Underwriting.Reports;
 using MultiFamilyPortal.Services;
@@ -82,17 +83,87 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             return File(result.Data, result.MimeType, result.FileName);
         }
 
+        [HttpGet("income-forecast/{propertyId:guid}")]
+        public async Task<IActionResult> GetIncomeForecast(Guid propertyId)
+        {
+            var result = await _generator.IncomeForecast(propertyId);
+
+            if (result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
+        }
+
+        [HttpGet("capital-expenses/{propertyId:guid}")]
+        public async Task<IActionResult> GetCapitalExpenses(Guid propertyId)
+        {
+            var result = await _generator.CapitalExpenses(propertyId);
+
+            if (result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
+        }
+
+        [HttpGet("investment-tiers/groups/{propertyId:guid}")]
+        public async Task<IActionResult> GetInvestmentTierGroups(Guid propertyId)
+        {
+            var groups = await _dbContext.UnderwritingTiers
+                .Where(x => x.PropertyId == propertyId)
+                .Select(x => new UnderwritingInvestmentTier
+                {
+                    Id = x.Id,
+                    Investment = x.Investment,
+                    Name = x.Name,
+                    PreferredRoR = x.PreferredRoR,
+                    RoROnSale = x.RoROnSale,
+                })
+                .ToArrayAsync();
+
+            return Ok(groups);
+        }
+
         [HttpGet("investment-tiers/{propertyId:guid}/{group}")]
         public async Task<IActionResult> GetInvestmentTiers(Guid propertyId, string group)
         {
-            var property = await _underwritingService.GetUnderwritingAnalysis(propertyId);
-            return NotFound();
+            var result = await _generator.TieredInvestmentGroup(propertyId, group);
+
+            if (result.Data?.Length == 0)
+                return NotFound();
+
+            return File(result.Data, result.MimeType, result.FileName);
         }
 
         [HttpPost("investment-tiers/{propertyId:guid}/{group}")]
         public async Task<IActionResult> UpdateInvestmentTiers(Guid propertyId, string group, [FromBody] IEnumerable<UnderwritingInvestmentTier> investmentTiers)
         {
-            return RedirectToAction(nameof(GetInvestmentTiers));
+            if (string.IsNullOrEmpty(group) || propertyId == default ||
+                !await _dbContext.UnderwritingPropertyProspects.AnyAsync(x => x.Id == propertyId))
+                return BadRequest();
+
+            var existing = await _dbContext.UnderwritingTiers
+                .Where(x => x.Group == group && x.PropertyId == propertyId)
+                .ToArrayAsync();
+            _dbContext.UnderwritingTiers.RemoveRange(existing);
+            await _dbContext.SaveChangesAsync();
+
+            if (investmentTiers is null)
+                return Ok(Array.Empty<UnderwritingInvestmentTier>());
+
+            var updated = investmentTiers.Select(x => new UnderwritingTier
+            {
+                Group = group,
+                Investment = x.Investment,
+                Name = string.IsNullOrEmpty(x.Name) ? "Undefined" : x.Name,
+                PreferredRoR = x.PreferredRoR,
+                PropertyId = propertyId,
+                RoROnSale = x.RoROnSale,
+            });
+
+            await _dbContext.UnderwritingTiers.AddRangeAsync(updated);
+            await _dbContext.SaveChangesAsync();
+
+            return await GetInvestmentTierGroups(propertyId);
         }
 
         [HttpGet("rementor-underwriting-template/{propertyId:guid}")]

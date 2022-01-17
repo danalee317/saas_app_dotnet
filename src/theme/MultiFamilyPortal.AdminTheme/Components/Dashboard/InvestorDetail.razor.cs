@@ -2,6 +2,7 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.AdminTheme.Models;
+using MultiFamilyPortal.Dtos;
 using MultiFamilyPortal.Services;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
@@ -24,13 +25,15 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
         private ITimeZoneService _timezoneService { get; set; }
 
         private string _localTime;
+        private TimezoneData  _timezone;
 
         protected override void OnParametersSet()
         {
             if (Investor == null)
                 return;
 
-            string investorTimeZone = HandleTimeZone(Investor.Timezone);
+            var investorTimeZone = HandleTimeZone(Investor.Timezone);
+            _timezone = GetIntialsTimezone(investorTimeZone);
 
             if (string.IsNullOrEmpty(investorTimeZone))
                 _localTime = "Unknown";
@@ -92,6 +95,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
                 default:
                     return timezone.Name;
             }
+        }
+
+        private TimezoneData GetIntialsTimezone(string timezone)
+        {
+           return _timezoneService.Timezones.FirstOrDefault(x => x.Name== timezone);
         }
     }
 }

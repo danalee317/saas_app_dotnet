@@ -24,7 +24,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Reports
             _comingSoon = false;
             _reportName = name;
 
-            if(name != "manager-report")
+            if(name != "manager-report" && name != "cash-flow")
                _comingSoon= true;
 
             _reportLink = $"{NavigationManager.BaseUri}api/reports/{_reportName}/{Property.Id}";

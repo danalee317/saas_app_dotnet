@@ -36,7 +36,7 @@ public class ReportGenerator : IReportGenerator
         var document = new RadFixedDocument();
         GenerateDealSummary(property, document);
         GenerateAssumptions(property, document);
-        GenerateCashFlow(property, document);
+        document = GenerateCashFlow(property, document);
         GenerateIncomeForecast(property, document);
         GenerateCapitalExpenses(property, document);
 

@@ -19,12 +19,14 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Reports
         private string _reportLink;
         private bool _comingSoon;
 
+        private static readonly string[] _supported = new string[] { "manager-report","cash-flow","full-report" };
+
         private void SelectReport(string name)
         {
             _comingSoon = false;
             _reportName = name;
 
-            if(name != "manager-report" && name != "cash-flow")
+            if(!_supported.Contains(name))
                _comingSoon= true;
 
             _reportLink = $"{NavigationManager.BaseUri}api/reports/{_reportName}/{Property.Id}";

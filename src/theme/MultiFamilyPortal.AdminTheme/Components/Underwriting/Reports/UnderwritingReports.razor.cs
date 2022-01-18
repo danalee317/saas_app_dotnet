@@ -19,7 +19,12 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Reports
         private string _reportLink;
         private bool _comingSoon;
 
-        private static readonly string[] _supported = new string[] { "manager-report","cash-flow","full-report" };
+        private static readonly string[] _supported = new string[]
+        {
+            "manager-report",
+            "cash-flow",
+            "full-report",
+        };
 
         private void SelectReport(string name)
         {

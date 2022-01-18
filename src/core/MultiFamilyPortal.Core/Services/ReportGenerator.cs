@@ -36,7 +36,7 @@ public class ReportGenerator : IReportGenerator
         var document = new RadFixedDocument();
         GenerateDealSummary(property, document);
         GenerateAssumptions(property, document);
-        document = GenerateCashFlow(property, document);
+        GenerateCashFlow(property, document);
         GenerateIncomeForecast(property, document);
         GenerateCapitalExpenses(property, document);
 
@@ -94,7 +94,8 @@ public class ReportGenerator : IReportGenerator
         if (property is null)
             return NotFound();
 
-        var document = GenerateCashFlow(property, new RadFixedDocument());
+        var document = new RadFixedDocument();
+        GenerateCashFlow(property, document);
 
         var name = $"Cash_Flow.pdf";
         return new ReportResponse
@@ -454,7 +455,7 @@ public class ReportGenerator : IReportGenerator
 
     }
 
-    private RadFixedDocument GenerateCashFlow(UnderwritingAnalysis property, RadFixedDocument document)
+    private void GenerateCashFlow(UnderwritingAnalysis property, RadFixedDocument document)
     {
         try
         {
@@ -806,8 +807,6 @@ public class ReportGenerator : IReportGenerator
         {
             _logger.LogError(ex.ToString());
         }
-
-        return document;
     }
 
     private void GenerateIncomeForecast(UnderwritingAnalysis property, RadFixedDocument document)

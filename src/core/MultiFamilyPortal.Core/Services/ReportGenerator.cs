@@ -464,7 +464,7 @@ public class ReportGenerator : IReportGenerator
                 _logger.LogCritical($"Cash Flow Report: Corrupt data for property {property.Name} : {property.Id} on {DateTime.UtcNow}");
             }
 
-            var dynamicWidth = 600 + 100 * property.HoldYears;
+            var dynamicWidth = 600 + 120 * property.HoldYears;
             var pageSize = new Size(dynamicWidth, 1423);
             var headerSize = 18;
             var cellPadding = 22;

@@ -28,6 +28,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
                 MarketRent = FloorPlan.MarketRent,
                 Name = FloorPlan.Name?.TrimEnd(),
                 TotalUnits = FloorPlan.TotalUnits,
+                Units = new List<UnderwritingAnalysisUnit>(),
                 Upgraded = FloorPlan.Upgraded,
             };
 

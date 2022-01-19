@@ -1,4 +1,4 @@
-﻿using System.IO.Compression;
+using System.IO.Compression;
 using System.Net.Mime;
 using Humanizer;
 using Microsoft.AspNetCore.Authorization;
@@ -14,9 +14,10 @@ using MultiFamilyPortal.Services;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     [Authorize(Policy = PortalPolicy.UnderwritingViewer)]
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("/api/[area]/[controller]")]
     public class ReportsController : ControllerBase
     {
         private IMFPContext _dbContext { get; }

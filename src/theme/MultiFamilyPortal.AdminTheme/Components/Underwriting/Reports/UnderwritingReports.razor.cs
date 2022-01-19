@@ -22,6 +22,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Reports
         private static readonly string[] _supported = new string[]
         {
             "manager-report",
+            "investment-tiers",
             "cash-flow",
             "full-report",
         };

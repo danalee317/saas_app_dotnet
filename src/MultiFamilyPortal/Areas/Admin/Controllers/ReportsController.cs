@@ -1,4 +1,4 @@
-using System.IO.Compression;
+﻿using System.IO.Compression;
 using System.Net.Mime;
 using Humanizer;
 using Microsoft.AspNetCore.Authorization;
@@ -207,6 +207,26 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             await _dbContext.SaveChangesAsync();
 
             return await GetInvestmentTierGroups(propertyId);
+        }
+
+        [HttpDelete("investment-tiers/{propertyId:guid}/{group}")]
+        public async Task<IActionResult> DeleteInvestmentTiers(Guid propertyId, string group)
+        {
+            if (string.IsNullOrEmpty(group) || propertyId == default ||
+                !await _dbContext.UnderwritingPropertyProspects.AnyAsync(x => x.Id == propertyId))
+                return BadRequest();
+
+            var existing = await _dbContext.UnderwritingTiers
+                .Where(x => x.Group == group && x.PropertyId == propertyId)
+                .ToArrayAsync();
+
+            if (existing.Any())
+            {
+                _dbContext.UnderwritingTiers.RemoveRange(existing);
+                await _dbContext.SaveChangesAsync();
+            }
+
+            return Ok();
         }
 
         [HttpGet("rementor-underwriting-template/{propertyId:guid}")]

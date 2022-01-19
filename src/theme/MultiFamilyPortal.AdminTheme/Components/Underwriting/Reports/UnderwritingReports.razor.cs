@@ -22,6 +22,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Reports
         private static readonly string[] _supported = new string[]
         {
             "manager-report",
+            "investment-tiers",
             "cash-flow",
             "full-report",
         };
@@ -29,15 +30,16 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Reports
         private void SelectReport(string name)
         {
             _comingSoon = false;
-            _reportName = name;
+            _reportName = null;
 
             if(!_supported.Contains(name))
-               _comingSoon= true;
+            {
+                _comingSoon = true;
+                return;
+            }
 
-            _reportLink = $"{NavigationManager.BaseUri}api/reports/{_reportName}/{Property.Id}";
-
-            if (_comingSoon)
-                _reportName = null;
+            _reportName = name;
+            _reportLink = $"{NavigationManager.BaseUri}api/admin/reports/{_reportName}/{Property.Id}";
         }
     }
 }

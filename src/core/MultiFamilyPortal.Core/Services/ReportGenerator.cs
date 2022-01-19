@@ -644,7 +644,8 @@ public class ReportGenerator : IReportGenerator
             var expensesTable = new Table
             {
                 DefaultCellProperties = { Padding = new Thickness(cellPadding) },
-                Borders = new TableBorders(blackBorder)
+                Borders = new TableBorders(blackBorder),
+                LayoutType = TableLayoutType.FixedWidth
             };
 
             var expensesHeader = expensesTable.Rows.AddTableRow();
@@ -684,8 +685,8 @@ public class ReportGenerator : IReportGenerator
                 dynamicCell.Blocks.Add(dynamicCellBlock);
             }
 
-            editor.Position.Translate(pageOne.Size.Width / 2 - expensesTable.Measure().Width / 2, incomeTable.Measure().Height + 210);
-            editor.DrawTable(expensesTable);
+            editor.Position.Translate(pageOne.Size.Width / 2 - incomeTable.Measure().Width/ 2, incomeTable.Measure().Height + 210);
+            editor.DrawTable(expensesTable, new Size(incomeTable.Measure().Width, double.PositiveInfinity));
 
             // Net Income
             var netTableTitle = pageOne.Content.AddTextFragment();
@@ -696,7 +697,8 @@ public class ReportGenerator : IReportGenerator
             var netTable = new Table
             {
                 DefaultCellProperties = { Padding = new Thickness(cellPadding) },
-                Borders = new TableBorders(blackBorder)
+                Borders = new TableBorders(blackBorder),
+                LayoutType = TableLayoutType.FixedWidth
             };
 
             var netHeader = netTable.Rows.AddTableRow();
@@ -795,8 +797,8 @@ public class ReportGenerator : IReportGenerator
                 dynamicCell.Blocks.Add(dynamicCellBlock);
             }
 
-            editor.Position.Translate(pageOne.Size.Width / 2 - netTable.Measure().Width / 2, incomeTable.Measure().Height + expensesTable.Measure().Height + 310);
-            editor.DrawTable(netTable);
+            editor.Position.Translate(pageOne.Size.Width / 2 - incomeTable.Measure().Width / 2, incomeTable.Measure().Height + expensesTable.Measure().Height + 310);
+            editor.DrawTable(netTable, new Size(incomeTable.Measure().Width, double.PositiveInfinity));
 
             // conclusion
             var dateBox = pageOne.Content.AddTextFragment();

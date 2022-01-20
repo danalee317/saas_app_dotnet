@@ -16,7 +16,7 @@ namespace MultiFamilyPortal.CoreUI
         {
             Show(new NotificationModel() {
                 Text = message,
-                ThemeColor = ThemeColors.Success
+                ThemeColor = "success"
             });
         }
 
@@ -24,7 +24,7 @@ namespace MultiFamilyPortal.CoreUI
         {
             Show(new NotificationModel() {
                 Text = message,
-                ThemeColor = ThemeColors.Warning
+                ThemeColor = "warning"
             });
         }
 
@@ -32,7 +32,7 @@ namespace MultiFamilyPortal.CoreUI
         {
             Show(new NotificationModel() {
                 Text = message,
-                ThemeColor = ThemeColors.Error,
+                ThemeColor = "error",
             });
         }
     }

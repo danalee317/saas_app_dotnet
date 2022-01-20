@@ -1,4 +1,4 @@
-﻿<ErrorBoundary @ref="errorBoundary"
+﻿<ErrorBoundary @ref="_errorBoundary"
                Context="ex">
   <ChildContent>
     @ChildContent
@@ -6,6 +6,6 @@
   <ErrorContent>
     @{ HandleError(ex); }
     <p class="errorUI">Whoops... that shouldn't have happened</p>
-    <TelerikButton Primary=@true Title="Refresh" OnClick=@RecoverFromError>Refresh</TelerikButton>
+    <TelerikButton ThemeColor="primary" Title="Refresh" OnClick=@RecoverFromError>Refresh</TelerikButton>
   </ErrorContent>
 </ErrorBoundary>

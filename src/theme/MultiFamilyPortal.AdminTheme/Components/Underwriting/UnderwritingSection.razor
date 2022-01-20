@@ -18,7 +18,7 @@
         <GridCommandButton Command="CreateLineItem"
                            Icon="add"
                            Title="Add"
-                           Primary="true"
+                           ThemeColor="primary"
                            OnClick=@OnCreate>
           Add
         </GridCommandButton>
@@ -117,7 +117,7 @@
                                  @bind-Value=@NewItem.Category>
               <ValueTemplate>
                 @context.Humanize(LetterCasing.Title)
-              </ValueTemplate>  
+              </ValueTemplate>
               <ItemTemplate>
                 @{ var category = (Data.Models.UnderwritingCategory)context; }
                 <span>@category.GetDisplayName()</span>
@@ -142,13 +142,12 @@
         <div class="row">
           <div class="col text-center">
             <TelerikButton ButtonType="ButtonType.Reset"
-                           Primary="false"
                            Title="Cancel"
                            OnClick=@(() => NewItem = null)>
               Cancel
             </TelerikButton>
             <TelerikButton ButtonType="ButtonType.Button"
-                           Primary="true"
+                           ThemeColor="primary"
                            Title="Save"
                            OnClick=@SaveNewLineItem>
               Add
@@ -216,13 +215,12 @@
         <div class="row">
           <div class="col text-center">
             <TelerikButton ButtonType="ButtonType.Reset"
-                           Primary="false"
                            Title="Cancel"
                            OnClick=@(() => EditItem = null)>
               Cancel
             </TelerikButton>
             <TelerikButton ButtonType="ButtonType.Button"
-                           Primary="true"
+                           ThemeColor="primary"
                            Title="Save"
                            OnClick=@SaveEditLineItem>
               Update

@@ -21,7 +21,7 @@ else
         <div class="col-md-4 col-xl-3 col-12 portfolio-btn my-1">
           @if(Property.Status == Data.Models.UnderwritingStatus.OfferAccepted && _editable)
           {
-            <TelerikButton Primary=@true
+            <TelerikButton ThemeColor="primary"
                            Enabled=@(Property.AssetId is null)
                            OnClick=@OnAddToPortfolio>Add to Portfolio</TelerikButton>
           }
@@ -87,10 +87,10 @@ else
             }
             @if(showNext)
             {
-              <TelerikButton ButtonType="ButtonType.Button" Primary="true" OnClick=@Next>Next</TelerikButton>
+              <TelerikButton ButtonType="ButtonType.Button" ThemeColor="primary" OnClick=@Next>Next</TelerikButton>
               <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
                 <TelerikButton Title="Update"
-                               Primary="true"
+                               ThemeColor="primary"
                                ButtonType=@ButtonType.Button
                                OnClick=@OnUpdateProperty>
                   Update

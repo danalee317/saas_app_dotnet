@@ -454,6 +454,7 @@ public class ReportGenerator : IReportGenerator
     {
         try
         {
+            var asr = new AssumptionsReport(property);
             var pageSize = new Size(1323, 2250);
             var headerSize = 18;
             var cellPadding = 22;
@@ -530,7 +531,7 @@ public class ReportGenerator : IReportGenerator
             eDassetEquityTitle.Blocks.Add(eDassetEquityTitleBlock);
             var eDassetEquityPercentage = eDassetEquity.Cells.AddTableCell();
             var eDassetEquityPercentageBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            eDassetEquityPercentageBlock.InsertText("30%");
+            eDassetEquityPercentageBlock.InsertText(property.OurEquityOfCF.ToString("P2"));
             eDassetEquityPercentage.Blocks.Add(eDassetEquityPercentageBlock);
 
             var eDinvestorEquityTitle = eDinvestorEquity.Cells.AddTableCell();
@@ -541,7 +542,7 @@ public class ReportGenerator : IReportGenerator
             var eDinvestorEquityPercentage = eDinvestorEquity.Cells.AddTableCell();
             eDinvestorEquityPercentage.Background = new RgbColor(248, 249, 250);
             var eDinvestorEquityPercentageBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            eDinvestorEquityPercentageBlock.InsertText("70%");
+            eDinvestorEquityPercentageBlock.InsertText((1 - property.OurEquityOfCF).ToString("P2"));
             eDinvestorEquityPercentage.Blocks.Add(eDinvestorEquityPercentageBlock);
 
             editor.Position.Translate(iCTable.Measure().Width + 240, 100);
@@ -572,11 +573,11 @@ public class ReportGenerator : IReportGenerator
 
             var reversionCapRateTitle = reversionCapRate.Cells.AddTableCell();
             var reversionCapRateTitleBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            reversionCapRateTitleBlock.InsertText("Revision Cap Rate");
+            reversionCapRateTitleBlock.InsertText("Reversion Cap Rate");
             reversionCapRateTitle.Blocks.Add(reversionCapRateTitleBlock);
             var reversionCapRatePercentage = reversionCapRate.Cells.AddTableCell();
             var reversionCapRatePercentageBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            reversionCapRatePercentageBlock.InsertText("30%");
+            reversionCapRatePercentageBlock.InsertText(property.ReversionCapRate.ToString("P2"));
             reversionCapRatePercentage.Blocks.Add(reversionCapRatePercentageBlock);
 
             var reversionCommissionTitle = reversionCommission.Cells.AddTableCell();
@@ -587,7 +588,7 @@ public class ReportGenerator : IReportGenerator
             var reversionCommissionPercentage = reversionCommission.Cells.AddTableCell();
             reversionCommissionPercentage.Background = new RgbColor(248, 249, 250);
             var reversionCommissionPercentageBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            reversionCommissionPercentageBlock.InsertText("30%");
+            reversionCommissionPercentageBlock.InsertText(" - ");
             reversionCommissionPercentage.Blocks.Add(reversionCommissionPercentageBlock);
 
             var reversionTransferTaxTitle = reversionTransferTax.Cells.AddTableCell();
@@ -596,10 +597,10 @@ public class ReportGenerator : IReportGenerator
             reversionTransferTaxTitle.Blocks.Add(reversionTransferTaxTitleBlock);
             var reversionTransferTaxPercentage = reversionTransferTax.Cells.AddTableCell();
             var reversionTransferTaxPercentageBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            reversionTransferTaxPercentageBlock.InsertText("30%");
+            reversionTransferTaxPercentageBlock.InsertText(" - ");
             reversionTransferTaxPercentage.Blocks.Add(reversionTransferTaxPercentageBlock);
 
-            editor.Position.Translate(iCTable.Measure().Width + eDTable.Measure().Width + 460, 100);
+            editor.Position.Translate(iCTable.Measure().Width + eDTable.Measure().Width + 435, 100);
             editor.DrawTable(reversionTable, new Size(tableWidth, double.PositiveInfinity));
 
             // Equity - Acqusition costs
@@ -636,7 +637,7 @@ public class ReportGenerator : IReportGenerator
             closingCostsTitle.Blocks.Add(closingCostsTitleBlock);
             var closingCostsValue = closingCosts.Cells.AddTableCell();
             var closingCostsValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            closingCostsValueBlock.InsertText("900,000");
+            closingCostsValueBlock.InsertText(asr.ClosingCosts.ToString("C2"));
             closingCostsValue.Blocks.Add(closingCostsValueBlock);
 
             var loanPointsTitle = loanPoints.Cells.AddTableCell();
@@ -647,7 +648,7 @@ public class ReportGenerator : IReportGenerator
             var loanPointsValue = loanPoints.Cells.AddTableCell();
             loanPointsValue.Background = new RgbColor(248, 249, 250);
             var loanPointsValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            loanPointsValueBlock.InsertText("1,000");
+            loanPointsValueBlock.InsertText(asr.LoanPoints.ToString("C2"));
             loanPointsValue.Blocks.Add(loanPointsValueBlock);
 
             var acquisitionFeeTitle = acquisitionFee.Cells.AddTableCell();
@@ -656,7 +657,7 @@ public class ReportGenerator : IReportGenerator
             acquisitionFeeTitle.Blocks.Add(acquisitionFeeTitleBlock);
             var acquisitionFeeValue = acquisitionFee.Cells.AddTableCell();
             var acquisitionFeeValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            acquisitionFeeValueBlock.InsertText("1,000");
+            acquisitionFeeValueBlock.InsertText(property.AquisitionFee.ToString("C2"));
             acquisitionFeeValue.Blocks.Add(acquisitionFeeValueBlock);
 
             var totalClosingCostsTitle = totalClosingCosts.Cells.AddTableCell();
@@ -667,7 +668,7 @@ public class ReportGenerator : IReportGenerator
             var totalClosingCostsValue = totalClosingCosts.Cells.AddTableCell();
             totalClosingCostsValue.Background = new RgbColor(248, 249, 250);
             var totalClosingCostsValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            totalClosingCostsValueBlock.InsertText("1,100,000");
+            totalClosingCostsValueBlock.InsertText((property.AquisitionFee + asr.ClosingCosts + asr.LoanPoints).ToString("C2"));
             totalClosingCostsValue.Blocks.Add(totalClosingCostsValueBlock);
 
             var downPaymentPercentageTitle = downPaymentPercentage.Cells.AddTableCell();
@@ -676,7 +677,7 @@ public class ReportGenerator : IReportGenerator
             downPaymentPercentageTitle.Blocks.Add(downPaymentPercentageTitleBlock);
             var downPaymentPercentageValue = downPaymentPercentage.Cells.AddTableCell();
             var downPaymentPercentageValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            downPaymentPercentageValueBlock.InsertText("20%");
+            downPaymentPercentageValueBlock.InsertText(asr.DownpaymentPercentage.ToString("P2"));
             downPaymentPercentageValue.Blocks.Add(downPaymentPercentageValueBlock);
 
             var downPaymentTitle = downPayment.Cells.AddTableCell();
@@ -687,7 +688,7 @@ public class ReportGenerator : IReportGenerator
             var downPaymentValue = downPayment.Cells.AddTableCell();
             downPaymentValue.Background = new RgbColor(248, 249, 250);
             var downPaymentValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            downPaymentValueBlock.InsertText("1,000,000");
+            downPaymentValueBlock.InsertText(asr.Downpayment.ToString("C2"));
             downPaymentValue.Blocks.Add(downPaymentValueBlock);
 
             var insurancePremiumTitle = insurancePremium.Cells.AddTableCell();
@@ -696,18 +697,18 @@ public class ReportGenerator : IReportGenerator
             insurancePremiumTitle.Blocks.Add(insurancePremiumTitleBlock);
             var insurancePremiumValue = insurancePremium.Cells.AddTableCell();
             var insurancePremiumValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            insurancePremiumValueBlock.InsertText("1,000");
+            insurancePremiumValueBlock.InsertText(asr.InsurancePremium.ToString("C2"));
             insurancePremiumValue.Blocks.Add(insurancePremiumValueBlock);
 
             var intialCapitalImprovementsTitle = intialCapitalImprovements.Cells.AddTableCell();
             intialCapitalImprovementsTitle.Background = new RgbColor(248, 249, 250);
             var intialCapitalImprovementsTitleBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            intialCapitalImprovementsTitleBlock.InsertText("Initial Capital Improvements");
+            intialCapitalImprovementsTitleBlock.InsertText("Initial Capital Improvements (see breakdown below)");
             intialCapitalImprovementsTitle.Blocks.Add(intialCapitalImprovementsTitleBlock);
             var intialCapitalImprovementsValue = intialCapitalImprovements.Cells.AddTableCell();
             intialCapitalImprovementsValue.Background = new RgbColor(248, 249, 250);
             var intialCapitalImprovementsValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            intialCapitalImprovementsValueBlock.InsertText("1,000");
+            intialCapitalImprovementsValueBlock.InsertText(asr.CapitalImprovementsBreakDown.Sum(x => x.Value).ToString("C2"));
             intialCapitalImprovementsValue.Blocks.Add(intialCapitalImprovementsValueBlock);
 
             var totalEquityAcqusitionCostsTitle = totalEquityAcqusitionCosts.Cells.AddTableCell();
@@ -716,7 +717,7 @@ public class ReportGenerator : IReportGenerator
             totalEquityAcqusitionCostsTitle.Blocks.Add(totalEquityAcqusitionCostsTitleBlock);
             var totalEquityAcqusitionCostsValue = totalEquityAcqusitionCosts.Cells.AddTableCell();
             var totalEquityAcqusitionCostsValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            totalEquityAcqusitionCostsValueBlock.InsertText("1,100,000");
+            totalEquityAcqusitionCostsValueBlock.InsertText(asr.TotalEquity.ToString("C2"));
             totalEquityAcqusitionCostsValue.Blocks.Add(totalEquityAcqusitionCostsValueBlock);
 
             editor.Position.Translate(20, reversionTable.Measure().Height + 150);
@@ -755,7 +756,7 @@ public class ReportGenerator : IReportGenerator
             rentAbatementTitle.Blocks.Add(rentAbatementTitleBlock);
             var rentAbatementValue = rentAbatement.Cells.AddTableCell();
             var rentAbatementValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            rentAbatementValueBlock.InsertText("1,000");
+            rentAbatementValueBlock.InsertText(" - ");
             rentAbatementValue.Blocks.Add(rentAbatementValueBlock);
 
             var reimbursementIncomeTitle = reimbursementIncome.Cells.AddTableCell();
@@ -766,7 +767,7 @@ public class ReportGenerator : IReportGenerator
             var reimbursementIncomeValue = reimbursementIncome.Cells.AddTableCell();
             reimbursementIncomeValue.Background = new RgbColor(248, 249, 250);
             var reimbursementIncomeValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            reimbursementIncomeValueBlock.InsertText("1,000");
+            reimbursementIncomeValueBlock.InsertText(" - ");
             reimbursementIncomeValue.Blocks.Add(reimbursementIncomeValueBlock);
 
             var generalMinimumVacanyTitle = generalMinimumVacany.Cells.AddTableCell();
@@ -775,7 +776,7 @@ public class ReportGenerator : IReportGenerator
             generalMinimumVacanyTitle.Blocks.Add(generalMinimumVacanyTitleBlock);
             var generalMinimumVacanyValue = generalMinimumVacany.Cells.AddTableCell();
             var generalMinimumVacanyValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            generalMinimumVacanyValueBlock.InsertText("1,000");
+            generalMinimumVacanyValueBlock.InsertText(" - ");
             generalMinimumVacanyValue.Blocks.Add(generalMinimumVacanyValueBlock);
 
             var taxAdustmentsTitle = taxAdustments.Cells.AddTableCell();
@@ -786,7 +787,7 @@ public class ReportGenerator : IReportGenerator
             var taxAdustmentsValue = taxAdustments.Cells.AddTableCell();
             taxAdustmentsValue.Background = new RgbColor(248, 249, 250);
             var taxAdustmentsValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            taxAdustmentsValueBlock.InsertText("1,000");
+            taxAdustmentsValueBlock.InsertText(" - ");
             taxAdustmentsValue.Blocks.Add(taxAdustmentsValueBlock);
 
             var expenseAdjustmentsTitle = expenseAdjustments.Cells.AddTableCell();
@@ -795,7 +796,7 @@ public class ReportGenerator : IReportGenerator
             expenseAdjustmentsTitle.Blocks.Add(expenseAdjustmentsTitleBlock);
             var expenseAdjustmentsValue = expenseAdjustments.Cells.AddTableCell();
             var expenseAdjustmentsValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            expenseAdjustmentsValueBlock.InsertText("1,000");
+            expenseAdjustmentsValueBlock.InsertText(" - ");
             expenseAdjustmentsValue.Blocks.Add(expenseAdjustmentsValueBlock);
 
             var capitalReserveAdustmentTitle = capitalReserveAdustment.Cells.AddTableCell();
@@ -806,10 +807,10 @@ public class ReportGenerator : IReportGenerator
             var capitalReserveAdustmentValue = capitalReserveAdustment.Cells.AddTableCell();
             capitalReserveAdustmentValue.Background = new RgbColor(248, 249, 250);
             var capitalReserveAdustmentValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            capitalReserveAdustmentValueBlock.InsertText("1,000");
+            capitalReserveAdustmentValueBlock.InsertText(" - ");
             capitalReserveAdustmentValue.Blocks.Add(capitalReserveAdustmentValueBlock);
 
-            editor.Position.Translate(equityAcqusitionCostsTable.Measure().Width + 370, reversionTable.Measure().Height + 150);
+            editor.Position.Translate(equityAcqusitionCostsTable.Measure().Width + 200, reversionTable.Measure().Height + 150);
             editor.DrawTable(cashFlowTable, new Size(page.Size.Width / 2 - 50, double.PositiveInfinity));
 
             // Primary Debt - Aqusition costs
@@ -849,7 +850,7 @@ public class ReportGenerator : IReportGenerator
             typeOfLoanTitle.Blocks.Add(typeOfLoanTitleBlock);
             var typeOfLoanValue = typeOfLoan.Cells.AddTableCell();
             var typeOfLoanValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            typeOfLoanValueBlock.InsertText("1,000");
+            typeOfLoanValueBlock.InsertText(property.LoanType.ToString());
             typeOfLoanValue.Blocks.Add(typeOfLoanValueBlock);
 
             var financedCapitalImprovementsTitle = financedCapitalImprovements.Cells.AddTableCell();
@@ -860,7 +861,7 @@ public class ReportGenerator : IReportGenerator
             var financedCapitalImprovementsValue = financedCapitalImprovements.Cells.AddTableCell();
             financedCapitalImprovementsValue.Background = new RgbColor(248, 249, 250);
             var financedCapitalImprovementsValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            financedCapitalImprovementsValueBlock.InsertText("1,000");
+            financedCapitalImprovementsValueBlock.InsertText(" - ");
             financedCapitalImprovementsValue.Blocks.Add(financedCapitalImprovementsValueBlock);
 
             var loanAmountTitle = loanAmount.Cells.AddTableCell();
@@ -869,7 +870,7 @@ public class ReportGenerator : IReportGenerator
             loanAmountTitle.Blocks.Add(loanAmountTitleBlock);
             var loanAmountValue = loanAmount.Cells.AddTableCell();
             var loanAmountValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            loanAmountValueBlock.InsertText("1,000");
+            loanAmountValueBlock.InsertText(property.Mortgages.Sum(x => x.LoanAmount).ToString("C2"));
             loanAmountValue.Blocks.Add(loanAmountValueBlock);
 
             var totalLoanAmountTitle = totalLoanAmount.Cells.AddTableCell();
@@ -880,7 +881,7 @@ public class ReportGenerator : IReportGenerator
             var totalLoanAmountValue = totalLoanAmount.Cells.AddTableCell();
             totalLoanAmountValue.Background = new RgbColor(248, 249, 250);
             var totalLoanAmountValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            totalLoanAmountValueBlock.InsertText("1,000");
+            totalLoanAmountValueBlock.InsertText(property.Mortgages.Sum(x => x.LoanAmount).ToString("C2"));
             totalLoanAmountValue.Blocks.Add(totalLoanAmountValueBlock);
 
             var loanToValueTitle = loanToValue.Cells.AddTableCell();
@@ -889,7 +890,7 @@ public class ReportGenerator : IReportGenerator
             loanToValueTitle.Blocks.Add(loanToValueTitleBlock);
             var loanToValueValue = loanToValue.Cells.AddTableCell();
             var loanToValueValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            loanToValueValueBlock.InsertText("1,000");
+            loanToValueValueBlock.InsertText(property.LTV.ToString("P2"));
             loanToValueValue.Blocks.Add(loanToValueValueBlock);
 
             var interestOnlyPeriodTitle = interestOnlyPeriod.Cells.AddTableCell();
@@ -900,7 +901,7 @@ public class ReportGenerator : IReportGenerator
             var interestOnlyPeriodValue = interestOnlyPeriod.Cells.AddTableCell();
             interestOnlyPeriodValue.Background = new RgbColor(248, 249, 250);
             var interestOnlyPeriodValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            interestOnlyPeriodValueBlock.InsertText("1,000");
+            interestOnlyPeriodValueBlock.InsertText(" - years");
             interestOnlyPeriodValue.Blocks.Add(interestOnlyPeriodValueBlock);
 
             var interestRateTitle = interestRate.Cells.AddTableCell();
@@ -909,7 +910,7 @@ public class ReportGenerator : IReportGenerator
             interestRateTitle.Blocks.Add(interestRateTitleBlock);
             var interestRateValue = interestRate.Cells.AddTableCell();
             var interestRateValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            interestRateValueBlock.InsertText("1,000");
+            interestRateValueBlock.InsertText(property.Mortgages.Sum(x => x.InterestRate).ToString("P2"));
             interestRateValue.Blocks.Add(interestRateValueBlock);
 
             var amortizationTitle = amortization.Cells.AddTableCell();
@@ -920,7 +921,7 @@ public class ReportGenerator : IReportGenerator
             var amortizationValue = amortization.Cells.AddTableCell();
             amortizationValue.Background = new RgbColor(248, 249, 250);
             var amortizationValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            amortizationValueBlock.InsertText("1,000");
+            amortizationValueBlock.InsertText(" - years");
             amortizationValue.Blocks.Add(amortizationValueBlock);
 
             var termTitle = term.Cells.AddTableCell();
@@ -929,7 +930,7 @@ public class ReportGenerator : IReportGenerator
             termTitle.Blocks.Add(termTitleBlock);
             var termValue = term.Cells.AddTableCell();
             var termValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            termValueBlock.InsertText("1,000");
+            termValueBlock.InsertText(property.Mortgages.Sum(x => x.TermInYears).ToString() + " years");
             termValue.Blocks.Add(termValueBlock);
 
             var debtServiceMonthTitle = debtServiceMonth.Cells.AddTableCell();
@@ -940,7 +941,7 @@ public class ReportGenerator : IReportGenerator
             var debtServiceMonthValue = debtServiceMonth.Cells.AddTableCell();
             debtServiceMonthValue.Background = new RgbColor(248, 249, 250);
             var debtServiceMonthValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            debtServiceMonthValueBlock.InsertText("1,000");
+            debtServiceMonthValueBlock.InsertText((property.Mortgages.Sum(x => x.AnnualDebtService)/12).ToString("C2"));
             debtServiceMonthValue.Blocks.Add(debtServiceMonthValueBlock);
 
             var debtServiceYearTitle = debtServiceYear.Cells.AddTableCell();
@@ -949,11 +950,11 @@ public class ReportGenerator : IReportGenerator
             debtServiceYearTitle.Blocks.Add(debtServiceYearTitleBlock);
             var debtServiceYearValue = debtServiceYear.Cells.AddTableCell();
             var debtServiceYearValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            debtServiceYearValueBlock.InsertText("1,000");
+            debtServiceYearValueBlock.InsertText(property.Mortgages.Sum(x => x.AnnualDebtService).ToString("C2"));
             debtServiceYearValue.Blocks.Add(debtServiceYearValueBlock);
 
             editor.Position.Translate(20, equityAcqusitionCostsTable.Measure().Height + reversionTable.Measure().Height + 200);
-            editor.DrawTable(primaryDebtAcqusitionCostsTable, new Size(tableWidth, double.PositiveInfinity));
+            editor.DrawTable(primaryDebtAcqusitionCostsTable, new Size(tableWidth + 30, double.PositiveInfinity));
 
             // Supplemnental debt - Aqusition costs
             var supplementalDebtAcqusitionCostsTable = new Table
@@ -992,7 +993,7 @@ public class ReportGenerator : IReportGenerator
             loanCostSupplementalTitle.Blocks.Add(loanCostSupplementalTitleBlock);
             var loanCostSupplementalValue = loanCostSupplemental.Cells.AddTableCell();
             var loanCostSupplementalValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            loanCostSupplementalValueBlock.InsertText("1,000");
+            loanCostSupplementalValueBlock.InsertText(" - ");
             loanCostSupplementalValue.Blocks.Add(loanCostSupplementalValueBlock);
 
             var adddedCapitalImprovementsSupplementalTitle = adddedCapitalImprovementsSupplemental.Cells.AddTableCell();
@@ -1003,7 +1004,7 @@ public class ReportGenerator : IReportGenerator
             var adddedCapitalImprovementsSupplementalValue = adddedCapitalImprovementsSupplemental.Cells.AddTableCell();
             adddedCapitalImprovementsSupplementalValue.Background = new RgbColor(248, 249, 250);
             var adddedCapitalImprovementsSupplementalValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            adddedCapitalImprovementsSupplementalValueBlock.InsertText("1,000");
+            adddedCapitalImprovementsSupplementalValueBlock.InsertText(" - ");
             adddedCapitalImprovementsSupplementalValue.Blocks.Add(adddedCapitalImprovementsSupplementalValueBlock);
 
             var loanAmountSupplementalTitle = loanAmountSupplemental.Cells.AddTableCell();
@@ -1012,7 +1013,7 @@ public class ReportGenerator : IReportGenerator
             loanAmountSupplementalTitle.Blocks.Add(loanAmountSupplementalTitleBlock);
             var loanAmountSupplementalValue = loanAmountSupplemental.Cells.AddTableCell();
             var loanAmountSupplementalValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            loanAmountSupplementalValueBlock.InsertText("1,000");
+            loanAmountSupplementalValueBlock.InsertText(" - ");
             loanAmountSupplementalValue.Blocks.Add(loanAmountSupplementalValueBlock);
 
             var totalLoanAmountSupplementalTitle = totalLoanAmountSupplemental.Cells.AddTableCell();
@@ -1023,7 +1024,7 @@ public class ReportGenerator : IReportGenerator
             var totalLoanAmountSupplementalValue = totalLoanAmountSupplemental.Cells.AddTableCell();
             totalLoanAmountSupplementalValue.Background = new RgbColor(248, 249, 250);
             var totalLoanAmountSupplementalValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            totalLoanAmountSupplementalValueBlock.InsertText("1,000");
+            totalLoanAmountSupplementalValueBlock.InsertText(" - ");
             totalLoanAmountSupplementalValue.Blocks.Add(totalLoanAmountSupplementalValueBlock);
 
             var loanToValueSupplementalTitle = loanToValueSupplemental.Cells.AddTableCell();
@@ -1032,7 +1033,7 @@ public class ReportGenerator : IReportGenerator
             loanToValueSupplementalTitle.Blocks.Add(loanToValueSupplementalTitleBlock);
             var loanToValueSupplementalValue = loanToValueSupplemental.Cells.AddTableCell();
             var loanToValueSupplementalValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            loanToValueSupplementalValueBlock.InsertText("1,000");
+            loanToValueSupplementalValueBlock.InsertText(" - ");
             loanToValueSupplementalValue.Blocks.Add(loanToValueSupplementalValueBlock);
 
             var interestOnlyPeriodSupplementalTitle = interestOnlyPeriodSupplemental.Cells.AddTableCell();
@@ -1043,7 +1044,7 @@ public class ReportGenerator : IReportGenerator
             var interestOnlyPeriodSupplementalValue = interestOnlyPeriodSupplemental.Cells.AddTableCell();
             interestOnlyPeriodSupplementalValue.Background = new RgbColor(248, 249, 250);
             var interestOnlyPeriodSupplementalValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            interestOnlyPeriodSupplementalValueBlock.InsertText("1,000");
+            interestOnlyPeriodSupplementalValueBlock.InsertText(" - ");
             interestOnlyPeriodSupplementalValue.Blocks.Add(interestOnlyPeriodSupplementalValueBlock);
 
             var interestRateSupplementalTitle = interestRateSupplemental.Cells.AddTableCell();
@@ -1052,7 +1053,7 @@ public class ReportGenerator : IReportGenerator
             interestRateSupplementalTitle.Blocks.Add(interestRateSupplementalTitleBlock);
             var interestRateSupplementalValue = interestRateSupplemental.Cells.AddTableCell();
             var interestRateSupplementalValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            interestRateSupplementalValueBlock.InsertText("1,000");
+            interestRateSupplementalValueBlock.InsertText(" - ");
             interestRateSupplementalValue.Blocks.Add(interestRateSupplementalValueBlock);
 
             var amortizationSupplementalTitle = amortizationSupplemental.Cells.AddTableCell();
@@ -1063,7 +1064,7 @@ public class ReportGenerator : IReportGenerator
             var amortizationSupplementalValue = amortizationSupplemental.Cells.AddTableCell();
             amortizationSupplementalValue.Background = new RgbColor(248, 249, 250);
             var amortizationSupplementalValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            amortizationSupplementalValueBlock.InsertText("1,000");
+            amortizationSupplementalValueBlock.InsertText(" - ");
             amortizationSupplementalValue.Blocks.Add(amortizationSupplementalValueBlock);
 
             var termSupplementalTitle = termSupplemental.Cells.AddTableCell();
@@ -1072,7 +1073,7 @@ public class ReportGenerator : IReportGenerator
             termSupplementalTitle.Blocks.Add(termSupplementalTitleBlock);
             var termSupplementalValue = termSupplemental.Cells.AddTableCell();
             var termSupplementalValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            termSupplementalValueBlock.InsertText("1,000");
+            termSupplementalValueBlock.InsertText(" - ");
             termSupplementalValue.Blocks.Add(termSupplementalValueBlock);
 
             var debtServiceMonthSupplementalTitle = debtServiceMonthSupplemental.Cells.AddTableCell();
@@ -1083,7 +1084,7 @@ public class ReportGenerator : IReportGenerator
             var debtServiceMonthSupplementalValue = debtServiceMonthSupplemental.Cells.AddTableCell();
             debtServiceMonthSupplementalValue.Background = new RgbColor(248, 249, 250);
             var debtServiceMonthSupplementalValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            debtServiceMonthSupplementalValueBlock.InsertText("1,000");
+            debtServiceMonthSupplementalValueBlock.InsertText(" - ");
             debtServiceMonthSupplementalValue.Blocks.Add(debtServiceMonthSupplementalValueBlock);
 
             var debtServiceYearSupplementalTitle = debtServiceYearSupplemental.Cells.AddTableCell();
@@ -1092,10 +1093,10 @@ public class ReportGenerator : IReportGenerator
             debtServiceYearSupplementalTitle.Blocks.Add(debtServiceYearSupplementalTitleBlock);
             var debtServiceYearSupplementalValue = debtServiceYearSupplemental.Cells.AddTableCell();
             var debtServiceYearSupplementalValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            debtServiceYearSupplementalValueBlock.InsertText("1,000");
+            debtServiceYearSupplementalValueBlock.InsertText(" - ");
             debtServiceYearSupplementalValue.Blocks.Add(debtServiceYearSupplementalValueBlock);
 
-            editor.Position.Translate(primaryDebtAcqusitionCostsTable.Measure().Width + 120, equityAcqusitionCostsTable.Measure().Height + reversionTable.Measure().Height + 200);
+            editor.Position.Translate(primaryDebtAcqusitionCostsTable.Measure().Width + 60, equityAcqusitionCostsTable.Measure().Height + reversionTable.Measure().Height + 200);
             editor.DrawTable(supplementalDebtAcqusitionCostsTable, new Size(tableWidth, double.PositiveInfinity));
 
             // Refinance
@@ -1135,7 +1136,7 @@ public class ReportGenerator : IReportGenerator
             loanStartDateTitle.Blocks.Add(loanStartDateTitleBlock);
             var loanStartDateValue = loanStartDate.Cells.AddTableCell();
             var loanStartDateValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            loanStartDateValueBlock.InsertText("1,000");
+            loanStartDateValueBlock.InsertText(" - ");
             loanStartDateValue.Blocks.Add(loanStartDateValueBlock);
 
             var financedCapitalImprovementsRefinanceTitle = financedCapitalImprovementsRefinance.Cells.AddTableCell();
@@ -1146,7 +1147,7 @@ public class ReportGenerator : IReportGenerator
             var financedCapitalImprovementsRefinanceValue = financedCapitalImprovementsRefinance.Cells.AddTableCell();
             financedCapitalImprovementsRefinanceValue.Background = new RgbColor(248, 249, 250);
             var financedCapitalImprovementsRefinanceValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            financedCapitalImprovementsRefinanceValueBlock.InsertText("1,000");
+            financedCapitalImprovementsRefinanceValueBlock.InsertText(" - ");
             financedCapitalImprovementsRefinanceValue.Blocks.Add(financedCapitalImprovementsRefinanceValueBlock);
 
             var loanCostsRefinanceTitle = loanCostsRefinance.Cells.AddTableCell();
@@ -1155,7 +1156,7 @@ public class ReportGenerator : IReportGenerator
             loanCostsRefinanceTitle.Blocks.Add(loanCostsRefinanceTitleBlock);
             var loanCostsRefinanceValue = loanCostsRefinance.Cells.AddTableCell();
             var loanCostsRefinanceValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            loanCostsRefinanceValueBlock.InsertText("1,000");
+            loanCostsRefinanceValueBlock.InsertText(" - ");
             loanCostsRefinanceValue.Blocks.Add(loanCostsRefinanceValueBlock);
 
             var loanAmountRefinanceTitle = loanAmountRefinance.Cells.AddTableCell();
@@ -1166,7 +1167,7 @@ public class ReportGenerator : IReportGenerator
             var loanAmountRefinanceValue = loanAmountRefinance.Cells.AddTableCell();
             loanAmountRefinanceValue.Background = new RgbColor(248, 249, 250);
             var loanAmountRefinanceValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            loanAmountRefinanceValueBlock.InsertText("1,000");
+            loanAmountRefinanceValueBlock.InsertText(" - ");
             loanAmountRefinanceValue.Blocks.Add(loanAmountRefinanceValueBlock);
 
             var totalLoanAmountRefinanceTitle = totalLoanAmountRefinance.Cells.AddTableCell();
@@ -1175,7 +1176,7 @@ public class ReportGenerator : IReportGenerator
             totalLoanAmountRefinanceTitle.Blocks.Add(totalLoanAmountRefinanceTitleBlock);
             var totalLoanAmountRefinanceValue = totalLoanAmountRefinance.Cells.AddTableCell();
             var totalLoanAmountRefinanceValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            totalLoanAmountRefinanceValueBlock.InsertText("1,000");
+            totalLoanAmountRefinanceValueBlock.InsertText(" - ");
             totalLoanAmountRefinanceValue.Blocks.Add(totalLoanAmountRefinanceValueBlock);
 
             var loanToValueRefinanceTitle = loanToValueRefinance.Cells.AddTableCell();
@@ -1186,7 +1187,7 @@ public class ReportGenerator : IReportGenerator
             var loanToValueRefinanceValue = loanToValueRefinance.Cells.AddTableCell();
             loanToValueRefinanceValue.Background = new RgbColor(248, 249, 250);
             var loanToValueRefinanceValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            loanToValueRefinanceValueBlock.InsertText("1,000");
+            loanToValueRefinanceValueBlock.InsertText(" - ");
             loanToValueRefinanceValue.Blocks.Add(loanToValueRefinanceValueBlock);
 
             var interestRateRefinanceTitle = interestRateRefinance.Cells.AddTableCell();
@@ -1195,7 +1196,7 @@ public class ReportGenerator : IReportGenerator
             interestRateRefinanceTitle.Blocks.Add(interestRateRefinanceTitleBlock);
             var interestRateRefinanceValue = interestRateRefinance.Cells.AddTableCell();
             var interestRateRefinanceValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            interestRateRefinanceValueBlock.InsertText("1,000");
+            interestRateRefinanceValueBlock.InsertText(" - ");
             interestRateRefinanceValue.Blocks.Add(interestRateRefinanceValueBlock);
 
             var amortizationRefinanceTitle = amortizationRefinance.Cells.AddTableCell();
@@ -1206,7 +1207,7 @@ public class ReportGenerator : IReportGenerator
             var amortizationRefinanceValue = amortizationRefinance.Cells.AddTableCell();
             amortizationRefinanceValue.Background = new RgbColor(248, 249, 250);
             var amortizationRefinanceValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            amortizationRefinanceValueBlock.InsertText("1,000");
+            amortizationRefinanceValueBlock.InsertText(" - ");
             amortizationRefinanceValue.Blocks.Add(amortizationRefinanceValueBlock);
 
             var termRefinanceTitle = termRefinance.Cells.AddTableCell();
@@ -1215,7 +1216,7 @@ public class ReportGenerator : IReportGenerator
             termRefinanceTitle.Blocks.Add(termRefinanceTitleBlock);
             var termRefinanceValue = termRefinance.Cells.AddTableCell();
             var termRefinanceValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            termRefinanceValueBlock.InsertText("1,000");
+            termRefinanceValueBlock.InsertText(" -");
             termRefinanceValue.Blocks.Add(termRefinanceValueBlock);
 
             var debtServiceMonthlyRefinanceTitle = debtServiceMonthRefinance.Cells.AddTableCell();
@@ -1226,7 +1227,7 @@ public class ReportGenerator : IReportGenerator
             var debtServiceMonthlyRefinanceValue = debtServiceMonthRefinance.Cells.AddTableCell();
             debtServiceMonthlyRefinanceValue.Background = new RgbColor(248, 249, 250);
             var debtServiceMonthlyRefinanceValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            debtServiceMonthlyRefinanceValueBlock.InsertText("1,000");
+            debtServiceMonthlyRefinanceValueBlock.InsertText(" - ");
             debtServiceMonthlyRefinanceValue.Blocks.Add(debtServiceMonthlyRefinanceValueBlock);
 
             var debtServiceYearRefinanceTitle = debtServiceYearRefinance.Cells.AddTableCell();
@@ -1235,10 +1236,10 @@ public class ReportGenerator : IReportGenerator
             debtServiceYearRefinanceTitle.Blocks.Add(debtServiceYearRefinanceTitleBlock);
             var debtServiceYearRefinanceValue = debtServiceYearRefinance.Cells.AddTableCell();
             var debtServiceYearRefinanceValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            debtServiceYearRefinanceValueBlock.InsertText("1,000");
+            debtServiceYearRefinanceValueBlock.InsertText(" - ");
             debtServiceYearRefinanceValue.Blocks.Add(debtServiceYearRefinanceValueBlock);
 
-            editor.Position.Translate(primaryDebtAcqusitionCostsTable.Measure().Width + 200 + supplementalDebtAcqusitionCostsTable.Measure().Width, equityAcqusitionCostsTable.Measure().Height + reversionTable.Measure().Height + 200);
+            editor.Position.Translate(primaryDebtAcqusitionCostsTable.Measure().Width + 160 + supplementalDebtAcqusitionCostsTable.Measure().Width, equityAcqusitionCostsTable.Measure().Height + reversionTable.Measure().Height + 200);
             editor.DrawTable(refinanceTable, new Size(tableWidth, double.PositiveInfinity));
 
             // Capital Improvements Breakdown
@@ -1271,22 +1272,24 @@ public class ReportGenerator : IReportGenerator
             capitalImprovementsBreakdownHeaderDiscriptionBlock.InsertText("Description");
             capitalImprovementsBreakdownHeaderDiscription.Blocks.Add(capitalImprovementsBreakdownHeaderDiscriptionBlock);
 
-            // TODO :control page height
             var targetindex = 0;
-            foreach (var capitalImprovement in Enumerable.Range(1, 3))
+            foreach (var capitalImprovement in asr.CapitalImprovementsBreakDown)
             {
+                if (capitalImprovement.Value == 0)
+                    continue;
+
                 var dynamicRow = capitalImprovementsBreakdownTable.Rows.AddTableRow();
                 var dynamicCell = dynamicRow.Cells.AddTableCell();
                 if (targetindex % 2 == 0)
                     dynamicCell.Background = new RgbColor(248, 249, 250);
                 var dynamicBlock = new Block();
-                dynamicBlock.InsertText("value " + capitalImprovement);
+                dynamicBlock.InsertText(capitalImprovement.Value.ToString("C2"));
                 dynamicCell.Blocks.Add(dynamicBlock);
                 var dynamicCell2 = dynamicRow.Cells.AddTableCell();
                 if (targetindex % 2 == 0)
                     dynamicCell2.Background = new RgbColor(248, 249, 250);
                 var dynamicBlock2 = new Block();
-                dynamicBlock2.InsertText("Description " + capitalImprovement);
+                dynamicBlock2.InsertText(capitalImprovement.Key);
                 dynamicCell2.Blocks.Add(dynamicBlock2);
                 targetindex++;
             }
@@ -1564,7 +1567,7 @@ public class ReportGenerator : IReportGenerator
             netHeaderTitleBlock.InsertText("For The Years Ending");
             netHeaderTitle.Blocks.Add(netHeaderTitleBlock);
             targetIndex = 0;
-            foreach (var year in cfr.Select( x => x.Year))
+            foreach (var year in cfr.Select(x => x.Year))
             {
                 var dynamicCell = netHeader.Cells.AddTableCell();
                 dynamicCell.Background = new RgbColor(137, 207, 240);

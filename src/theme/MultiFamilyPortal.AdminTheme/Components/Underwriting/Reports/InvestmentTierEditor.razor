@@ -43,7 +43,7 @@
       <div class="card-body align-self-center">
         <div class="row">
           <div class="col align-self-center">
-            <TelerikButton Primary=@true
+            <TelerikButton ThemeColor="primary"
                            Enabled=@(!Tiers.Any(x => string.IsNullOrEmpty(x.Name)))
                            OnClick=@(() => Tiers.Add(new ()))>Add Tier</TelerikButton>
           </div>
@@ -57,7 +57,7 @@
   @if(_isNew)
   {
     <div class="col-md-6 offset-md-3 text-center">
-      <TelerikButton Primary=@true
+      <TelerikButton ThemeColor="primary"
                      Enabled=@(!Tiers.Any(x => string.IsNullOrEmpty(x.Name)) && !string.IsNullOrEmpty(Name))
                      OnClick=@OnSave>Save</TelerikButton>
     </div>
@@ -68,7 +68,7 @@
       <TelerikButton Class="btn-danger" OnClick=@OnDelete>Delete</TelerikButton>
     </div>
     <div class="col-md-3 text-center">
-      <TelerikButton Primary=@true
+      <TelerikButton ThemeColor="primary"
                      Enabled=@(!Tiers.Any(x => string.IsNullOrEmpty(x.Name)) && !string.IsNullOrEmpty(Name))
                      OnClick=@OnSave>Save</TelerikButton>
     </div>

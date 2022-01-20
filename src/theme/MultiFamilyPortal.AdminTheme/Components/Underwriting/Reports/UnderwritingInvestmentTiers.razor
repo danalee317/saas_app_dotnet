@@ -11,13 +11,12 @@
 
         @if(!string.IsNullOrEmpty(_selectedGroup))
         {
-          <TelerikButton Primary=@false
-                         IconClass="fa-solid fa-pencil"
+          <TelerikButton IconClass="fa-solid fa-pencil"
                          Class="mt-3 mx-2"
                          OnClick=@OnEdit>Edit Group</TelerikButton>
         }
 
-        <TelerikButton Primary=@true
+        <TelerikButton ThemeColor="primary"
                        IconClass="fa-solid fa-plus"
                        Class="mt-3 mx-2"
                        OnClick=@OnAdd>Add Group</TelerikButton>

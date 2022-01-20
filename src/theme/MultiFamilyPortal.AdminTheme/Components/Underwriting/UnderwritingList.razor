@@ -9,7 +9,7 @@
           <div class="flex" style="margin-left: auto;">
             <GridCommandButton Command="NewProperty"
                                 Icon="add"
-                                Primary="true"
+                                ThemeColor="primary"
                                 Class="float-right"
                                 OnClick=@CreateProperty>
               Add Property
@@ -140,7 +140,7 @@
     <div class="row g-3 mt-2">
       <div class="col-lg-6 text-center">
         <TelerikButton ButtonType="ButtonType.Reset"
-                        Primary="true"
+                        ThemeColor="primary"
                         Title="Cancel"
                         OnClick="@(() => NewProspect = null)">
           Cancel
@@ -148,7 +148,7 @@
       </div>
       <div class="col-lg-6 text-center">
         <TelerikButton ButtonType="ButtonType.Button"
-                       Primary="true"
+                       ThemeColor="primary"
                        Enabled="@(!string.IsNullOrEmpty(NewProspect.Name) && NewProspect.Name.Length > 3 && NewProspect.Units > 0)"
                        Title="Start Underwriting"
                        OnClick="StartUnderwriting">

@@ -81,7 +81,7 @@
       <div class="text-center">
         @{ var guidance = context as UnderwritingGuidance; }
         <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
-          <GridCommandButton Primary=@true
+          <GridCommandButton ThemeColor="primary"
                              Title="Update Underwriting"
                              Enabled=@IsCleanExpense(guidance)
                              OnClick=@ShowUpdateUnderwriting>

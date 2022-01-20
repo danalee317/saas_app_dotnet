@@ -12,10 +12,10 @@ namespace MultiFamilyPortal.CoreUI
         [Inject]
         private ILogger<PortalErrorBoundary> _logger { get; set; }
 
-        private ErrorBoundary errorBoundary;
+        private ErrorBoundary _errorBoundary;
         private void RecoverFromError()
         {
-            errorBoundary?.Recover();
+            _errorBoundary?.Recover();
         }
 
         private void HandleError(Exception ex)

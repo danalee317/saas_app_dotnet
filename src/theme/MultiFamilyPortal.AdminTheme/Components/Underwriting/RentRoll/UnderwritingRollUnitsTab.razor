@@ -8,7 +8,7 @@
     <span class="k-toolbar-spacer"></span>
     @if(_editable)
     {
-      <GridCommandButton Primary=@true
+      <GridCommandButton ThemeColor="primary"
                          IconClass="fa-duotone fa-plus"
                          OnClick="@OnAddFloorUnits">Add</GridCommandButton>
     }
@@ -92,7 +92,7 @@
       <Animation OptionsName="Page">
         @if(_newUnit != null)
         {
-          <UnderwritingRollUnitsControls Unit="@_newUnit" 
+          <UnderwritingRollUnitsControls Unit="@_newUnit"
                                          UnitChanged="@HideWindow"
                                          OnAddFloorUnits="RefreshFloors"/>
         }

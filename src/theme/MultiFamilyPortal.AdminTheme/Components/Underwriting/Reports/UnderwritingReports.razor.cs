@@ -25,6 +25,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Reports
             "investment-tiers",
             "cash-flow",
             "full-report",
+            "deal-summary",
              "assumptions",
         };
 

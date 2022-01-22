@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.Dtos;
 using MultiFamilyPortal.Dtos.Underwriting;
 using MultiFamilyPortal.Dtos.Underwriting.Reports;
+using MultiFamilyPortal.Helpers.Reports;
 using Telerik.Documents.Primitives;
 using Telerik.Windows.Documents.Fixed.FormatProviders.Pdf;
 using Telerik.Windows.Documents.Fixed.FormatProviders.Pdf.Export;
@@ -34,7 +35,7 @@ public class ReportGenerator : IReportGenerator
             return NotFound();
 
         var document = new RadFixedDocument();
-        GenerateDealSummary(property, document);
+        GenearateDealSummaryBuilder.GenerateDealSummary(property, document);
         GenerateAssumptions(property, document);
         GenerateCashFlow(property, document);
         GenerateIncomeForecast(property, document);
@@ -57,7 +58,7 @@ public class ReportGenerator : IReportGenerator
             return NotFound();
 
         var document = new RadFixedDocument();
-        GenerateDealSummary(property, document);
+        GenearateDealSummaryBuilder.GenerateDealSummary(property, document);
 
         var name = $"Deal_Summary.pdf";
         return new ReportResponse
@@ -445,11 +446,6 @@ public class ReportGenerator : IReportGenerator
     }
 
     #region Underwriting Report Generators
-    private void GenerateDealSummary(UnderwritingAnalysis property, RadFixedDocument document)
-    {
-
-    }
-
     private void GenerateAssumptions(UnderwritingAnalysis property, RadFixedDocument document)
     {
         try
@@ -941,7 +937,7 @@ public class ReportGenerator : IReportGenerator
             var debtServiceMonthValue = debtServiceMonth.Cells.AddTableCell();
             debtServiceMonthValue.Background = new RgbColor(248, 249, 250);
             var debtServiceMonthValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-            debtServiceMonthValueBlock.InsertText((property.Mortgages.Sum(x => x.AnnualDebtService)/12).ToString("C2"));
+            debtServiceMonthValueBlock.InsertText((property.Mortgages.Sum(x => x.AnnualDebtService) / 12).ToString("C2"));
             debtServiceMonthValue.Blocks.Add(debtServiceMonthValueBlock);
 
             var debtServiceYearTitle = debtServiceYear.Cells.AddTableCell();
@@ -1538,7 +1534,7 @@ public class ReportGenerator : IReportGenerator
                 dynamicCell.Blocks.Add(dynamicCellBlock);
             }
 
-            editor.Position.Translate(pageOne.Size.Width / 2 - incomeTable.Measure().Width/ 2, incomeTable.Measure().Height + 210);
+            editor.Position.Translate(pageOne.Size.Width / 2 - incomeTable.Measure().Width / 2, incomeTable.Measure().Height + 210);
             editor.DrawTable(expensesTable, new Size(incomeTable.Measure().Width, double.PositiveInfinity));
 
             // Net Income

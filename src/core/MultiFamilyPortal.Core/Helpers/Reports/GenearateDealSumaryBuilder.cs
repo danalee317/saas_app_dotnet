@@ -98,7 +98,6 @@ public static class GenearateDealSumaryBuilder
         editor.DrawTable(basicAssumptionsTable);
 
         // Projected Performance
-        var lineBorder = new TableCellBorders(new Border(1, new RgbColor(64,224,208)), null, null, null);
         var projectedPerformanceTable = new Table
         {
             DefaultCellProperties = { Padding = new Thickness(cellPadding) },
@@ -347,6 +346,12 @@ public static class GenearateDealSumaryBuilder
         editor.DrawTable(projectedPerformanceTable);
 
         // Cash Flow
+        var asrYear0 = property.Projections.Select(x => x.GrossScheduledRent).FirstOrDefault();
+        var asrYear1 = property.Projections.Select(x => x.GrossScheduledRent).ToList()[1];
+        var numberOfUnits = property.Units;
+        var lineBorder = new TableCellBorders(new Border(1, new RgbColor(100, 100, 100)), null, null, null);
+
+
         var cashFlowTable = new Table
         {
             DefaultCellProperties = { Padding = new Thickness(cellPadding) },
@@ -422,7 +427,7 @@ public static class GenearateDealSumaryBuilder
         cashFlowHeaderSixTitle.Blocks.Add(cashFlowHeaderSixTitleBlock);
         var cashFlowHeaderSevenTitle = cashFlowHeaderTwo.Cells.AddTableCell();
         cashFlowHeaderSevenTitle.Borders = lineBorder;
-        cashFlowHeaderSevenTitle.Background = new RgbColor(64,224,208);
+        cashFlowHeaderSevenTitle.Background = new RgbColor(64, 224, 208);
         var cashFlowHeaderSevenTitleBlock = new Block
         {
             TextProperties = { Font = FontsRepository.HelveticaBold },
@@ -431,7 +436,7 @@ public static class GenearateDealSumaryBuilder
         cashFlowHeaderSevenTitleBlock.InsertText("Year 1");
         cashFlowHeaderSevenTitle.Blocks.Add(cashFlowHeaderSevenTitleBlock);
         var cashFlowHeaderEightTitle = cashFlowHeaderTwo.Cells.AddTableCell();
-        cashFlowHeaderEightTitle.Background = new RgbColor(64,224,208);
+        cashFlowHeaderEightTitle.Background = new RgbColor(64, 224, 208);
         var cashFlowHeaderEightTitleBlock = new Block
         {
             TextProperties = { Font = FontsRepository.HelveticaBold },
@@ -440,7 +445,7 @@ public static class GenearateDealSumaryBuilder
         cashFlowHeaderEightTitleBlock.InsertText("Per Unit");
         cashFlowHeaderEightTitle.Blocks.Add(cashFlowHeaderEightTitleBlock);
         var cashFlowHeaderNineTitle = cashFlowHeaderTwo.Cells.AddTableCell();
-        cashFlowHeaderNineTitle.Background = new RgbColor(64,224,208);
+        cashFlowHeaderNineTitle.Background = new RgbColor(64, 224, 208);
         var cashFlowHeaderNineTitleBlock = new Block
         {
             TextProperties = { Font = FontsRepository.HelveticaBold },
@@ -464,7 +469,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        rentStatedInPlaceBlock.InsertText("Some Value");
+        rentStatedInPlaceBlock.InsertText(asrYear0.ToString("C2"));
         rentStatedInPlace.Blocks.Add(rentStatedInPlaceBlock);
         var rentPerUnit = rent.Cells.AddTableCell();
         rentPerUnit.Background = new RgbColor(248, 249, 250);
@@ -473,7 +478,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        rentPerUnitBlock.InsertText("Some Value");
+        rentPerUnitBlock.InsertText((asrYear0 / numberOfUnits).ToString("C2"));
         rentPerUnit.Blocks.Add(rentPerUnitBlock);
         var rentPercentage = rent.Cells.AddTableCell();
         rentPercentage.Background = new RgbColor(248, 249, 250);
@@ -482,7 +487,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        rentPercentageBlock.InsertText("Some Value");
+        rentPercentageBlock.InsertText((asrYear0 / asrYear0).ToString("P2"));
         rentPercentage.Blocks.Add(rentPercentageBlock);
         var rentYear1 = rent.Cells.AddTableCell();
         rentYear1.Borders = lineBorder;
@@ -492,7 +497,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        rentYear1Block.InsertText("Some Value");
+        rentYear1Block.InsertText(asrYear1.ToString("C2"));
         rentYear1.Blocks.Add(rentYear1Block);
         var rentPerUnitYear1 = rent.Cells.AddTableCell();
         rentPerUnitYear1.Background = new RgbColor(248, 249, 250);
@@ -501,7 +506,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        rentPerUnitYear1Block.InsertText("Some Value");
+        rentPerUnitYear1Block.InsertText((asrYear1 / numberOfUnits).ToString("C2"));
         rentPerUnitYear1.Blocks.Add(rentPerUnitYear1Block);
         var rentPercentageYear1 = rent.Cells.AddTableCell();
         rentPercentageYear1.Background = new RgbColor(248, 249, 250);
@@ -510,7 +515,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        rentPercentageYear1Block.InsertText("Some Value");
+        rentPercentageYear1Block.InsertText((asrYear1 / asrYear1).ToString("P2"));
         rentPercentageYear1.Blocks.Add(rentPercentageYear1Block);
 
         var vacancyTitle = vacancy.Cells.AddTableCell();
@@ -525,21 +530,21 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        vacancyStatedInPlaceBlock.InsertText("Some Value");
+        vacancyStatedInPlaceBlock.InsertText(property.Projections.Select(x => x.Vacancy).FirstOrDefault().ToString("C2"));
         vacancyStatedInPlace.Blocks.Add(vacancyStatedInPlaceBlock);
         var vacancyPerUnit = vacancy.Cells.AddTableCell();
         var vacancyPerUnitBlock = new Block
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        vacancyPerUnitBlock.InsertText("Some Value");
+        vacancyPerUnitBlock.InsertText((property.Projections.Select(x => x.Vacancy).FirstOrDefault() / numberOfUnits).ToString("C2"));
         vacancyPerUnit.Blocks.Add(vacancyPerUnitBlock);
         var vacancyPercentage = vacancy.Cells.AddTableCell();
         var vacancyPercentageBlock = new Block
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        vacancyPercentageBlock.InsertText("Some Value");
+        vacancyPercentageBlock.InsertText((property.Projections.Select(x => x.Vacancy).FirstOrDefault() / asrYear0).ToString("P2"));
         vacancyPercentage.Blocks.Add(vacancyPercentageBlock);
         var vacancyYear1 = vacancy.Cells.AddTableCell();
         vacancyYear1.Borders = lineBorder;
@@ -547,21 +552,21 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        vacancyYear1Block.InsertText("Some Value");
+        vacancyYear1Block.InsertText(property.Projections.Select(x => x.Vacancy).Skip(1).FirstOrDefault().ToString("C2"));
         vacancyYear1.Blocks.Add(vacancyYear1Block);
         var vacancyPerUnitYear1 = vacancy.Cells.AddTableCell();
         var vacancyPerUnitYear1Block = new Block
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        vacancyPerUnitYear1Block.InsertText("Some Value");
+        vacancyPerUnitYear1Block.InsertText((property.Projections.Select(x => x.Vacancy).Skip(1).FirstOrDefault() / numberOfUnits).ToString("C2"));
         vacancyPerUnitYear1.Blocks.Add(vacancyPerUnitYear1Block);
         var vacancyPercentageYear1 = vacancy.Cells.AddTableCell();
         var vacancyPercentageYear1Block = new Block
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        vacancyPercentageYear1Block.InsertText("Some Value");
+        vacancyPercentageYear1Block.InsertText((property.Projections.Select(x => x.Vacancy).Skip(1).FirstOrDefault() / asrYear1).ToString("P2"));
         vacancyPercentageYear1.Blocks.Add(vacancyPercentageYear1Block);
 
         var otherLossesTitle = otherLosses.Cells.AddTableCell();
@@ -577,7 +582,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        otherLossesStatedInPlaceBlock.InsertText("Some Value");
+        otherLossesStatedInPlaceBlock.InsertText(property.Projections.Select(x => x.ConcessionsNonPayment).FirstOrDefault().ToString("C2"));
         otherLossesStatedInPlace.Blocks.Add(otherLossesStatedInPlaceBlock);
         var otherLossesPerUnit = otherLosses.Cells.AddTableCell();
         otherLossesPerUnit.Background = new RgbColor(248, 249, 250);
@@ -585,7 +590,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        otherLossesPerUnitBlock.InsertText("Some Value");
+        otherLossesPerUnitBlock.InsertText((property.Projections.Select(x => x.ConcessionsNonPayment).FirstOrDefault() / numberOfUnits).ToString("C2"));
         otherLossesPerUnit.Blocks.Add(otherLossesPerUnitBlock);
         var otherLossesPercentage = otherLosses.Cells.AddTableCell();
         otherLossesPercentage.Background = new RgbColor(248, 249, 250);
@@ -593,7 +598,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        otherLossesPercentageBlock.InsertText("Some Value");
+        otherLossesPercentageBlock.InsertText((property.Projections.Select(x => x.ConcessionsNonPayment).FirstOrDefault() / asrYear0).ToString("P2"));
         otherLossesPercentage.Blocks.Add(otherLossesPercentageBlock);
         var otherLossesYear1 = otherLosses.Cells.AddTableCell();
         otherLossesYear1.Borders = lineBorder;
@@ -602,7 +607,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        otherLossesYear1Block.InsertText("Some Value");
+        otherLossesYear1Block.InsertText(property.Projections.Select(x => x.ConcessionsNonPayment).Skip(1).FirstOrDefault().ToString("C2"));
         otherLossesYear1.Blocks.Add(otherLossesYear1Block);
         var otherLossesPerUnitYear1 = otherLosses.Cells.AddTableCell();
         otherLossesPerUnitYear1.Background = new RgbColor(248, 249, 250);
@@ -610,7 +615,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        otherLossesPerUnitYear1Block.InsertText("Some Value");
+        otherLossesPerUnitYear1Block.InsertText((property.Projections.Select(x => x.ConcessionsNonPayment).Skip(1).FirstOrDefault() / numberOfUnits).ToString("C2"));
         otherLossesPerUnitYear1.Blocks.Add(otherLossesPerUnitYear1Block);
         var otherLossesPercentageYear1 = otherLosses.Cells.AddTableCell();
         otherLossesPercentageYear1.Background = new RgbColor(248, 249, 250);
@@ -618,7 +623,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        otherLossesPercentageYear1Block.InsertText("Some Value");
+        otherLossesPercentageYear1Block.InsertText((property.Projections.Select(x => x.ConcessionsNonPayment).Skip(1).FirstOrDefault() / asrYear1).ToString("P2"));
         otherLossesPercentageYear1.Blocks.Add(otherLossesPercentageYear1Block);
 
         var utilitiesIncomeTitle = utilitiesIncome.Cells.AddTableCell();
@@ -633,21 +638,21 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        utilitiesIncomeStatedInPlaceBlock.InsertText("Some Value");
+        utilitiesIncomeStatedInPlaceBlock.InsertText(property.Projections.Select(x => x.UtilityReimbursement).FirstOrDefault().ToString("C2"));
         utilitiesIncomeStatedInPlace.Blocks.Add(utilitiesIncomeStatedInPlaceBlock);
         var utilitiesIncomePerUnit = utilitiesIncome.Cells.AddTableCell();
         var utilitiesIncomePerUnitBlock = new Block
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        utilitiesIncomePerUnitBlock.InsertText("Some Value");
+        utilitiesIncomePerUnitBlock.InsertText((property.Projections.Select(x => x.UtilityReimbursement).FirstOrDefault() / numberOfUnits).ToString("C2"));
         utilitiesIncomePerUnit.Blocks.Add(utilitiesIncomePerUnitBlock);
         var utilitiesIncomePercentage = utilitiesIncome.Cells.AddTableCell();
         var utilitiesIncomePercentageBlock = new Block
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        utilitiesIncomePercentageBlock.InsertText("Some Value");
+        utilitiesIncomePercentageBlock.InsertText((property.Projections.Select(x => x.UtilityReimbursement).FirstOrDefault() / asrYear0).ToString("P2"));
         utilitiesIncomePercentage.Blocks.Add(utilitiesIncomePercentageBlock);
         var utilitiesIncomeYear1 = utilitiesIncome.Cells.AddTableCell();
         utilitiesIncomeYear1.Borders = lineBorder;
@@ -655,21 +660,21 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        utilitiesIncomeYear1Block.InsertText("Some Value");
+        utilitiesIncomeYear1Block.InsertText(property.Projections.Select(x => x.UtilityReimbursement).Skip(1).FirstOrDefault().ToString("C2"));
         utilitiesIncomeYear1.Blocks.Add(utilitiesIncomeYear1Block);
         var utilitiesIncomePerUnitYear1 = utilitiesIncome.Cells.AddTableCell();
         var utilitiesIncomePerUnitYear1Block = new Block
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        utilitiesIncomePerUnitYear1Block.InsertText("Some Value");
+        utilitiesIncomePerUnitYear1Block.InsertText((property.Projections.Select(x => x.UtilityReimbursement).Skip(1).FirstOrDefault() / numberOfUnits).ToString("C2"));
         utilitiesIncomePerUnitYear1.Blocks.Add(utilitiesIncomePerUnitYear1Block);
         var utilitiesIncomePercentageYear1 = utilitiesIncome.Cells.AddTableCell();
         var utilitiesIncomePercentageYear1Block = new Block
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        utilitiesIncomePercentageYear1Block.InsertText("Some Value");
+        utilitiesIncomePercentageYear1Block.InsertText((property.Projections.Select(x => x.UtilityReimbursement).Skip(1).FirstOrDefault() / asrYear1).ToString("P2"));
         utilitiesIncomePercentageYear1.Blocks.Add(utilitiesIncomePercentageYear1Block);
 
         var otherIncomeTitle = otherIncome.Cells.AddTableCell();
@@ -685,7 +690,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        otherIncomeStatedInPlaceBlock.InsertText("Some Value");
+        otherIncomeStatedInPlaceBlock.InsertText(property.Projections.Select(x => x.OtherIncome).FirstOrDefault().ToString("C2"));
         otherIncomeStatedInPlace.Blocks.Add(otherIncomeStatedInPlaceBlock);
         var otherIncomePerUnit = otherIncome.Cells.AddTableCell();
         otherIncomePerUnit.Background = new RgbColor(248, 249, 250);
@@ -693,7 +698,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        otherIncomePerUnitBlock.InsertText("Some Value");
+        otherIncomePerUnitBlock.InsertText((property.Projections.Select(x => x.OtherIncome).FirstOrDefault() / numberOfUnits).ToString("C2"));
         otherIncomePerUnit.Blocks.Add(otherIncomePerUnitBlock);
         var otherIncomePercentage = otherIncome.Cells.AddTableCell();
         otherIncomePercentage.Background = new RgbColor(248, 249, 250);
@@ -701,7 +706,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        otherIncomePercentageBlock.InsertText("Some Value");
+        otherIncomePercentageBlock.InsertText((property.Projections.Select(x => x.OtherIncome).FirstOrDefault() / asrYear0).ToString("P2"));
         otherIncomePercentage.Blocks.Add(otherIncomePercentageBlock);
         var otherIncomeYear1 = otherIncome.Cells.AddTableCell();
         otherIncomeYear1.Borders = lineBorder;
@@ -711,7 +716,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        otherIncomeYear1Block.InsertText("Some Value");
+        otherIncomeYear1Block.InsertText(property.Projections.Select(x => x.OtherIncome).Skip(1).FirstOrDefault().ToString("C2"));
         otherIncomeYear1.Blocks.Add(otherIncomeYear1Block);
         var otherIncomePerUnitYear1 = otherIncome.Cells.AddTableCell();
         otherIncomePerUnitYear1.Background = new RgbColor(248, 249, 250);
@@ -719,7 +724,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        otherIncomePerUnitYear1Block.InsertText("Some Value");
+        otherIncomePerUnitYear1Block.InsertText((property.Projections.Select(x => x.OtherIncome).Skip(1).FirstOrDefault() / numberOfUnits).ToString("C2"));
         otherIncomePerUnitYear1.Blocks.Add(otherIncomePerUnitYear1Block);
         var otherIncomePercentageYear1 = otherIncome.Cells.AddTableCell();
         otherIncomePercentageYear1.Background = new RgbColor(248, 249, 250);
@@ -727,7 +732,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        otherIncomePercentageYear1Block.InsertText("Some Value");
+        otherIncomePercentageYear1Block.InsertText((property.Projections.Select(x => x.OtherIncome).Skip(1).FirstOrDefault() / asrYear1).ToString("P2"));
         otherIncomePercentageYear1.Blocks.Add(otherIncomePercentageYear1Block);
 
         var totalEffectiveIncomeTitle = totalEffectiveIncome.Cells.AddTableCell();
@@ -744,7 +749,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        totalEffectiveIncomeStatedInPlaceBlock.InsertText("Some Value");
+        totalEffectiveIncomeStatedInPlaceBlock.InsertText(property.Projections.Select(x => x.EffectiveGrossIncome).FirstOrDefault().ToString("C2"));
         totalEffectiveIncomeStatedInPlace.Blocks.Add(totalEffectiveIncomeStatedInPlaceBlock);
         var totalEffectiveIncomePerUnit = totalEffectiveIncome.Cells.AddTableCell();
         var totalEffectiveIncomePerUnitBlock = new Block
@@ -752,7 +757,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        totalEffectiveIncomePerUnitBlock.InsertText("Some Value");
+        totalEffectiveIncomePerUnitBlock.InsertText((property.Projections.Select(x => x.EffectiveGrossIncome).FirstOrDefault() / numberOfUnits).ToString("C2"));
         totalEffectiveIncomePerUnit.Blocks.Add(totalEffectiveIncomePerUnitBlock);
         var totalEffectiveIncomePercentage = totalEffectiveIncome.Cells.AddTableCell();
         var totalEffectiveIncomePercentageBlock = new Block
@@ -760,7 +765,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        totalEffectiveIncomePercentageBlock.InsertText("Some Value");
+        totalEffectiveIncomePercentageBlock.InsertText((property.Projections.Select(x => x.EffectiveGrossIncome).FirstOrDefault() / asrYear0).ToString("P2"));
         totalEffectiveIncomePercentage.Blocks.Add(totalEffectiveIncomePercentageBlock);
         var totalEffectiveIncomeYear1 = totalEffectiveIncome.Cells.AddTableCell();
         totalEffectiveIncomeYear1.Borders = lineBorder;
@@ -769,7 +774,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        totalEffectiveIncomeYear1Block.InsertText("Some Value");
+        totalEffectiveIncomeYear1Block.InsertText(property.Projections.Select(x => x.EffectiveGrossIncome).Skip(1).FirstOrDefault().ToString("C2"));
         totalEffectiveIncomeYear1.Blocks.Add(totalEffectiveIncomeYear1Block);
         var totalEffectiveIncomePerUnitYear1 = totalEffectiveIncome.Cells.AddTableCell();
         var totalEffectiveIncomePerUnitYear1Block = new Block
@@ -777,7 +782,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        totalEffectiveIncomePerUnitYear1Block.InsertText("Some Value");
+        totalEffectiveIncomePerUnitYear1Block.InsertText((property.Projections.Select(x => x.EffectiveGrossIncome).Skip(1).FirstOrDefault() / numberOfUnits).ToString("C2"));
         totalEffectiveIncomePerUnitYear1.Blocks.Add(totalEffectiveIncomePerUnitYear1Block);
         var totalEffectiveIncomePercentageYear1 = totalEffectiveIncome.Cells.AddTableCell();
         var totalEffectiveIncomePercentageYear1Block = new Block
@@ -785,7 +790,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        totalEffectiveIncomePercentageYear1Block.InsertText("Some Value");
+        totalEffectiveIncomePercentageYear1Block.InsertText((property.Projections.Select(x => x.EffectiveGrossIncome).Skip(1).FirstOrDefault() / asrYear1).ToString("P2"));
         totalEffectiveIncomePercentageYear1.Blocks.Add(totalEffectiveIncomePercentageYear1Block);
 
         var operatingExpensesTitle = operatingExpenses.Cells.AddTableCell();
@@ -801,7 +806,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        operatingExpensesStatedInPlaceBlock.InsertText("Some Value");
+        operatingExpensesStatedInPlaceBlock.InsertText(property.Projections.Select(x => x.OperatingExpenses).FirstOrDefault().ToString("C2"));
         operatingExpensesStatedInPlace.Blocks.Add(operatingExpensesStatedInPlaceBlock);
         var operatingExpensesPerUnit = operatingExpenses.Cells.AddTableCell();
         operatingExpensesPerUnit.Background = new RgbColor(248, 249, 250);
@@ -809,7 +814,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        operatingExpensesPerUnitBlock.InsertText("Some Value");
+        operatingExpensesPerUnitBlock.InsertText((property.Projections.Select(x => x.OperatingExpenses).FirstOrDefault() / numberOfUnits).ToString("C2"));
         operatingExpensesPerUnit.Blocks.Add(operatingExpensesPerUnitBlock);
         var operatingExpensesPercentage = operatingExpenses.Cells.AddTableCell();
         operatingExpensesPercentage.Background = new RgbColor(248, 249, 250);
@@ -817,7 +822,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        operatingExpensesPercentageBlock.InsertText("Some Value");
+        operatingExpensesPercentageBlock.InsertText((property.Projections.Select(x => x.OperatingExpenses).FirstOrDefault() / asrYear0).ToString("P2"));
         operatingExpensesPercentage.Blocks.Add(operatingExpensesPercentageBlock);
         var operatingExpensesYear1 = operatingExpenses.Cells.AddTableCell();
         operatingExpensesYear1.Borders = lineBorder;
@@ -826,7 +831,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        operatingExpensesYear1Block.InsertText("Some Value");
+        operatingExpensesYear1Block.InsertText(property.Projections.Select(x => x.OperatingExpenses).Skip(1).FirstOrDefault().ToString("C2"));
         operatingExpensesYear1.Blocks.Add(operatingExpensesYear1Block);
         var operatingExpensesPerUnitYear1 = operatingExpenses.Cells.AddTableCell();
         operatingExpensesPerUnitYear1.Background = new RgbColor(248, 249, 250);
@@ -834,7 +839,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        operatingExpensesPerUnitYear1Block.InsertText("Some Value");
+        operatingExpensesPerUnitYear1Block.InsertText((property.Projections.Select(x => x.OperatingExpenses).Skip(1).FirstOrDefault() / numberOfUnits).ToString("C2"));
         operatingExpensesPerUnitYear1.Blocks.Add(operatingExpensesPerUnitYear1Block);
         var operatingExpensesPercentageYear1 = operatingExpenses.Cells.AddTableCell();
         operatingExpensesPercentageYear1.Background = new RgbColor(248, 249, 250);
@@ -842,7 +847,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        operatingExpensesPercentageYear1Block.InsertText("Some Value");
+        operatingExpensesPercentageYear1Block.InsertText((property.Projections.Select(x => x.OperatingExpenses).Skip(1).FirstOrDefault() / asrYear1).ToString("P2"));
         operatingExpensesPercentageYear1.Blocks.Add(operatingExpensesPercentageYear1Block);
 
         var noiTitle = NOI.Cells.AddTableCell();
@@ -859,7 +864,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        noiStatedInPlaceBlock.InsertText("Some Value");
+        noiStatedInPlaceBlock.InsertText(property.Projections.Select(x => x.NetOperatingIncome).FirstOrDefault().ToString("C2"));
         noiStatedInPlace.Blocks.Add(noiStatedInPlaceBlock);
         var noiPerUnit = NOI.Cells.AddTableCell();
         var noiPerUnitBlock = new Block
@@ -867,7 +872,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        noiPerUnitBlock.InsertText("Some Value");
+        noiPerUnitBlock.InsertText((property.Projections.Select(x => x.NetOperatingIncome).FirstOrDefault() / numberOfUnits).ToString("C2"));
         noiPerUnit.Blocks.Add(noiPerUnitBlock);
         var noiPercentage = NOI.Cells.AddTableCell();
         var noiPercentageBlock = new Block
@@ -875,7 +880,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        noiPercentageBlock.InsertText("Some Value");
+        noiPercentageBlock.InsertText((property.Projections.Select(x => x.NetOperatingIncome).FirstOrDefault() / asrYear0).ToString("P2"));
         noiPercentage.Blocks.Add(noiPercentageBlock);
         var noiYear1 = NOI.Cells.AddTableCell();
         noiYear1.Borders = lineBorder;
@@ -884,7 +889,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        noiYear1Block.InsertText("Some Value");
+        noiYear1Block.InsertText(property.Projections.Select(x => x.NetOperatingIncome).Skip(1).FirstOrDefault().ToString("C2"));
         noiYear1.Blocks.Add(noiYear1Block);
         var noiPerUnitYear1 = NOI.Cells.AddTableCell();
         var noiPerUnitYear1Block = new Block
@@ -892,7 +897,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        noiPerUnitYear1Block.InsertText("Some Value");
+        noiPerUnitYear1Block.InsertText((property.Projections.Select(x => x.NetOperatingIncome).Skip(1).FirstOrDefault() / numberOfUnits).ToString("C2"));
         noiPerUnitYear1.Blocks.Add(noiPerUnitYear1Block);
         var noiPercentageYear1 = NOI.Cells.AddTableCell();
         var noiPercentageYear1Block = new Block
@@ -900,7 +905,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        noiPercentageYear1Block.InsertText("Some Value");
+        noiPercentageYear1Block.InsertText((property.Projections.Select(x => x.NetOperatingIncome).Skip(1).FirstOrDefault() / asrYear1).ToString("P2"));
         noiPercentageYear1.Blocks.Add(noiPercentageYear1Block);
 
         var captialReservesTitle = captialReserves.Cells.AddTableCell();
@@ -916,7 +921,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        captialReservesStatedInPlaceBlock.InsertText("Some Value");
+        captialReservesStatedInPlaceBlock.InsertText(property.Projections.Select(x => x.CapitalReserves).FirstOrDefault().ToString("C2"));
         captialReservesStatedInPlace.Blocks.Add(captialReservesStatedInPlaceBlock);
         var captialReservesPerUnit = captialReserves.Cells.AddTableCell();
         captialReservesPerUnit.Background = new RgbColor(248, 249, 250);
@@ -924,7 +929,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        captialReservesPerUnitBlock.InsertText("Some Value");
+        captialReservesPerUnitBlock.InsertText((property.Projections.Select(x => x.CapitalReserves).FirstOrDefault() / numberOfUnits).ToString("C2"));
         captialReservesPerUnit.Blocks.Add(captialReservesPerUnitBlock);
         var captialReservesPercentage = captialReserves.Cells.AddTableCell();
         captialReservesPercentage.Background = new RgbColor(248, 249, 250);
@@ -932,7 +937,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        captialReservesPercentageBlock.InsertText("Some Value");
+        captialReservesPercentageBlock.InsertText((property.Projections.Select(x => x.CapitalReserves).FirstOrDefault() / asrYear0).ToString("P2"));
         captialReservesPercentage.Blocks.Add(captialReservesPercentageBlock);
         var captialReservesYear1 = captialReserves.Cells.AddTableCell();
         captialReservesYear1.Borders = lineBorder;
@@ -941,7 +946,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        captialReservesYear1Block.InsertText("Some Value");
+        captialReservesYear1Block.InsertText(property.Projections.Select(x => x.CapitalReserves).Skip(1).FirstOrDefault().ToString("C2"));
         captialReservesYear1.Blocks.Add(captialReservesYear1Block);
         var captialReservesPerUnitYear1 = captialReserves.Cells.AddTableCell();
         captialReservesPerUnitYear1.Background = new RgbColor(248, 249, 250);
@@ -949,7 +954,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        captialReservesPerUnitYear1Block.InsertText("Some Value");
+        captialReservesPerUnitYear1Block.InsertText((property.Projections.Select(x => x.CapitalReserves).Skip(1).FirstOrDefault() / numberOfUnits).ToString("C2"));
         captialReservesPerUnitYear1.Blocks.Add(captialReservesPerUnitYear1Block);
         var captialReservesPercentageYear1 = captialReserves.Cells.AddTableCell();
         captialReservesPercentageYear1.Background = new RgbColor(248, 249, 250);
@@ -957,7 +962,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        captialReservesPercentageYear1Block.InsertText("Some Value");
+        captialReservesPercentageYear1Block.InsertText((property.Projections.Select(x => x.CapitalReserves).Skip(1).FirstOrDefault() / asrYear1).ToString("P2"));
         captialReservesPercentageYear1.Blocks.Add(captialReservesPercentageYear1Block);
 
         var cFBeforeDebtServiceTitle = cFBeforeDebtService.Cells.AddTableCell();
@@ -975,7 +980,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        cFBeforeDebtServiceStatedInPlaceBlock.InsertText("Some Value");
+        cFBeforeDebtServiceStatedInPlaceBlock.InsertText(property.Projections.Select(x => x.CashFlowBeforeDebtService).FirstOrDefault().ToString("C2"));
         cFBeforeDebtServiceStatedInPlace.Blocks.Add(cFBeforeDebtServiceStatedInPlaceBlock);
         var cFBeforeDebtServicePerUnit = cFBeforeDebtService.Cells.AddTableCell();
         var cFBeforeDebtServicePerUnitBlock = new Block
@@ -983,7 +988,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        cFBeforeDebtServicePerUnitBlock.InsertText("Some Value");
+        cFBeforeDebtServicePerUnitBlock.InsertText((property.Projections.Select(x => x.CashFlowBeforeDebtService).FirstOrDefault() / numberOfUnits).ToString("C2"));
         cFBeforeDebtServicePerUnit.Blocks.Add(cFBeforeDebtServicePerUnitBlock);
         var cFBeforeDebtServicePercentage = cFBeforeDebtService.Cells.AddTableCell();
         var cFBeforeDebtServicePercentageBlock = new Block
@@ -991,7 +996,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        cFBeforeDebtServicePercentageBlock.InsertText("Some Value");
+        cFBeforeDebtServicePercentageBlock.InsertText((property.Projections.Select(x => x.CashFlowBeforeDebtService).FirstOrDefault() / asrYear0).ToString("P2"));
         cFBeforeDebtServicePercentage.Blocks.Add(cFBeforeDebtServicePercentageBlock);
         var cFBeforeDebtServiceYear1 = cFBeforeDebtService.Cells.AddTableCell();
         cFBeforeDebtServiceYear1.Borders = lineBorder;
@@ -1000,7 +1005,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        cFBeforeDebtServiceYear1Block.InsertText("Some Value");
+        cFBeforeDebtServiceYear1Block.InsertText(property.Projections.Select(x => x.CashFlowBeforeDebtService).Skip(1).FirstOrDefault().ToString("C2"));
         cFBeforeDebtServiceYear1.Blocks.Add(cFBeforeDebtServiceYear1Block);
         var cFBeforeDebtServicePerUnitYear1 = cFBeforeDebtService.Cells.AddTableCell();
         var cFBeforeDebtServicePerUnitYear1Block = new Block
@@ -1008,7 +1013,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        cFBeforeDebtServicePerUnitYear1Block.InsertText("Some Value");
+        cFBeforeDebtServicePerUnitYear1Block.InsertText((property.Projections.Select(x => x.CashFlowBeforeDebtService).Skip(1).FirstOrDefault() / numberOfUnits).ToString("C2"));
         cFBeforeDebtServicePerUnitYear1.Blocks.Add(cFBeforeDebtServicePerUnitYear1Block);
         var cFBeforeDebtServicePercentageYear1 = cFBeforeDebtService.Cells.AddTableCell();
         var cFBeforeDebtServicePercentageYear1Block = new Block
@@ -1016,7 +1021,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        cFBeforeDebtServicePercentageYear1Block.InsertText("Some Value");
+        cFBeforeDebtServicePercentageYear1Block.InsertText((property.Projections.Select(x => x.CashFlowBeforeDebtService).Skip(1).FirstOrDefault() / asrYear1).ToString("P2"));
         cFBeforeDebtServicePercentageYear1.Blocks.Add(cFBeforeDebtServicePercentageYear1Block);
 
         var annualDebtServiceTitle = annualDebtService.Cells.AddTableCell();
@@ -1032,7 +1037,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        annualDebtServiceStatedInPlaceBlock.InsertText("Some Value");
+        annualDebtServiceStatedInPlaceBlock.InsertText(property.Projections.Select(x => x.DebtService).FirstOrDefault().ToString("C2"));
         annualDebtServiceStatedInPlace.Blocks.Add(annualDebtServiceStatedInPlaceBlock);
         var annualDebtServicePerUnit = annualDebtService.Cells.AddTableCell();
         annualDebtServicePerUnit.Background = new RgbColor(248, 249, 250);
@@ -1040,7 +1045,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        annualDebtServicePerUnitBlock.InsertText("Some Value");
+        annualDebtServicePerUnitBlock.InsertText((property.Projections.Select(x => x.DebtService).FirstOrDefault() / numberOfUnits).ToString("C2"));
         annualDebtServicePerUnit.Blocks.Add(annualDebtServicePerUnitBlock);
         var annualDebtServicePercentage = annualDebtService.Cells.AddTableCell();
         annualDebtServicePercentage.Background = new RgbColor(248, 249, 250);
@@ -1048,7 +1053,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        annualDebtServicePercentageBlock.InsertText("Some Value");
+        annualDebtServicePercentageBlock.InsertText((property.Projections.Select(x => x.DebtService).FirstOrDefault() / asrYear0).ToString("P2"));
         annualDebtServicePercentage.Blocks.Add(annualDebtServicePercentageBlock);
         var annualDebtServiceYear1 = annualDebtService.Cells.AddTableCell();
         annualDebtServiceYear1.Borders = lineBorder;
@@ -1057,7 +1062,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        annualDebtServiceYear1Block.InsertText("Some Value");
+        annualDebtServiceYear1Block.InsertText(property.Projections.Select(x => x.DebtService).Skip(1).FirstOrDefault().ToString("C2"));
         annualDebtServiceYear1.Blocks.Add(annualDebtServiceYear1Block);
         var annualDebtServicePerUnitYear1 = annualDebtService.Cells.AddTableCell();
         annualDebtServicePerUnitYear1.Background = new RgbColor(248, 249, 250);
@@ -1065,7 +1070,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        annualDebtServicePerUnitYear1Block.InsertText("Some Value");
+        annualDebtServicePerUnitYear1Block.InsertText((property.Projections.Select(x => x.DebtService).Skip(1).FirstOrDefault() / numberOfUnits).ToString("C2"));
         annualDebtServicePerUnitYear1.Blocks.Add(annualDebtServicePerUnitYear1Block);
         var annualDebtServicePercentageYear1 = annualDebtService.Cells.AddTableCell();
         annualDebtServicePercentageYear1.Background = new RgbColor(248, 249, 250);
@@ -1073,7 +1078,7 @@ public static class GenearateDealSumaryBuilder
         {
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        annualDebtServicePercentageYear1Block.InsertText("Some Value");
+        annualDebtServicePercentageYear1Block.InsertText((property.Projections.Select(x => x.DebtService).Skip(1).FirstOrDefault() / asrYear1).ToString("P2"));
         annualDebtServicePercentageYear1.Blocks.Add(annualDebtServicePercentageYear1Block);
 
         var cashFlowBeforeTaxesTitle = cashFlowBeforeTaxes.Cells.AddTableCell();
@@ -1090,7 +1095,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        cashFlowBeforeTaxesStatedInPlaceBlock.InsertText("Some Value");
+        cashFlowBeforeTaxesStatedInPlaceBlock.InsertText(property.Projections.Select(x => x.TotalCashFlow).FirstOrDefault().ToString("C2"));
         cashFlowBeforeTaxesStatedInPlace.Blocks.Add(cashFlowBeforeTaxesStatedInPlaceBlock);
         var cashFlowBeforeTaxesPerUnit = cashFlowBeforeTaxes.Cells.AddTableCell();
         var cashFlowBeforeTaxesPerUnitBlock = new Block
@@ -1098,7 +1103,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        cashFlowBeforeTaxesPerUnitBlock.InsertText("Some Value");
+        cashFlowBeforeTaxesPerUnitBlock.InsertText((property.Projections.Select(x => x.TotalCashFlow).FirstOrDefault() / numberOfUnits).ToString("C2"));
         cashFlowBeforeTaxesPerUnit.Blocks.Add(cashFlowBeforeTaxesPerUnitBlock);
         var cashFlowBeforeTaxesPercentage = cashFlowBeforeTaxes.Cells.AddTableCell();
         var cashFlowBeforeTaxesPercentageBlock = new Block
@@ -1106,7 +1111,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        cashFlowBeforeTaxesPercentageBlock.InsertText("Some Value");
+        cashFlowBeforeTaxesPercentageBlock.InsertText((property.Projections.Select(x => x.TotalCashFlow).FirstOrDefault() / asrYear0).ToString("P2"));
         cashFlowBeforeTaxesPercentage.Blocks.Add(cashFlowBeforeTaxesPercentageBlock);
         var cashFlowBeforeTaxesYear1 = cashFlowBeforeTaxes.Cells.AddTableCell();
         cashFlowBeforeTaxesYear1.Borders = lineBorder;
@@ -1115,7 +1120,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        cashFlowBeforeTaxesYear1Block.InsertText("Some Value");
+        cashFlowBeforeTaxesYear1Block.InsertText(property.Projections.Select(x => x.TotalCashFlow).Skip(1).FirstOrDefault().ToString("C2"));
         cashFlowBeforeTaxesYear1.Blocks.Add(cashFlowBeforeTaxesYear1Block);
         var cashFlowBeforeTaxesPerUnitYear1 = cashFlowBeforeTaxes.Cells.AddTableCell();
         var cashFlowBeforeTaxesPerUnitYear1Block = new Block
@@ -1123,7 +1128,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        cashFlowBeforeTaxesPerUnitYear1Block.InsertText("Some Value");
+        cashFlowBeforeTaxesPerUnitYear1Block.InsertText((property.Projections.Select(x => x.TotalCashFlow).Skip(1).FirstOrDefault() / numberOfUnits).ToString("C2"));
         cashFlowBeforeTaxesPerUnitYear1.Blocks.Add(cashFlowBeforeTaxesPerUnitYear1Block);
         var cashFlowBeforeTaxesPercentageYear1 = cashFlowBeforeTaxes.Cells.AddTableCell();
         var cashFlowBeforeTaxesPercentageYear1Block = new Block
@@ -1131,7 +1136,7 @@ public static class GenearateDealSumaryBuilder
             TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
-        cashFlowBeforeTaxesPercentageYear1Block.InsertText("Some Value");
+        cashFlowBeforeTaxesPercentageYear1Block.InsertText((property.Projections.Select(x => x.TotalCashFlow).Skip(1).FirstOrDefault() / asrYear1).ToString("P2"));
         cashFlowBeforeTaxesPercentageYear1.Blocks.Add(cashFlowBeforeTaxesPercentageYear1Block);
 
         editor.Position.Translate(50, basicAssumptionsTable.Measure().Height + 150);
@@ -1142,5 +1147,4 @@ public static class GenearateDealSumaryBuilder
         dateBox.Text = $"{property.Name} - {DateTime.Now:MM/dd/yyyy}";
         dateBox.Position.Translate(page.Size.Width - 250, page.Size.Height - 10);
     }
-
 }

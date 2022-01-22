@@ -10,7 +10,7 @@ using Telerik.Windows.Documents.Fixed.Model.Fonts;
 
 namespace MultiFamilyPortal.Helpers.Reports;
 
-public static class GenearateDealSumaryBuilder
+public static class GenearateDealSummaryBuilder
 {
     public static void GenerateDealSummary(UnderwritingAnalysis property, RadFixedDocument document)
     {
@@ -43,8 +43,8 @@ public static class GenearateDealSumaryBuilder
         {
             DefaultCellProperties = { Padding = new Thickness(padding) },
             LayoutType = TableLayoutType.FixedWidth,
+            Borders = new TableBorders(border)
         };
-        basicAssumptionsTable.Borders = new TableBorders(border);
 
         BasicAssumptionsHeader(basicAssumptionsTable);
         StartDateRow(basicAssumptionsTable, property);
@@ -61,9 +61,9 @@ public static class GenearateDealSumaryBuilder
         {
             DefaultCellProperties = { Padding = new Thickness(padding) },
             LayoutType = TableLayoutType.AutoFit,
+            Borders = new TableBorders(border)
         };
 
-        projectedPerformanceTable.Borders = new TableBorders(border);
         ProjectedPerformanceHeader(projectedPerformanceTable);
         ProjectedPerformanceHeaderTwo(projectedPerformanceTable);
         ProjectedPerformancePrice(projectedPerformanceTable, property);
@@ -83,13 +83,14 @@ public static class GenearateDealSumaryBuilder
 
         editor.Position.Translate(widthStart, 100);
         editor.DrawTable(projectedPerformanceTable);
-
     }
 
     private static void CashFlowTable(FixedContentEditor editor, Border border, UnderwritingAnalysis property, double padding = 22)
     {
         var scheduledRentYear0 = property.Projections.Select(x => x.GrossScheduledRent).FirstOrDefault();
         var scheduledRentYear1 = property.Projections.Select(x => x.GrossScheduledRent).ToList()[1];
+        scheduledRentYear0 = Math.Abs(scheduledRentYear0) == 0 ? 1:scheduledRentYear0 ;
+        scheduledRentYear1 = Math.Abs(scheduledRentYear1) == 0 ? 1: scheduledRentYear1 ;
         var numberOfUnits = property.Units;
         var lineBorder = new TableCellBorders(new Border(1, new RgbColor(100, 100, 100)), null, null, null);
 
@@ -97,12 +98,12 @@ public static class GenearateDealSumaryBuilder
         {
             DefaultCellProperties = { Padding = new Thickness(padding) },
             LayoutType = TableLayoutType.AutoFit,
+            Borders = new TableBorders(border)
         };
-        cashFlowTable.Borders = new TableBorders(border);
 
-        CashFlowHeaderOne(cashFlowTable, lineBorder);
+        CashFlowHeaderOne(cashFlowTable);
         CashFlowHeaderTwo(cashFlowTable, lineBorder);
-        Rent(cashFlowTable, lineBorder, property, scheduledRentYear0, scheduledRentYear1, numberOfUnits);
+        Rent(cashFlowTable, lineBorder, scheduledRentYear0, scheduledRentYear1, numberOfUnits);
         Vacancy(cashFlowTable, lineBorder, property, scheduledRentYear0, scheduledRentYear1, numberOfUnits);
         OtherLosses(cashFlowTable, lineBorder, property, scheduledRentYear0, scheduledRentYear1, numberOfUnits);
         UtilitiesIncome(cashFlowTable, lineBorder, property, scheduledRentYear0, scheduledRentYear1, numberOfUnits);
@@ -110,7 +111,7 @@ public static class GenearateDealSumaryBuilder
         TotalEffectiveIncome(cashFlowTable, lineBorder, property, scheduledRentYear0, scheduledRentYear1, numberOfUnits);
         OperatingExpenses(cashFlowTable, lineBorder, property, scheduledRentYear0, scheduledRentYear1, numberOfUnits);
         NOI(cashFlowTable, lineBorder, property, scheduledRentYear0, scheduledRentYear1, numberOfUnits);
-        CaptialReserves(cashFlowTable, lineBorder, property, scheduledRentYear0, scheduledRentYear1, numberOfUnits);
+        CapitalReserves(cashFlowTable, lineBorder, property, scheduledRentYear0, scheduledRentYear1, numberOfUnits);
         CFBeforeDebtService(cashFlowTable, lineBorder, property, scheduledRentYear0, scheduledRentYear1, numberOfUnits);
         AnnualDebtService(cashFlowTable, lineBorder, property, scheduledRentYear0, scheduledRentYear1, numberOfUnits);
         CashFlowBeforeTaxes(cashFlowTable, lineBorder, property, scheduledRentYear0, scheduledRentYear1, numberOfUnits);
@@ -368,7 +369,6 @@ public static class GenearateDealSumaryBuilder
         };
         projectedPerformanceSaleTitleBlock.InsertText("Sale");
         projectedPerformanceSaleTitle.Blocks.Add(projectedPerformanceSaleTitleBlock);
-
     }
 
     private static void ProjectedPerformanceReversionValue(Table table, UnderwritingAnalysis property)
@@ -388,7 +388,6 @@ public static class GenearateDealSumaryBuilder
         var projectedPerformanceReversionValueValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
         projectedPerformanceReversionValueValueBlock.InsertText(property.Reversion.ToString("C2"));
         projectedPerformanceReversionValueValue.Blocks.Add(projectedPerformanceReversionValueValueBlock);
-
     }
 
     private static void ProjectedPerformanceReversionCapRate(Table table, UnderwritingAnalysis property)
@@ -406,7 +405,6 @@ public static class GenearateDealSumaryBuilder
         var projectedPerformanceReversionCapRateValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
         projectedPerformanceReversionCapRateValueBlock.InsertText(property.ReversionCapRate.ToString("P2"));
         projectedPerformanceReversionCapRateValue.Blocks.Add(projectedPerformanceReversionCapRateValueBlock);
-
     }
 
     private static void ProjectedPerformanceNPV(Table table, UnderwritingAnalysis property)
@@ -426,7 +424,6 @@ public static class GenearateDealSumaryBuilder
         var projectedPerformanceNPVValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
         projectedPerformanceNPVValueBlock.InsertText(property.NetPresentValue.ToString("C2"));
         projectedPerformanceNPVValue.Blocks.Add(projectedPerformanceNPVValueBlock);
-
     }
 
     private static void ProjectedPerformanceIRR(Table table, UnderwritingAnalysis property)
@@ -488,7 +485,7 @@ public static class GenearateDealSumaryBuilder
     #endregion
 
     #region Cash Flows Rows
-    private static void CashFlowHeaderOne(Table table, TableCellBorders lineBorder)
+    private static void CashFlowHeaderOne(Table table)
     {
         var cashFlowHeaderOne = table.Rows.AddTableRow();
         var cashFlowHeader = cashFlowHeaderOne.Cells.AddTableCell();
@@ -509,9 +506,9 @@ public static class GenearateDealSumaryBuilder
         cashFlowHeaderThree.ColumnSpan = 3;
         cashFlowHeaderThree.Background = new RgbColor(137, 207, 240);
         var cashFlowHeaderThreeBlock = new Block();
-        cashFlowHeader.Blocks.Add(cashFlowHeaderBlock);
+        cashFlowHeader.Blocks.Add(cashFlowHeaderThreeBlock);
     }
-   
+
     private static void CashFlowHeaderTwo(Table table, TableCellBorders lineBorder)
     {
         var cashFlowHeaderTwo = table.Rows.AddTableRow();
@@ -573,10 +570,9 @@ public static class GenearateDealSumaryBuilder
         };
         cashFlowHeaderNineTitleBlock.InsertText("% of ASR");
         cashFlowHeaderNineTitle.Blocks.Add(cashFlowHeaderNineTitleBlock);
-
     }
-   
-    private static void Rent(Table table, TableCellBorders lineBorder, UnderwritingAnalysis property, double scheduledRentYear0, double scheduledRentYear1, int numberOfUnits)
+
+    private static void Rent(Table table, TableCellBorders lineBorder, double scheduledRentYear0, double scheduledRentYear1, int numberOfUnits)
     {
         var rent = table.Rows.AddTableRow();
         var rentTitle = rent.Cells.AddTableCell();
@@ -642,9 +638,8 @@ public static class GenearateDealSumaryBuilder
         };
         rentPercentageYear1Block.InsertText((scheduledRentYear1 / scheduledRentYear1).ToString("P2"));
         rentPercentageYear1.Blocks.Add(rentPercentageYear1Block);
-
     }
-   
+
     private static void Vacancy(Table table, TableCellBorders lineBorder, UnderwritingAnalysis property, double scheduledRentYear0, double scheduledRentYear1, int numberOfUnits)
     {
         var vacancy = table.Rows.AddTableRow();
@@ -699,7 +694,7 @@ public static class GenearateDealSumaryBuilder
         vacancyPercentageYear1Block.InsertText((property.Projections.Select(x => x.Vacancy).Skip(1).FirstOrDefault() / scheduledRentYear1).ToString("P2"));
         vacancyPercentageYear1.Blocks.Add(vacancyPercentageYear1Block);
     }
-   
+
     private static void OtherLosses(Table table, TableCellBorders lineBorder, UnderwritingAnalysis property, double scheduledRentYear0, double scheduledRentYear1, int numberOfUnits)
     {
         var otherLosses = table.Rows.AddTableRow();
@@ -760,7 +755,7 @@ public static class GenearateDealSumaryBuilder
         otherLossesPercentageYear1Block.InsertText((property.Projections.Select(x => x.ConcessionsNonPayment).Skip(1).FirstOrDefault() / scheduledRentYear1).ToString("P2"));
         otherLossesPercentageYear1.Blocks.Add(otherLossesPercentageYear1Block);
     }
-    
+
     private static void UtilitiesIncome(Table table, TableCellBorders lineBorder, UnderwritingAnalysis property, double scheduledRentYear0, double scheduledRentYear1, int numberOfUnits)
     {
         var utilitiesIncome = table.Rows.AddTableRow();
@@ -815,7 +810,7 @@ public static class GenearateDealSumaryBuilder
         utilitiesIncomePercentageYear1Block.InsertText((property.Projections.Select(x => x.UtilityReimbursement).Skip(1).FirstOrDefault() / scheduledRentYear1).ToString("P2"));
         utilitiesIncomePercentageYear1.Blocks.Add(utilitiesIncomePercentageYear1Block);
     }
-    
+
     private static void OtherIncome(Table table, TableCellBorders lineBorder, UnderwritingAnalysis property, double scheduledRentYear0, double scheduledRentYear1, int numberOfUnits)
     {
         var otherIncome = table.Rows.AddTableRow();
@@ -875,9 +870,8 @@ public static class GenearateDealSumaryBuilder
         };
         otherIncomePercentageYear1Block.InsertText((property.Projections.Select(x => x.OtherIncome).Skip(1).FirstOrDefault() / scheduledRentYear1).ToString("P2"));
         otherIncomePercentageYear1.Blocks.Add(otherIncomePercentageYear1Block);
-
     }
-    
+
     private static void TotalEffectiveIncome(Table table, TableCellBorders lineBorder, UnderwritingAnalysis property, double scheduledRentYear0, double scheduledRentYear1, int numberOfUnits)
     {
         var totalEffectiveIncome = table.Rows.AddTableRow();
@@ -939,7 +933,7 @@ public static class GenearateDealSumaryBuilder
         totalEffectiveIncomePercentageYear1Block.InsertText((property.Projections.Select(x => x.EffectiveGrossIncome).Skip(1).FirstOrDefault() / scheduledRentYear1).ToString("P2"));
         totalEffectiveIncomePercentageYear1.Blocks.Add(totalEffectiveIncomePercentageYear1Block);
     }
-    
+
     private static void OperatingExpenses(Table table, TableCellBorders lineBorder, UnderwritingAnalysis property, double scheduledRentYear0, double scheduledRentYear1, int numberOfUnits)
     {
         var operatingExpenses = table.Rows.AddTableRow();
@@ -1066,7 +1060,7 @@ public static class GenearateDealSumaryBuilder
 
     }
 
-    private static void CaptialReserves(Table table, TableCellBorders lineBorder, UnderwritingAnalysis property, double scheduledRentYear0, double scheduledRentYear1, int numberOfUnits)
+    private static void CapitalReserves(Table table, TableCellBorders lineBorder, UnderwritingAnalysis property, double scheduledRentYear0, double scheduledRentYear1, int numberOfUnits)
     {
         var captialReserves = table.Rows.AddTableRow();
         var captialReservesTitle = captialReserves.Cells.AddTableCell();

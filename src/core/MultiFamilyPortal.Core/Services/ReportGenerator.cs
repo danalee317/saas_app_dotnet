@@ -35,7 +35,7 @@ public class ReportGenerator : IReportGenerator
             return NotFound();
 
         var document = new RadFixedDocument();
-        GenearateDealSumaryBuilder.GenerateDealSummary(property, document);
+        GenearateDealSummaryBuilder.GenerateDealSummary(property, document);
         GenerateAssumptions(property, document);
         GenerateCashFlow(property, document);
         GenerateIncomeForecast(property, document);
@@ -58,7 +58,7 @@ public class ReportGenerator : IReportGenerator
             return NotFound();
 
         var document = new RadFixedDocument();
-        GenearateDealSumaryBuilder.GenerateDealSummary(property, document);
+        GenearateDealSummaryBuilder.GenerateDealSummary(property, document);
 
         var name = $"Deal_Summary.pdf";
         return new ReportResponse

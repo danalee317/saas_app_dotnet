@@ -33,7 +33,7 @@ public class ReportGenerator : IReportGenerator
         GenerateAssumptionsBuilder.GenerateAssumptions(property, document);
         GenerateCashFlowBuilder.GenerateCashFlow(property, document);
         GenerateIncomeForecastBuilder.GenerateIncomeForecast(property, document);
-        GenerateCapitalExpenses(property, document);
+        GenerateCapitalExpensesBuilder.GenerateCapitalExpenses(property, document);
 
         var name = "Overall_Projections.pdf";
         return new ReportResponse
@@ -160,7 +160,7 @@ public class ReportGenerator : IReportGenerator
             return NotFound();
 
         var document = new RadFixedDocument();
-        GenerateCapitalExpenses(property, document);
+        GenerateCapitalExpensesBuilder.GenerateCapitalExpenses(property, document);
 
         var name = "Capital_Expenses.pdf";
         return new ReportResponse
@@ -342,10 +342,6 @@ public class ReportGenerator : IReportGenerator
 
     #region Underwriting Report Generators
 
-    private void GenerateCapitalExpenses(UnderwritingAnalysis property, RadFixedDocument document)
-    {
-
-    }
 
     #endregion Underwriting Report Generators
 

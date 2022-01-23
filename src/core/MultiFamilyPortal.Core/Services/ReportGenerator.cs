@@ -38,7 +38,7 @@ public class ReportGenerator : IReportGenerator
         GenearateDealSummaryBuilder.GenerateDealSummary(property, document);
         GenerateAssumptions(property, document);
         GenerateCashFlow(property, document);
-        GenerateIncomeForecast(property, document);
+        GenerateIncomeForecastBuilder.GenerateIncomeForecast(property, document);
         GenerateCapitalExpenses(property, document);
 
         var name = $"Overall_Projections.pdf";
@@ -115,7 +115,7 @@ public class ReportGenerator : IReportGenerator
             return NotFound();
 
         var document = new RadFixedDocument();
-        GenerateIncomeForecast(property, document);
+        GenerateIncomeForecastBuilder.GenerateIncomeForecast(property, document);
 
         var name = $"Income_Forecast.pdf";
         return new ReportResponse
@@ -1658,11 +1658,6 @@ public class ReportGenerator : IReportGenerator
         {
             _logger.LogError(ex.ToString());
         }
-    }
-
-    private void GenerateIncomeForecast(UnderwritingAnalysis property, RadFixedDocument document)
-    {
-
     }
 
     private void GenerateCapitalExpenses(UnderwritingAnalysis property, RadFixedDocument document)

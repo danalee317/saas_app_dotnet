@@ -26,7 +26,8 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Reports
             "cash-flow",
             "full-report",
             "deal-summary",
-             "assumptions",
+            "income-forecast",
+            "assumptions",
         };
 
         private void SelectReport(string name)

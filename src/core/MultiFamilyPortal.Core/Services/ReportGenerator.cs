@@ -19,11 +19,13 @@ public class ReportGenerator : IReportGenerator
 {
     private ILogger<ReportGenerator> _logger { get; }
     private IUnderwritingService _underwritingService { get; }
+    private IBrandService _brand { get; }
 
-    public ReportGenerator(ILogger<ReportGenerator> logger, IUnderwritingService underwritingService)
+    public ReportGenerator(ILogger<ReportGenerator> logger, IUnderwritingService underwritingService, IBrandService brand)
     {
         _logger = logger;
         _underwritingService = underwritingService;
+        _brand = brand;
     }
 
     #region Underwriting Reports
@@ -35,6 +37,7 @@ public class ReportGenerator : IReportGenerator
             return NotFound();
 
         var document = new RadFixedDocument();
+        await GenerateFullReportBuilder.GenerateFullReportAsync(property,document, _brand);
         GenearateDealSummaryBuilder.GenerateDealSummary(property, document);
         GenerateAssumptions(property, document);
         GenerateCashFlow(property, document);

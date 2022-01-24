@@ -1,4 +1,5 @@
 using MultiFamilyPortal.Dtos.Underwriting;
+using MultiFamilyPortal.Data.Models;
 using Telerik.Documents.Primitives;
 using Telerik.Windows.Documents.Fixed.Model;
 using Telerik.Windows.Documents.Fixed.Model.ColorSpaces;
@@ -7,13 +8,14 @@ using Telerik.Windows.Documents.Fixed.Model.Editing.Flow;
 using Telerik.Windows.Documents.Fixed.Model.Editing.Tables;
 using Telerik.Windows.Documents.Fixed.Model.Fonts;
 
+
 namespace MultiFamilyPortal.Helpers.Reports;
 
 public static class GenerateIncomeForecastBuilder
 {
     public static void GenerateIncomeForecast(UnderwritingAnalysis property, RadFixedDocument document)
     {
-        var pageSize = new Size(400 + (100 * property.HoldYears + 2), 750);
+        var pageSize = new Size(400 + (100 * property.HoldYears + 2), 700);
         var headerSize = 18;
         var cellPadding = 22;
         var page = document.Pages.AddPage();
@@ -45,7 +47,6 @@ public static class GenerateIncomeForecastBuilder
 
         Header(table, property);
         Year(table, property);
-        IncreaseType(table, property);
         PerUnitIncrease(table, property);
         UnitsAppliedTo(table, property);
         RemainingUnits(table, property);
@@ -102,26 +103,6 @@ public static class GenerateIncomeForecastBuilder
         }
     }
 
-    private static void IncreaseType(Table table, UnderwritingAnalysis property)
-    {
-        var row = table.Rows.AddTableRow();
-        var rowTitle = row.Cells.AddTableCell();
-        var rowTitleBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
-        rowTitleBlock.InsertText("Increase Type");
-        rowTitle.Blocks.Add(rowTitleBlock);
-
-        foreach (var increase in property.IncomeForecast.Select(x => x.IncreaseType))
-        {
-            var cell = row.Cells.AddTableCell();
-            var cellBlock = new Block
-            {
-                HorizontalAlignment = HorizontalAlignment.Right
-            };
-            cellBlock.InsertText(increase.ToString());
-            cell.Blocks.Add(cellBlock);
-        }
-    }
-
     private static void PerUnitIncrease(Table table, UnderwritingAnalysis property)
     {
         var row = table.Rows.AddTableRow();
@@ -129,17 +110,18 @@ public static class GenerateIncomeForecastBuilder
         var rowTitleBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
         rowTitleBlock.InsertText("Per Unit Increase");
         rowTitle.Blocks.Add(rowTitleBlock);
-
+        int i = 0;
         foreach (var increase in property.IncomeForecast.Select(x => x.PerUnitIncrease))
         {
             var cell = row.Cells.AddTableCell();
-            cell.Background = new RgbColor(248, 249, 250);
             var cellBlock = new Block
             {
                 HorizontalAlignment = HorizontalAlignment.Right
             };
-            cellBlock.InsertText(increase.ToString());
+            var format = property.IncomeForecast.ToList()[i].IncreaseType == IncomeForecastIncreaseType.Percent ? "P2" : "C2";
+            cellBlock.InsertText(increase.ToString(format));
             cell.Blocks.Add(cellBlock);
+            i++;
         }
     }
 
@@ -154,6 +136,7 @@ public static class GenerateIncomeForecastBuilder
         foreach (var units in property.IncomeForecast.Select(x => x.UnitsAppliedTo))
         {
             var cell = row.Cells.AddTableCell();
+            cell.Background = new RgbColor(248, 249, 250);
             var cellBlock = new Block
             {
                 HorizontalAlignment = HorizontalAlignment.Right
@@ -174,7 +157,6 @@ public static class GenerateIncomeForecastBuilder
         foreach (var increase in property.IncomeForecast.Select(x => x.FixedIncreaseOnRemainingUnits))
         {
             var cell = row.Cells.AddTableCell();
-            cell.Background = new RgbColor(248, 249, 250);
             var cellBlock = new Block
             {
                 HorizontalAlignment = HorizontalAlignment.Right
@@ -195,6 +177,7 @@ public static class GenerateIncomeForecastBuilder
         foreach (var vacancy in property.IncomeForecast.Select(x => x.Vacancy))
         {
             var cell = row.Cells.AddTableCell();
+            cell.Background = new RgbColor(248, 249, 250);
             var cellBlock = new Block
             {
                 HorizontalAlignment = HorizontalAlignment.Right
@@ -211,7 +194,6 @@ public static class GenerateIncomeForecastBuilder
         var rowTitle = row.Cells.AddTableCell();
         var rowTitleBlock = new Block
         {
-            TextProperties = { Font = FontsRepository.HelveticaBold },
             HorizontalAlignment = HorizontalAlignment.Right
         };
         rowTitleBlock.InsertText("Other Losses");
@@ -220,7 +202,6 @@ public static class GenerateIncomeForecastBuilder
         foreach (var loss in property.IncomeForecast.Select(x => x.OtherLossesPercent))
         {
             var cell = row.Cells.AddTableCell();
-            cell.Background = new RgbColor(248, 249, 250);
             var cellBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
             cellBlock.InsertText(loss.ToString("P2"));
             cell.Blocks.Add(cellBlock);
@@ -238,6 +219,7 @@ public static class GenerateIncomeForecastBuilder
         foreach (var increase in property.IncomeForecast.Select(x => x.UtilityIncreases))
         {
             var cell = row.Cells.AddTableCell();
+            cell.Background = new RgbColor(248, 249, 250);
             var cellBlock = new Block
             {
                 HorizontalAlignment = HorizontalAlignment.Right
@@ -258,7 +240,6 @@ public static class GenerateIncomeForecastBuilder
         foreach (var income in property.IncomeForecast.Select(x => x.OtherIncomePercent))
         {
             var cell = row.Cells.AddTableCell();
-            cell.Background = new RgbColor(248, 249, 250);
             var cellBlock = new Block
             {
                 HorizontalAlignment = HorizontalAlignment.Right

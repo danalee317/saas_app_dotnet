@@ -13,7 +13,7 @@ public static class GenerateCapitalExpensesBuilder
 {
     public static void GenerateCapitalExpenses(UnderwritingAnalysis property, RadFixedDocument document)
     {
-        var pageSize = new Size(900, 1600);
+        var pageSize = new Size(900, 900);
         var headerSize = 18;
         var cellPadding = 22;
         var page = document.Pages.AddPage();
@@ -65,7 +65,7 @@ public static class GenerateCapitalExpensesBuilder
         MenuOption(table, property, true);
         DynamicRow(table, property, true);
 
-        editor.Position.Translate(size.Width / 2 - table.Measure().Width / 2, 850);
+        editor.Position.Translate(size.Width / 2 - table.Measure().Width / 2, 500);
         editor.DrawTable(table);
     }
 
@@ -118,54 +118,80 @@ public static class GenerateCapitalExpensesBuilder
         var descriptionTitleBlock = new Block
         {
             TextProperties = { Font = FontsRepository.HelveticaBold },
-            HorizontalAlignment = HorizontalAlignment.Right
+            HorizontalAlignment = HorizontalAlignment.Left
         };
         descriptionTitleBlock.InsertText("Description");
         descriptionTitle.Blocks.Add(descriptionTitleBlock);
     }
 
-
     private static void DynamicRow(Table table, UnderwritingAnalysis property, bool isPlanned = false)
     {
-
-        foreach (var increase in Enumerable.Range(1, 10))
+        if (isPlanned)
         {
-            var row = table.Rows.AddTableRow();
-
-            var costCell = row.Cells.AddTableCell();
-            var costCellBlock = new Block
+            foreach (var improvement in property.CapitalImprovements)
             {
-                HorizontalAlignment = HorizontalAlignment.Right
-            };
-            costCellBlock.InsertText("$3455.43");
-            costCell.Blocks.Add(costCellBlock);
+                var row = table.Rows.AddTableRow();
 
-            var statusCell = row.Cells.AddTableCell();
-            var statusCellBlock = new Block
-            {
-                HorizontalAlignment = HorizontalAlignment.Right
-            };
-            statusCellBlock.InsertText("Pending");
-            statusCell.Blocks.Add(statusCellBlock);
+                var costCell = row.Cells.AddTableCell();
+                var costCellBlock = new Block();
+                costCellBlock.InsertText(improvement.Cost.ToString("C2"));
+                costCell.Blocks.Add(costCellBlock);
 
-            if (isPlanned)
-            {
+                var statusCell = row.Cells.AddTableCell();
+                var statusCellBlock = new Block();
+                statusCellBlock.InsertText(improvement.Status.ToString());
+                statusCell.Blocks.Add(statusCellBlock);
+
                 var fundedCell = row.Cells.AddTableCell();
-                var fundedCellBlock = new Block
-                {
-                    HorizontalAlignment = HorizontalAlignment.Right
-                };
+                var fundedCellBlock = new Block();
                 fundedCellBlock.InsertText("Investors");
                 fundedCell.Blocks.Add(fundedCellBlock);
+
+                var descriptionCell = row.Cells.AddTableCell();
+                var descriptionCellBlock = new Block();
+                descriptionCellBlock.InsertText(improvement.Description);
+                descriptionCell.Blocks.Add(descriptionCellBlock);
             }
 
-            var descriptionCell = row.Cells.AddTableCell();
-            var descriptionCellBlock = new Block
+            var totalRow = table.Rows.AddTableRow();
+            var totalCell = totalRow.Cells.AddTableCell();
+            var totalCellBlock = new Block
             {
-                HorizontalAlignment = HorizontalAlignment.Right
+                TextProperties = { Font = FontsRepository.HelveticaBold },
             };
-            descriptionCellBlock.InsertText("Phasellus vitae lorem aliquet, vulputate nisl vel, varius tortor.");
-            descriptionCell.Blocks.Add(descriptionCellBlock);
+            totalCellBlock.InsertText(property.CapitalImprovements.Sum(x => x.Cost).ToString("C2"));
+            totalCell.Blocks.Add(totalCellBlock);
+        }
+        else
+        {
+            foreach (var improvement in property.CapitalImprovements)
+            {
+                var row = table.Rows.AddTableRow();
+
+                var costCell = row.Cells.AddTableCell();
+                var costCellBlock = new Block();
+                costCellBlock.InsertText(improvement.Cost.ToString("C2"));
+                costCell.Blocks.Add(costCellBlock);
+
+                var statusCell = row.Cells.AddTableCell();
+                var statusCellBlock = new Block();
+                statusCellBlock.InsertText(improvement.Status.ToString());
+                statusCell.Blocks.Add(statusCellBlock);
+
+                var descriptionCell = row.Cells.AddTableCell();
+                var descriptionCellBlock = new Block();
+                descriptionCellBlock.InsertText(improvement.Description);
+                descriptionCell.Blocks.Add(descriptionCellBlock);
+            }
+
+            var totalRow = table.Rows.AddTableRow();
+            var totalCell = totalRow.Cells.AddTableCell();
+            var totalCellBlock = new Block
+            {
+                TextProperties = { Font = FontsRepository.HelveticaBold },
+            };
+            totalCellBlock.InsertText(property.CapitalImprovements.Sum(x => x.Cost).ToString("C2"));
+            totalCell.Blocks.Add(totalCellBlock);
         }
     }
 }

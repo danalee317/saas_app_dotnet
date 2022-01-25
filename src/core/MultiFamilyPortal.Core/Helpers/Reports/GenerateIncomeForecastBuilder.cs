@@ -161,7 +161,7 @@ public static class GenerateIncomeForecastBuilder
             {
                 HorizontalAlignment = HorizontalAlignment.Right
             };
-            cellBlock.InsertText(increase.ToString());
+            cellBlock.InsertText(increase.ToString("C2"));
             cell.Blocks.Add(cellBlock);
         }
     }

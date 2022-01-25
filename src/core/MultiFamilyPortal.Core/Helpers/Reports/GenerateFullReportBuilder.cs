@@ -1,3 +1,4 @@
+using Humanizer;
 using MultiFamilyPortal.Dtos.Underwriting;
 using MultiFamilyPortal.Dtos.Underwriting.Reports;
 using MultiFamilyPortal.Services;
@@ -15,24 +16,45 @@ namespace MultiFamilyPortal.Helpers.Reports;
 
 public static class GenerateFullReportBuilder
 {
-    public static async Task GenerateFullReportAsync(UnderwritingAnalysis property, RadFixedDocument document, IBrandService brand)
+    public static void GenerateFullReport(UnderwritingAnalysis property, RadFixedDocument document)
     {
-        var pageSize = new Size(1503, 800);
-        var headerSize = 18;
+        var headerSize = 60;
         var cellPadding = 25;
         var page = document.Pages.AddPage();
+        var pageSize = new Size(1503, 800);
         page.Size = pageSize;
-        var editor = new FixedContentEditor(page);
 
-        var textFragment = page.Content.AddTextFragment();
-        textFragment.Text = $"{property.Name} Full Report";
-        textFragment.Position.Translate(page.Size.Width / 2 - 200, 100);
-        textFragment.FontSize = headerSize + 20;
+        var editor = new FixedContentEditor(page);
         var blackBorder = new Border(1, new RgbColor(200, 200, 200));
 
-        CreateDetail(editor, blackBorder, property, 200, cellPadding);
-        await CreateIdentity(page, property, pageSize.Width * 3 / 4, brand);
-        CreateAddress(editor, blackBorder, property, pageSize.Width * 3 / 4, cellPadding);
+
+        CreateHeader(editor, property, page.Size.Width, cellPadding);
+        CreateAddress(page, property, pageSize.Width * 1 / 2 + 5);
+        CreateDetail(editor, blackBorder, property, pageSize.Width, cellPadding);
+
+    }
+
+    private static void CreateHeader(FixedContentEditor editor, UnderwritingAnalysis property, double widthStart, double padding = 22)
+    {
+        var table = new Table
+        {
+            DefaultCellProperties = { Padding = new Thickness(padding + 10) },
+            LayoutType = TableLayoutType.AutoFit,
+        };
+
+        var row = table.Rows.AddTableRow();
+        var rowTitle = row.Cells.AddTableCell();
+        rowTitle.Background = new RgbColor(137, 207, 240);
+        var rowTitleBlock = new Block
+        {
+            TextProperties = { Font = FontsRepository.HelveticaBold, FontSize = 50 },
+            HorizontalAlignment = HorizontalAlignment.Right,
+        };
+        rowTitleBlock.InsertText($"{property.Name} Full Report");
+        rowTitle.Blocks.Add(rowTitleBlock);
+
+        editor.Position.Translate(widthStart / 2 - table.Measure().Width / 2, 10);
+        editor.DrawTable(table);
     }
 
     private static void CreateDetail(FixedContentEditor editor, Border border, UnderwritingAnalysis property, double widthStart, double padding = 22)
@@ -44,8 +66,7 @@ public static class GenerateFullReportBuilder
             Borders = new TableBorders(border)
         };
 
-        SimpleRow(table, "Name", property.Name);
-        SimpleRow(table, "Market", property.Market);
+        SimpleRow(table, "Class", property.PropertyClass.Humanize(LetterCasing.Title));
         SimpleRow(table, "Price", property.OfferPrice.ToString("C2"));
         SimpleRow(table, "Cap Rate", property.CapRate.ToString("P2"));
         SimpleRow(table, "Debt Coverage Ratio", property.DebtCoverage.ToString("F2"));
@@ -53,66 +74,57 @@ public static class GenerateFullReportBuilder
         SimpleRow(table, "Number of Units", property.Units.ToString());
         SimpleRow(table, "Date", DateTime.Now.ToString("MM/dd/yyyy"));
 
-        editor.Position.Translate(widthStart, 150);
+        editor.Position.Translate(widthStart / 2 - table.Measure().Width / 2, 290);
         editor.DrawTable(table);
     }
 
-
-    private static async Task CreateIdentity(RadFixedPage page, UnderwritingAnalysis property, double widthStart, IBrandService brand)
+    private static void CreateAddress(RadFixedPage page, UnderwritingAnalysis property, double widthStart, double fontSize = 18)
     {
+        var marketFragment = page.Content.AddTextFragment();
+        marketFragment.Text = $"{property.Market}";
+        marketFragment.Position.Translate(widthStart - 265, 225);
+        marketFragment.FontSize = fontSize + 20;
 
-       // TODO : figure this out
-        var imageStream = await brand.GetBrandImage("logos");
+        var addressFragment = page.Content.AddTextFragment();
+        addressFragment.Text = $"{property.Address}";
+        addressFragment.Position.Translate(widthStart, 180);
+        addressFragment.FontSize = fontSize;
 
-        if (imageStream.Stream != Stream.Null)
-        {
-            var imageSource = new ImageSource(imageStream.Stream);
-            Image image = page.Content.AddImage(imageSource);
-        }
-        else
-        {
-            Console.WriteLine("Well its empty");
-        }
+        var cityFragment = page.Content.AddTextFragment();
+        cityFragment.Text = $"{property.City}, {property.State}, {property.Zip}";
+        cityFragment.Position.Translate(widthStart, 220);
+        cityFragment.FontSize = fontSize;
+
+        var countryFragment = page.Content.AddTextFragment();
+        countryFragment.Text = "United States";
+        countryFragment.Position.Translate(widthStart, 260);
+        countryFragment.FontSize = fontSize;
     }
 
-    private static void CreateAddress(FixedContentEditor editor, Border border, UnderwritingAnalysis property, double widthStart, double padding = 22)
-    {
-        var table = new Table
-        {
-            DefaultCellProperties = { Padding = new Thickness(padding) },
-            LayoutType = TableLayoutType.AutoFit,
-            Borders = new TableBorders(border)
-        };
-
-
-        editor.Position.Translate(widthStart, 100);
-        editor.DrawTable(table);
-    }
-
-    private static void SimpleRow(Table table, string Title, string Value)
+    private static void SimpleRow(Table table, string title, string value, double fontSize = 18)
     {
         var row = table.Rows.AddTableRow();
         var rowTitle = row.Cells.AddTableCell();
         var rowTitleBlock = new Block
         {
-            TextProperties = { Font = FontsRepository.HelveticaBold },
-            HorizontalAlignment = HorizontalAlignment.Right
+            TextProperties = { Font = FontsRepository.HelveticaBold, FontSize = fontSize },
+            HorizontalAlignment = HorizontalAlignment.Right,
         };
-        rowTitleBlock.InsertText(Title);
+        rowTitleBlock.InsertText(title);
         rowTitle.Blocks.Add(rowTitleBlock);
 
         var rowSpace = row.Cells.AddTableCell();
         var rowSpaceBlock = new Block
         {
-            TextProperties = { Font = FontsRepository.HelveticaBold },
+            TextProperties = { Font = FontsRepository.HelveticaBold, FontSize = fontSize },
             HorizontalAlignment = HorizontalAlignment.Center
         };
         rowSpaceBlock.InsertText(":");
         rowSpace.Blocks.Add(rowSpaceBlock);
 
         var rowValue = row.Cells.AddTableCell();
-        var rowValueBlock = new Block { HorizontalAlignment = HorizontalAlignment.Left };
-        rowValueBlock.InsertText(Value);
+        var rowValueBlock = new Block { TextProperties = { FontSize = fontSize } };
+        rowValueBlock.InsertText(value);
         rowValue.Blocks.Add(rowValueBlock);
     }
 }

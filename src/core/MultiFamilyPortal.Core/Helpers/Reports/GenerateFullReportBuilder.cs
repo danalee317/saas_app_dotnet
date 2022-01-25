@@ -5,6 +5,7 @@ using MultiFamilyPortal.Services;
 using Telerik.Documents.Primitives;
 using Telerik.Windows.Documents.Fixed.Model;
 using Telerik.Windows.Documents.Fixed.Model.ColorSpaces;
+using Telerik.Windows.Documents.Fixed.Model.Data;
 using Telerik.Windows.Documents.Fixed.Model.Editing;
 using Telerik.Windows.Documents.Fixed.Model.Editing.Flow;
 using Telerik.Windows.Documents.Fixed.Model.Editing.Tables;
@@ -18,27 +19,27 @@ public static class GenerateFullReportBuilder
 {
     public static void GenerateFullReport(UnderwritingAnalysis property, RadFixedDocument document)
     {
-        var headerSize = 60;
-        var cellPadding = 25;
+        var headerSize = 40;
+        var cellPadding = 20;
         var page = document.Pages.AddPage();
-        var pageSize = new Size(1503, 800);
-        page.Size = pageSize;
+        page.Rotation = Rotation.Rotate0;
+        page.Size = new Size(1128, 792);
 
         var editor = new FixedContentEditor(page);
         var blackBorder = new Border(1, new RgbColor(200, 200, 200));
 
 
-        CreateHeader(editor, property, page.Size.Width, cellPadding);
-        CreateAddress(page, property, pageSize.Width * 1 / 2 + 5);
-        CreateDetail(editor, blackBorder, property, pageSize.Width, cellPadding);
-
+        CreateHeader(editor, property, page.Size.Width, headerSize);
+        CreateAddress(page, property, page.Size.Width / 2 - 100);
+        LeftDetail(editor, blackBorder, property, page.Size.Width, cellPadding);
+        RightDetail(editor, blackBorder, property, page.Size.Width, cellPadding);
     }
 
     private static void CreateHeader(FixedContentEditor editor, UnderwritingAnalysis property, double widthStart, double padding = 22)
     {
         var table = new Table
         {
-            DefaultCellProperties = { Padding = new Thickness(padding + 10) },
+            DefaultCellProperties = { Padding = new Thickness(padding) },
             LayoutType = TableLayoutType.AutoFit,
         };
 
@@ -48,16 +49,34 @@ public static class GenerateFullReportBuilder
         var rowTitleBlock = new Block
         {
             TextProperties = { Font = FontsRepository.HelveticaBold, FontSize = 50 },
-            HorizontalAlignment = HorizontalAlignment.Right,
+            HorizontalAlignment = HorizontalAlignment.Center,
         };
         rowTitleBlock.InsertText($"{property.Name} Full Report");
         rowTitle.Blocks.Add(rowTitleBlock);
 
-        editor.Position.Translate(widthStart / 2 - table.Measure().Width / 2, 10);
+        editor.Position.Translate(widthStart / 2 - table.Measure().Width / 2, 100);
         editor.DrawTable(table);
     }
 
-    private static void CreateDetail(FixedContentEditor editor, Border border, UnderwritingAnalysis property, double widthStart, double padding = 22)
+    private static void LeftDetail(FixedContentEditor editor, Border border, UnderwritingAnalysis property, double widthStart, double padding = 22)
+    {
+        var table = new Table
+        {
+            DefaultCellProperties = { Padding = new Thickness(padding) },
+            LayoutType = TableLayoutType.AutoFit,
+            Borders = new TableBorders(border)
+        };
+
+        SimpleRow(table, "Cap Rate", property.CapRate.ToString("P2"));
+        SimpleRow(table, "Debt Coverage Ratio", property.DebtCoverage.ToString("F2"));
+        SimpleRow(table, "Investor Cash On Cash Return", property.CashOnCash.ToString("P2"));
+        SimpleRow(table, "Built", property.Vintage.ToString());
+
+        editor.Position.Translate(100, 450);
+        editor.DrawTable(table);
+    }
+
+    private static void RightDetail(FixedContentEditor editor, Border border, UnderwritingAnalysis property, double widthStart, double padding = 22)
     {
         var table = new Table
         {
@@ -68,13 +87,10 @@ public static class GenerateFullReportBuilder
 
         SimpleRow(table, "Class", property.PropertyClass.Humanize(LetterCasing.Title));
         SimpleRow(table, "Price", property.OfferPrice.ToString("C2"));
-        SimpleRow(table, "Cap Rate", property.CapRate.ToString("P2"));
-        SimpleRow(table, "Debt Coverage Ratio", property.DebtCoverage.ToString("F2"));
-        SimpleRow(table, "Investor Cash On Cash Return", property.CashOnCash.ToString("P2"));
         SimpleRow(table, "Number of Units", property.Units.ToString());
         SimpleRow(table, "Date", DateTime.Now.ToString("MM/dd/yyyy"));
 
-        editor.Position.Translate(widthStart / 2 - table.Measure().Width / 2, 290);
+        editor.Position.Translate(widthStart - 100 - table.Measure().Width, 450);
         editor.DrawTable(table);
     }
 
@@ -82,22 +98,22 @@ public static class GenerateFullReportBuilder
     {
         var marketFragment = page.Content.AddTextFragment();
         marketFragment.Text = $"{property.Market}";
-        marketFragment.Position.Translate(widthStart - 265, 225);
-        marketFragment.FontSize = fontSize + 20;
+        marketFragment.Position.Translate(widthStart, 280);
+        marketFragment.FontSize = fontSize + 10;
 
         var addressFragment = page.Content.AddTextFragment();
         addressFragment.Text = $"{property.Address}";
-        addressFragment.Position.Translate(widthStart, 180);
+        addressFragment.Position.Translate(widthStart, 320);
         addressFragment.FontSize = fontSize;
 
         var cityFragment = page.Content.AddTextFragment();
         cityFragment.Text = $"{property.City}, {property.State}, {property.Zip}";
-        cityFragment.Position.Translate(widthStart, 220);
+        cityFragment.Position.Translate(widthStart, 360);
         cityFragment.FontSize = fontSize;
 
         var countryFragment = page.Content.AddTextFragment();
         countryFragment.Text = "United States";
-        countryFragment.Position.Translate(widthStart, 260);
+        countryFragment.Position.Translate(widthStart, 400);
         countryFragment.FontSize = fontSize;
     }
 

@@ -29,31 +29,42 @@ public static class GenerateCapitalExpensesBuilder
         var blackBorder = new Border(1, new RgbColor(0, 0, 0));
         var tableOneHeight = 0.0d;
 
-        SellerTable(editor, blackBorder, property, page.Size, out tableOneHeight, cellPadding);
-        PlannedTable(document, editor, blackBorder, property, page.Size, tableOneHeight, cellPadding);
+        SellerTable(page, editor, blackBorder, property, out tableOneHeight, cellPadding);
+        PlannedTable(page, document, editor, blackBorder, property, tableOneHeight, cellPadding);
 
         Conclusion(page, property.Name);
     }
 
-    private static void SellerTable(FixedContentEditor editor, Border border, UnderwritingAnalysis property, Size size, out double height, double padding = 22)
+    private static void SellerTable(RadFixedPage page, FixedContentEditor editor, Border border, UnderwritingAnalysis property, out double height, double padding = 22)
     {
-        var table = new Table
+        if (property.CapitalImprovements.Where(x => x.Status != CapitalImprovementStatus.Planned).Any())
         {
-            DefaultCellProperties = { Padding = new Thickness(padding) },
-            LayoutType = TableLayoutType.FixedWidth,
-            Borders = new TableBorders(border)
-        };
+            var table = new Table
+            {
+                DefaultCellProperties = { Padding = new Thickness(padding) },
+                LayoutType = TableLayoutType.FixedWidth,
+                Borders = new TableBorders(border)
+            };
 
-        Header(table, property, "Seller Capital Expenses");
-        MenuOption(table, property);
-        DynamicRow(table, property);
+            Header(table, property, "Seller Capital Expenses");
+            MenuOption(page.Size, table, property);
+            DynamicRow(table, property);
 
-        height = table.Measure().Height;
-        editor.Position.Translate(100, 150);
-        editor.DrawTable(table, new Size(size.Width - 200, double.PositiveInfinity));
+            height = table.Measure().Height;
+            editor.Position.Translate(48, 150);
+            editor.DrawTable(table, new Size(page.Size.Width - 96, double.PositiveInfinity));
+        }
+        else
+        {
+            height = 0;
+            var textFragment = page.Content.AddTextFragment();
+            textFragment.Text = "No Known Existing Capital Expenses";
+            textFragment.Position.Translate(48, 150);
+            textFragment.FontSize = 15;
+        }
     }
 
-    private static void PlannedTable(RadFixedDocument document, FixedContentEditor editor, Border border, UnderwritingAnalysis property, Size size, double tableHeight, double padding = 22)
+    private static void PlannedTable(RadFixedPage page, RadFixedDocument document, FixedContentEditor editor, Border border, UnderwritingAnalysis property, double tableHeight, double padding = 22)
     {
         var table = new Table
         {
@@ -63,24 +74,45 @@ public static class GenerateCapitalExpensesBuilder
         };
 
         Header(table, property, "Planned Capital Expenses");
-        MenuOption(table, property, true);
+        MenuOption(page.Size, table, property, true);
         DynamicRow(table, property, true);
 
         var height = tableHeight + table.Measure().Height + 350;
+        var noData = "No Planned Capital Expenses";
 
-        if (height < size.Height)
+        if (height < page.Size.Height)
         {
-            editor.Position.Translate(100, tableHeight + 250);
-            editor.DrawTable(table, new Size(size.Width - 200, double.PositiveInfinity));
+            if (property.CapitalImprovements.Where(x => x.Status == CapitalImprovementStatus.Planned).Any())
+            {
+                editor.Position.Translate(48, tableHeight + 250);
+                editor.DrawTable(table, new Size(page.Size.Width - 96, double.PositiveInfinity));
+            }
+            else
+            {
+                var textFragment = page.Content.AddTextFragment();
+                textFragment.Text = noData;
+                textFragment.Position.Translate(48, tableHeight + 250);
+                textFragment.FontSize = 15;
+            }
         }
         else
         {
-            var page = document.Pages.AddPage();
-            page.Size = size;
+            var pageTwo = document.Pages.AddPage();
+            pageTwo.Size = page.Size;
             var editorTwo = new FixedContentEditor(page);
 
-            editorTwo.Position.Translate(100, 150);
-            editorTwo.DrawTable(table, new Size(size.Width - 200, double.PositiveInfinity));
+            if (property.CapitalImprovements.Where(x => x.Status == CapitalImprovementStatus.Planned).Any())
+            {
+                editorTwo.Position.Translate(48, 150);
+                editorTwo.DrawTable(table, new Size(pageTwo.Size.Width - 96, double.PositiveInfinity));
+            }
+            else
+            {
+                var textFragment = page.Content.AddTextFragment();
+                textFragment.Text = noData;
+                textFragment.Position.Translate(48, tableHeight + 250);
+                textFragment.FontSize = 15;
+            }
 
             Conclusion(page, property.Name);
         }
@@ -101,10 +133,11 @@ public static class GenerateCapitalExpensesBuilder
         title.Blocks.Add(titleBlock);
     }
 
-    private static void MenuOption(Table table, UnderwritingAnalysis property, bool isPlanned = false)
+    private static void MenuOption(Size size, Table table, UnderwritingAnalysis property, bool isPlanned = false)
     {
         var row = table.Rows.AddTableRow();
         var costTitle = row.Cells.AddTableCell();
+        costTitle.PreferredWidth = 170;
         costTitle.Background = new RgbColor(248, 249, 250);
         var costTitleBlock = new Block
         {
@@ -113,8 +146,8 @@ public static class GenerateCapitalExpensesBuilder
         costTitleBlock.InsertText("Cost");
         costTitle.Blocks.Add(costTitleBlock);
 
-
         var statusTitle = row.Cells.AddTableCell();
+        statusTitle.PreferredWidth = 120;
         statusTitle.Background = new RgbColor(248, 249, 250);
         var statusTitleBlock = new Block
         {
@@ -124,8 +157,8 @@ public static class GenerateCapitalExpensesBuilder
         statusTitleBlock.InsertText(text);
         statusTitle.Blocks.Add(statusTitleBlock);
 
-
         var descriptionTitle = row.Cells.AddTableCell();
+        descriptionTitle.PreferredWidth = size.Width - 290 - 96;
         descriptionTitle.Background = new RgbColor(248, 249, 250);
         var descriptionTitleBlock = new Block
         {
@@ -207,7 +240,7 @@ public static class GenerateCapitalExpensesBuilder
                     costCell.Background = new RgbColor(248, 249, 250);
                 }
                 var costCellBlock = new Block();
-                costCellBlock.InsertText(improvement.Cost.ToString("C2"));
+                costCellBlock.InsertText((improvement.Cost*23436373).ToString("C2"));
                 costCell.Blocks.Add(costCellBlock);
 
                 var statusCell = row.Cells.AddTableCell();

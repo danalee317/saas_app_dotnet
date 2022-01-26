@@ -84,6 +84,10 @@ textarea {
   border: none;
 }
 
+.k-picker {
+  background-color: unset !important;
+}
+
 .k-tabstrip-items .k-item {
   color: blue;
 }

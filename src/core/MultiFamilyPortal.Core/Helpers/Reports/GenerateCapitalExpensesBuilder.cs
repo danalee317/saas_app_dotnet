@@ -37,31 +37,20 @@ public static class GenerateCapitalExpensesBuilder
 
     private static void SellerTable(RadFixedPage page, FixedContentEditor editor, Border border, UnderwritingAnalysis property, out double height, double padding = 22)
     {
-        if (property.CapitalImprovements.Where(x => x.Status != CapitalImprovementStatus.Planned).Any())
+        var table = new Table
         {
-            var table = new Table
-            {
-                DefaultCellProperties = { Padding = new Thickness(padding) },
-                LayoutType = TableLayoutType.FixedWidth,
-                Borders = new TableBorders(border)
-            };
+            DefaultCellProperties = { Padding = new Thickness(padding) },
+            LayoutType = TableLayoutType.FixedWidth,
+            Borders = new TableBorders(border)
+        };
 
-            Header(table, property, "Seller Capital Expenses");
-            MenuOption(page.Size, table, property);
-            DynamicRow(table, property);
+        Header(table, property, "Seller Capital Expenses");
+        MenuOption(page.Size, table, property);
+        DynamicRow(table, property);
 
-            height = table.Measure().Height;
-            editor.Position.Translate(48, 150);
-            editor.DrawTable(table, new Size(page.Size.Width - 96, double.PositiveInfinity));
-        }
-        else
-        {
-            height = 0;
-            var textFragment = page.Content.AddTextFragment();
-            textFragment.Text = "No Known Existing Capital Expenses";
-            textFragment.Position.Translate(48, 150);
-            textFragment.FontSize = 15;
-        }
+        height = table.Measure().Height;
+        editor.Position.Translate(48, 150);
+        editor.DrawTable(table, new Size(page.Size.Width - 96, double.PositiveInfinity));
     }
 
     private static void PlannedTable(RadFixedPage page, RadFixedDocument document, FixedContentEditor editor, Border border, UnderwritingAnalysis property, double tableHeight, double padding = 22)
@@ -78,41 +67,19 @@ public static class GenerateCapitalExpensesBuilder
         DynamicRow(table, property, true);
 
         var height = tableHeight + table.Measure().Height + 350;
-        var noData = "No Planned Capital Expenses";
 
         if (height < page.Size.Height)
         {
-            if (property.CapitalImprovements.Where(x => x.Status == CapitalImprovementStatus.Planned).Any())
-            {
-                editor.Position.Translate(48, tableHeight + 250);
-                editor.DrawTable(table, new Size(page.Size.Width - 96, double.PositiveInfinity));
-            }
-            else
-            {
-                var textFragment = page.Content.AddTextFragment();
-                textFragment.Text = noData;
-                textFragment.Position.Translate(48, tableHeight + 250);
-                textFragment.FontSize = 15;
-            }
+            editor.Position.Translate(48, tableHeight + 250);
+            editor.DrawTable(table, new Size(page.Size.Width - 96, double.PositiveInfinity));
         }
         else
         {
             var pageTwo = document.Pages.AddPage();
             pageTwo.Size = page.Size;
             var editorTwo = new FixedContentEditor(page);
-
-            if (property.CapitalImprovements.Where(x => x.Status == CapitalImprovementStatus.Planned).Any())
-            {
-                editorTwo.Position.Translate(48, 150);
-                editorTwo.DrawTable(table, new Size(pageTwo.Size.Width - 96, double.PositiveInfinity));
-            }
-            else
-            {
-                var textFragment = page.Content.AddTextFragment();
-                textFragment.Text = noData;
-                textFragment.Position.Translate(48, tableHeight + 250);
-                textFragment.FontSize = 15;
-            }
+            editorTwo.Position.Translate(48, 150);
+            editorTwo.DrawTable(table, new Size(pageTwo.Size.Width - 96, double.PositiveInfinity));
 
             Conclusion(page, property.Name);
         }
@@ -216,16 +183,21 @@ public static class GenerateCapitalExpensesBuilder
             }
 
             var totalRow = table.Rows.AddTableRow();
+            var prop = property.CapitalImprovements.Where(x => x.Status == CapitalImprovementStatus.Planned);
+            var text = prop.Any() ? prop.Sum(x => x.Cost).ToString("C2") : "No Planned Capital Expenses";
+
             var totalCell = totalRow.Cells.AddTableCell();
+            totalCell.ColumnSpan = 3;
             if (i % 2 != 0)
             {
                 totalCell.Background = new RgbColor(248, 249, 250);
             }
             var totalCellBlock = new Block
             {
-                TextProperties = { Font = FontsRepository.HelveticaBold },
+                TextProperties = { Font = prop.Any() ? FontsRepository.HelveticaBold : FontsRepository.Helvetica },
             };
-            totalCellBlock.InsertText(property.CapitalImprovements.Where(x => x.Status == CapitalImprovementStatus.Planned).Sum(x => x.Cost).ToString("C2"));
+
+            totalCellBlock.InsertText(text);
             totalCell.Blocks.Add(totalCellBlock);
         }
         else
@@ -240,7 +212,7 @@ public static class GenerateCapitalExpensesBuilder
                     costCell.Background = new RgbColor(248, 249, 250);
                 }
                 var costCellBlock = new Block();
-                costCellBlock.InsertText((improvement.Cost*23436373).ToString("C2"));
+                costCellBlock.InsertText(improvement.Cost.ToString("C2"));
                 costCell.Blocks.Add(costCellBlock);
 
                 var statusCell = row.Cells.AddTableCell();
@@ -263,16 +235,20 @@ public static class GenerateCapitalExpensesBuilder
             }
 
             var totalRow = table.Rows.AddTableRow();
+            var prop = property.CapitalImprovements.Where(x => x.Status != CapitalImprovementStatus.Planned);
+            var text = prop.Any() ? prop.Sum(x => x.Cost).ToString("C2") : "No Known Existing Capital Expenses";
+
             var totalCell = totalRow.Cells.AddTableCell();
+            totalCell.ColumnSpan = 3;
             if (i % 2 != 0)
             {
                 totalCell.Background = new RgbColor(248, 249, 250);
             }
             var totalCellBlock = new Block
             {
-                TextProperties = { Font = FontsRepository.HelveticaBold },
+                TextProperties = { Font = prop.Any() ? FontsRepository.HelveticaBold : FontsRepository.Helvetica },
             };
-            totalCellBlock.InsertText(property.CapitalImprovements.Where(x => x.Status != CapitalImprovementStatus.Planned).Sum(x => x.Cost).ToString("C2"));
+            totalCellBlock.InsertText(text);
             totalCell.Blocks.Add(totalCellBlock);
             i++;
         }

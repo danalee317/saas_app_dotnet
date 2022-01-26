@@ -48,4 +48,5 @@ jobs:
       with:
         app-name: multifamilyportal
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-        publish-profile: ${{ secrets.multifamilyportal_c268 }}
+        # publish-profile: ${{ secrets.multifamilyportal_c268 }}
+        publish-profile: ${{ secrets.multifamilyportal_stage_85ab }}

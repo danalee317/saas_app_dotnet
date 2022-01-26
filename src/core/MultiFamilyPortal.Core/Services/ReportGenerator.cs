@@ -35,13 +35,14 @@ public class ReportGenerator : IReportGenerator
             return NotFound();
 
         var document = new RadFixedDocument();
+        GenerateFullReportBuilder.GenerateFullReport(property,document);
         GenearateDealSummaryBuilder.GenerateDealSummary(property, document);
         GenerateAssumptions(property, document);
         GenerateCashFlow(property, document);
         GenerateIncomeForecast(property, document);
         GenerateCapitalExpenses(property, document);
 
-        var name = $"Overall_Projections.pdf";
+        var name = "Overall_Projections.pdf";
         return new ReportResponse
         {
             FileName = name,

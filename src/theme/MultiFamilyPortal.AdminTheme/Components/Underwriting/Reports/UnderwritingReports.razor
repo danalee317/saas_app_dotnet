@@ -46,27 +46,27 @@ else
           <li>
             <span class="file-link" @onclick=@(() => SelectReport("capital-expenses"))><FileIcon FileType=@FileIconType.PDF /> Capital Expenses</span>
           </li>
-          <li>
+          @*<li>
             <span class="file-link" @onclick=@(() => SelectReport("rent-roll"))><FileIcon FileType=@FileIconType.PDF /> Rent Roll</span>
           </li>
           <li>
             <span class="file-link" @onclick=@(() => SelectReport("lease-exposure"))><FileIcon FileType=@FileIconType.PDF /> Lease Exposure</span>
-          </li>
+          </li>*@
         </ul>
       </div>
       <div class="col-md-4">
         <h3>Investors</h3>
         <hr />
         <ul class="file-list">
-          <li>
+          @*<li>
             <span class="file-link" @onclick=@(() => SelectReport("100k-projections"))><FileIcon FileType=@FileIconType.PDF /> 100k Investment Projections</span>
-          </li>
+          </li>*@
           <li>
             <span class="file-link" @onclick=@(() => SelectReport("manager-report"))><FileIcon FileType=@FileIconType.PDF /> Manager Report</span>
           </li>
-          <li>
+          @*<li>
             <span class="file-link" @onclick=@(() => SelectReport("investment-tiers"))><FileIcon FileType=@FileIconType.PDF /> Investment Tiers</span>
-          </li>
+          </li>*@
         </ul>
       </div>
       @if(_tenant.IsREMentorStudent)
@@ -90,6 +90,16 @@ else
           </ul>
         </div>
       }
+      <div class="col-12 text-center py-3">
+        <h4>Comming Soon!</h4>
+        Our team is working hard to bring you several additional reports in the comming weeks.<br />Please keep an eye out for the following reports in the near future.
+        <ul style=" list-style-type: none;">
+          <li>Lease Exposure Report</li>
+          <li>Full Rent Roll</li>
+          <li>100k Investor Returns</li>
+          <li>Customizable Investor Tier Returns</li>
+        </ul>
+      </div>
     </div>
   </div>
 }

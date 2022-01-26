@@ -16,7 +16,7 @@ public static class GenerateFullReportBuilder
     public static void GenerateFullReport(UnderwritingAnalysis property, RadFixedDocument document)
     {
         var headerSize = 40;
-        var cellPadding = 15;
+        var cellPadding = 7;
         var page = document.Pages.AddPage();
         page.Rotation = Rotation.Rotate0;
         page.Size = ReportBuilder.LetterSizeHorizontal;
@@ -63,14 +63,14 @@ public static class GenerateFullReportBuilder
             Borders = new TableBorders(border)
         };
 
+        SimpleRow(table, "Date", DateTime.Now.ToString("MM/dd/yyyy"));
         SimpleRow(table, "Cap Rate", property.CapRate.ToString("P2"));
         SimpleRow(table, "Debt Coverage Ratio", property.DebtCoverage.ToString("F2"));
-        SimpleRow(table, "Investor Cash On Cash Return", property.CashOnCash.ToString("P2"));
-        SimpleRow(table, "Built", property.Vintage.ToString());
+        SimpleRow(table, "Cash On Cash Return", property.CashOnCash.ToString("P2"));
 
         width = table.Measure().Width;
 
-        editor.Position.Translate(widthStart / 2 - width / 2, 580);
+        editor.Position.Translate(widthStart / 2 - width / 2, 600);
         editor.DrawTable(table);
     }
 
@@ -86,9 +86,9 @@ public static class GenerateFullReportBuilder
         SimpleRow(table, "Class", property.PropertyClass.Humanize(LetterCasing.Title));
         SimpleRow(table, "Price", property.OfferPrice.ToString("C2"));
         SimpleRow(table, "Number of Units", property.Units.ToString());
-        SimpleRow(table, "Date", DateTime.Now.ToString("MM/dd/yyyy"));
+        SimpleRow(table, "Built", property.Vintage.ToString());
 
-        editor.Position.Translate(widthStart + widthStart / 2 - tableWidth / 2, 580);
+        editor.Position.Translate(widthStart + widthStart / 2 - tableWidth / 2, 600);
         editor.DrawTable(table, new Size(tableWidth, double.PositiveInfinity));
     }
 
@@ -115,7 +115,7 @@ public static class GenerateFullReportBuilder
         countryFragment.FontSize = fontSize;
     }
 
-    private static void SimpleRow(Table table, string title, string value, double fontSize = 10)
+    private static void SimpleRow(Table table, string title, string value, double fontSize = 12)
     {
         var row = table.Rows.AddTableRow();
         var rowTitle = row.Cells.AddTableCell();

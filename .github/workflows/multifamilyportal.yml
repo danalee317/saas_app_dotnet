@@ -1,10 +1,11 @@
 name: Build & Deploy
 on:
   push:
-    branches:
-    - master
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 env:
-  AZURE_WEBAPP_PACKAGE_PATH: src\MultiFamilyPortal/publish
+  AZURE_WEBAPP_PACKAGE_PATH: src\MultiFamilyPortal\publish
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x
   WORKING_DIRECTORY: src\MultiFamilyPortal
@@ -29,6 +30,7 @@ jobs:
     - name: Publish
       run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
     - name: Publish Artifacts
+      if: ${{ github.event_name != 'pull_request' }}
       uses: actions/upload-artifact@v1.0.0
       with:
         name: webapp
@@ -36,6 +38,7 @@ jobs:
 
   deploy:
     needs: build
+    if: ${{ github.event_name != 'pull_request' }}
     runs-on: windows-latest
     steps:
     - uses: actions/download-artifact@v2
@@ -48,4 +51,5 @@ jobs:
       with:
         app-name: multifamilyportal
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-        publish-profile: ${{ secrets.multifamilyportal_c268 }}
+        # publish-profile: ${{ secrets.multifamilyportal_c268 }}
+        publish-profile: ${{ secrets.multifamilyportal_stage_85ab }}

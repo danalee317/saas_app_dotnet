@@ -1,9 +1,9 @@
 name: Build & Deploy
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  schedule:
+    # Runs "At 03:00 on Monday."
+    - cron: '0 3 * * 1'
+
 env:
   AZURE_WEBAPP_PACKAGE_PATH: src\MultiFamilyPortal\publish
   CONFIGURATION: Release
@@ -51,5 +51,4 @@ jobs:
       with:
         app-name: multifamilyportal
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-        publish-profile: ${{ secrets.multifamilyportal_stage_85ab }}
-        slot-name: stage
+        publish-profile: ${{ secrets.multifamilyportal_c268 }}

@@ -70,7 +70,7 @@ public static class GenerateFullReportBuilder
 
         width = table.Measure().Width;
 
-        editor.Position.Translate(widthStart / 2 - width / 2, 550);
+        editor.Position.Translate(widthStart / 2 - width / 2, 580);
         editor.DrawTable(table);
     }
 
@@ -88,7 +88,7 @@ public static class GenerateFullReportBuilder
         SimpleRow(table, "Number of Units", property.Units.ToString());
         SimpleRow(table, "Date", DateTime.Now.ToString("MM/dd/yyyy"));
 
-        editor.Position.Translate(widthStart + widthStart / 2 - tableWidth / 2, 550);
+        editor.Position.Translate(widthStart + widthStart / 2 - tableWidth / 2, 580);
         editor.DrawTable(table, new Size(tableWidth, double.PositiveInfinity));
     }
 
@@ -96,26 +96,26 @@ public static class GenerateFullReportBuilder
     {
         var marketFragment = page.Content.AddTextFragment();
         marketFragment.Text = $"{property.Market}";
-        marketFragment.Position.Translate(widthStart - property.Market.Length * 5, 330);
+        marketFragment.Position.Translate(widthStart - property.Market.Length * 5, 370);
         marketFragment.FontSize = fontSize + 5;
 
         var addressFragment = page.Content.AddTextFragment();
         addressFragment.Text = property.Address;
-        addressFragment.Position.Translate(widthStart - property.Address.Length * 4, 360);
+        addressFragment.Position.Translate(widthStart - property.Address.Length * 4, 390);
         addressFragment.FontSize = fontSize;
 
         var cityFragment = page.Content.AddTextFragment();
         cityFragment.Text = $"{property.City}, {property.State}, {property.Zip}";
-        cityFragment.Position.Translate(widthStart - (property.City.Length + property.State.Length + property.Zip.Length) * 6, 390);
+        cityFragment.Position.Translate(widthStart - (property.City.Length + property.State.Length + property.Zip.Length) * 6, 410);
         cityFragment.FontSize = fontSize;
 
         var countryFragment = page.Content.AddTextFragment();
         countryFragment.Text = "United States";
-        countryFragment.Position.Translate(widthStart - 50, 420);
+        countryFragment.Position.Translate(widthStart - 50, 430);
         countryFragment.FontSize = fontSize;
     }
 
-    private static void SimpleRow(Table table, string title, string value, double fontSize = 18)
+    private static void SimpleRow(Table table, string title, string value, double fontSize = 10)
     {
         var row = table.Rows.AddTableRow();
         var rowTitle = row.Cells.AddTableCell();

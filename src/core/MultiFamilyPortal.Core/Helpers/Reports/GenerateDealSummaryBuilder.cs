@@ -10,7 +10,7 @@ using Telerik.Windows.Documents.Fixed.Model.Fonts;
 
 namespace MultiFamilyPortal.Helpers.Reports;
 
-public static class GenearateDealSummaryBuilder
+public static class GenerateDealSummaryBuilder
 {
     public static void GenerateDealSummary(UnderwritingAnalysis property, RadFixedDocument document)
     {

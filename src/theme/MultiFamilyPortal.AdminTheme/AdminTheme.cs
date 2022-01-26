@@ -98,16 +98,16 @@ namespace MultiFamilyPortal.AdminTheme
                         Link = "/admin/pages",
                         RequiredRole = PortalRoles.PortalAdministrator
                     },
-                    new ChildMenuOption
-                    {
-                        Title = "Blogs",
-                        Link = "/admin/posts"
-                    },
-                    new ChildMenuOption
-                    {
-                        Title = "New Post",
-                        Link = "/admin/create-post"
-                    }
+                    //new ChildMenuOption
+                    //{
+                    //    Title = "Blogs",
+                    //    Link = "/admin/posts"
+                    //},
+                    //new ChildMenuOption
+                    //{
+                    //    Title = "New Post",
+                    //    Link = "/admin/create-post"
+                    //}
                 }
             },
             new RootMenuOption

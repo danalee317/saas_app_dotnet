@@ -1,4 +1,5 @@
 using System.Net.Mail;
+using AvantiPoint.EmailService;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

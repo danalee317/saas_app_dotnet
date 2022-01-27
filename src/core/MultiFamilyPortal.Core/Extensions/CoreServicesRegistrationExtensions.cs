@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Net.Http.Headers;
-using Azure.Storage.Blobs;
+using System.Net.Mail;
+using AvantiPoint.EmailService.Postmark;
 using BlazorAnimation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
@@ -10,9 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using MultiFamilyPortal.Configuration;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Http;
+using MultiFamilyPortal.SaaS;
 using MultiFamilyPortal.SaaS.Extensions;
 using MultiFamilyPortal.Services;
-using PostmarkDotNet;
 
 namespace MultiFamilyPortal.Extensions
 {
@@ -20,15 +21,19 @@ namespace MultiFamilyPortal.Extensions
     {
         public static IServiceCollection AddCorePortalServices(this IServiceCollection services, IConfiguration configuration)
         {
+            var config = new SiteConfiguration();
+            configuration.Bind(config);
+            configuration.Get<SiteConfiguration>();
             services.AddHttpContextAccessor()
+                .AddSingleton(config)
                 .AddSaaSApplication(configuration)
                 .AddScoped<IAuthenticationService, AuthenticationService>()
                 .AddScoped<IBlogSubscriberService, BlogSubscriberService>()
                 .AddScoped<IBlogAdminService, BlogAdminService>()
                 .AddScoped<ITemplateProvider, DatabaseTemplateProvider>()
                 .AddScoped<IIpLookupService, IpLookupService>()
-                .AddScoped<IEmailService, EmailService>()
-                .AddScoped<IEmailValidationService, EmailValidationService>()
+                .AddEmailValidationService()
+                .AddPostmarkEmailService(ConfigurePostmarkEmailService)
                 .AddScoped<IFormService, FormService>()
                 .AddScoped<ITimeZoneService, TimeZoneService>()
                 .AddScoped<ISiteInfo, SiteInfo>()
@@ -46,29 +51,26 @@ namespace MultiFamilyPortal.Extensions
                     };
                 });
 
-            var config = new SiteConfiguration();
-            configuration.Bind(config);
-
-            services.AddTransient<PostmarkClient>(sp =>
-            {
-                return new PostmarkClient(config.PostmarkApiKey);
-            });
-
             if (string.IsNullOrEmpty(config?.Storage?.ConnectionString))
             {
-                services.AddScoped<IStorageService, LocalStorageService>();
+                services.AddLocalFileStorage((sp, o) =>
+                {
+                    var tenantProvider = sp.GetRequiredService<ITenantProvider>();
+                    var tenant = tenantProvider.GetTenant();
+                    o.GetOutputPath = path => Path.Combine(tenant.Host, path);
+                });
             }
             else
             {
-                services.AddScoped(p =>
+                services.AddAzureBlobStorage((sp, o) =>
                 {
-                    var container = config.Storage.Container;
-                    if (string.IsNullOrEmpty(container))
-                        container = "tenants";
+                    if (string.IsNullOrEmpty(o.Container))
+                        o.Container = "tenants";
 
-                    return new BlobContainerClient(config.Storage.ConnectionString, container);
-                })
-                    .AddScoped<IStorageService, AzureStorageService>();
+                    var tenantProvider = sp.GetRequiredService<ITenantProvider>();
+                    var tenant = tenantProvider.GetTenant();
+                    o.GetOutputPath = path => Path.Combine(tenant.Host, path);
+                });
             }
 
             services.AddLocalization();
@@ -111,6 +113,25 @@ namespace MultiFamilyPortal.Extensions
             });
 
             return services;
+        }
+
+        private static void ConfigurePostmarkEmailService(IServiceProvider sp, PostmarkEmailServiceOptions options)
+        {
+            var config = sp.GetRequiredService<SiteConfiguration>();
+            options.ApiKey = config.PostmarkApiKey;
+            var context = sp.GetRequiredService<IMFPContext>();
+            options.GetDefaultFromEmail = async () =>
+            {
+                var fromEmail = await context.GetSettingAsync<string>(PortalSetting.NotificationEmail);
+                var fromEmailName = await context.GetSettingAsync<string>(PortalSetting.NotificationEmailFrom);
+                return new MailAddress(fromEmail, fromEmailName);
+            };
+            options.GetDefaultToEmail = async () =>
+            {
+                var toEmail = await context.GetSettingAsync<string>(PortalSetting.ContactEmail);
+                var fromEmailName = await context.GetSettingAsync<string>(PortalSetting.NotificationEmailFrom);
+                return new MailAddress(toEmail, fromEmailName);
+            };
         }
     }
 }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -13,7 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.10.0" />
+    <PackageReference Include="AvantiPoint.EmailService.Postmark" Version="3.0.15" />
+    <PackageReference Include="AvantiPoint.FileStorage.AzureBlobStorage" Version="3.0.15" />
+    <PackageReference Include="AvantiPoint.FileStorage.FileSystem" Version="3.0.15" />
     <PackageReference Include="BlazorAnimation" Version="2.1.0" />
     <PackageReference Include="DynamicData" Version="7.4.9" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
@@ -21,10 +23,6 @@
     <PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     <PackageReference Include="UAParser" Version="3.1.47" />
-    <PackageReference Include="Handlebars.Net" Version="2.0.10" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.40" />
-    <PackageReference Include="Postmark" Version="4.5.2" />
-    <PackageReference Include="ARSoft.Tools.Net.Core" Version="2.3.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.0-preview.145" />
     <PackageReference Include="SkiaSharp.QrCode" Version="0.4.1" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.0-preview.145" Condition="$([MSBuild]::IsOsPlatform('OSX'))" />

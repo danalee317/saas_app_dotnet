@@ -1,18 +1,15 @@
-using System.IO.Compression;
 using System.Net.Http.Headers;
-using System.Net.Mime;
 using System.Security.Claims;
+using AvantiPoint.FileStorage;
 using Humanizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultiFamilyPortal.AdminTheme.Models;
-using MultiFamilyPortal.AdminTheme.Services;
 using MultiFamilyPortal.Authentication;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
-using MultiFamilyPortal.Dtos.Underwriting.Reports;
 using MultiFamilyPortal.Services;
 
 namespace MultiFamilyPortal.Areas.Admin.Controllers

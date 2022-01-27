@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using AvantiPoint.EmailService;
 using HandlebarsDotNet;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using MultiFamilyPortal.ComponentModel;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos;
+using static System.Net.WebRequestMethods;
 
 namespace MultiFamilyPortal.Services
 {
@@ -67,96 +69,57 @@ namespace MultiFamilyPortal.Services
             var properties = type.GetRuntimeProperties();
             var emailTemplate = await GetTemplate(templateName);
 
-            if(partials.Any())
+            return await TemplateResult.FromModelAsync(model, model.Subject, async o =>
             {
-                foreach(var partial in partials)
+                if (partials.Any())
                 {
-                    var partialTemplate = await GetPartialTemplate(partial.Name);
-                    Handlebars.RegisterTemplate(partial.Name, partialTemplate);
+                    foreach (var partial in partials)
+                    {
+                        var partialTemplate = await GetPartialTemplate(partial.Name);
+                        o.Partials.Add((partial.Name, partialTemplate));
+                    }
                 }
-            }
 
-            foreach(var rawProperty in properties.Where(x => x.GetCustomAttributes<RawOutputAttribute>().Any()))
-            {
-                Handlebars.RegisterHelper(rawProperty.Name, (output, context, args) =>
-                    output.WriteSafeString($"{context[rawProperty.Name]}"));
-            }
+                foreach (var rawProperty in properties.Where(x => x.GetCustomAttributes<RawOutputAttribute>().Any()))
+                {
+                    o.Raw.Add(rawProperty.Name);
+                }
 
-            var templateHtml = $"{HtmlTemplateHead}{emailTemplate.Html}\n</body>\n</html>";
-            var htmlTemplate = Handlebars.Compile(templateHtml);
+                o.HtmlTemplate = $"{HtmlTemplateHead}{emailTemplate.Html}\n</body>\n</html>";
 
-            var html = htmlTemplate(model);
-            var htt = new HtmlToText();
-
-            foreach(var plainTextProperty in properties.Where(x => x.GetCustomAttributes<PlainTextAttribute>().Any()))
-            {
-                var value = plainTextProperty.GetValue(model).ToString();
-                plainTextProperty.SetValue(model, htt.ConvertHtml(value));
-            }
-
-            var text = ReplaceTokens(emailTemplate.PlainText, model);
-
-            return new TemplateResult
-            {
-                Subject = model.Subject,
-                Html = html,
-                PlainText = text
-            };
+                foreach (var plainTextProperty in properties.Where(x => x.GetCustomAttributes<PlainTextAttribute>().Any()))
+                {
+                    var value = plainTextProperty.GetValue(model).ToString();
+                    //plainTextProperty.SetValue(model, htt.ConvertHtml(value));
+                }
+            });
         }
 
         public async Task<TemplateResult> GetSubscriberNotification(SubscriberNotification notification)
         {
             var emailTemplate = await GetTemplate("subscribernotification");
-            Handlebars.RegisterHelper("Summary", SummaryRawOutput);
-            Handlebars.RegisterTemplate("tag", await GetPartialTemplate("tag"));
-            Handlebars.RegisterTemplate("category", await GetPartialTemplate("category"));
-            var htmlTemplate = Handlebars.Compile(emailTemplate.Html);
-
-            var html = htmlTemplate(notification);
-            var htt = new HtmlToText();
-            notification.Summary = htt.ConvertHtml(notification.Summary);
-            var text = ReplaceTokens(emailTemplate.PlainText, notification);
-
-            return new TemplateResult
+            return await TemplateResult.FromModelAsync(notification, notification.Subject, async o =>
             {
-                Subject = notification.Subject,
-                Html = html,
-                PlainText = text
-            };
+                o.HtmlTemplate = emailTemplate.Html;
+                o.TextTemplate = emailTemplate.PlainText;
+                o.Raw.Add(nameof(SubscriberNotification.Summary));
+                o.Partials.Add(("tag", await GetPartialTemplate("tag")));
+                o.Partials.Add(("category", await GetPartialTemplate("category")));
+            });
+
+            // TODO: Replace HTML Summary with Plain Text
+            //notification.Summary = htt.ConvertHtml(notification.Summary);
         }
 
         public async Task<TemplateResult> ContactUs(ContactFormEmailNotification notification)
         {
             var emailTemplate = await GetTemplate("contact-form");
-            Handlebars.RegisterHelper("Message", MessageRawOutput);
-            var template = Handlebars.Compile(emailTemplate.Html);
-
-            var html = template(notification);
-            var htt = new HtmlToText();
-            notification.Message = htt.ConvertHtml(notification.Message);
-            var text = ReplaceTokens(emailTemplate.PlainText, notification);
-
-            return new TemplateResult
+            return TemplateResult.FromModel(notification, notification.Subject, o =>
             {
-                Html = html,
-                PlainText = text
-            };
-        }
-
-        private void SummaryRawOutput(EncodedTextWriter output, Context context, Arguments arguments)
-        {
-            output.WriteSafeString($"{context["Summary"]}");
-        }
-
-        private void MessageRawOutput(EncodedTextWriter output, Context context, Arguments arguments)
-        {
-            output.WriteSafeString($"{context["Message"]}");
-        }
-
-        private static void ReplaceValue(ref string text, string name, string value)
-        {
-            var pattern = Regex.Escape($"{{{{{name}}}}}");
-            text = Regex.Replace(text, pattern, value);
+                o.HtmlTemplate = emailTemplate.Html;
+                o.TextTemplate = emailTemplate.PlainText;
+                o.Raw.Add(nameof(ContactFormEmailNotification.Message));
+            });
         }
 
         private async Task<string> GetPartialTemplate(string key)
@@ -169,31 +132,6 @@ namespace MultiFamilyPortal.Services
         {
             var template = await _context.EmailTemplates.FirstOrDefaultAsync(x => x.Key == key);
             return template;
-        }
-
-        private static string ReplaceTokens<T>(in string text, T model)
-        {
-            var props = typeof(T).GetRuntimeProperties()
-                .Where(x => !typeof(IEnumerable).IsAssignableFrom(x.PropertyType))
-                .ToDictionary(x => x.Name, x => GetFormattedValue(x, model));
-
-            var output = text;
-            foreach((var name, var value) in props)
-            {
-                ReplaceValue(ref output, name, value);
-            }
-
-            return output;
-        }
-
-        private static string GetFormattedValue(PropertyInfo propertyInfo, object model)
-        {
-            var value = propertyInfo.GetValue(model, null);
-            var displayFormat = propertyInfo.GetCustomAttribute<DisplayFormatAttribute>();
-            if (displayFormat != null && !string.IsNullOrEmpty(displayFormat.DataFormatString))
-                return string.Format(displayFormat.DataFormatString, value);
-
-            return value.ToString();
         }
     }
 }

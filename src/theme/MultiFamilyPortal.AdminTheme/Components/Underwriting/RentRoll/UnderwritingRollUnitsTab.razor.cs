@@ -76,7 +76,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
             _newUnit = new DisplayUnit(_floor);
         }
 
-        private async Task RemoveUnit(UnderwritingAnalysisUnit unit)
+        private void RemoveUnit(UnderwritingAnalysisUnit unit)
         {
             var model = Property.Models.FirstOrDefault(m => m.Units.Contains(unit));
             model?.Units.Remove(unit);

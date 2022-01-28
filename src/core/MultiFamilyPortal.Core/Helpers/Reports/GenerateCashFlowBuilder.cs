@@ -13,7 +13,7 @@ public static class GenerateCashFlowBuilder
     {
         var projections = property.Projections;
 
-        var cellPadding = property.HoldYears > 5 ? 13 : 20;
+        var cellPadding = property.HoldYears > 5 ? 14 : 20;
         var blackBorder = new Border(1, ReportBuilder.DarkColor);
         var page = document.Pages.AddPage();
         var pageTwo = document.Pages.AddPage();
@@ -166,6 +166,7 @@ public static class GenerateCashFlowBuilder
         tableTitle.FontSize = headerSize;
         tableTitle.Text = "Net";
         tableTitle.Position.Translate(page.Size.Width / 2 - 5, 335);
+        padding = projections.Count() - 1 > 9 ? 1 : padding;
 
         var table = new Table
         {

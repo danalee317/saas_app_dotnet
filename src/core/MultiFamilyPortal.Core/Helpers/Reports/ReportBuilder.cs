@@ -6,7 +6,6 @@ using Telerik.Windows.Documents.Fixed.Model.Editing.Tables;
 using Telerik.Windows.Documents.Fixed.Model.Editing;
 using Telerik.Windows.Documents.Fixed.Model.Fonts;
 using Telerik.Windows.Documents.Fixed.Model;
-using Telerik.Windows.Documents.Media;
 using Telerik.Windows.Documents.Model;
 
 public static class ReportBuilder

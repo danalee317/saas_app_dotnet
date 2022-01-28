@@ -42,7 +42,11 @@ public static class GenerateCashFlowBuilder
         tableTitle.Text = "Income";
         tableTitle.Position.Translate(page.Size.Width / 2 - 25, 135);
 
-        var table = new Table { DefaultCellProperties = { Padding = new Thickness(padding) } };
+        var table = new Table 
+        { 
+            DefaultCellProperties = { Padding = new Thickness(padding) }, 
+            LayoutType = TableLayoutType.FixedWidth 
+        };
         table.Borders = new TableBorders(border);
 
         var incomeHeader = table.Rows.AddTableRow();
@@ -111,7 +115,7 @@ public static class GenerateCashFlowBuilder
         foreach (var total in projections.Select(x => x.EffectiveGrossIncome))
             totalEffectiveIncome.BasicCell(total.ToString("C2"), true);
 
-        editor.Position.Translate(page.Size.Width / 2 - table.Measure().Width / 2, 150);
+        editor.Position.Translate(ReportBuilder.PageMargin, 150);
         editor.DrawTable(table, new Size(page.Size.Width - 2 * ReportBuilder.PageMargin, table.Measure().Height));
 
     }
@@ -150,8 +154,8 @@ public static class GenerateCashFlowBuilder
         foreach (var expenses in projections.Select(x => x.OperatingExpenses))
             totalOperatingExpenses.BasicCell(expenses.ToString("C2"), false, ReportBuilder.PrimaryColor);
 
-        editor.Position.Translate(page.Size.Width / 2 - table.Measure().Width / 2, 150);
-        editor.DrawTable(table);
+        editor.Position.Translate(ReportBuilder.PageMargin, 150);
+        editor.DrawTable(table, new Size(page.Size.Width - 2 * ReportBuilder.PageMargin, table.Measure().Height));
     }
 
     private static void NetTable(RadFixedPage page,
@@ -161,16 +165,15 @@ public static class GenerateCashFlowBuilder
                                  double padding = 20,
                                  double headerSize = 18)
     {
-        // Net Income
         var tableTitle = page.Content.AddTextFragment();
         tableTitle.FontSize = headerSize;
         tableTitle.Text = "Net";
         tableTitle.Position.Translate(page.Size.Width / 2 - 5, 335);
-        padding = projections.Count() - 1 > 9 ? 1 : padding;
+        var thickness = projections.Count() - 1 > 9 ? new Thickness(0, padding+5, 0, padding+5) : new Thickness(padding);
 
         var table = new Table
         {
-            DefaultCellProperties = { Padding = new Thickness(padding) },
+            DefaultCellProperties = { Padding = thickness },
             Borders = new TableBorders(border),
             LayoutType = TableLayoutType.FixedWidth
         };
@@ -186,7 +189,7 @@ public static class GenerateCashFlowBuilder
         }
 
         var netOperatingIncome = table.Rows.AddTableRow();
-        netOperatingIncome.BasicCell("Net Operating Income (NOI)");
+        netOperatingIncome.BasicCell("Net Operating Income");
         foreach (var noi in projections.Select(x => x.NetOperatingIncome))
             netOperatingIncome.BasicCell(noi.ToString("C2"), false, ReportBuilder.PrimaryColor);
 
@@ -210,7 +213,7 @@ public static class GenerateCashFlowBuilder
         foreach (var cash in projections.Select(x => x.TotalCashFlow))
             cashFlowBeforeTax.BasicCell(cash.ToString("C2"), true, ReportBuilder.PrimaryColor);
 
-        editor.Position.Translate(page.Size.Width / 2 - table.Measure().Width / 2, 350);
-        editor.DrawTable(table, new Size(table.Measure().Width, double.PositiveInfinity));
+        editor.Position.Translate(ReportBuilder.PageMargin, 350);
+        editor.DrawTable(table, new Size(page.Size.Width-2*ReportBuilder.PageMargin, double.PositiveInfinity));
     }
 }

@@ -44,8 +44,8 @@ public static class GenerateIncomeForecastBuilder
         UtilityIncreases(table, property);
         OtherIncome(table, property);
 
-        editor.Position.Translate(size.Width / 2 - table.Measure().Width / 2, size.Height / 2 - table.Measure().Height / 2);
-        editor.DrawTable(table);
+        editor.Position.Translate(ReportBuilder.PageMargin, size.Height / 2 - table.Measure().Height / 2);
+        editor.DrawTable(table, new Size(size.Width - ReportBuilder.PageMargin * 2, table.Measure().Height));
     }
 
     #region Income Forecast Rows
@@ -83,7 +83,7 @@ public static class GenerateIncomeForecastBuilder
         var row = table.Rows.AddTableRow();
         row.BasicCell("Units Applied To");
         foreach (var units in property.IncomeForecast.Select(x => x.UnitsAppliedTo))
-            row.BasicCell(units.ToString(),false, ReportBuilder.PrimaryColor);
+            row.BasicCell(units.ToString(), false, ReportBuilder.PrimaryColor);
     }
 
     private static void RemainingUnits(Table table, UnderwritingAnalysis property)
@@ -99,7 +99,7 @@ public static class GenerateIncomeForecastBuilder
         var row = table.Rows.AddTableRow();
         row.BasicCell("Vacancy");
         foreach (var vacancy in property.IncomeForecast.Select(x => x.Vacancy))
-            row.BasicCell(vacancy.ToString("P2"),false, ReportBuilder.PrimaryColor);
+            row.BasicCell(vacancy.ToString("P2"), false, ReportBuilder.PrimaryColor);
     }
 
     private static void OtherLosses(Table table, UnderwritingAnalysis property)
@@ -115,7 +115,7 @@ public static class GenerateIncomeForecastBuilder
         var row = table.Rows.AddTableRow();
         row.BasicCell("Utility Increases");
         foreach (var increase in property.IncomeForecast.Select(x => x.UtilityIncreases))
-            row.BasicCell(increase.ToString("C2"),false, ReportBuilder.PrimaryColor);
+            row.BasicCell(increase.ToString("C2"), false, ReportBuilder.PrimaryColor);
     }
 
     private static void OtherIncome(Table table, UnderwritingAnalysis property)

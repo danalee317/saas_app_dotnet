@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -11,12 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AvantiPoint.MultiFamilyPortal.Themes" Version="1.0.582" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\core\MultiFamilyPortal.CoreUI\MultiFamilyPortal.CoreUI.csproj" />
-    <ProjectReference Include="..\MultiFamilyPortal.Themes\MultiFamilyPortal.Themes.csproj" />
   </ItemGroup>
 
 </Project>

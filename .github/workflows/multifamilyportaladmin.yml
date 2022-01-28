@@ -1,29 +1,22 @@
-name: Build & Deploy
+name: Build & Deploy Admin Portal
 on:
   push:
     branches: [ master ]
-    paths-ignore:
-      - '**/*.md'
-      - 'docs/**'
-      - 'src/saas/**'
-      - '.github/dependabot.yml'
-      - '.github/workflows/multifamilyportal-prod.yml'
+    paths:
       - '.github/workflows/multifamilyportaladmin.yml'
+      - 'src/saas/**'
   pull_request:
     branches: [ master ]
-    paths-ignore:
-      - '**/*.md'
-      - 'docs/**'
-      - 'src/saas/**'
-      - '.github/dependabot.yml'
-      - '.github/workflows/multifamilyportal-prod.yml'
+    paths:
       - '.github/workflows/multifamilyportaladmin.yml'
+      - 'src/saas/**'
 env:
-  AZURE_WEBAPP_PACKAGE_PATH: src\MultiFamilyPortal\publish
+  AZURE_WEBAPP_NAME: multifamilyportaladmin
+  AZURE_WEBAPP_PACKAGE_PATH: src\saas\MultiFamilyPortal.SaaSAdmin\publish
+  AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.multifamilyportaladmin_26d7 }}
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x
-  WORKING_DIRECTORY: src\MultiFamilyPortal
-
+  WORKING_DIRECTORY: src\saas\MultiFamilyPortal.SaaSAdmin
 jobs:
   build:
     runs-on: windows-latest
@@ -63,7 +56,6 @@ jobs:
     - name: Deploy to multifamilyportal
       uses: azure/webapps-deploy@v2
       with:
-        app-name: multifamilyportal
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-        publish-profile: ${{ secrets.multifamilyportal_stage_85ab }}
-        slot-name: stage
+        publish-profile: ${{ env.AZURE_WEBAPP_PUBLISH_PROFILE }}

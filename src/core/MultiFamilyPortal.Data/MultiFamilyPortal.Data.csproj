@@ -11,15 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AvantiPoint.MultiFamilyPortal.Abstractions" Version="1.0.577" />
+    <PackageReference Include="AvantiPoint.MultiFamilyPortal.SaaS" Version="1.0.577" />
     <PackageReference Include="Humanizer.Core" Version="2.13.14" />
     <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="6.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\saas\MultiFamilyPortal.SaaS\MultiFamilyPortal.SaaS.csproj" />
-    <ProjectReference Include="..\MultiFamilyPortal.Abstractions\MultiFamilyPortal.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AvantiPoint.MultiFamilyPortal.SaaS" Version="1.0.577" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.1" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.1" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.1">
@@ -25,7 +26,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\core\MultiFamilyPortal.Data\MultiFamilyPortal.Data.csproj" />
-    <ProjectReference Include="..\MultiFamilyPortal.SaaS\MultiFamilyPortal.SaaS.csproj" />
   </ItemGroup>
 
 </Project>

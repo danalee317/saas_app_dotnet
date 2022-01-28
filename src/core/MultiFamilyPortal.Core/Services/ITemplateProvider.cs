@@ -1,4 +1,5 @@
-﻿using MultiFamilyPortal.Dtos;
+﻿using AvantiPoint.EmailService;
+using MultiFamilyPortal.Dtos;
 
 namespace MultiFamilyPortal.Services
 {

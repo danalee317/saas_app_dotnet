@@ -1,4 +1,6 @@
-﻿namespace MultiFamilyPortal.Configuration
+﻿using AvantiPoint.FileStorage.AzureBlobStorage;
+
+namespace MultiFamilyPortal.Configuration
 {
     internal class SiteConfiguration
     {
@@ -6,6 +8,6 @@
 
         public GoogleCaptchaOptions Captcha { get; set; }
 
-        public StorageConfiguration Storage { get; set; }
+        public AzureBlobStorageOptions Storage { get; set; }
     }
 }

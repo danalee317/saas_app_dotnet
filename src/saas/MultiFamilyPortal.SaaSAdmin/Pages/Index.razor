@@ -96,7 +96,7 @@
 <TelerikWindow Modal=@true
                Centered=@true
                Width="500px"
-               Visible=@(newTenant != null)>
+               Visible=@(_newTenant != null)>
   <WindowActions>
     <WindowAction Name="Close" OnClick=@CloseNewTenant />
   </WindowActions>
@@ -109,13 +109,13 @@
         <label for="Host" class="form-label">Host</label>
       </div>
       <div class="col-9">
-        <TelerikTextBox @bind-Value=@newTenant!.Host Class="form-control" />
+        <TelerikTextBox @bind-Value=@_newTenant!.Host Class="form-control" />
       </div>
       <div class="col-3">
         <label for="Environment" class="form-label">Environment</label>
       </div>
       <div class="col-9">
-        <TelerikDropDownList @bind-Value=@newTenant.Environment Class="form-control"
+        <TelerikDropDownList @bind-Value=@_newTenant.Environment Class="form-control"
                              Data=@_environments />
         @*<TelerikTextBox @bind-Value=@newTenant.Environment Class="form-control" />*@
       </div>
@@ -123,7 +123,7 @@
         <label for="DatabaseName" class="form-label">Database Name</label>
       </div>
       <div class="col-9">
-        <TelerikTextBox @bind-Value=@newTenant.DatabaseName Class="form-control" />
+        <TelerikTextBox @bind-Value=@_newTenant.DatabaseName Class="form-control" />
       </div>
     </div>
     <div class="row p-2">
@@ -137,10 +137,10 @@
   </WindowContent>
 </TelerikWindow>
 
-@if(editTenant != null)
+@if(_editTenant != null)
 {
-  <TenantSettings @bind-Tenant=@editTenant OnTenantUpdated=@UpdateTenants />
+  <TenantSettings @bind-Tenant=@_editTenant OnTenantUpdated=@UpdateTenants />
 }
 
-<TelerikNotification @ref="notification"
+<TelerikNotification @ref="_notification"
                      HorizontalPosition="NotificationHorizontalPosition.Center" />

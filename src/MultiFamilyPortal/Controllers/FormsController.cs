@@ -1,4 +1,5 @@
 ﻿using System.Net.Mail;
+using AvantiPoint.EmailService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,7 @@ namespace MultiFamilyPortal.Controllers
         [HttpPost("contact-us")]
         public async Task<IActionResult> ContactUs([FromBody] ContactFormRequest form)
         {
-            var validatorResponse = await _emailValidator.Validate(form.Email);
+            var validatorResponse = _emailValidator.Validate(form.Email);
 
             if (!validatorResponse.IsValid)
             {
@@ -94,7 +95,7 @@ namespace MultiFamilyPortal.Controllers
         [HttpPost("investor-inquiry")]
         public async Task<IActionResult> InvestorInquiry([FromBody]InvestorInquiryRequest form)
         {
-            var validatorResponse = await _emailValidator.Validate(form.Email);
+            var validatorResponse = _emailValidator.Validate(form.Email);
 
             if (!validatorResponse.IsValid || form.LookingToInvest is null)
             {
@@ -164,7 +165,7 @@ namespace MultiFamilyPortal.Controllers
         [HttpPost("newsletter-subscriber")]
         public async Task<IActionResult> NewsletterSubscriber([FromBody]NewsletterSubscriberRequest form)
         {
-            var validatorResponse = await _emailValidator.Validate(form.Email);
+            var validatorResponse = _emailValidator.Validate(form.Email);
 
             if (!validatorResponse.IsValid)
             {

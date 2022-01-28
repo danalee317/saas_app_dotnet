@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using AvantiPoint.EmailService;
 using MultiFamilyPortal.Dtos;
 
 namespace MultiFamilyPortal.Services
@@ -24,7 +25,7 @@ namespace MultiFamilyPortal.Services
 
         public async Task<FormResult> SubmitContactForm()
         {
-            var validationResponse = await _emailValidationService.Validate(ContactForm.Email);
+            var validationResponse = _emailValidationService.Validate(ContactForm.Email);
             if (!validationResponse.IsValid)
                 return new FormResult
                 {
@@ -45,7 +46,7 @@ namespace MultiFamilyPortal.Services
 
         public async Task<FormResult> SubmitInvestorContactForm()
         {
-            var validationResponse = await _emailValidationService.Validate(InvestorInquiry.Email);
+            var validationResponse = _emailValidationService.Validate(InvestorInquiry.Email);
             if (!validationResponse.IsValid)
                 return new FormResult
                 {
@@ -66,7 +67,7 @@ namespace MultiFamilyPortal.Services
 
         public async Task<FormResult> SubmitSubscriberSignup()
         {
-            var validationResponse = await _emailValidationService.Validate(SignupModel.Email);
+            var validationResponse = _emailValidationService.Validate(SignupModel.Email);
             if (!validationResponse.IsValid)
                 return new FormResult
                 {

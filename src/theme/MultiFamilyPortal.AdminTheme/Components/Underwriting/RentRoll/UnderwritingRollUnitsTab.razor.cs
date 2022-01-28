@@ -17,7 +17,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
         private ClaimsPrincipal _user { get; set; }
 
         private IEnumerable<UnderwritingAnalysisModel> _allFloors = Array.Empty<UnderwritingAnalysisModel>();
-        private ObservableRangeCollection<DisplayUnit> _filteredUnits = new ();
+        private readonly ObservableRangeCollection<DisplayUnit> _filteredUnits = new ();
         private IEnumerable<DisplayUnit> _allUnits;
         private DisplayUnit _unit;
         private string _query;
@@ -76,7 +76,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
             _newUnit = new DisplayUnit(_floor);
         }
 
-        private async Task RemoveUnit(UnderwritingAnalysisUnit unit)
+        private void RemoveUnit(UnderwritingAnalysisUnit unit)
         {
             var model = Property.Models.FirstOrDefault(m => m.Units.Contains(unit));
             model?.Units.Remove(unit);

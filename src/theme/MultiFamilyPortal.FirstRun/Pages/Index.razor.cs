@@ -1,4 +1,5 @@
 using System.Net.Mail;
+using AvantiPoint.EmailService;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +14,8 @@ namespace MultiFamilyPortal.FirstRun.Pages
 {
     public partial class Index
     {
-        private FirstRunSetup Model = new();
-        private bool isBusy;
+        private readonly FirstRunSetup _model = new();
+        private bool _isBusy;
 
         [Inject]
         private IMFPContext _dbContext { get; set; }
@@ -38,28 +39,28 @@ namespace MultiFamilyPortal.FirstRun.Pages
 
         private bool SiteInfoIsValid()
         {
-            return !string.IsNullOrEmpty(Model.SiteTitle) && IsEmail(Model.SenderEmail) && !string.IsNullOrEmpty(Model.SenderEmailName);
+            return !string.IsNullOrEmpty(_model.SiteTitle) && IsEmail(_model.SenderEmail) && !string.IsNullOrEmpty(_model.SenderEmailName);
         }
 
         private bool BusinessEntityIsValid()
         {
             return SiteInfoIsValid() && new[]
             {
-                Model.LegalName,
-                Model.PublicEmail,
-                Model.City,
-                Model.State,
-                Model.PostalCode,
-            }.All(x => !string.IsNullOrEmpty(x)) && IsEmail(Model.PublicEmail);
+                _model.LegalName,
+                _model.PublicEmail,
+                _model.City,
+                _model.State,
+                _model.PostalCode,
+            }.All(x => !string.IsNullOrEmpty(x)) && IsEmail(_model.PublicEmail);
         }
 
         private bool AdminAccountIsValid()
         {
-            var password = Model.UsePassword ? !string.IsNullOrEmpty(Model.Password) && Model.Password.Length > 5 && Model.Password == Model.ConfirmPassword : true;
-            return BusinessEntityIsValid() && IsEmail(Model.AdminUser) && password && !string.IsNullOrEmpty(Model.FirstName) && !string.IsNullOrEmpty(Model.LastName) && !string.IsNullOrEmpty(Model.AdminPhone);
+            var password = !_model.UsePassword || !string.IsNullOrEmpty(_model.Password) && _model.Password.Length > 5 && _model.Password == _model.ConfirmPassword;
+            return BusinessEntityIsValid() && IsEmail(_model.AdminUser) && password && !string.IsNullOrEmpty(_model.FirstName) && !string.IsNullOrEmpty(_model.LastName) && !string.IsNullOrEmpty(_model.AdminPhone);
         }
 
-        private bool IsEmail(string email)
+        private static bool IsEmail(string email)
         {
             if (string.IsNullOrEmpty(email))
                 return false;
@@ -82,7 +83,7 @@ namespace MultiFamilyPortal.FirstRun.Pages
         {
             try
             {
-                isBusy = true;
+                _isBusy = true;
 
                 if (!AdminAccountIsValid())
                     return;
@@ -92,52 +93,52 @@ namespace MultiFamilyPortal.FirstRun.Pages
                     new Setting
                     {
                         Key = PortalSetting.SiteTitle,
-                        Value = Model.SiteTitle
+                        Value = _model.SiteTitle
                     },
                     new Setting
                     {
                         Key = PortalSetting.NotificationEmailFrom,
-                        Value = Model.SenderEmailName
+                        Value = _model.SenderEmailName
                     },
                     new Setting
                     {
                         Key = PortalSetting.NotificationEmail,
-                        Value = Model.SenderEmail
+                        Value = _model.SenderEmail
                     },
                     new Setting
                     {
                         Key = PortalSetting.ContactStreetAddress,
-                        Value = Model.Address
+                        Value = _model.Address
                     },
                     new Setting
                     {
                         Key = PortalSetting.ContactCity,
-                        Value = Model.City
+                        Value = _model.City
                     },
                     new Setting
                     {
                         Key = PortalSetting.ContactState,
-                        Value = Model.State
+                        Value = _model.State
                     },
                     new Setting
                     {
                         Key = PortalSetting.ContactZip,
-                        Value = Model.PostalCode
+                        Value = _model.PostalCode
                     },
                     new Setting
                     {
                         Key = PortalSetting.ContactStreetAddress,
-                        Value = Model.Address
+                        Value = _model.Address
                     },
                     new Setting
                     {
                         Key = PortalSetting.ContactEmail,
-                        Value = Model.PublicEmail
+                        Value = _model.PublicEmail
                     },
                     new Setting
                     {
                         Key = PortalSetting.ContactPhone,
-                        Value = Model.Phone
+                        Value = _model.Phone
                     }
                 }.Where(x => !string.IsNullOrEmpty(x.Value));
 
@@ -152,12 +153,12 @@ namespace MultiFamilyPortal.FirstRun.Pages
                     await _dbContext.SaveChangesAsync();
                 }
 
-                var user = new SiteUser(Model.AdminUser)
+                var user = new SiteUser(_model.AdminUser)
                 {
-                    FirstName = Model.FirstName,
-                    LastName = Model.LastName,
-                    Email = Model.AdminUser,
-                    PhoneNumber = Model.AdminPhone,
+                    FirstName = _model.FirstName,
+                    LastName = _model.LastName,
+                    Email = _model.AdminUser,
+                    PhoneNumber = _model.AdminPhone,
                     EmailConfirmed = true,
                     PhoneNumberConfirmed = true,
                     Title = "Site Owner",
@@ -165,9 +166,9 @@ namespace MultiFamilyPortal.FirstRun.Pages
                 };
 
                 IdentityResult result = null;
-                if (Model.UsePassword)
+                if (_model.UsePassword)
                 {
-                    result = await _userManager.CreateAsync(user, Model.Password);
+                    result = await _userManager.CreateAsync(user, _model.Password);
                 }
                 else
                 {
@@ -221,7 +222,7 @@ namespace MultiFamilyPortal.FirstRun.Pages
             }
             finally
             {
-                isBusy = false;
+                _isBusy = false;
             }
         }
     }

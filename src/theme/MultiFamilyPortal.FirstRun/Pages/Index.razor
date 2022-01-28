@@ -19,7 +19,7 @@
             <div class="row py-4 px-2">
               <label for="SiteTitle" class="col-sm-2 col-form-label">Site Title</label>
               <div class="col-sm-10">
-                <TelerikTextBox @bind-Value=@Model.SiteTitle
+                <TelerikTextBox @bind-Value=@_model.SiteTitle
                                 Class="full-width"
                                 PlaceHolder="Site Title" />
               </div>
@@ -27,12 +27,12 @@
             <div class="row pb-5 px-2">
               <label for="Email" class="col-sm-2 col-form-label">Sender Email</label>
               <div class="col-sm-5">
-                <TelerikTextBox @bind-Value=@Model.SenderEmailName
+                <TelerikTextBox @bind-Value=@_model.SenderEmailName
                                 Class="full-width"
                                 PlaceHolder="Display Name" />
               </div>
               <div class="col-sm-5">
-                <TelerikTextBox @bind-Value=@Model.SenderEmail
+                <TelerikTextBox @bind-Value=@_model.SenderEmail
                                 Class="full-width"
                                 PlaceHolder="no-reply@website.com" />
               </div>
@@ -44,7 +44,7 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon3">https://facebook.com/</span>
                   </div>
-                  <TelerikTextBox @bind-Value=@Model.Facebook Class="form-control" />
+                  <TelerikTextBox @bind-Value=@_model.Facebook Class="form-control" />
                 </div>
               </div>
               <div class="col-md-6">
@@ -52,7 +52,7 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon3">https://twitter.com/</span>
                   </div>
-                  <TelerikTextBox @bind-Value=@Model.Twitter Class="form-control" />
+                  <TelerikTextBox @bind-Value=@_model.Twitter Class="form-control" />
                 </div>
               </div>
               <div class="col-md-6">
@@ -60,7 +60,7 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon3">https://linkedin.com/in/</span>
                   </div>
-                  <TelerikTextBox @bind-Value=@Model.LinkedIn Class="form-control" />
+                  <TelerikTextBox @bind-Value=@_model.LinkedIn Class="form-control" />
                 </div>
               </div>
               <div class="col-md-6">
@@ -68,7 +68,7 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text" id="basic-addon3">https://instagram.com/</span>
                   </div>
-                  <TelerikTextBox @bind-Value=@Model.Instagram Class="form-control" />
+                  <TelerikTextBox @bind-Value=@_model.Instagram Class="form-control" />
                 </div>
               </div>
             </div>
@@ -81,19 +81,19 @@
             <div class="row g-3 mt-1">
               <label for="LegalName" class="col-sm-2 col-form-label">Legal Business Name</label>
               <div class="col-sm-10">
-                <TelerikTextBox @bind-Value=@Model.LegalName
+                <TelerikTextBox @bind-Value=@_model.LegalName
                                 Class="full-width"
                                 PlaceHolder="Legal Business Name" />
               </div>
               <label for="PublicEmail" class="col-sm-2 col-form-label">Public Email</label>
               <div class="col-sm-10">
-                <TelerikTextBox @bind-Value=@Model.PublicEmail
+                <TelerikTextBox @bind-Value=@_model.PublicEmail
                                 Class="full-width"
                                 PlaceHolder="hello@website.com" />
               </div>
               <label for="LegalName" class="col-sm-2 col-form-label">Phone</label>
               <div class="col-sm-10">
-                <TelerikMaskedTextBox @bind-Value=@Model.Phone
+                <TelerikMaskedTextBox @bind-Value=@_model.Phone
                                       Class="full-width"
                                       Mask="(000) 000-0000" />
               </div>
@@ -101,7 +101,7 @@
             <div class="row g-3 mt-1 mb-3">
               <label for="address" class="col-sm-2 col-form-label">Address</label>
               <div class="col-sm-10">
-                <TelerikTextBox @bind-Value=@Model.Address
+                <TelerikTextBox @bind-Value=@_model.Address
                                 Class="full-width"
                                 PlaceHolder="Address" />
               </div>
@@ -109,17 +109,17 @@
             <div class="row g-3">
               <div class="col-sm-2"></div>
               <div class="col-sm-5">
-                <TelerikTextBox @bind-Value=@Model.City
+                <TelerikTextBox @bind-Value=@_model.City
                                 Class="full-width"
                                 PlaceHolder="City" />
               </div>
               <div class="col-sm">
-                <TelerikTextBox @bind-Value=@Model.State
+                <TelerikTextBox @bind-Value=@_model.State
                                 Class="full-width"
                                 PlaceHolder="State" />
               </div>
               <div class="col-sm">
-                <TelerikTextBox @bind-Value=@Model.PostalCode
+                <TelerikTextBox @bind-Value=@_model.PostalCode
                                 Class="full-width"
                                 PlaceHolder="Zip" />
               </div>
@@ -134,25 +134,25 @@
             <div class="row gt-3 py-3 px-3">
               <label for="FirstName" class="col-sm-2 col-form-label">First Name</label>
               <div class="col-sm-4">
-                <TelerikTextBox @bind-Value=@Model.FirstName
+                <TelerikTextBox @bind-Value=@_model.FirstName
                                 Class="full-width"
                                 PlaceHolder="First Name" />
               </div>
               <label for="LastName" class="col-sm-2 col-form-label">Last Name</label>
               <div class="col-sm-4">
-                <TelerikTextBox @bind-Value=@Model.LastName
+                <TelerikTextBox @bind-Value=@_model.LastName
                                 Class="full-width"
                                 PlaceHolder="Last Name" />
               </div>
               <label for="Phone" class="col-sm-2 col-form-label">Phone</label>
               <div class="col-sm-4">
-                <TelerikMaskedTextBox @bind-Value=@Model.AdminPhone
+                <TelerikMaskedTextBox @bind-Value=@_model.AdminPhone
                                       Mask="(000) 000-0000"
                                       Class="full-width" />
               </div>
               <label for="PublicEmail" class="col-sm-2 col-form-label">Email</label>
               <div class="col-sm-4">
-                <TelerikTextBox @bind-Value=@Model.AdminUser
+                <TelerikTextBox @bind-Value=@_model.AdminUser
                                 Class="full-width"
                                 PlaceHolder="user@website.com" />
               </div>
@@ -164,19 +164,19 @@
               <div class="col-12">
                 <TelerikSwitch OffLabel="No"
                                OnLabel="Yes"
-                               @bind-Value=@Model.UsePassword />
+                               @bind-Value=@_model.UsePassword />
               </div>
-              @if(Model.UsePassword)
+              @if(_model.UsePassword)
               {
                 <label for="Password" class="col-sm-2 col-form-label">Password</label>
                 <div class="col-sm-10">
-                  <TelerikTextBox @bind-Value=@Model.Password
+                  <TelerikTextBox @bind-Value=@_model.Password
                                   Class="full-width"
                                   Password=@true />
                 </div>
                 <label for="ConfirmPassword" class="col-sm-2 col-form-label">Confirm Password</label>
                 <div class="col-sm-10">
-                  <TelerikTextBox @bind-Value=@Model.ConfirmPassword
+                  <TelerikTextBox @bind-Value=@_model.ConfirmPassword
                                   Class="full-width"
                                   Password=@true />
                 </div>
@@ -191,7 +191,7 @@
 
 <PortalNotification @ref="notification" />
 
-<TelerikWindow @bind-Visible=@isBusy
+<TelerikWindow @bind-Visible=@_isBusy
                Modal=@true
                Width="300px"
                Height="300px">

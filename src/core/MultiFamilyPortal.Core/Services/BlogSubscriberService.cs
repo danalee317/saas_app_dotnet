@@ -1,4 +1,5 @@
 ﻿using System.Net.Mail;
+using AvantiPoint.EmailService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.Data;

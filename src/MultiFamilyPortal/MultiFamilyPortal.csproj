@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\core\MultiFamilyPortal.Caching\MultiFamilyPortal.Caching.csproj" />
     <ProjectReference Include="..\core\MultiFamilyPortal.Core\MultiFamilyPortal.Core.csproj" />
     <ProjectReference Include="..\saas\MultiFamilyPortal.SaaS.Authentication\MultiFamilyPortal.SaaS.Authentication.csproj" />
     <ProjectReference Include="..\theme\MultiFamilyPortal.FirstRun\MultiFamilyPortal.FirstRun.csproj" />

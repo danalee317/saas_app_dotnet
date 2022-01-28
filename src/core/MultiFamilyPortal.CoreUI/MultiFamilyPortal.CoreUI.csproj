@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MultiFamilyPortal.Abstractions\MultiFamilyPortal.Abstractions.csproj" />
     <ProjectReference Include="..\MultiFamilyPortal.Core\MultiFamilyPortal.Core.csproj" />
   </ItemGroup>
 

@@ -17,15 +17,15 @@ namespace MultiFamilyPortal.SaaSAdmin.Pages
         private IWebHostEnvironment _hostEnvironment { get; set; } = default!;
 
         private IEnumerable<Tenant> _tenants = default!;
-        private readonly ObservableRangeCollection<Tenant> _filteredTenants = new ObservableRangeCollection<Tenant>();
+        private readonly ObservableRangeCollection<Tenant> _filteredTenants = new ();
 
-        private Tenant? newTenant;
-        private Tenant? editTenant;
-        private TelerikNotification? notification;
+        private Tenant? _newTenant;
+        private Tenant? _editTenant;
+        private TelerikNotification? _notification;
         private bool _loading;
         private string _query = string.Empty;
 
-        private IEnumerable<string> _environments = new[]
+        private readonly IEnumerable<string> _environments = new[]
         {
             "Development",
             "Staging",
@@ -61,7 +61,7 @@ namespace MultiFamilyPortal.SaaSAdmin.Pages
 
         private void OnAddTenantClicked()
         {
-            newTenant = new Tenant
+            _newTenant = new Tenant
             {
                 Environment = _hostEnvironment.EnvironmentName
             };
@@ -69,42 +69,42 @@ namespace MultiFamilyPortal.SaaSAdmin.Pages
 
         private void CloseNewTenant()
         {
-            newTenant = null;
+            _newTenant = null;
         }
 
         private async Task SaveTenant()
         {
-            if (newTenant is null || notification is null)
+            if (_newTenant is null || _notification is null)
                 return;
 
-            if (string.IsNullOrEmpty(newTenant.Host))
+            if (string.IsNullOrEmpty(_newTenant.Host))
             {
                 Warn("You must enter a host name");
                 return;
             }
-            else if(string.IsNullOrEmpty(newTenant.DatabaseName))
+            else if(string.IsNullOrEmpty(_newTenant.DatabaseName))
             {
                 Warn("You must enter a database name");
                 return;
             }
-            else if(string.IsNullOrEmpty(newTenant.Environment))
+            else if(string.IsNullOrEmpty(_newTenant.Environment))
             {
                 Warn("You must enter an environment name");
                 return;
             }
-            else if(await _context.Tenants.AnyAsync(x => x.Host == newTenant.Host))
+            else if(await _context.Tenants.AnyAsync(x => x.Host == _newTenant.Host))
             {
-                Warn($"The host name {newTenant.Host} already exists");
+                Warn($"The host name {_newTenant.Host} already exists");
                 return;
             }
 
-            newTenant.Host = newTenant.Host.ToLower();
-            newTenant.Created = DateTimeOffset.Now;
+            _newTenant.Host = _newTenant.Host.ToLower();
+            _newTenant.Created = DateTimeOffset.Now;
 
-            await _context.Tenants.AddAsync(newTenant);
+            await _context.Tenants.AddAsync(_newTenant);
             await _context.SaveChangesAsync();
 
-            newTenant = null;
+            _newTenant = null;
             await UpdateTenants();
         }
 
@@ -147,16 +147,16 @@ namespace MultiFamilyPortal.SaaSAdmin.Pages
 
         private void Warn(string message)
         {
-            notification?.Show(new NotificationModel
+            _notification?.Show(new NotificationModel
             {
                 Text = message,
-                ThemeColor = ThemeColors.Warning
+                ThemeColor = "warning"
             });
         }
 
         private void OnShowSettings(GridCommandEventArgs args)
         {
-            editTenant = args.Item as Tenant;
+            _editTenant = args.Item as Tenant;
         }
     }
 }

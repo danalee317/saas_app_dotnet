@@ -12,7 +12,6 @@ public static class GenerateAssumptionsBuilder
 {
     public static void GenerateAssumptions(UnderwritingAnalysis property, RadFixedDocument document)
     {
-        var cellPadding = 22;
         var page = document.Pages.AddPage();
         var pageTwo = document.Pages.AddPage();
         var pageThree = document.Pages.AddPage();
@@ -31,6 +30,7 @@ public static class GenerateAssumptionsBuilder
         var pageOneTableWidth = page.Size.Width - 2 * ReportBuilder.PageMargin - 400;
         var pageTwoTableWidth = page.Size.Width / 2 - 2 * ReportBuilder.PageMargin;
         var tableWidth = page.Size.Width / 3 - 60;
+        var cellPadding = 22;
         var blackBorder = new Border(1, ReportBuilder.DarkColor);
 
         ReportBuilder.Header(page, "Assumptions");

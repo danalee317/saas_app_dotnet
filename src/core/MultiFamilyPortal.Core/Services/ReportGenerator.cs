@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.Dtos;
-using MultiFamilyPortal.Dtos.Underwriting;
 using MultiFamilyPortal.Helpers.Reports;
 using Telerik.Windows.Documents.Fixed.FormatProviders.Pdf;
 using Telerik.Windows.Documents.Fixed.FormatProviders.Pdf.Export;

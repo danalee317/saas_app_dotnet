@@ -44,36 +44,36 @@ public static class GenerateIncomeForecastBuilder
         UtilityIncreases(table, property);
         OtherIncome(table, property);
 
-        editor.Position.Translate(size.Width / 2 - table.Measure().Width / 2, 150);
+        editor.Position.Translate(size.Width / 2 - table.Measure().Width / 2, size.Height / 2 - table.Measure().Height / 2);
         editor.DrawTable(table);
     }
 
     #region Income Forecast Rows
     private static void Header(Table table, UnderwritingAnalysis property)
     {
-        ReportBuilder.BasicCell(table.Rows.AddTableRow(), "Income Forecast", ReportBuilder.HeaderColor, true, HorizontalAlignment.Center, 2 + property.HoldYears);
+        table.Rows.AddTableRow().BasicCell("Income Forecast", true, ReportBuilder.HeaderColor, HorizontalAlignment.Center, 2 + property.HoldYears);
     }
 
     private static void Year(Table table, UnderwritingAnalysis property)
     {
         var row = table.Rows.AddTableRow();
-        ReportBuilder.BasicCell(row, "Year", ReportBuilder.WhiteColor, true);
+        row.BasicCell("Year", true);
         foreach (var year in property.IncomeForecast.Select(x => x.Year))
         {
             var currentYear = year == 0 ? "Start Year* : " + property.StartDate.Year : $"{property.StartDate.Year + year}";
-            ReportBuilder.BasicCell(row, currentYear.ToString(), ReportBuilder.WhiteColor, true);
+            row.BasicCell(currentYear.ToString(), true);
         }
     }
 
     private static void PerUnitIncrease(Table table, UnderwritingAnalysis property)
     {
         var row = table.Rows.AddTableRow();
-        ReportBuilder.BasicCell(row, "Per Unit Increase", ReportBuilder.WhiteColor);
+        row.BasicCell("Per Unit Increase");
         int i = 0;
         foreach (var increase in property.IncomeForecast.Select(x => x.PerUnitIncrease))
         {
             var format = property.IncomeForecast.ToList()[i].IncreaseType == IncomeForecastIncreaseType.Percent ? "P2" : "C2";
-            ReportBuilder.BasicCell(row, increase.ToString(format), ReportBuilder.WhiteColor);
+            row.BasicCell(increase.ToString(format));
             i++;
         }
     }
@@ -81,49 +81,49 @@ public static class GenerateIncomeForecastBuilder
     private static void UnitsAppliedTo(Table table, UnderwritingAnalysis property)
     {
         var row = table.Rows.AddTableRow();
-        ReportBuilder.BasicCell(row, "Units Applied To", ReportBuilder.WhiteColor);
+        row.BasicCell("Units Applied To");
         foreach (var units in property.IncomeForecast.Select(x => x.UnitsAppliedTo))
-            ReportBuilder.BasicCell(row, units.ToString(), ReportBuilder.PrimaryColor);
+            row.BasicCell(units.ToString(),false, ReportBuilder.PrimaryColor);
     }
 
     private static void RemainingUnits(Table table, UnderwritingAnalysis property)
     {
         var row = table.Rows.AddTableRow();
-        ReportBuilder.BasicCell(row, "Increase on Remaining Units",ReportBuilder.WhiteColor);
+        row.BasicCell("Increase on Remaining Units");
         foreach (var increase in property.IncomeForecast.Select(x => x.FixedIncreaseOnRemainingUnits))
-            ReportBuilder.BasicCell(row, increase.ToString("C2"), ReportBuilder.WhiteColor);
+            row.BasicCell(increase.ToString("C2"));
     }
 
     private static void Vacancy(Table table, UnderwritingAnalysis property)
     {
         var row = table.Rows.AddTableRow();
-        ReportBuilder.BasicCell(row, "Vacancy", ReportBuilder.WhiteColor);
+        row.BasicCell("Vacancy");
         foreach (var vacancy in property.IncomeForecast.Select(x => x.Vacancy))
-            ReportBuilder.BasicCell(row, vacancy.ToString("P2"), ReportBuilder.PrimaryColor);
+            row.BasicCell(vacancy.ToString("P2"),false, ReportBuilder.PrimaryColor);
     }
 
     private static void OtherLosses(Table table, UnderwritingAnalysis property)
     {
         var row = table.Rows.AddTableRow();
-        ReportBuilder.BasicCell(row, "Other Losses", ReportBuilder.WhiteColor);
+        row.BasicCell("Other Losses");
         foreach (var loss in property.IncomeForecast.Select(x => x.OtherLossesPercent))
-            ReportBuilder.BasicCell(row, loss.ToString("P2"), ReportBuilder.WhiteColor);
+            row.BasicCell(loss.ToString("P2"));
     }
 
     private static void UtilityIncreases(Table table, UnderwritingAnalysis property)
     {
         var row = table.Rows.AddTableRow();
-        ReportBuilder.BasicCell(row, "Utility Increases", ReportBuilder.WhiteColor);
+        row.BasicCell("Utility Increases");
         foreach (var increase in property.IncomeForecast.Select(x => x.UtilityIncreases))
-            ReportBuilder.BasicCell(row, increase.ToString("C2"), ReportBuilder.PrimaryColor);
+            row.BasicCell(increase.ToString("C2"),false, ReportBuilder.PrimaryColor);
     }
 
     private static void OtherIncome(Table table, UnderwritingAnalysis property)
     {
         var row = table.Rows.AddTableRow();
-        ReportBuilder.BasicCell(row, "Other Income", ReportBuilder.WhiteColor);
+        row.BasicCell("Other Income");
         foreach (var income in property.IncomeForecast.Select(x => x.OtherIncomePercent))
-            ReportBuilder.BasicCell(row, income.ToString("P2"), ReportBuilder.WhiteColor);
+            row.BasicCell(income.ToString("P2"));
     }
     # endregion
 }

@@ -57,10 +57,10 @@ public static class ReportBuilder
 
     }
 
-    public static void BasicCell(TableRow row, string value, RgbColor color, bool isBold = false, HorizontalAlignment alignment = HorizontalAlignment.Right, int ColumnSpan = 1)
+    public static void BasicCell(this TableRow row, string value, bool isBold = false, RgbColor color = null, HorizontalAlignment alignment = HorizontalAlignment.Right, int ColumnSpan = 1)
     {
         var cell = row.Cells.AddTableCell();
-        cell.Background = color;
+        cell.Background = color is null ? WhiteColor : color;
         cell.ColumnSpan = ColumnSpan;
         var block = new Block
         {

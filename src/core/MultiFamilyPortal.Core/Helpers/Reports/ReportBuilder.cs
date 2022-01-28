@@ -29,7 +29,7 @@ public static class ReportBuilder
     {
         var header = page.Content.AddTextFragment();
         header.Text = title;
-        header.Position.Translate(page.Size.Width / 2 - title.Length * 6, PageMargin * 2);
+        header.Position.Translate(page.Size.Width / 2 - title.Length * 6, PageMargin + PageMargin/2);
         header.FontSize = HeaderSize;
     }
 

@@ -13,24 +13,13 @@ public static class GenerateAssumptionsBuilder
     public static void GenerateAssumptions(UnderwritingAnalysis property, RadFixedDocument document)
     {
         var page = document.Pages.AddPage();
-        var pageTwo = document.Pages.AddPage();
-        var pageThree = document.Pages.AddPage();
-        var pageFour = document.Pages.AddPage();
-
         var editor = new FixedContentEditor(page);
-        var editorTwo = new FixedContentEditor(pageTwo);
-        var editorThree = new FixedContentEditor(pageThree);
-        var editorFour = new FixedContentEditor(pageFour);
-
         page.Size = ReportBuilder.LetterSizeHorizontal;
-        pageTwo.Size = page.Size;
-        pageThree.Size = page.Size;
-        pageFour.Size = page.Size;
 
-        var pageOneTableWidth = page.Size.Width - 2 * ReportBuilder.PageMargin - 400;
+        var pageOneTableWidth =195;
         var pageTwoTableWidth = page.Size.Width / 2 - 2 * ReportBuilder.PageMargin;
         var tableWidth = page.Size.Width / 3 - 60;
-        var cellPadding = 22;
+        var cellPadding = 3;
         var blackBorder = new Border(1, ReportBuilder.DarkColor);
 
         ReportBuilder.Header(page, "Assumptions");
@@ -38,17 +27,13 @@ public static class GenerateAssumptionsBuilder
         CriteriaTable(page, editor, property, blackBorder, pageOneTableWidth, cellPadding);
         DistributionTable(page, editor, property, blackBorder, pageOneTableWidth, cellPadding);
         ReversionTable(page, editor, property, blackBorder, pageOneTableWidth, cellPadding);
-        EquityTable(pageTwo, editorTwo, property, blackBorder, pageTwoTableWidth, cellPadding - 5);
-        CashFlowTable(pageTwo, editorTwo, property, blackBorder, pageTwoTableWidth, cellPadding - 5);
-        PrimaryTable(pageThree, editorThree, property, blackBorder, tableWidth, cellPadding - 8);
-        SupplementalTable(pageThree, editorThree, property, blackBorder, tableWidth, cellPadding - 8);
-        RefinanceTable(pageThree, editorThree, property, blackBorder, tableWidth, cellPadding - 8);
-        CapitalImprovementsTable(pageFour, editorFour, property, blackBorder, tableWidth, cellPadding);
+        EquityTable(page,editor, property, blackBorder, pageTwoTableWidth, cellPadding );
+        CashFlowTable(page, editor, property, blackBorder, pageTwoTableWidth, cellPadding );
+        PrimaryTable(page, editor, property, blackBorder, tableWidth, cellPadding);
+        SupplementalTable(page, editor, property, blackBorder, tableWidth, cellPadding);
+        RefinanceTable(page, editor, property, blackBorder, tableWidth, cellPadding);
 
         ReportBuilder.Footer(page, property.Name);
-        ReportBuilder.Footer(pageTwo, property.Name);
-        ReportBuilder.Footer(pageThree, property.Name);
-        ReportBuilder.Footer(pageFour, property.Name);
     }
 
     private static void CriteriaTable(RadFixedPage page,
@@ -74,7 +59,7 @@ public static class GenerateAssumptionsBuilder
         data.BasicCell("Hold Period", false);
         data.BasicCell(property.HoldYears.ToString(), false);
 
-        editor.Position.Translate(page.Size.Width / 2 - width / 2, 150);
+        editor.Position.Translate(ReportBuilder.PageMargin+page.Size.Width/2 -width + 10, 120);
         editor.DrawTable(table, new Size(width, double.PositiveInfinity));
     }
 
@@ -104,7 +89,7 @@ public static class GenerateAssumptionsBuilder
         investorEquity.BasicCell("Investor Equity", false, ReportBuilder.PrimaryColor);
         investorEquity.BasicCell((1 - property.OurEquityOfCF).ToString("P2"), false, ReportBuilder.PrimaryColor);
 
-        editor.Position.Translate(page.Size.Width / 2 - width / 2, 300);
+        editor.Position.Translate(page.Size.Width/2 - width/2 +170, 120);
         editor.DrawTable(table, new Size(width, double.PositiveInfinity));
     }
 
@@ -138,7 +123,7 @@ public static class GenerateAssumptionsBuilder
         reversionTransferTax.BasicCell("Transfer Tax", false);
         reversionTransferTax.BasicCell(" - ", false); // TODO : Add Transfer Tax
 
-        editor.Position.Translate(page.Size.Width / 2 - width / 2, 500);
+        editor.Position.Translate(page.Size.Width - width - ReportBuilder.PageMargin, 120);
         editor.DrawTable(table, new Size(width, double.PositiveInfinity));
     }
 
@@ -203,9 +188,8 @@ public static class GenerateAssumptionsBuilder
         totalEquityAcqusitionCosts.BasicCell("Total Acqusition Costs", true);
         totalEquityAcqusitionCosts.BasicCell(asr.TotalEquity.ToString("C2"), true);
 
-        editor.Position.Translate(ReportBuilder.PageMargin + 5, 150);
-        editor.DrawTable(table, new Size(width + 20, double.PositiveInfinity));
-
+        editor.Position.Translate(ReportBuilder.PageMargin, 120);
+        editor.DrawTable(table, new Size(width -100, double.PositiveInfinity));
     }
 
     private static void CashFlowTable(RadFixedPage page,
@@ -252,8 +236,8 @@ public static class GenerateAssumptionsBuilder
         capitalReserveAdustment.BasicCell("Annual Additional Capital Reserve Adjustment", false, ReportBuilder.PrimaryColor);
         capitalReserveAdustment.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Capital Reserve Adjustments
 
-        editor.Position.Translate(page.Size.Width - width - ReportBuilder.PageMargin - 5, 150);
-        editor.DrawTable(table, new Size(width, double.PositiveInfinity));
+        editor.Position.Translate(page.Size.Width - width - ReportBuilder.PageMargin - 180, 230);
+        editor.DrawTable(table, new Size(width+180, double.PositiveInfinity));
     }
 
     private static void PrimaryTable(RadFixedPage page,
@@ -328,7 +312,7 @@ public static class GenerateAssumptionsBuilder
         debtServiceYear.BasicCell("Debt Service / Year", false);
         debtServiceYear.BasicCell(property.Mortgages.Sum(x => x.AnnualDebtService).ToString("C2"), false);
 
-        editor.Position.Translate(ReportBuilder.PageMargin + 5, 150);
+        editor.Position.Translate(ReportBuilder.PageMargin + 5, 400);
         editor.DrawTable(table, new Size(width, double.PositiveInfinity));
     }
 
@@ -403,7 +387,7 @@ public static class GenerateAssumptionsBuilder
         debtServiceYear.BasicCell("Debt Service / Year", false);
         debtServiceYear.BasicCell(" - ", false); // TODO : Add Debt Service / Year Supplemental
 
-        editor.Position.Translate(width + ReportBuilder.PageMargin + 45, 150);
+        editor.Position.Translate(width + ReportBuilder.PageMargin + 45, 400);
         editor.DrawTable(table, new Size(width, double.PositiveInfinity));
     }
 
@@ -478,47 +462,7 @@ public static class GenerateAssumptionsBuilder
         debtServiceYear.BasicCell("Debt Service / Year", false);
         debtServiceYear.BasicCell(" - ", false); // TODO : Add Debt Service / Year Refinance
 
-        editor.Position.Translate(page.Size.Width - width - ReportBuilder.PageMargin - 5, 150);
+        editor.Position.Translate(page.Size.Width - width - ReportBuilder.PageMargin - 5, 400);
         editor.DrawTable(table, new Size(width, double.PositiveInfinity));
     }
-
-    private static void CapitalImprovementsTable(RadFixedPage page,
-                                                 FixedContentEditor editor,
-                                                 UnderwritingAnalysis property,
-                                                 Border border,
-                                                 double width,
-                                                 double padding = 20,
-                                                 double headerSize = 18)
-    {
-        var asr = new AssumptionsReport(property);
-        var table = new Table
-        {
-            DefaultCellProperties = { Padding = new Thickness(padding) },
-            LayoutType = TableLayoutType.FixedWidth,
-        };
-        table.Borders = new TableBorders(border);
-
-        var title = table.Rows.AddTableRow();
-        title.BasicCell("Capital Improvements Breakdown", true, ReportBuilder.HeaderColor, HorizontalAlignment.Left, 2);
-
-        var headers = table.Rows.AddTableRow();
-        headers.BasicCell("Cost", true, ReportBuilder.WhiteColor, HorizontalAlignment.Left);
-        headers.BasicCell("Description", true, ReportBuilder.WhiteColor, HorizontalAlignment.Left);
-
-        var targetindex = 0;
-        foreach (var capitalImprovement in asr.CapitalImprovementsBreakDown)
-        {
-            if (capitalImprovement.Value == 0)
-                continue;
-
-            var row = table.Rows.AddTableRow();
-            row.BasicCell(capitalImprovement.Value.ToString("C"), false, targetindex % 2 == 0 ? ReportBuilder.PrimaryColor : ReportBuilder.WhiteColor, HorizontalAlignment.Left);
-            row.BasicCell(capitalImprovement.Key, false, targetindex % 2 == 0 ? ReportBuilder.PrimaryColor : ReportBuilder.WhiteColor, HorizontalAlignment.Left);
-            targetindex++;
-        }
-
-        editor.Position.Translate(ReportBuilder.PageMargin + 15, 150);
-        editor.DrawTable(table, new Size(page.Size.Width - 2 * ReportBuilder.PageMargin - 30, double.PositiveInfinity));
-    }
-
 }

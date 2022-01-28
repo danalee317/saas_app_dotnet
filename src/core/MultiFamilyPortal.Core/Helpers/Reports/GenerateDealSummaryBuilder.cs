@@ -15,35 +15,30 @@ public static class GenerateDealSummaryBuilder
     public static void GenerateDealSummary(UnderwritingAnalysis property, RadFixedDocument document)
     {
         var page = document.Pages.AddPage();
-        var pageTwo = document.Pages.AddPage();
 
         var editor = new FixedContentEditor(page);
-        var editorTwo = new FixedContentEditor(pageTwo);
-
         page.Size = ReportBuilder.LetterSizeHorizontal;
-        pageTwo.Size = page.Size;
 
         var pageOneTableWidth = page.Size.Width - 2 * ReportBuilder.PageMargin - 400;
         var pageTwoTableWidth = page.Size.Width / 2 - 2 * ReportBuilder.PageMargin;
         var tableWidth = page.Size.Width / 3 - 60;
         var blackBorder = new Border(1, ReportBuilder.DarkColor);
-        var cellPadding = 22;
+        var cellPadding = 5;
 
         ReportBuilder.Header(page, "Deal Summary");
 
         BasicAssumptionsTable(editor, blackBorder, property, cellPadding);
-        ProjectedPerformanceTable(editor, blackBorder, property, page.Size.Width * 1 / 2, cellPadding - 2);
-        CashFlowsTable(editorTwo, blackBorder, property, cellPadding - 7);
+        ProjectedPerformanceTable(editor, blackBorder, property, page.Size.Width * 1 / 2, cellPadding);
+        CashFlowsTable(editor, blackBorder, property, cellPadding);
 
         ReportBuilder.Footer(page, property.Name);
-        ReportBuilder.Footer(pageTwo, property.Name);
     }
 
     private static void BasicAssumptionsTable(FixedContentEditor editor, Border border, UnderwritingAnalysis property, double padding = 22)
     {
         var table = new Table
         {
-            DefaultCellProperties = { Padding = new Thickness(padding) },
+            DefaultCellProperties = { Padding = new Thickness(padding, padding + 16, padding, padding + 16) },
             LayoutType = TableLayoutType.FixedWidth,
             Borders = new TableBorders(border)
         };
@@ -53,8 +48,8 @@ public static class GenerateDealSummaryBuilder
         DesiredYieldRow(table, property);
         HoldYearsRow(table, property);
 
-        editor.Position.Translate(ReportBuilder.PageMargin + 5, 150);
-        editor.DrawTable(table);
+        editor.Position.Translate(ReportBuilder.PageMargin, 120);
+        editor.DrawTable(table, new Size(240, double.PositiveInfinity));
     }
 
     private static void ProjectedPerformanceTable(FixedContentEditor editor, Border border, UnderwritingAnalysis property, double widthStart, double padding = 22)
@@ -62,7 +57,7 @@ public static class GenerateDealSummaryBuilder
         var projectedPerformanceTable = new Table
         {
             DefaultCellProperties = { Padding = new Thickness(padding) },
-            LayoutType = TableLayoutType.AutoFit,
+            LayoutType = TableLayoutType.FixedWidth,
             Borders = new TableBorders(border)
         };
 
@@ -76,8 +71,8 @@ public static class GenerateDealSummaryBuilder
         ProjectedPerformanceActualPDSCR(projectedPerformanceTable, property);
         ProjectedPerformancePCoC(projectedPerformanceTable, property);
 
-        editor.Position.Translate(widthStart - 150, 150);
-        editor.DrawTable(projectedPerformanceTable);
+        editor.Position.Translate(300, 120);
+        editor.DrawTable(projectedPerformanceTable, new Size(ReportBuilder.LetterSizeHorizontal.Width - 300 - ReportBuilder.PageMargin, double.PositiveInfinity));
     }
 
     private static void CashFlowsTable(FixedContentEditor editor, Border border, UnderwritingAnalysis property, double padding = 22)
@@ -92,7 +87,7 @@ public static class GenerateDealSummaryBuilder
         var table = new Table
         {
             DefaultCellProperties = { Padding = new Thickness(padding) },
-            LayoutType = TableLayoutType.AutoFit,
+            LayoutType = TableLayoutType.FixedWidth,
             Borders = new TableBorders(border)
         };
 
@@ -111,8 +106,8 @@ public static class GenerateDealSummaryBuilder
         AnnualDebtService(table, lineBorder, property, scheduledRentYear0, scheduledRentYear1, numberOfUnits);
         CashFlowBeforeTaxes(table, lineBorder, property, scheduledRentYear0, scheduledRentYear1, numberOfUnits);
 
-        editor.Position.Translate(ReportBuilder.LetterSizeHorizontal.Width / 2 - table.Measure().Width / 2, ReportBuilder.LetterSizeHorizontal.Height / 2 - table.Measure().Height / 2);
-        editor.DrawTable(table);
+        editor.Position.Translate(ReportBuilder.PageMargin, 380);
+        editor.DrawTable(table, new Size(ReportBuilder.LetterSizeHorizontal.Width - 2 * ReportBuilder.PageMargin, double.PositiveInfinity));
     }
 
     #region Basic Assumptions Rows
@@ -234,7 +229,7 @@ public static class GenerateDealSummaryBuilder
         row.BasicCell("Stated In Place", true, ReportBuilder.SecondaryColor);
         row.BasicCell("Per Unit", true, ReportBuilder.SecondaryColor);
         row.BasicCell("% of ASR", true, ReportBuilder.SecondaryColor);
-      
+
         var cashFlowHeaderSevenTitle = row.Cells.AddTableCell();
         cashFlowHeaderSevenTitle.Borders = lineBorder;
         cashFlowHeaderSevenTitle.Background = ReportBuilder.TertiaryColor;
@@ -257,7 +252,7 @@ public static class GenerateDealSummaryBuilder
         row.BasicCell(scheduledRentYear0.ToString("C2"), true, ReportBuilder.PrimaryColor);
         row.BasicCell((scheduledRentYear0 / numberOfUnits).ToString("C2"), true, ReportBuilder.PrimaryColor);
         row.BasicCell((scheduledRentYear0 / scheduledRentYear0).ToString("P2"), true, ReportBuilder.PrimaryColor);
-   
+
         var rentYear1 = row.Cells.AddTableCell();
         rentYear1.Borders = lineBorder;
         rentYear1.Background = ReportBuilder.PrimaryColor;
@@ -280,7 +275,7 @@ public static class GenerateDealSummaryBuilder
         row.BasicCell(property.Projections.Select(x => x.Vacancy).FirstOrDefault().ToString("C2"));
         row.BasicCell((property.Projections.Select(x => x.Vacancy).FirstOrDefault() / numberOfUnits).ToString("C2"));
         row.BasicCell((property.Projections.Select(x => x.Vacancy).FirstOrDefault() / scheduledRentYear0).ToString("P2"));
-        
+
         var vacancyYear1 = row.Cells.AddTableCell();
         vacancyYear1.Borders = lineBorder;
         var vacancyYear1Block = new Block
@@ -301,7 +296,7 @@ public static class GenerateDealSummaryBuilder
         row.BasicCell(property.Projections.Select(x => x.ConcessionsNonPayment).FirstOrDefault().ToString("C2"), false, ReportBuilder.PrimaryColor);
         row.BasicCell((property.Projections.Select(x => x.ConcessionsNonPayment).FirstOrDefault() / numberOfUnits).ToString("C2"), false, ReportBuilder.PrimaryColor);
         row.BasicCell((property.Projections.Select(x => x.ConcessionsNonPayment).FirstOrDefault() / scheduledRentYear0).ToString("P2"), false, ReportBuilder.PrimaryColor);
-  
+
         var otherLossesYear1 = row.Cells.AddTableCell();
         otherLossesYear1.Borders = lineBorder;
         otherLossesYear1.Background = ReportBuilder.PrimaryColor;
@@ -343,7 +338,7 @@ public static class GenerateDealSummaryBuilder
         row.BasicCell(property.Projections.Select(x => x.OtherIncome).FirstOrDefault().ToString("C2"), false, ReportBuilder.PrimaryColor);
         row.BasicCell((property.Projections.Select(x => x.OtherIncome).FirstOrDefault() / numberOfUnits).ToString("C2"), false, ReportBuilder.PrimaryColor);
         row.BasicCell((property.Projections.Select(x => x.OtherIncome).FirstOrDefault() / scheduledRentYear0).ToString("P2"), false, ReportBuilder.PrimaryColor);
- 
+
         var otherIncomeYear1 = row.Cells.AddTableCell();
         otherIncomeYear1.Borders = lineBorder;
         otherIncomeYear1.Background = ReportBuilder.PrimaryColor;
@@ -387,7 +382,7 @@ public static class GenerateDealSummaryBuilder
         row.BasicCell(property.Projections.Select(x => x.OperatingExpenses).FirstOrDefault().ToString("C2"), false, ReportBuilder.PrimaryColor);
         row.BasicCell((property.Projections.Select(x => x.OperatingExpenses).FirstOrDefault() / numberOfUnits).ToString("C2"), false, ReportBuilder.PrimaryColor);
         row.BasicCell((property.Projections.Select(x => x.OperatingExpenses).FirstOrDefault() / scheduledRentYear0).ToString("P2"), false, ReportBuilder.PrimaryColor);
-        
+
         var operatingExpensesYear1 = row.Cells.AddTableCell();
         operatingExpensesYear1.Borders = lineBorder;
         operatingExpensesYear1.Background = ReportBuilder.PrimaryColor;
@@ -409,7 +404,7 @@ public static class GenerateDealSummaryBuilder
         row.BasicCell(property.Projections.Select(x => x.NetOperatingIncome).FirstOrDefault().ToString("C2"), true);
         row.BasicCell((property.Projections.Select(x => x.NetOperatingIncome).FirstOrDefault() / numberOfUnits).ToString("C2"), true);
         row.BasicCell((property.Projections.Select(x => x.NetOperatingIncome).FirstOrDefault() / scheduledRentYear0).ToString("P2"), true);
-        
+
         var noiYear1 = row.Cells.AddTableCell();
         noiYear1.Borders = lineBorder;
         var noiYear1Block = new Block
@@ -431,7 +426,7 @@ public static class GenerateDealSummaryBuilder
         row.BasicCell(property.Projections.Select(x => x.CapitalReserves).FirstOrDefault().ToString("C2"), false, ReportBuilder.PrimaryColor);
         row.BasicCell((property.Projections.Select(x => x.CapitalReserves).FirstOrDefault() / numberOfUnits).ToString("C2"), false, ReportBuilder.PrimaryColor);
         row.BasicCell((property.Projections.Select(x => x.CapitalReserves).FirstOrDefault() / scheduledRentYear0).ToString("P2"), false, ReportBuilder.PrimaryColor);
-        
+
         var captialReservesYear1 = row.Cells.AddTableCell();
         captialReservesYear1.Borders = lineBorder;
         captialReservesYear1.Background = ReportBuilder.PrimaryColor;

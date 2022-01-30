@@ -13,7 +13,7 @@ public static class GenerateCashFlowBuilder
     {
         var projections = property.Projections;
 
-        var cellPadding = 5;
+        var cellPadding = 5.3;
         var blackBorder = new Border(1, ReportBuilder.DarkColor);
         var page = document.Pages.AddPage();
         page.Size = ReportBuilder.LetterSizeHorizontal;
@@ -22,7 +22,7 @@ public static class GenerateCashFlowBuilder
 
         ReportBuilder.Header(page, "Cash Flow");
         IncomeTable(page, editor, projections, blackBorder, cellPadding);
-        ExpensesTable(page, editor, projections, blackBorder, cellPadding + 5);
+        ExpensesTable(page, editor, projections, blackBorder, cellPadding);
         NetTable(page, editor, projections, blackBorder, cellPadding);
         ReportBuilder.Footer(page, property.Name);
 
@@ -52,8 +52,11 @@ public static class GenerateCashFlowBuilder
         tableTitle.FontSize = headerSize;
         tableTitle.Text = "Income";
         tableTitle.Position.Translate(page.Size.Width / 2 - 25, 120);
+       
         var startPoint = isSecondary ? 6 : 1;
         var breakPoint = 4;
+        var holdYears = projections.Count() - 1;
+        var missingYears = isSecondary ? 10 - holdYears : 5 - holdYears;
 
         var table = new Table
         {
@@ -63,15 +66,22 @@ public static class GenerateCashFlowBuilder
         table.Borders = new TableBorders(border);
 
         var incomeHeader = table.Rows.AddTableRow();
+        var years = projections.Select(x => x.Year);
         incomeHeader.BasicCell("For the Years Ending", true);
         incomeHeader.BasicCell("Stated in Place", true, ReportBuilder.HeaderColor);
         var targetIndex = 0;
-        foreach (var year in projections.Skip(startPoint).Select(x => x.Year))
+        foreach (var year in years.Skip(startPoint))
         {
             incomeHeader.BasicCell(year.ToString(), true, ReportBuilder.HeaderColor);
             if (!isSecondary && targetIndex == breakPoint)
                 break;
             targetIndex++;
+        }
+
+        if (missingYears > 0)
+        {
+            for (var i = 1; i <= missingYears; i++)
+                incomeHeader.BasicCell((years.LastOrDefault() + i).ToString(), true, ReportBuilder.HeaderColor);
         }
 
         var actualScheduledRent = table.Rows.AddTableRow();
@@ -87,6 +97,12 @@ public static class GenerateCashFlowBuilder
             targetIndex++;
         }
 
+        if (missingYears > 0)
+        {
+            for (var i = 1; i <= missingYears; i++)
+                actualScheduledRent.BasicCell("", false, ReportBuilder.PrimaryColor);
+        }
+
         var lessEffectiveVacancy = table.Rows.AddTableRow();
         var vacancies = projections.Select(x => x.Vacancy);
         lessEffectiveVacancy.BasicCell("Less Effective Vacancy ($)");
@@ -98,6 +114,12 @@ public static class GenerateCashFlowBuilder
             if (!isSecondary && targetIndex == breakPoint)
                 break;
             targetIndex++;
+        }
+
+        if (missingYears > 0)
+        {
+            for (var i = 1; i <= missingYears; i++)
+                lessEffectiveVacancy.BasicCell("");
         }
 
         var effectiveVacancy = table.Rows.AddTableRow();
@@ -117,6 +139,12 @@ public static class GenerateCashFlowBuilder
             targetIndex++;
         }
 
+        if (missingYears > 0)
+        {
+            for (var i = 1; i <= missingYears; i++)
+                effectiveVacancy.BasicCell("", false, ReportBuilder.PrimaryColor);
+        }
+
         var lessOtherLosses = table.Rows.AddTableRow();
         var otherLosses = projections.Select(x => x.ConcessionsNonPayment);
         lessOtherLosses.BasicCell("Less Other Losses");
@@ -128,6 +156,12 @@ public static class GenerateCashFlowBuilder
             if (!isSecondary && targetIndex == breakPoint)
                 break;
             targetIndex++;
+        }
+
+        if (missingYears > 0)
+        {
+            for (var i = 1; i <= missingYears; i++)
+                lessOtherLosses.BasicCell("");
         }
 
         var adjustedIncome = table.Rows.AddTableRow();
@@ -156,6 +190,14 @@ public static class GenerateCashFlowBuilder
             targetIndex++;
         }
 
+        if (missingYears > 0)
+        {
+            for (var i = 1; i <= missingYears; i++)
+            {
+                adjustedIncome.BasicCell("", false, ReportBuilder.PrimaryColor);
+            }
+        }
+
         var utilitiesIncome = table.Rows.AddTableRow();
         var utilitiesIncomes = projections.Select(x => x.UtilityReimbursement);
         utilitiesIncome.BasicCell("plus Utilities Income ($)");
@@ -167,6 +209,12 @@ public static class GenerateCashFlowBuilder
             if (!isSecondary && targetIndex == breakPoint)
                 break;
             targetIndex++;
+        }
+
+        if (missingYears > 0)
+        {
+            for (var i = 1; i <= missingYears; i++)
+                utilitiesIncome.BasicCell("");
         }
 
         var addingOtherIncome = table.Rows.AddTableRow();
@@ -182,6 +230,12 @@ public static class GenerateCashFlowBuilder
             targetIndex++;
         }
 
+        if (missingYears > 0)
+        {
+            for (var i = 1; i <= missingYears; i++)
+                addingOtherIncome.BasicCell("", false, ReportBuilder.PrimaryColor);
+        }
+
         var totalEffectiveIncome = table.Rows.AddTableRow();
         var totalEffectiveIncomes = projections.Select(x => x.EffectiveGrossIncome);
         totalEffectiveIncome.BasicCell("Total Effective Income", true);
@@ -193,6 +247,12 @@ public static class GenerateCashFlowBuilder
             if (!isSecondary && targetIndex == breakPoint)
                 break;
             targetIndex++;
+        }
+
+        if (missingYears > 0)
+        {
+            for (var i = 1; i <= missingYears; i++)
+                totalEffectiveIncome.BasicCell("", true);
         }
 
         editor.Position.Translate(ReportBuilder.PageMargin, 125);
@@ -211,9 +271,12 @@ public static class GenerateCashFlowBuilder
         tableTitle.FontSize = headerSize;
         tableTitle.Text = "Expenses";
         tableTitle.Position.Translate(page.Size.Width / 2 - 30, 395);
+        
         var startPoint = isSecondary ? 6 : 1;
         var breakPoint = 4;
         var targetIndex = 0;
+        var holdYears = projections.Count() - 1;
+        var missingYears = isSecondary ? 10 - holdYears : 5 - holdYears;
 
         var table = new Table
         {
@@ -223,6 +286,7 @@ public static class GenerateCashFlowBuilder
         };
 
         var expensesHeader = table.Rows.AddTableRow();
+        var years = projections.Select(x => x.Year).ToList();
         expensesHeader.BasicCell("For The Years Ending", true);
         expensesHeader.BasicCell("Stated in Place", true, ReportBuilder.HeaderColor);
         foreach (var year in projections.Skip(startPoint).Select(x => x.Year))
@@ -230,8 +294,13 @@ public static class GenerateCashFlowBuilder
             expensesHeader.BasicCell(year.ToString(), true, ReportBuilder.HeaderColor);
             if (!isSecondary && targetIndex == breakPoint)
                 break;
-
             targetIndex++;
+        }
+
+        if (missingYears > 0)
+        {
+            for (var i = 1; i <= missingYears; i++)
+                expensesHeader.BasicCell((years.LastOrDefault() + i).ToString(), true, ReportBuilder.HeaderColor);
         }
 
         var totalOperatingExpenses = table.Rows.AddTableRow();
@@ -245,6 +314,12 @@ public static class GenerateCashFlowBuilder
             if (!isSecondary && targetIndex == breakPoint)
                 break;
             targetIndex++;
+        }
+
+        if (missingYears > 0)
+        {
+            for (var i = 1; i <= missingYears; i++)
+                totalOperatingExpenses.BasicCell("");
         }
 
         editor.Position.Translate(ReportBuilder.PageMargin, 400);
@@ -263,17 +338,20 @@ public static class GenerateCashFlowBuilder
         tableTitle.FontSize = headerSize;
         tableTitle.Text = "Net";
         tableTitle.Position.Translate(page.Size.Width / 2 - 5, 510);
-        var thickness = projections.Count() - 1 > 9 ? new Thickness(0, padding + 5, 0, padding + 5) : new Thickness(padding);
 
+        var thickness = projections.Count() - 1 > 9 ? new Thickness(0, padding + 5, 0, padding + 5) : new Thickness(padding);
+        var targetIndex = 0;
+        var startPoint = isSecondary ? 6 : 1;
+        var breakPoint = 4;
+        var holdYears = projections.Count() - 1;
+        var missingYears = isSecondary ? 10 - holdYears : 5 - holdYears;
         var table = new Table
         {
             DefaultCellProperties = { Padding = thickness },
             Borders = new TableBorders(border),
             LayoutType = TableLayoutType.FixedWidth
         };
-        var targetIndex = 0;
-        var startPoint = isSecondary ? 6 : 1;
-        var breakPoint = 4;
+
 
         var netHeader = table.Rows.AddTableRow();
         netHeader.BasicCell("For The Years Ending", true);
@@ -285,6 +363,12 @@ public static class GenerateCashFlowBuilder
             if (!isSecondary && targetIndex == breakPoint)
                 break;
             targetIndex++;
+        }
+
+        if (missingYears > 0)
+        {
+            for (var i = 1; i <= missingYears; i++)
+                netHeader.BasicCell((projections.LastOrDefault().Year + i).ToString(), true, ReportBuilder.HeaderColor);
         }
 
         var netOperatingIncome = table.Rows.AddTableRow();
@@ -300,6 +384,12 @@ public static class GenerateCashFlowBuilder
             targetIndex++;
         }
 
+        if (missingYears > 0)
+        {
+            for (var i = 1; i <= missingYears; i++)
+                netOperatingIncome.BasicCell("", false, ReportBuilder.PrimaryColor);
+        }
+
         var capitalReserves = table.Rows.AddTableRow();
         var capitalReservouir = projections.Select(x => x.CapitalReserves);
         capitalReserves.BasicCell("Less Capital Reserves");
@@ -311,6 +401,12 @@ public static class GenerateCashFlowBuilder
             if (!isSecondary && targetIndex == breakPoint)
                 break;
             targetIndex++;
+        }
+
+        if (missingYears > 0)
+        {
+            for (var i = 1; i <= missingYears; i++)
+                capitalReserves.BasicCell("");
         }
 
         var cashBeforeDebtService = table.Rows.AddTableRow();
@@ -326,6 +422,12 @@ public static class GenerateCashFlowBuilder
             targetIndex++;
         }
 
+        if (missingYears > 0)
+        {
+            for (var i = 1; i <= missingYears; i++)
+                cashBeforeDebtService.BasicCell("", false, ReportBuilder.PrimaryColor);
+        }
+
         var annualDebtService = table.Rows.AddTableRow();
         var annualDebtServices = projections.Select(x => x.DebtService);
         annualDebtService.BasicCell("Less Annual Debt Service");
@@ -339,6 +441,12 @@ public static class GenerateCashFlowBuilder
             targetIndex++;
         }
 
+        if (missingYears > 0)
+        {
+            for (var i = 1; i <= missingYears; i++)
+                annualDebtService.BasicCell("");
+        }
+
         var cashFlowBeforeTax = table.Rows.AddTableRow();
         var totalCashFlows = projections.Select(x => x.TotalCashFlow);
         cashFlowBeforeTax.BasicCell("Cash Flow Before Taxes");
@@ -350,6 +458,12 @@ public static class GenerateCashFlowBuilder
             if (!isSecondary && targetIndex == breakPoint)
                 break;
             targetIndex++;
+        }
+
+        if (missingYears > 0)
+        {
+            for (var i = 1; i <= missingYears; i++)
+                cashFlowBeforeTax.BasicCell("");
         }
 
         editor.Position.Translate(ReportBuilder.PageMargin, 515);

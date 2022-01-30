@@ -15,24 +15,20 @@ public static class GenerateCapitalExpensesBuilder
 {
     public static void GenerateCapitalExpenses(UnderwritingAnalysis property, RadFixedDocument document)
     {
-        var headerSize = 18;
-        var cellPadding = 25;
+        var cellPadding = 15;
         var page = document.Pages.AddPage();
         page.Rotation = Rotation.Rotate0;
-        page.Size = new Size(792, 1128);
+        page.Size = ReportBuilder.LetterSizeHorizontal;
         var editor = new FixedContentEditor(page);
 
-        var textFragment = page.Content.AddTextFragment();
-        textFragment.Text = "Capital Expenses";
-        textFragment.Position.Translate(page.Size.Width / 2 - 100, 100);
-        textFragment.FontSize = headerSize + 10;
+        ReportBuilder.Header(page, "Capital Expenses");
+
         var blackBorder = new Border(1, new RgbColor(0, 0, 0));
         var tableOneHeight = 0.0d;
 
         SellerTable(page, editor, blackBorder, property, out tableOneHeight, cellPadding);
         PlannedTable(page, document, editor, blackBorder, property, tableOneHeight, cellPadding);
-
-        Conclusion(page, property.Name);
+        ReportBuilder.Footer(page, property.Name);
     }
 
     private static void SellerTable(RadFixedPage page, FixedContentEditor editor, Border border, UnderwritingAnalysis property, out double height, double padding = 22)
@@ -49,8 +45,8 @@ public static class GenerateCapitalExpensesBuilder
         DynamicRow(table, property);
 
         height = table.Measure().Height;
-        editor.Position.Translate(48, 150);
-        editor.DrawTable(table, new Size(page.Size.Width - 96, double.PositiveInfinity));
+        editor.Position.Translate(ReportBuilder.PageMargin, 120);
+        editor.DrawTable(table, new Size(page.Size.Width - 2 * ReportBuilder.PageMargin, double.PositiveInfinity));
     }
 
     private static void PlannedTable(RadFixedPage page, RadFixedDocument document, FixedContentEditor editor, Border border, UnderwritingAnalysis property, double tableHeight, double padding = 22)
@@ -66,22 +62,22 @@ public static class GenerateCapitalExpensesBuilder
         MenuOption(page.Size, table, property, true);
         DynamicRow(table, property, true);
 
-        var height = tableHeight + table.Measure().Height + 350;
+        var height = tableHeight + 200 + 2 * ReportBuilder.PageMargin;
 
         if (height < page.Size.Height)
         {
-            editor.Position.Translate(48, tableHeight + 250);
-            editor.DrawTable(table, new Size(page.Size.Width - 96, double.PositiveInfinity));
+            editor.Position.Translate(ReportBuilder.PageMargin, tableHeight + 150);
+            editor.DrawTable(table, new Size(page.Size.Width - 2 * ReportBuilder.PageMargin, double.PositiveInfinity));
         }
         else
         {
             var pageTwo = document.Pages.AddPage();
             pageTwo.Size = page.Size;
-            var editorTwo = new FixedContentEditor(page);
-            editorTwo.Position.Translate(48, 150);
-            editorTwo.DrawTable(table, new Size(pageTwo.Size.Width - 96, double.PositiveInfinity));
+            var editorTwo = new FixedContentEditor(pageTwo);
+            editorTwo.Position.Translate(ReportBuilder.PageMargin, 120);
+            editorTwo.DrawTable(table, new Size(pageTwo.Size.Width - 2 * ReportBuilder.PageMargin, double.PositiveInfinity));
 
-            Conclusion(page, property.Name);
+            ReportBuilder.Footer(pageTwo, property.Name);
         }
     }
 
@@ -136,12 +132,6 @@ public static class GenerateCapitalExpensesBuilder
         descriptionTitle.Blocks.Add(descriptionTitleBlock);
     }
 
-    private static void Conclusion(RadFixedPage page, string name)
-    {
-        var dateBox = page.Content.AddTextFragment();
-        dateBox.Text = $"{name} - {DateTime.Now:MM/dd/yyyy}";
-        dateBox.Position.Translate(page.Size.Width - 250, page.Size.Height - 100);
-    }
 
     private static void DynamicRow(Table table, UnderwritingAnalysis property, bool isPlanned = false)
     {

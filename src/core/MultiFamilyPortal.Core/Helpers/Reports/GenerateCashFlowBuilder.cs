@@ -13,21 +13,27 @@ public static class GenerateCashFlowBuilder
     {
         var projections = property.Projections;
 
-        var cellPadding = property.HoldYears > 5 ? 14 : 20;
+        var cellPadding = 10;//property.HoldYears > 5 ? 14 : 20;
         var blackBorder = new Border(1, ReportBuilder.DarkColor);
         var page = document.Pages.AddPage();
-        var pageTwo = document.Pages.AddPage();
-        var editorOne = new FixedContentEditor(page);
-        var editorTwo = new FixedContentEditor(pageTwo);
         page.Size = ReportBuilder.LetterSizeHorizontal;
-        pageTwo.Size = page.Size;
+   
+        var editor = new FixedContentEditor(page);
 
         ReportBuilder.Header(page, "Cash Flow");
-        IncomeTable(page, editorOne, projections, blackBorder, cellPadding - 5);
-        ExpensesTable(pageTwo, editorTwo, projections, blackBorder, cellPadding);
-        NetTable(pageTwo, editorTwo, projections, blackBorder, cellPadding);
+        IncomeTable(page, editor, projections, blackBorder, cellPadding-5);
+        ExpensesTable(page, editor, projections, blackBorder, cellPadding);
+        NetTable(page, editor, projections, blackBorder, cellPadding);
         ReportBuilder.Footer(page, property.Name);
+
+/*
+        var pageTwo = document.Pages.AddPage();
+        var editorTwo = new FixedContentEditor(pageTwo);
+       
+        pageTwo.Size = page.Size;
         ReportBuilder.Footer(pageTwo, property.Name);
+        */
+       
     }
 
     private static void IncomeTable(RadFixedPage page,
@@ -40,7 +46,7 @@ public static class GenerateCashFlowBuilder
         var tableTitle = page.Content.AddTextFragment();
         tableTitle.FontSize = headerSize;
         tableTitle.Text = "Income";
-        tableTitle.Position.Translate(page.Size.Width / 2 - 25, 135);
+        tableTitle.Position.Translate(page.Size.Width / 2 - 25, 120);
 
         var table = new Table 
         { 
@@ -115,7 +121,7 @@ public static class GenerateCashFlowBuilder
         foreach (var total in projections.Select(x => x.EffectiveGrossIncome))
             totalEffectiveIncome.BasicCell(total.ToString("C2"), true);
 
-        editor.Position.Translate(ReportBuilder.PageMargin, 150);
+        editor.Position.Translate(ReportBuilder.PageMargin, 125);
         editor.DrawTable(table, new Size(page.Size.Width - 2 * ReportBuilder.PageMargin, table.Measure().Height));
 
     }
@@ -130,7 +136,7 @@ public static class GenerateCashFlowBuilder
         var tableTitle = page.Content.AddTextFragment();
         tableTitle.FontSize = headerSize;
         tableTitle.Text = "Expenses";
-        tableTitle.Position.Translate(page.Size.Width / 2 - 30, 135);
+        tableTitle.Position.Translate(page.Size.Width / 2 - 30, 395);
 
         var table = new Table
         {
@@ -154,7 +160,7 @@ public static class GenerateCashFlowBuilder
         foreach (var expenses in projections.Select(x => x.OperatingExpenses))
             totalOperatingExpenses.BasicCell(expenses.ToString("C2"), false, ReportBuilder.PrimaryColor);
 
-        editor.Position.Translate(ReportBuilder.PageMargin, 150);
+        editor.Position.Translate(ReportBuilder.PageMargin, 400);
         editor.DrawTable(table, new Size(page.Size.Width - 2 * ReportBuilder.PageMargin, table.Measure().Height));
     }
 
@@ -168,7 +174,7 @@ public static class GenerateCashFlowBuilder
         var tableTitle = page.Content.AddTextFragment();
         tableTitle.FontSize = headerSize;
         tableTitle.Text = "Net";
-        tableTitle.Position.Translate(page.Size.Width / 2 - 5, 335);
+        tableTitle.Position.Translate(page.Size.Width / 2 - 5, 510);
         var thickness = projections.Count() - 1 > 9 ? new Thickness(0, padding+5, 0, padding+5) : new Thickness(padding);
 
         var table = new Table
@@ -213,7 +219,7 @@ public static class GenerateCashFlowBuilder
         foreach (var cash in projections.Select(x => x.TotalCashFlow))
             cashFlowBeforeTax.BasicCell(cash.ToString("C2"), true, ReportBuilder.PrimaryColor);
 
-        editor.Position.Translate(ReportBuilder.PageMargin, 350);
+        editor.Position.Translate(ReportBuilder.PageMargin, 515);
         editor.DrawTable(table, new Size(page.Size.Width-2*ReportBuilder.PageMargin, double.PositiveInfinity));
     }
 }

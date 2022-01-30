@@ -44,7 +44,7 @@ public static class GenerateIncomeForecastBuilder
         UtilityIncreases(table, property);
         OtherIncome(table, property);
 
-        editor.Position.Translate(ReportBuilder.PageMargin, size.Height / 2 - table.Measure().Height / 2);
+        editor.Position.Translate(ReportBuilder.PageMargin, 120);
         editor.DrawTable(table, new Size(size.Width - ReportBuilder.PageMargin * 2, table.Measure().Height));
     }
 

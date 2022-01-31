@@ -14,15 +14,8 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Content
 
         protected override async Task OnInitializedAsync()
         {
-            try
-            {
-                var content = await _client.GetFromJsonAsync<IEnumerable<CustomContent>>("/api/admin/content");
-                _content.ReplaceRange(content);
-            }
-            catch (Exception ex)
-            {
-                // TODO: Add Logging
-            }
+            var content = await _client.GetFromJsonAsync<IEnumerable<CustomContent>>("/api/admin/content");
+            _content.ReplaceRange(content);
         }
     }
 }

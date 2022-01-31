@@ -13,9 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AvantiPoint.EmailService.Postmark" Version="3.0.17" />
-    <PackageReference Include="AvantiPoint.FileStorage.AzureBlobStorage" Version="3.0.17" />
-    <PackageReference Include="AvantiPoint.FileStorage.FileSystem" Version="3.0.17" />
+    <PackageReference Include="AvantiPoint.EmailService.Postmark" Version="3.0.21" />
+    <PackageReference Include="AvantiPoint.FileStorage.AzureBlobStorage" Version="3.0.21" />
+    <PackageReference Include="AvantiPoint.FileStorage.FileSystem" Version="3.0.21" />
     <PackageReference Include="AvantiPoint.MultiFamilyPortal.Data" Version="1.0.582" />
     <PackageReference Include="BlazorAnimation" Version="2.1.0" />
     <PackageReference Include="DynamicData" Version="7.4.9" />

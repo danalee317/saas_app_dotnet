@@ -73,7 +73,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
                 if (Status != "All")
                     FilteredProspects.ReplaceRange(Prospects.Where(x => x.Status == (UnderwritingStatus)Enum.Parse(typeof(UnderwritingStatus), Status.Dehumanize())));
                 else
-                    FilteredProspects.ReplaceRange(Prospects);
+                    FilteredProspects.ReplaceRange(Prospects.Where(x => x.Status != UnderwritingStatus.Passed));
             }
             catch (Exception ex)
             {

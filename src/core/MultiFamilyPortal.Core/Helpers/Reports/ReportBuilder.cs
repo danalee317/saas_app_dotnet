@@ -6,14 +6,13 @@ using Telerik.Windows.Documents.Fixed.Model.Editing.Tables;
 using Telerik.Windows.Documents.Fixed.Model.Editing;
 using Telerik.Windows.Documents.Fixed.Model.Fonts;
 using Telerik.Windows.Documents.Fixed.Model;
-using Telerik.Windows.Documents.Media;
 using Telerik.Windows.Documents.Model;
 
 public static class ReportBuilder
 {
     #region Document variables
     public static readonly double HeaderSize = 25;
-    public static readonly double PageMargin = 100;
+    public static readonly double PageMargin = 96 * 0.5;
     public static readonly Size LetterSize = PaperTypeConverter.ToSize(PaperTypes.Letter);
     public static readonly Size LetterSizeHorizontal = new Size(LetterSize.Height, LetterSize.Width);
     public static readonly RgbColor PrimaryColor = new RgbColor(248, 249, 250);
@@ -30,7 +29,7 @@ public static class ReportBuilder
     {
         var header = page.Content.AddTextFragment();
         header.Text = title;
-        header.Position.Translate(page.Size.Width / 2 - PageMargin, PageMargin);
+        header.Position.Translate(page.Size.Width / 2 - title.Length * 6, PageMargin + PageMargin / 2);
         header.FontSize = HeaderSize;
     }
 
@@ -38,10 +37,10 @@ public static class ReportBuilder
     {
         var footer = page.Content.AddTextFragment();
         footer.Text = $"{name} - {DateTime.Now:MM/dd/yyyy}";
-        footer.Position.Translate(page.Size.Width - 150 - PageMargin, page.Size.Height - 100);
+        var length = name.Length > 20 ? page.Size.Width - 3.8 * (PageMargin + 1.25 * name.Length) : page.Size.Width * 3 / 4;
+        footer.Position.Translate(length, page.Size.Height - 60);
     }
     #endregion
-
 
     #region Table creation
 
@@ -57,10 +56,11 @@ public static class ReportBuilder
 
     }
 
-    public static void BasicCell(TableRow row, string value, RgbColor color, bool isBold = false, HorizontalAlignment alignment = HorizontalAlignment.Right)
+    public static void BasicCell(this TableRow row, string value, bool isBold = false, RgbColor color = null, HorizontalAlignment alignment = HorizontalAlignment.Right, int ColumnSpan = 1)
     {
         var cell = row.Cells.AddTableCell();
-        cell.Background = color;
+        cell.Background = color is null ? WhiteColor : color;
+        cell.ColumnSpan = ColumnSpan;
         var block = new Block
         {
             TextProperties = { Font = isBold ? FontsRepository.HelveticaBold : FontsRepository.Helvetica, },
@@ -69,7 +69,6 @@ public static class ReportBuilder
         block.InsertText(value);
         cell.Blocks.Add(block);
     }
-
 
     public static void DynamicRow(UnderwritingAnalysis property, RadFixedDocument document)
     {

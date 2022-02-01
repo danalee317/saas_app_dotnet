@@ -98,11 +98,7 @@ public static class GenerateCashFlowBuilder
                 var yearTitle = incomeHeader.Cells.AddTableCell();
                 yearTitle.PreferredWidth = preferredSize;
                 yearTitle.Background = ReportBuilder.HeaderColor;
-                var yearTitleCellBlock = new Block
-                {
-                    TextProperties = { Font = FontsRepository.HelveticaBold },
-                    HorizontalAlignment = HorizontalAlignment.Right,
-                };
+                var yearTitleCellBlock = new Block();
                 yearTitle.Blocks.Add(yearTitleCellBlock);
             }
         }
@@ -358,11 +354,7 @@ public static class GenerateCashFlowBuilder
                 var yearTitle = expensesHeader.Cells.AddTableCell();
                 yearTitle.PreferredWidth = preferredSize;
                 yearTitle.Background = ReportBuilder.HeaderColor;
-                var yearCellBlock = new Block
-                {
-                    TextProperties = { Font = FontsRepository.HelveticaBold },
-                    HorizontalAlignment = HorizontalAlignment.Right
-                };
+                var yearCellBlock = new Block();
                 yearTitle.Blocks.Add(yearCellBlock);
             }
         }
@@ -464,11 +456,7 @@ public static class GenerateCashFlowBuilder
                 var yearTitle = netHeader.Cells.AddTableCell();
                 yearTitle.PreferredWidth = preferredSize;
                 yearTitle.Background = ReportBuilder.HeaderColor;
-                var yearCellBlock = new Block
-                {
-                    TextProperties = { Font = FontsRepository.HelveticaBold },
-                    HorizontalAlignment = HorizontalAlignment.Right
-                };
+                var yearCellBlock = new Block();
                 yearTitle.Blocks.Add(yearCellBlock);
             }
         }

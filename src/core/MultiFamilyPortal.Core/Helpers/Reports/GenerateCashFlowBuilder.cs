@@ -6,6 +6,7 @@ using Telerik.Windows.Documents.Fixed.Model.Editing;
 using Telerik.Windows.Documents.Fixed.Model.Editing.Flow;
 using Telerik.Windows.Documents.Fixed.Model.Editing.Tables;
 using MultiFamilyPortal.Dtos;
+using Telerik.Windows.Documents.Fixed.Model.Fonts;
 
 public static class GenerateCashFlowBuilder
 {
@@ -34,7 +35,7 @@ public static class GenerateCashFlowBuilder
 
             ReportBuilder.Header(pageTwo, "Cash Flow (" + (property.HoldYears == 6 ? "6" : "6 - " + property.HoldYears.ToString()) + " Years)");
             IncomeTable(pageTwo, editorTwo, projections, blackBorder, cellPadding, true);
-            ExpensesTable(pageTwo, editorTwo, projections, blackBorder, cellPadding + 5, true);
+            ExpensesTable(pageTwo, editorTwo, projections, blackBorder, cellPadding, true);
             NetTable(pageTwo, editorTwo, projections, blackBorder, cellPadding, true);
             ReportBuilder.Footer(pageTwo, property.Name);
         }
@@ -46,17 +47,19 @@ public static class GenerateCashFlowBuilder
                                     Border border,
                                     double padding = 15,
                                     bool isSecondary = false,
+                                    double titleSize = 200,
                                     double headerSize = 18)
     {
         var tableTitle = page.Content.AddTextFragment();
         tableTitle.FontSize = headerSize;
         tableTitle.Text = "Income";
         tableTitle.Position.Translate(page.Size.Width / 2 - 25, 120);
-       
+
         var startPoint = isSecondary ? 6 : 1;
         var breakPoint = 4;
         var holdYears = projections.Count() - 1;
         var missingYears = isSecondary ? 10 - holdYears : 5 - holdYears;
+        var preferredSize = (page.Size.Width - 2 * ReportBuilder.PageMargin - titleSize) / 6;
 
         var table = new Table
         {
@@ -67,8 +70,18 @@ public static class GenerateCashFlowBuilder
 
         var incomeHeader = table.Rows.AddTableRow();
         var years = projections.Select(x => x.Year);
-        incomeHeader.BasicCell("For the Years Ending", true);
-        incomeHeader.BasicCell("Stated in Place", true, ReportBuilder.HeaderColor);
+
+        var headerTitle = incomeHeader.Cells.AddTableCell();
+        headerTitle.PreferredWidth = titleSize;
+        var headerTitleCellBlock = new Block
+        {
+            TextProperties = { Font = FontsRepository.HelveticaBold },
+            HorizontalAlignment = HorizontalAlignment.Right
+        };
+        headerTitleCellBlock.InsertText("For the Years Ending");
+        headerTitle.Blocks.Add(headerTitleCellBlock);
+
+        incomeHeader.BasicCell("Stated In Place", true, ReportBuilder.HeaderColor);
         var targetIndex = 0;
         foreach (var year in years.Skip(startPoint))
         {
@@ -81,7 +94,17 @@ public static class GenerateCashFlowBuilder
         if (missingYears > 0)
         {
             for (var i = 1; i <= missingYears; i++)
-                incomeHeader.BasicCell((years.LastOrDefault() + i).ToString(), true, ReportBuilder.HeaderColor);
+            {
+                var yearTitle = incomeHeader.Cells.AddTableCell();
+                yearTitle.PreferredWidth = preferredSize;
+                yearTitle.Background = ReportBuilder.HeaderColor;
+                var yearTitleCellBlock = new Block
+                {
+                    TextProperties = { Font = FontsRepository.HelveticaBold },
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                };
+                yearTitle.Blocks.Add(yearTitleCellBlock);
+            }
         }
 
         var actualScheduledRent = table.Rows.AddTableRow();
@@ -168,6 +191,7 @@ public static class GenerateCashFlowBuilder
         var adjustedIncomes = projections.Select(x => x.GrossScheduledRent);
         adjustedIncome.BasicCell("Adjusted Income ($)");
         var tempCell = adjustedIncome.Cells.AddTableCell();
+        tempCell.PreferredWidth = preferredSize;
         tempCell.Background = ReportBuilder.PrimaryColor;
         var tempCellBlock = new Block { HorizontalAlignment = HorizontalAlignment.Right };
         tempCellBlock.SaveGraphicProperties();
@@ -265,33 +289,63 @@ public static class GenerateCashFlowBuilder
                                       Border border,
                                       double padding = 20,
                                       bool isSecondary = false,
+                                      double titleSize = 200,
                                       double headerSize = 18)
     {
         var tableTitle = page.Content.AddTextFragment();
         tableTitle.FontSize = headerSize;
         tableTitle.Text = "Expenses";
         tableTitle.Position.Translate(page.Size.Width / 2 - 30, 395);
-        
+
         var startPoint = isSecondary ? 6 : 1;
         var breakPoint = 4;
         var targetIndex = 0;
         var holdYears = projections.Count() - 1;
         var missingYears = isSecondary ? 10 - holdYears : 5 - holdYears;
+        var preferredSize = (page.Size.Width - 2 * ReportBuilder.PageMargin - titleSize) / 6;
 
         var table = new Table
         {
-            DefaultCellProperties = { Padding = new Thickness(padding) },
+            DefaultCellProperties = { Padding = new Thickness(padding, padding + 5, padding, padding + 5) },
             Borders = new TableBorders(border),
             LayoutType = TableLayoutType.FixedWidth
         };
 
         var expensesHeader = table.Rows.AddTableRow();
         var years = projections.Select(x => x.Year).ToList();
-        expensesHeader.BasicCell("For The Years Ending", true);
-        expensesHeader.BasicCell("Stated in Place", true, ReportBuilder.HeaderColor);
+
+        var headerTitle = expensesHeader.Cells.AddTableCell();
+        headerTitle.PreferredWidth = titleSize;
+        var headerTitleCellBlock = new Block
+        {
+            TextProperties = { Font = FontsRepository.HelveticaBold },
+            HorizontalAlignment = HorizontalAlignment.Right
+        };
+        headerTitleCellBlock.InsertText("For the Years Ending");
+        headerTitle.Blocks.Add(headerTitleCellBlock);
+
+        var sipTitle = expensesHeader.Cells.AddTableCell();
+        sipTitle.PreferredWidth = preferredSize;
+        sipTitle.Background = ReportBuilder.HeaderColor;
+        var sipTitleCellBlock = new Block
+        {
+            TextProperties = { Font = FontsRepository.HelveticaBold },
+            HorizontalAlignment = HorizontalAlignment.Right
+        };
+        sipTitleCellBlock.InsertText("Stated In Place");
+        sipTitle.Blocks.Add(sipTitleCellBlock);
         foreach (var year in projections.Skip(startPoint).Select(x => x.Year))
         {
-            expensesHeader.BasicCell(year.ToString(), true, ReportBuilder.HeaderColor);
+            var yearTitle = expensesHeader.Cells.AddTableCell();
+            yearTitle.PreferredWidth = preferredSize;
+            yearTitle.Background = ReportBuilder.HeaderColor;
+            var yearCellBlock = new Block
+            {
+                TextProperties = { Font = FontsRepository.HelveticaBold },
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+            yearCellBlock.InsertText(year.ToString());
+            yearTitle.Blocks.Add(yearCellBlock);
             if (!isSecondary && targetIndex == breakPoint)
                 break;
             targetIndex++;
@@ -300,7 +354,17 @@ public static class GenerateCashFlowBuilder
         if (missingYears > 0)
         {
             for (var i = 1; i <= missingYears; i++)
-                expensesHeader.BasicCell((years.LastOrDefault() + i).ToString(), true, ReportBuilder.HeaderColor);
+            {
+                var yearTitle = expensesHeader.Cells.AddTableCell();
+                yearTitle.PreferredWidth = preferredSize;
+                yearTitle.Background = ReportBuilder.HeaderColor;
+                var yearCellBlock = new Block
+                {
+                    TextProperties = { Font = FontsRepository.HelveticaBold },
+                    HorizontalAlignment = HorizontalAlignment.Right
+                };
+                yearTitle.Blocks.Add(yearCellBlock);
+            }
         }
 
         var totalOperatingExpenses = table.Rows.AddTableRow();
@@ -332,6 +396,7 @@ public static class GenerateCashFlowBuilder
                                  Border border,
                                  double padding = 20,
                                  bool isSecondary = false,
+                                 double titleSize = 200,
                                  double headerSize = 18)
     {
         var tableTitle = page.Content.AddTextFragment();
@@ -339,27 +404,54 @@ public static class GenerateCashFlowBuilder
         tableTitle.Text = "Net";
         tableTitle.Position.Translate(page.Size.Width / 2 - 5, 510);
 
-        var thickness = projections.Count() - 1 > 9 ? new Thickness(0, padding + 5, 0, padding + 5) : new Thickness(padding);
         var targetIndex = 0;
         var startPoint = isSecondary ? 6 : 1;
         var breakPoint = 4;
         var holdYears = projections.Count() - 1;
         var missingYears = isSecondary ? 10 - holdYears : 5 - holdYears;
+        var preferredSize = (page.Size.Width - 2 * ReportBuilder.PageMargin - titleSize) / 6;
+
         var table = new Table
         {
-            DefaultCellProperties = { Padding = thickness },
+            DefaultCellProperties = { Padding = new Thickness(padding) },
             Borders = new TableBorders(border),
             LayoutType = TableLayoutType.FixedWidth
         };
 
-
         var netHeader = table.Rows.AddTableRow();
-        netHeader.BasicCell("For The Years Ending", true);
-        netHeader.BasicCell("Stated in Place", true, ReportBuilder.HeaderColor);
+        var headerTitle = netHeader.Cells.AddTableCell();
+        headerTitle.PreferredWidth = titleSize;
+        var headerTitleCellBlock = new Block
+        {
+            TextProperties = { Font = FontsRepository.HelveticaBold },
+            HorizontalAlignment = HorizontalAlignment.Right
+        };
+        headerTitleCellBlock.InsertText("For The Years Ending");
+        headerTitle.Blocks.Add(headerTitleCellBlock);
+
+        var sipTitle = netHeader.Cells.AddTableCell();
+        sipTitle.PreferredWidth = preferredSize;
+        sipTitle.Background = ReportBuilder.HeaderColor;
+        var sipTitleCellBlock = new Block
+        {
+            TextProperties = { Font = FontsRepository.HelveticaBold },
+            HorizontalAlignment = HorizontalAlignment.Right
+        };
+        sipTitleCellBlock.InsertText("Stated In Place");
+        sipTitle.Blocks.Add(sipTitleCellBlock);
 
         foreach (var year in projections.Skip(startPoint).Select(x => x.Year))
         {
-            netHeader.BasicCell(year.ToString(), true, ReportBuilder.HeaderColor);
+            var yearTitle = netHeader.Cells.AddTableCell();
+            yearTitle.PreferredWidth = preferredSize;
+            yearTitle.Background = ReportBuilder.HeaderColor;
+            var yearCellBlock = new Block
+            {
+                TextProperties = { Font = FontsRepository.HelveticaBold },
+                HorizontalAlignment = HorizontalAlignment.Right
+            };
+            yearCellBlock.InsertText(year.ToString());
+            yearTitle.Blocks.Add(yearCellBlock);
             if (!isSecondary && targetIndex == breakPoint)
                 break;
             targetIndex++;
@@ -368,7 +460,17 @@ public static class GenerateCashFlowBuilder
         if (missingYears > 0)
         {
             for (var i = 1; i <= missingYears; i++)
-                netHeader.BasicCell((projections.LastOrDefault().Year + i).ToString(), true, ReportBuilder.HeaderColor);
+            {
+                var yearTitle = netHeader.Cells.AddTableCell();
+                yearTitle.PreferredWidth = preferredSize;
+                yearTitle.Background = ReportBuilder.HeaderColor;
+                var yearCellBlock = new Block
+                {
+                    TextProperties = { Font = FontsRepository.HelveticaBold },
+                    HorizontalAlignment = HorizontalAlignment.Right
+                };
+                yearTitle.Blocks.Add(yearCellBlock);
+            }
         }
 
         var netOperatingIncome = table.Rows.AddTableRow();

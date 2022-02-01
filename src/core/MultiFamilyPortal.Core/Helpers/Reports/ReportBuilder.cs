@@ -29,7 +29,7 @@ public static class ReportBuilder
     {
         var header = page.Content.AddTextFragment();
         header.Text = title;
-        header.Position.Translate(page.Size.Width / 2 - title.Length * 6, PageMargin + PageMargin/2);
+        header.Position.Translate(page.Size.Width / 2 - title.Length * 6, PageMargin + PageMargin / 2);
         header.FontSize = HeaderSize;
     }
 
@@ -37,10 +37,10 @@ public static class ReportBuilder
     {
         var footer = page.Content.AddTextFragment();
         footer.Text = $"{name} - {DateTime.Now:MM/dd/yyyy}";
-        footer.Position.Translate(page.Size.Width - 150 - PageMargin, page.Size.Height - 60);
+        var length = name.Length > 20 ? page.Size.Width - 3.8 * (PageMargin + 1.25 * name.Length) : page.Size.Width * 3 / 4;
+        footer.Position.Translate(length, page.Size.Height - 60);
     }
     #endregion
-
 
     #region Table creation
 

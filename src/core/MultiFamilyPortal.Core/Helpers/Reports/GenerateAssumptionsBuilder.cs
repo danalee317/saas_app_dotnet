@@ -16,7 +16,7 @@ public static class GenerateAssumptionsBuilder
         var editor = new FixedContentEditor(page);
         page.Size = ReportBuilder.LetterSizeHorizontal;
 
-        var pageOneTableWidth =195;
+        var pageOneTableWidth = 195;
         var pageTwoTableWidth = page.Size.Width / 2 - 2 * ReportBuilder.PageMargin;
         var tableWidth = page.Size.Width / 3 - 60;
         var cellPadding = 3;
@@ -27,8 +27,8 @@ public static class GenerateAssumptionsBuilder
         CriteriaTable(page, editor, property, blackBorder, pageOneTableWidth, cellPadding);
         DistributionTable(page, editor, property, blackBorder, pageOneTableWidth, cellPadding);
         ReversionTable(page, editor, property, blackBorder, pageOneTableWidth, cellPadding);
-        EquityTable(page,editor, property, blackBorder, pageTwoTableWidth, cellPadding );
-        CashFlowTable(page, editor, property, blackBorder, pageTwoTableWidth, cellPadding );
+        EquityTable(page, editor, property, blackBorder, pageTwoTableWidth, cellPadding);
+        CashFlowTable(page, editor, property, blackBorder, pageTwoTableWidth, cellPadding);
         PrimaryTable(page, editor, property, blackBorder, tableWidth, cellPadding);
         SupplementalTable(page, editor, property, blackBorder, tableWidth, cellPadding);
         RefinanceTable(page, editor, property, blackBorder, tableWidth, cellPadding);
@@ -59,7 +59,7 @@ public static class GenerateAssumptionsBuilder
         data.BasicCell("Hold Period", false);
         data.BasicCell(property.HoldYears.ToString(), false);
 
-        editor.Position.Translate(ReportBuilder.PageMargin+page.Size.Width/2 -width + 10, 120);
+        editor.Position.Translate(ReportBuilder.PageMargin + page.Size.Width / 2 - width + 10, 120);
         editor.DrawTable(table, new Size(width, double.PositiveInfinity));
     }
 
@@ -89,7 +89,7 @@ public static class GenerateAssumptionsBuilder
         investorEquity.BasicCell("Investor Equity", false, ReportBuilder.PrimaryColor);
         investorEquity.BasicCell((1 - property.OurEquityOfCF).ToString("P2"), false, ReportBuilder.PrimaryColor);
 
-        editor.Position.Translate(page.Size.Width/2 - width/2 +170, 120);
+        editor.Position.Translate(page.Size.Width / 2 - width / 2 + 170, 120);
         editor.DrawTable(table, new Size(width, double.PositiveInfinity));
     }
 
@@ -117,11 +117,11 @@ public static class GenerateAssumptionsBuilder
 
         var commission = table.Rows.AddTableRow();
         commission.BasicCell("Commission", false, ReportBuilder.PrimaryColor);
-        commission.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Commission
+        commission.BasicCell(" - ", false, ReportBuilder.PrimaryColor, HorizontalAlignment.Center); // TODO : Add Commission
 
         var reversionTransferTax = table.Rows.AddTableRow();
         reversionTransferTax.BasicCell("Transfer Tax", false);
-        reversionTransferTax.BasicCell(" - ", false); // TODO : Add Transfer Tax
+        reversionTransferTax.BasicCell(" - ", false, null, HorizontalAlignment.Center); // TODO : Add Transfer Tax
 
         editor.Position.Translate(page.Size.Width - width - ReportBuilder.PageMargin, 120);
         editor.DrawTable(table, new Size(width, double.PositiveInfinity));
@@ -189,7 +189,7 @@ public static class GenerateAssumptionsBuilder
         totalEquityAcqusitionCosts.BasicCell(asr.TotalEquity.ToString("C2"), true);
 
         editor.Position.Translate(ReportBuilder.PageMargin, 120);
-        editor.DrawTable(table, new Size(width -100, double.PositiveInfinity));
+        editor.DrawTable(table, new Size(width - 100, double.PositiveInfinity));
     }
 
     private static void CashFlowTable(RadFixedPage page,
@@ -213,31 +213,31 @@ public static class GenerateAssumptionsBuilder
 
         var rentAbatement = table.Rows.AddTableRow();
         rentAbatement.BasicCell("Rent Abatement", false);
-        rentAbatement.BasicCell(" - ", false); // TODO : Add Rent Abatement
+        rentAbatement.BasicCell(" - ", false, null, HorizontalAlignment.Center); // TODO : Add Rent Abatement
 
         var reimbursementIncome = table.Rows.AddTableRow();
         reimbursementIncome.BasicCell("Annual Adjustment to Expense Reimbursement Income", false, ReportBuilder.PrimaryColor);
-        reimbursementIncome.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Reimbursement Income
+        reimbursementIncome.BasicCell(" - ", false, ReportBuilder.PrimaryColor, HorizontalAlignment.Center); // TODO : Add Reimbursement Income
 
 
         var generalMinimumVacany = table.Rows.AddTableRow();
         generalMinimumVacany.BasicCell("General Minimum Vacancy", false);
-        generalMinimumVacany.BasicCell(" - ", false); // TODO : Add General Minimum Vacancy
+        generalMinimumVacany.BasicCell(" - ", false, null, HorizontalAlignment.Center); // TODO : Add General Minimum Vacancy
 
         var taxAdustments = table.Rows.AddTableRow();
         taxAdustments.BasicCell("Annual Tax Adustment", false, ReportBuilder.PrimaryColor);
-        taxAdustments.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Tax Adjustments
+        taxAdustments.BasicCell(" - ", false, ReportBuilder.PrimaryColor, HorizontalAlignment.Center); // TODO : Add Tax Adjustments
 
         var expenseAdjustments = table.Rows.AddTableRow();
         expenseAdjustments.BasicCell("Annual Expense Adjustment", false);
-        expenseAdjustments.BasicCell(" - ", false); // TODO : Add Expense Adjustments
+        expenseAdjustments.BasicCell(" - ", false, null, HorizontalAlignment.Center); // TODO : Add Expense Adjustments
 
         var capitalReserveAdustment = table.Rows.AddTableRow();
         capitalReserveAdustment.BasicCell("Annual Additional Capital Reserve Adjustment", false, ReportBuilder.PrimaryColor);
-        capitalReserveAdustment.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Capital Reserve Adjustments
+        capitalReserveAdustment.BasicCell(" - ", false, ReportBuilder.PrimaryColor, HorizontalAlignment.Center); // TODO : Add Capital Reserve Adjustments
 
         editor.Position.Translate(page.Size.Width - width - ReportBuilder.PageMargin - 180, 230);
-        editor.DrawTable(table, new Size(width+180, double.PositiveInfinity));
+        editor.DrawTable(table, new Size(width + 180, double.PositiveInfinity));
     }
 
     private static void PrimaryTable(RadFixedPage page,
@@ -274,7 +274,7 @@ public static class GenerateAssumptionsBuilder
 
         var financedCapitalImprovements = table.Rows.AddTableRow();
         financedCapitalImprovements.BasicCell("Intial Capital Improvements (Financed)", false, ReportBuilder.PrimaryColor);
-        financedCapitalImprovements.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Financed Capital Improvements
+        financedCapitalImprovements.BasicCell(" - ", false, ReportBuilder.PrimaryColor, HorizontalAlignment.Center); // TODO : Add Financed Capital Improvements
 
         var loanAmount = table.Rows.AddTableRow();
         loanAmount.BasicCell("Loan Amount", false);
@@ -290,7 +290,7 @@ public static class GenerateAssumptionsBuilder
 
         var interestOnlyPeriod = table.Rows.AddTableRow();
         interestOnlyPeriod.BasicCell("Interest Only Period", false, ReportBuilder.PrimaryColor);
-        interestOnlyPeriod.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Interest Only Period
+        interestOnlyPeriod.BasicCell(" - ", false, ReportBuilder.PrimaryColor, HorizontalAlignment.Center); // TODO : Add Interest Only Period
 
         var interestRate = table.Rows.AddTableRow();
         interestRate.BasicCell("Interest Rate", false);
@@ -298,7 +298,7 @@ public static class GenerateAssumptionsBuilder
 
         var amortization = table.Rows.AddTableRow();
         amortization.BasicCell("Amortization", false, ReportBuilder.PrimaryColor);
-        amortization.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Amortization
+        amortization.BasicCell(" - ", false, ReportBuilder.PrimaryColor, HorizontalAlignment.Center); // TODO : Add Amortization
 
         var term = table.Rows.AddTableRow();
         term.BasicCell("Term", false);
@@ -345,47 +345,47 @@ public static class GenerateAssumptionsBuilder
 
         var loanCost = table.Rows.AddTableRow();
         loanCost.BasicCell("Loan Cost (Financed)", false);
-        loanCost.BasicCell(" - ", false); // TODO : Add Loan Cost Supplemental
+        loanCost.BasicCell(" - ", false, null, HorizontalAlignment.Center); // TODO : Add Loan Cost Supplemental
 
         var adddedCapitalImprovements = table.Rows.AddTableRow();
         adddedCapitalImprovements.BasicCell("Added Capital Improvements (Financed)", false, ReportBuilder.PrimaryColor);
-        adddedCapitalImprovements.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Added Capital Improvements Supplemental
+        adddedCapitalImprovements.BasicCell(" - ", false, ReportBuilder.PrimaryColor, HorizontalAlignment.Center); // TODO : Add Added Capital Improvements Supplemental
 
         var loanAmount = table.Rows.AddTableRow();
         loanAmount.BasicCell("Loan Amount", false);
-        loanAmount.BasicCell(" - ", false); // TODO : Add Loan Amount Supplemental
+        loanAmount.BasicCell(" - ", false, null, HorizontalAlignment.Center); // TODO : Add Loan Amount Supplemental
 
         var totalLoanAmount = table.Rows.AddTableRow();
         totalLoanAmount.BasicCell("Total Loan Amount", false, ReportBuilder.PrimaryColor);
-        totalLoanAmount.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Total Loan Amount Supplemental
+        totalLoanAmount.BasicCell(" - ", false, ReportBuilder.PrimaryColor, HorizontalAlignment.Center); // TODO : Add Total Loan Amount Supplemental
 
         var loanToValue = table.Rows.AddTableRow();
         loanToValue.BasicCell("Loan to Value", false);
-        loanToValue.BasicCell(" - ", false); // TODO : Add Loan to Value Supplemental
+        loanToValue.BasicCell(" - ", false, null, HorizontalAlignment.Center); // TODO : Add Loan to Value Supplemental
 
         var interestOnlyPeriod = table.Rows.AddTableRow();
         interestOnlyPeriod.BasicCell("Interest Only Period", false, ReportBuilder.PrimaryColor);
-        interestOnlyPeriod.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Interest Only Period Supplemental
+        interestOnlyPeriod.BasicCell(" - ", false, ReportBuilder.PrimaryColor, HorizontalAlignment.Center); // TODO : Add Interest Only Period Supplemental
 
         var interestRate = table.Rows.AddTableRow();
         interestRate.BasicCell("Interest Rate", false);
-        interestRate.BasicCell(" - ", false); // TODO : Add Interest Rate Supplemental
+        interestRate.BasicCell(" - ", false, null, HorizontalAlignment.Center); // TODO : Add Interest Rate Supplemental
 
         var amortization = table.Rows.AddTableRow();
         amortization.BasicCell("Amortization", false, ReportBuilder.PrimaryColor);
-        amortization.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Amortization Supplemental
+        amortization.BasicCell(" - ", false, ReportBuilder.PrimaryColor, HorizontalAlignment.Center); // TODO : Add Amortization Supplemental
 
         var term = table.Rows.AddTableRow();
         term.BasicCell("Term", false);
-        term.BasicCell(" - ", false); // TODO : Add Term Supplemental
+        term.BasicCell(" - ", false, null, HorizontalAlignment.Center); // TODO : Add Term Supplemental
 
         var debtServiceMonth = table.Rows.AddTableRow();
         debtServiceMonth.BasicCell("Debt Service / Month", false, ReportBuilder.PrimaryColor);
-        debtServiceMonth.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Debt Service / Month Supplemental
+        debtServiceMonth.BasicCell(" - ", false, ReportBuilder.PrimaryColor, HorizontalAlignment.Center); // TODO : Add Debt Service / Month Supplemental
 
         var debtServiceYear = table.Rows.AddTableRow();
         debtServiceYear.BasicCell("Debt Service / Year", false);
-        debtServiceYear.BasicCell(" - ", false); // TODO : Add Debt Service / Year Supplemental
+        debtServiceYear.BasicCell(" - ", false, null, HorizontalAlignment.Center); // TODO : Add Debt Service / Year Supplemental
 
         editor.Position.Translate(width + ReportBuilder.PageMargin + 45, 400);
         editor.DrawTable(table, new Size(width, double.PositiveInfinity));
@@ -420,47 +420,47 @@ public static class GenerateAssumptionsBuilder
 
         var loanStartDate = table.Rows.AddTableRow();
         loanStartDate.BasicCell("Loan Start Date", false);
-        loanStartDate.BasicCell(" - ", false); // TODO : Add Loan Start Date
+        loanStartDate.BasicCell(" - ", false, null, HorizontalAlignment.Center); // TODO : Add Loan Start Date
 
         var financedImprovements = table.Rows.AddTableRow();
         financedImprovements.BasicCell("Capital Improvements (Financed)", false, ReportBuilder.PrimaryColor);
-        financedImprovements.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Financed Capital Improvements Refinance
+        financedImprovements.BasicCell(" - ", false, ReportBuilder.PrimaryColor, HorizontalAlignment.Center); // TODO : Add Financed Capital Improvements Refinance
 
         var loanCosts = table.Rows.AddTableRow();
         loanCosts.BasicCell("Loan Cost (Financed)", false);
-        loanCosts.BasicCell(" - ", false); // TODO : Add Loan Cost Refinance
+        loanCosts.BasicCell(" - ", false, null, HorizontalAlignment.Center); // TODO : Add Loan Cost Refinance
 
         var loanAmount = table.Rows.AddTableRow();
         loanAmount.BasicCell("Loan Amount", false, ReportBuilder.PrimaryColor);
-        loanAmount.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Loan Amount Refinance
+        loanAmount.BasicCell(" - ", false, ReportBuilder.PrimaryColor, HorizontalAlignment.Center); // TODO : Add Loan Amount Refinance
 
         var totalLoanAmount = table.Rows.AddTableRow();
         totalLoanAmount.BasicCell("Total Loan Amount", false);
-        totalLoanAmount.BasicCell(" - ", false); // TODO : Add Total Loan Amount Refinance
+        totalLoanAmount.BasicCell(" - ", false, null, HorizontalAlignment.Center); // TODO : Add Total Loan Amount Refinance
 
         var loanToValue = table.Rows.AddTableRow();
         loanToValue.BasicCell("Loan to Value", false, ReportBuilder.PrimaryColor);
-        loanToValue.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Loan to Value Refinance
+        loanToValue.BasicCell(" - ", false, ReportBuilder.PrimaryColor, HorizontalAlignment.Center); // TODO : Add Loan to Value Refinance
 
         var interestRate = table.Rows.AddTableRow();
         interestRate.BasicCell("Interest Rate", false);
-        interestRate.BasicCell(" - ", false); // TODO : Add Interest Rate Refinance
+        interestRate.BasicCell(" - ", false, null, HorizontalAlignment.Center); // TODO : Add Interest Rate Refinance
 
         var amortization = table.Rows.AddTableRow();
         amortization.BasicCell("Amortization", false, ReportBuilder.PrimaryColor);
-        amortization.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Amortization Refinance
+        amortization.BasicCell(" - ", false, ReportBuilder.PrimaryColor, HorizontalAlignment.Center); // TODO : Add Amortization Refinance
 
         var term = table.Rows.AddTableRow();
         term.BasicCell("Term", false);
-        term.BasicCell(" - ", false); // TODO : Add Term Refinance
+        term.BasicCell(" - ", false, null, HorizontalAlignment.Center); // TODO : Add Term Refinance
 
         var debtServiceMonth = table.Rows.AddTableRow();
         debtServiceMonth.BasicCell("Debt Service / Month", false, ReportBuilder.PrimaryColor);
-        debtServiceMonth.BasicCell(" - ", false, ReportBuilder.PrimaryColor); // TODO : Add Debt Service / Month Refinance
+        debtServiceMonth.BasicCell(" - ", false, ReportBuilder.PrimaryColor, HorizontalAlignment.Center); // TODO : Add Debt Service / Month Refinance
 
         var debtServiceYear = table.Rows.AddTableRow();
         debtServiceYear.BasicCell("Debt Service / Year", false);
-        debtServiceYear.BasicCell(" - ", false); // TODO : Add Debt Service / Year Refinance
+        debtServiceYear.BasicCell(" - ", false, null, HorizontalAlignment.Center); // TODO : Add Debt Service / Year Refinance
 
         editor.Position.Translate(page.Size.Width - width - ReportBuilder.PageMargin - 5, 400);
         editor.DrawTable(table, new Size(width, double.PositiveInfinity));

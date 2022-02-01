@@ -18,7 +18,7 @@
     <PackageReference Include="AvantiPoint.FileStorage.FileSystem" Version="3.0.22" />
     <PackageReference Include="AvantiPoint.MultiFamilyPortal.Data" Version="1.0.582" />
     <PackageReference Include="BlazorAnimation" Version="2.1.0" />
-    <PackageReference Include="DynamicData" Version="7.4.9" />
+    <PackageReference Include="DynamicData" Version="7.4.11" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="ReactiveUI.Fody" Version="17.1.17" />
     <PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />

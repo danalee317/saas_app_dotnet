@@ -75,23 +75,17 @@
           <div class="header-menu d-none d-xl-block">
             <nav>
               <div class="ltn__main-menu">
-                <ul>
-                  <li>
-                    <a href="/">Home</a>
-                  </li>
-                  <li>
-                    <a href="/about">About</a>
-                  </li>
-                  <li>
-                    <a href="/strategy">Strategy</a>
-                  </li>
-                  @*<li>
-                    <a href="/portfolio">Portfolio</a>
-                  </li>*@
-                  <li>
-                    <a href="/contact">Contact</a>
-                  </li>
-                </ul>
+                @if (MenuProvider != null)
+                {
+                  <ul>
+                    @foreach (var rootItem in MenuProvider.Menu.Take(MenuProvider.Menu.Count() - 1))
+                    {
+                      <li>
+                        <a href="@rootItem.Link">@rootItem.Title</a>
+                      </li>
+                    }
+                  </ul>
+                }
               </div>
             </nav>
           </div>

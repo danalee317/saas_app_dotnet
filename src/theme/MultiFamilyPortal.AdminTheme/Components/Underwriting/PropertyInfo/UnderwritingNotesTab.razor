@@ -1,7 +1,6 @@
 ﻿<AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
   <div class="row">
-    <div class="col-10"></div>
-    <div class="col-2">
+    <div class="d-flex justify-content-end mb-2">
       <TelerikButton ButtonType="ButtonType.Button"
                       ThemeColor="primary"
                       Title="Add Note"
@@ -74,7 +73,8 @@
 <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
   <TelerikWindow Visible="@(NewNote != null)"
                  Width="600px"
-                 Height="450px">
+                 Modal="true"
+                 Height="600px">
     <WindowTitle>
       Add Note
     </WindowTitle>
@@ -100,7 +100,8 @@
 
   <TelerikWindow Visible="@(UpdateNote != null)"
                  Width="600px"
-                 Height="450px">
+                 Modal="true"
+                 Height="600px">
     <WindowTitle>
       Update Note
     </WindowTitle>

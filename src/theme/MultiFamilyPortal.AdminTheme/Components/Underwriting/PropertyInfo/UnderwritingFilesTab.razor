@@ -35,18 +35,19 @@
           <GridCommandButton Title="Preview"
                              IconClass="fa-duotone fa-eye"
                              ThemeColor="primary"
+                             Class="my-1"
                              OnClick=@OnPreview>Preview
           </GridCommandButton>
         }
 
         @{ var file = context as UnderwritingAnalysisFile; }
-        <a href="@file.DownloadLink" target="_blank" class="btn btn-secondary text-center">
+        <a href="@file.DownloadLink" target="_blank" role="button" class="btn btn-secondary text-center my-1">
           <span style="color: #FFFFFF;">
             <i class="fa-duotone fa-download"></i> Download
           </span>
         </a>
         <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
-          <GridCommandButton Command="Delete" Title="Delete" Icon="delete">Delete</GridCommandButton>
+          <GridCommandButton Command="Delete" Title="Delete" Class="my-1" Icon="delete">Delete</GridCommandButton>
         </AuthorizedPolicy>
       </div>
     </GridCommandColumn>

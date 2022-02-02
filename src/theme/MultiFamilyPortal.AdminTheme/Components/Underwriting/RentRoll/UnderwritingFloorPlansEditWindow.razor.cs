@@ -21,7 +21,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
         {
             if(FloorPlan.Id == default)
             {
-                _height = "665px";
+                _height = "590px";
                 _title = "Add Floor Plan";
             }
             else

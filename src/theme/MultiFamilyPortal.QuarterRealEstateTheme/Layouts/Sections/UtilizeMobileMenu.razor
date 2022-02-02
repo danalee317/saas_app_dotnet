@@ -14,7 +14,7 @@
       @if (MenuProvider != null)
       {
         <ul>
-          @foreach (var rootItem in MenuProvider.Menu.Take(MenuProvider.Menu.Count() - 1))
+          @foreach (var rootItem in MenuProvider.Menu)
           {
             <li class="nav-item" data-bs-dismiss="offcanvas" aria-label="Close">
               <NavLink class="nav-link" href="@rootItem.Link" Match=@rootItem.Match>
@@ -24,7 +24,7 @@
           }
         </ul>
         <div class="header-top-btn mt-3 w-100" data-bs-dismiss="offcanvas" aria-label="Close">
-          <a href="@MenuProvider.Menu.LastOrDefault().Link" class="w-100 text-center py-md-0 py-2">@MenuProvider.Menu.LastOrDefault().Title</a>
+          <a href="/invest-with-us" class="w-100 text-center py-md-0 py-2">Invest with Us</a>
         </div>
       }
     </div>

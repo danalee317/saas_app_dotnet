@@ -78,7 +78,7 @@
                 @if (MenuProvider != null)
                 {
                   <ul>
-                    @foreach (var rootItem in MenuProvider.Menu.Take(MenuProvider.Menu.Count() - 1))
+                    @foreach (var rootItem in MenuProvider.Menu)
                     {
                       <li>
                         <a href="@rootItem.Link">@rootItem.Title</a>

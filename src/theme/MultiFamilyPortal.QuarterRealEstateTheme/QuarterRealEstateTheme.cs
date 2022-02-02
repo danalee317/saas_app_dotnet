@@ -51,13 +51,6 @@ namespace MultiFamilyPortal.QuarterRealEstateTheme
                 IconClass = "fal fa-at",
                 Link = "/contact",
                 Match = NavLinkMatch.All
-            },
-            new RootMenuOption
-            {
-                Title = "Invest with us",
-                IconClass = "fas fa-piggy-bank",
-                Link = "/invest-with-us",
-                Match = NavLinkMatch.All
             }
         };
     }

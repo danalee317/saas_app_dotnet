@@ -116,7 +116,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             }
 
             notification.ShowSuccess($"{Type} line item {NewItem.Category.GetDisplayName()}");
-            NewItem = null;
+            NewItem = new();
         }
 
         private void ShowEditDialog(GridCommandEventArgs args)

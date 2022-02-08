@@ -96,6 +96,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
                 ExpenseType = ExpenseSheetType.T12
             };
         }
+        private void SaveNewLineItemWithClose()
+        {
+            SaveNewLineItem();
+            NewItem = null;
+        }
 
         private void SaveNewLineItem()
         {
@@ -116,7 +121,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
             }
 
             notification.ShowSuccess($"{Type} line item {NewItem.Category.GetDisplayName()}");
-            NewItem = null;
+            NewItem = new();
         }
 
         private void ShowEditDialog(GridCommandEventArgs args)

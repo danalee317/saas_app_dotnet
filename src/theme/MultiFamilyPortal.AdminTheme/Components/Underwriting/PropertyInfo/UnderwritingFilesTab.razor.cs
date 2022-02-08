@@ -82,5 +82,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.PropertyInfo
         {
             return $"{_navigationManager.BaseUri}{url}";
         }
+
+        private void OnSelectHandler(UploadSelectEventArgs e)
+        {
+            if (string.IsNullOrEmpty(description))
+                description = e.Files.FirstOrDefault().Name;
+        }
     }
 }

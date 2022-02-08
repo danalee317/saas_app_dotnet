@@ -57,7 +57,8 @@
 <TelerikWindow Visible=@showUploadFile
                Modal=@true
                Width="600px"
-               Height="300px">
+               Draggable=@false
+               Height="410px">
   <WindowTitle>Upload</WindowTitle>
   <WindowActions>
     <WindowAction Name="Close" OnClick=@CloseUpload />
@@ -84,9 +85,11 @@
     </div>
     <TelerikUpload SaveUrl="@SaveUrl"
                SaveField="file"
-               Enabled=@(!string.IsNullOrEmpty(description))
                AllowedExtensions="@( new List<string>() { ".jpg", ".png", ".jpeg", ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".zip", ".rar" } )"
-               MaxFileSize="64000000" MinFileSize="1024"
+               MaxFileSize="64000000" 
+               MinFileSize="1024"
+               AutoUpload=@false
+               OnSelect="@OnSelectHandler"
                OnSuccess=@OnFileUploaded>
 </TelerikUpload>
   </WindowContent>

@@ -676,6 +676,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
 
         private ObservableAsPropertyHelper<double> _noi;
         [DisplayFormat(DataFormatString = "{0:C}")]
+        [JsonPropertyName("noi")]
         public double NOI => _noi?.Value ?? 0;
 
         private ObservableAsPropertyHelper<double> _sellerNOI;

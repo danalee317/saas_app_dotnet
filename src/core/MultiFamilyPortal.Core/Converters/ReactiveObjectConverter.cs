@@ -10,6 +10,17 @@ namespace MultiFamilyPortal.Converters
     internal class ReactiveObjectConverter<T> : JsonConverter<T>
         where T : ReactiveObject, new()
     {
+        private static readonly Type[] _writeAsString = new[]
+        {
+            typeof(DateTime),
+            typeof(DateTime?),
+            typeof(DateTimeOffset),
+            typeof(DateTimeOffset?),
+            typeof(Guid),
+            typeof(Guid?),
+            typeof(Uri),
+        };
+
         public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var type = typeof(T);
@@ -67,12 +78,19 @@ namespace MultiFamilyPortal.Converters
                     {
                         prop.SetValue(value, reader.GetBoolean());
                     }
-                    else if (typeof(string) != prop.PropertyType && typeof(IEnumerable).IsAssignableFrom(prop.PropertyType))
+                    else if (reader.TokenType == JsonTokenType.StartObject || (typeof(string) != prop.PropertyType && typeof(IEnumerable).IsAssignableFrom(prop.PropertyType)))
                     {
                         var converter = options.GetConverter(prop.PropertyType);
 
                         var readHelperType = typeof(ReadHelper<>).MakeGenericType(prop.PropertyType);
                         var readHelper = Activator.CreateInstance(readHelperType, converter) as ReadHelper;
+
+                        if(reader.TokenType == JsonTokenType.StartObject)
+                        {
+                            prop.SetValue(value, readHelper.Read(ref reader, prop.PropertyType, options));
+                            continue;
+                        }
+
                         var listValue = readHelper.Read(ref reader, prop.PropertyType, options);
 
                         var addMethodAttr = prop.GetCustomAttribute<AddMethodAttribute>();
@@ -178,10 +196,18 @@ namespace MultiFamilyPortal.Converters
 
                     writer.WriteEndArray();
                 }
-                else
+                else if(_writeAsString.Contains(prop.PropertyType) || prop.PropertyType.IsEnum)
                 {
                     var propertyValue = propValue.ToString();
                     writer.WriteString(name, propertyValue);
+                }
+                else
+                {
+                    writer.WritePropertyName(name);
+                    var converter = options.GetConverter(prop.PropertyType);
+                    var writeHelperType = typeof(WriteHelper<>).MakeGenericType(prop.PropertyType);
+                    var writeHelper = Activator.CreateInstance(writeHelperType, converter) as WriteHelper;
+                    writeHelper.Write(writer, propValue, options);
                 }
             }
 

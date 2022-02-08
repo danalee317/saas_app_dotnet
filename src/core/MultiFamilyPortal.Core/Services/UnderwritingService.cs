@@ -152,7 +152,7 @@ namespace MultiFamilyPortal.Services
                 .ToArrayAsync();
             if (mortgages.Any())
             {
-                property.AddMortgages(mortgages);
+                property.ReplaceMortgages(mortgages);
             }
 
             var unitModels = await _dbContext.UnderwritingPropertyUnitModels

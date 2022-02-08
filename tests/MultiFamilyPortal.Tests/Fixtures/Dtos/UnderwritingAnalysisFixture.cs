@@ -375,6 +375,54 @@ namespace MultiFamilyPortal.Tests.Fixtures.Dtos
             Assert.Equal("Charge more money", analysis.DealAnalysis.ValuePlays);
         }
 
+        [Fact]
+        public void UpdateTermsOnAutomaticLoanRespected()
+        {
+            var analysis = new UnderwritingAnalysis
+            {
+                PurchasePrice = 2000000,
+                StartDate = DateTimeOffset.Now.AddMonths(3),
+                HoldYears = 5,
+                Units = 40,
+                LoanType = UnderwritingLoanType.Automatic,
+                LTV = 0.8
+            };
+            analysis.AddOurItems(_ledger);
+
+            var dcr = Math.Round(analysis.DebtCoverage, 3);
+            Assert.Equal(2.185, dcr);
+            Assert.Single(analysis.Mortgages);
+            var mortgage = analysis.Mortgages.First();
+
+            Assert.Equal(0.04, mortgage.InterestRate);
+            Assert.False(mortgage.InterestOnly);
+
+            mortgage.InterestOnly = true;
+            dcr = Math.Round(analysis.DebtCoverage, 3);
+            Assert.Equal(3.13, dcr);
+
+            mortgage.InterestRate = 0.0325;
+
+            dcr = Math.Round(analysis.DebtCoverage, 3);
+            Assert.Equal(3.852, dcr);
+
+            analysis.PurchasePrice++;
+            analysis.PurchasePrice--;
+
+            dcr = Math.Round(analysis.DebtCoverage, 3);
+            Assert.Equal(3.852, dcr);
+
+            var json = JsonSerializer.Serialize(analysis);
+            var deserialized = JsonSerializer.Deserialize<UnderwritingAnalysis>(json);
+            Assert.Single(deserialized.Mortgages);
+            mortgage = deserialized.Mortgages.First();
+
+            Assert.True(mortgage.InterestOnly);
+            Assert.Equal(0.0325, mortgage.InterestRate);
+            dcr = Math.Round(deserialized.DebtCoverage, 3);
+            Assert.Equal(3.852, dcr);
+        }
+
         private static readonly IEnumerable<UnderwritingAnalysisLineItem> _ledger = new[]
         {
             new UnderwritingAnalysisLineItem { Id = Guid.NewGuid(), Amount = 400000, Category = UnderwritingCategory.GrossScheduledRent },

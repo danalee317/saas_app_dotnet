@@ -767,7 +767,7 @@ namespace MultiFamilyPortal.Dtos.Underwriting
             _mortgageCache.Edit(x => x.AddOrUpdate(item));
         }
 
-        private void ReplaceMortgages(IEnumerable<UnderwritingAnalysisMortgage> items)
+        public void ReplaceMortgages(IEnumerable<UnderwritingAnalysisMortgage> items)
         {
             _mortgageCache.Edit(x =>
             {

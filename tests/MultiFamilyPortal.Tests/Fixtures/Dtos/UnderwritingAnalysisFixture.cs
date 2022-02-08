@@ -1,4 +1,5 @@
 ﻿using System.Reactive.Linq;
+using System.Text.Json;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos.Underwriting;
 using ReactiveUI;
@@ -334,6 +335,44 @@ namespace MultiFamilyPortal.Tests.Fixtures.Dtos
                 var current = equity[analysis.StartDate.Year + i];
                 Assert.True(current > previous);
             }
+        }
+
+        [Fact]
+        public void ReserializesAnalysis()
+        {
+            var analysis = new UnderwritingAnalysis
+            {
+                PurchasePrice = 2000000,
+                StartDate = DateTimeOffset.Now.AddMonths(3),
+                HoldYears = 5,
+                Units = 40,
+                DealAnalysis = new UnderwritingAnalysisDealAnalysis
+                {
+                    CompetitionNotes = "Competition Notes",
+                    ConstructionType = "Wood frame",
+                    HowUnderwritingWasDetermined = "We put numbers in",
+                    MarketCapRate = 0.03,
+                    MarketPricePerUnit = 200000,
+                    Summary = "Property Summary",
+                    UtilityNotes = "Notes about the Utilities",
+                    ValuePlays = "Charge more money"
+                }
+            };
+
+            var json = JsonSerializer.Serialize(analysis);
+            Assert.DoesNotContain("MultiFamilyPortal.Dtos.Underwriting.", json);
+
+            var deserialized = JsonSerializer.Deserialize<UnderwritingAnalysis>(json);
+
+            Assert.NotNull(deserialized.DealAnalysis);
+            Assert.Equal("Competition Notes", analysis.DealAnalysis.CompetitionNotes);
+            Assert.Equal("Wood frame", analysis.DealAnalysis.ConstructionType);
+            Assert.Equal("We put numbers in", analysis.DealAnalysis.HowUnderwritingWasDetermined);
+            Assert.Equal(0.03, analysis.DealAnalysis.MarketCapRate);
+            Assert.Equal(200000, analysis.DealAnalysis.MarketPricePerUnit);
+            Assert.Equal("Property Summary", analysis.DealAnalysis.Summary);
+            Assert.Equal("Notes about the Utilities", analysis.DealAnalysis.UtilityNotes);
+            Assert.Equal("Charge more money", analysis.DealAnalysis.ValuePlays);
         }
 
         private static readonly IEnumerable<UnderwritingAnalysisLineItem> _ledger = new[]

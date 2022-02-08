@@ -153,9 +153,13 @@
         </div>
         <div class="row">
           <div class="col text-center">
+             <TelerikButton ButtonType="ButtonType.Button"
+                           ThemeColor="success"
+                           OnClick=@SaveNewLineItemWithClose>
+              Add & Close
+            </TelerikButton>
             <TelerikButton ButtonType="ButtonType.Button"
                            ThemeColor="primary"
-                           Title="Save"
                            OnClick=@SaveNewLineItem>
               Add Another
             </TelerikButton>

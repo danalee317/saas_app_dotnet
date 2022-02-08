@@ -96,6 +96,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting
                 ExpenseType = ExpenseSheetType.T12
             };
         }
+        private void SaveNewLineItemWithClose()
+        {
+            SaveNewLineItem();
+            NewItem = null;
+        }
 
         private void SaveNewLineItem()
         {

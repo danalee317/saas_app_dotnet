@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -13,10 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AvantiPoint.EmailService.Postmark" Version="3.0.22" />
-    <PackageReference Include="AvantiPoint.FileStorage.AzureBlobStorage" Version="3.0.22" />
-    <PackageReference Include="AvantiPoint.FileStorage.FileSystem" Version="3.0.22" />
-    <PackageReference Include="AvantiPoint.MultiFamilyPortal.Data" Version="1.0.582" />
+    <PackageReference Include="AvantiPoint.EmailService.Postmark" Version="3.0.26" />
+    <PackageReference Include="AvantiPoint.FileStorage.AzureBlobStorage" Version="3.0.26" />
+    <PackageReference Include="AvantiPoint.FileStorage.FileSystem" Version="3.0.26" />
+    <PackageReference Include="AvantiPoint.MultiFamilyPortal.DataContracts" Version="1.0.586" />
     <PackageReference Include="BlazorAnimation" Version="2.1.0" />
     <PackageReference Include="DynamicData" Version="7.4.11" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />

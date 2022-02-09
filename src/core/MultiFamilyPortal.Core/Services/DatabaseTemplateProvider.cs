@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection;
-using System.Text.RegularExpressions;
+﻿using System.Reflection;
 using AvantiPoint.EmailService;
 using HandlebarsDotNet;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +7,6 @@ using MultiFamilyPortal.ComponentModel;
 using MultiFamilyPortal.Data;
 using MultiFamilyPortal.Data.Models;
 using MultiFamilyPortal.Dtos;
-using static System.Net.WebRequestMethods;
 
 namespace MultiFamilyPortal.Services
 {

@@ -72,9 +72,10 @@
 
 <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
   <TelerikWindow Visible="@(NewNote != null)"
-                 Width="600px"
+                 Class="responsive-window"
                  Modal="true"
-                 Height="600px">
+                 Centered="@true"
+                 Draggable="@false">
     <WindowTitle>
       Add Note
     </WindowTitle>
@@ -99,9 +100,10 @@
   </TelerikWindow>
 
   <TelerikWindow Visible="@(UpdateNote != null)"
-                 Width="600px"
+                 Class="responsive-window"
                  Modal="true"
-                 Height="600px">
+                 Centered="@true"
+                 Draggable="@false">
     <WindowTitle>
       Update Note
     </WindowTitle>

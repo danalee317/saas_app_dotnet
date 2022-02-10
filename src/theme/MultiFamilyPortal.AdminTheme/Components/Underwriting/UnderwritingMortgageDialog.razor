@@ -1,7 +1,12 @@
 ﻿<TelerikWindow Modal="true"
                Visible="@(Mortgage != null)"
-               Width="600px">
+               Centered="true"
+               Draggable="false"
+               Class="responsive-window">
   <WindowTitle>@Title</WindowTitle>
+  <WindowActions>
+      <WindowAction Name="Close" OnClick="@(() => Mortgage = null)"/>
+  </WindowActions>
   <WindowContent>
     <div class="row g-3">
       <label for="LoanAmount" class="col-sm-2 col-form-label">Loan Amount</label>

@@ -14,30 +14,30 @@
     }
   </GridToolBar>
   <GridColumns>
-    <GridColumn Field="@(nameof(DisplayUnit.UnitName))" Title="Unit" />
-    <GridColumn Field="@(nameof(DisplayUnit.Renter))" Title="Tenant Name" Width="15%">
+    <GridColumn Field="@(nameof(DisplayUnit.UnitName))" Title="Unit" Width=@(_isSmallScreen ? "150px" : "12%")/>
+    <GridColumn Field="@(nameof(DisplayUnit.Renter))" Title="Tenant Name" Width=@(_isSmallScreen ? "150px" : "15%")>
       <Template>
         @{ var unit = context as DisplayUnit; }
         @(string.IsNullOrEmpty(unit.Renter) ? "N/A" : unit.Renter)
       </Template>
     </GridColumn>
-    <GridColumn Field="@(nameof(DisplayUnit.FloorPlanName))" Title="Floor Plan" />
-    <GridColumn Field="@(nameof(DisplayUnit.Rent))" Title="Monthly Rent ($)" DisplayFormat="{0:C}" />
-    <GridColumn Field="@(nameof(DisplayUnit.Balance))" Title="Balance ($)" DisplayFormat="{0:C}" />
-    <GridColumn Field="@(nameof(DisplayUnit.DepositOnHand))" Title="Deposit ($)" DisplayFormat="{0:C}" />
-    <GridColumn Field="@(nameof(DisplayUnit.LeaseStart))" Title="Lease Start" >
+    <GridColumn Field="@(nameof(DisplayUnit.FloorPlanName))" Title="Floor Plan" Width=@(_isSmallScreen ? "150px" : "10%")/>
+    <GridColumn Field="@(nameof(DisplayUnit.Rent))" Title="Monthly Rent ($)" DisplayFormat="{0:C}" Width=@(_isSmallScreen ? "150px" : "10%")/>
+    <GridColumn Field="@(nameof(DisplayUnit.Balance))" Title="Balance ($)" DisplayFormat="{0:C}"Width=@(_isSmallScreen ? "150px" : "10%") />
+    <GridColumn Field="@(nameof(DisplayUnit.DepositOnHand))" Title="Deposit ($)" DisplayFormat="{0:C}" Width=@(_isSmallScreen ? "150px" : "10%")/>
+    <GridColumn Field="@(nameof(DisplayUnit.LeaseStart))" Title="Lease Start" Width=@(_isSmallScreen ? "150px" : "10%")>
       <Template>
         @{ var unit = context as DisplayUnit; }
         @(unit.LeaseStart.HasValue ? unit.LeaseStart.Value.ToString($"MM/yyyy") : "N/A")
       </Template>
     </GridColumn>
-    <GridColumn Field="@(nameof(DisplayUnit.LeaseEnd))" Title="Lease End">
+    <GridColumn Field="@(nameof(DisplayUnit.LeaseEnd))" Title="Lease End" Width=@(_isSmallScreen ? "150px" : "10%")>
       <Template>
         @{ var unit = context as DisplayUnit; }
         @(unit.LeaseEnd.HasValue ? unit.LeaseEnd.Value.ToString($"MM/yyyy") : "N/A")
       </Template>
     </GridColumn>
-    <GridCommandColumn>
+    <GridCommandColumn Width=@(_isSmallScreen ? "150px" : "10%")>
       <div class="text-center">
         <GridCommandButton OnClick="UpdateUnit" Icon="edit">
           Edit
@@ -52,7 +52,7 @@
   <TelerikWindow Centered="true"
                  Modal="true"
                  Visible=@(_unit != null)
-                 Width="600px">
+                 Class="responsive-window">
     <WindowTitle>
       <strong>Edit @_unit?.UnitName</strong>
     </WindowTitle>
@@ -70,7 +70,7 @@
   <TelerikWindow Centered="true"
                  Modal="true"
                  Visible=@_showAddUnit
-                 Width="600px">
+                 Class="responsive-window">
     <WindowTitle>
       <strong>Add New Unit(s)</strong>
     </WindowTitle>
@@ -100,3 +100,4 @@
     </WindowContent>
   </TelerikWindow>
 }
+<TelerikMediaQuery Media="@_mediaQuery" OnChange="@((doesMatch) => _isSmallScreen = doesMatch)"></TelerikMediaQuery>

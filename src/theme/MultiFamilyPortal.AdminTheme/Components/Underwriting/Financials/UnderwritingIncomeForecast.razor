@@ -24,7 +24,7 @@
              OnEdit=@OnForecastEditing
              OnUpdate=@OnForecastUpdated>
   <GridColumns>
-    <GridColumn Field="Year" Editable=@false TextAlign=@ColumnTextAlign.Center>
+    <GridColumn Field="Year" Editable=@false TextAlign=@ColumnTextAlign.Center Width=@(_isSmallScreen ? "150px" : "16%")>
       <HeaderTemplate>
         <span class="table-header">Year</span>
       </HeaderTemplate>
@@ -40,7 +40,9 @@
         }
       </Template>
     </GridColumn>
-    <GridColumn Field="IncreaseType" TextAlign=@ColumnTextAlign.Center>
+    <GridColumn Field="IncreaseType" 
+                TextAlign=@ColumnTextAlign.Center 
+                Width=@(_isSmallScreen ? "150px" : "16.7%")>
       <HeaderTemplate>
         <span class="table-header">Increase Type</span>
       </HeaderTemplate>
@@ -65,7 +67,9 @@
         </TelerikDropDownList>
       </EditorTemplate>
     </GridColumn>
-    <GridColumn Field="PerUnitIncrease" TextAlign=@ColumnTextAlign.Center>
+    <GridColumn Field="PerUnitIncrease" 
+                TextAlign=@ColumnTextAlign.Center 
+                Width=@(_isSmallScreen ? "150px" : "16%")>
       <HeaderTemplate>
         <span class="table-header">Per Unit<br />Increase</span>
       </HeaderTemplate>
@@ -91,7 +95,7 @@
         }
       </EditorTemplate>
     </GridColumn>
-    <GridColumn Field="UnitsAppliedTo" Title="Units Applied To" TextAlign=@ColumnTextAlign.Center />
+    <GridColumn Field="UnitsAppliedTo" Title="Units Applied To" TextAlign=@ColumnTextAlign.Center Width=@(_isSmallScreen ? "150px" : "16%")/>
     <GridColumn Field="FixedIncreaseOnRemainingUnits"
                 DisplayFormat="{0:C}"
                 TextAlign=@ColumnTextAlign.Center>
@@ -107,6 +111,7 @@
       </EditorTemplate>
     </GridColumn>
     <GridColumn Field="Vacancy"
+                Width=@(_isSmallScreen ? "150px" : "16%")
                 DisplayFormat="{0:P}"
                 TextAlign=@ColumnTextAlign.Center>
       <HeaderTemplate>
@@ -130,6 +135,7 @@
     </GridColumn>
     <GridColumn Field="UtilityIncreases"
                 DisplayFormat="{0:C}"
+                Width=@(_isSmallScreen ? "150px" : "16%")
                 TextAlign=@ColumnTextAlign.Center>
       <HeaderTemplate>
         <span class="table-header">Utility Increases</span>
@@ -144,6 +150,7 @@
     </GridColumn>
     <GridColumn Field="OtherIncomePercent"
                 DisplayFormat="{0:P}"
+                Width=@(_isSmallScreen ? "150px" : "16%")
                 TextAlign=@ColumnTextAlign.Center>
       <HeaderTemplate>
         <span class="table-header">Other Income<br />Percent</span>
@@ -173,3 +180,4 @@
     </GridCommandColumn>
   </GridColumns>
 </TelerikGrid>
+<TelerikMediaQuery Media="@_mediaQuery" OnChange="@((doesMatch) => _isSmallScreen = doesMatch)"></TelerikMediaQuery>

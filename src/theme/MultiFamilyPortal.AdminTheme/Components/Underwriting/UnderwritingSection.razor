@@ -99,8 +99,9 @@
 <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
   <TelerikWindow Modal="true"
                  Visible=@(NewItem != null)
+                 Centered="true"
                  Draggable="false"
-                 Width="550px">
+                 Class="responsive-window">
     <WindowTitle>Add @Type Item</WindowTitle>
     <WindowActions>
         <WindowAction Name="Close" OnClick=@(() => NewItem = null) />
@@ -173,7 +174,8 @@
   <TelerikWindow Modal="true"
                  Visible=@(EditItem != null)
                  Draggable="false"
-                 Width="550px">
+                 Centered="true"
+                 Class="responsive-window">
     <WindowTitle>Edit @Type Item</WindowTitle>
     <WindowActions>
         <WindowAction Name="Close" OnClick=@(() => EditItem = null) />

@@ -68,10 +68,9 @@
 </TelerikGrid>
 
 <TelerikWindow @bind-Visible="@_windowVisibility"
-               Top="25px"
+               Centered ="true"
                Modal="true"
-               Width="1200px"
-               Height="800px">
+               Class="responsive-window-lg">
   <WindowTitle>
     <strong>@(string.IsNullOrEmpty(_marketTitle)?"Add": "Edit") Market</strong>
   </WindowTitle>

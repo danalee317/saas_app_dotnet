@@ -66,9 +66,13 @@
 
 <TelerikWindow Modal="true"
                Centered="true"
-               Width="600px"
+               Draggable="false"
+               Class="responsive-window"
                Visible="@(NewProspect != null)">
   <WindowTitle>Create Property</WindowTitle>
+  <WindowActions>
+      <WindowAction Name="Close" OnClick="@(() => NewProspect = null)" />
+  </WindowActions>
   <WindowContent>
     <form>
     <div class="row g-3">

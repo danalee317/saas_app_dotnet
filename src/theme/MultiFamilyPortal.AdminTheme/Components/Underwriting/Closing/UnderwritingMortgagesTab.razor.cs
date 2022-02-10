@@ -21,6 +21,8 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Closing
         private UnderwritingAnalysisMortgage EditMortgage;
         private bool showBalloon;
         private bool _editable;
+        private bool _isSmallScreen { get; set; }
+        private string _mediaQuery { get; set; } = "(max-width: 576px)";
 
         protected override void OnInitialized()
         {

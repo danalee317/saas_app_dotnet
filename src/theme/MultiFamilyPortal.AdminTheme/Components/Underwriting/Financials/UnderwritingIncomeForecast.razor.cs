@@ -16,8 +16,9 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Financials
         private ClaimsPrincipal _user { get; set; }
 
         private bool _editable;
-
         private int _index = -1;
+        private bool _isSmallScreen { get; set; }
+        private string _mediaQuery { get; set; } = "(max-width: 576px)";
 
         protected override void OnInitialized()
         {

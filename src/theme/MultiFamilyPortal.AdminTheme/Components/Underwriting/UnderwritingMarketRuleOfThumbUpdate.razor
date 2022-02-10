@@ -1,7 +1,8 @@
 @if (Guidance != null)
 {
-  <TelerikWindow @bind-Visible=@Show
-                 Width="600px"
+  <TelerikWindow @bind-Visible="@Show"
+                 Centered = "true"
+                 Class="responsive-window"
                  Modal=@true>
     <WindowTitle>
       <h3>Update Underwriting</h3>

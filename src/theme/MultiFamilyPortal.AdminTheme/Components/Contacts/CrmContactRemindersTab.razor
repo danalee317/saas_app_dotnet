@@ -1,1 +1,72 @@
-﻿<ComingSoon />
+﻿<div class="row mb-3">
+    <div class="col-md-4">
+        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+    </div>
+    <div class="col-md-4">
+        <select class="form-select" aria-label="Default select example">
+            <option selected>Open this select menu</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <TelerikButton OnClick="@( () => WindowIsVisible = !WindowIsVisible )">Add</TelerikButton>
+    </div>
+</div>
+@* List of Reminders *@
+
+@if(Contact.Reminders is not null && Contact.Reminders.Any())
+{
+<div class="row row-cols-1 row-cols-md-2 gy-2 gx-3">
+    @foreach (var reminder in Contact.Reminders)
+    {
+        <div class="col">
+            <div class="row border m-5 p-3">
+                <div class="col-9 border-end">
+                    <div class="row">
+                        <div class="col-12">
+                            <span class="lead my-1">Title</span>
+                        </div>
+                        <div class="col-12">
+                            <span class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                Donec et luctus ante. Eget dictum enim mauris ultricies enim. Vestibulum eu risus
+                                massa.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col my-auto">
+                    Feb 18, 2022 <br>
+                    <small class="form-text">In 10 Days time</small>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+} 
+else 
+{
+    <div class="text-secondary text-center m-5 p-5 lead">
+        Add Your First Reminder
+    </div>
+}
+
+
+<TelerikWindow @bind-Visible="@WindowIsVisible" Modal=true>
+    <WindowTitle>
+        <strong>Add/Remove/Edit Reminder</strong>
+    </WindowTitle>
+    <WindowContent>
+        Reminder Content
+    </WindowContent>
+    <WindowActions>
+        <WindowAction Name="Close"></WindowAction>
+    </WindowActions>
+</TelerikWindow>
+
+
+
+@code {
+    bool WindowIsVisible { get; set; }
+}

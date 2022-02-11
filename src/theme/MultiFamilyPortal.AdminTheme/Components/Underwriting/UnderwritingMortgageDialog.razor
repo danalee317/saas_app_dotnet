@@ -1,8 +1,4 @@
-﻿<TelerikWindow Modal="true"
-               Visible="@(Mortgage != null)"
-               Centered="true"
-               Draggable="false"
-               Class="responsive-window">
+﻿<ResponsiveWindow Visible="@(Mortgage != null)">
   <WindowTitle>@Title</WindowTitle>
   <WindowActions>
       <WindowAction Name="Close" OnClick="@(() => Mortgage = null)"/>
@@ -81,4 +77,4 @@
       </div>
     </div>
   </WindowContent>
-</TelerikWindow>
+</ResponsiveWindow>

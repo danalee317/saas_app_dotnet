@@ -1,7 +1,4 @@
-<TelerikWindow Modal="true"
-               Centered="true"
-               Visible=@(FloorPlan != null)
-               Class="responsive-window">
+<ResponsiveWindow Visible=@(FloorPlan != null)>
   <WindowTitle>
     <strong>@_title</strong>
   </WindowTitle>
@@ -32,4 +29,4 @@
     </LoaderContainer>
   </WindowContent>
 
-</TelerikWindow>
+</ResponsiveWindow>

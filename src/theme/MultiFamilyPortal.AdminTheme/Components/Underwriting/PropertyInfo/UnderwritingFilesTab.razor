@@ -1,4 +1,6 @@
-﻿<TelerikGrid Data=@_files
+﻿@inherits ResponsiveCheckerBase
+
+<TelerikGrid Data=@_files
              ConfirmDelete=@true
              Width="100%"
              OnDelete=@OnDelete>
@@ -24,7 +26,7 @@
     </GridColumn>
     <GridColumn Field=@nameof(UnderwritingAnalysisFile.Type) />
     <GridColumn Field=@nameof(UnderwritingAnalysisFile.Name) />
-      @if(!_isSmallScreen)
+      @if(!IsSmallScreen)
       {
         <GridColumn Field=@nameof(UnderwritingAnalysisFile.Description) />
       }
@@ -41,7 +43,7 @@
                              ThemeColor="primary"
                              Class="my-1"
                              OnClick=@OnPreview> 
-                             @if(!_isSmallScreen)
+                             @if(!IsSmallScreen)
                              {
                               <span>Preview</span>
                              }
@@ -52,7 +54,7 @@
         <a href="@file.DownloadLink" target="_blank" role="button" class="btn btn-secondary text-center my-1">
           <span style="color: #FFFFFF;">
             <i class="fa-duotone fa-download"></i>
-             @if(!_isSmallScreen)
+             @if(!IsSmallScreen)
              {
                <span>Download</span>
              }
@@ -60,7 +62,7 @@
         </a>
         <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
           <GridCommandButton Command="Delete" Title="Delete" Class="my-1" Icon="delete">
-              @if(!_isSmallScreen)
+              @if(!IsSmallScreen)
               {
                 <span>Delete</span>
               }
@@ -71,12 +73,7 @@
   </GridColumns>
 </TelerikGrid>
 
-<TelerikWindow Visible=@showUploadFile
-               Modal=@true
-               Centered="@true"
-               Class="responsive-window"
-               Draggable=@false
-               Height="410px">
+<ResponsiveWindow Visible=@showUploadFile>
   <WindowTitle>Upload</WindowTitle>
   <WindowActions>
     <WindowAction Name="Close" OnClick=@CloseUpload />
@@ -111,7 +108,7 @@
                OnSuccess=@OnFileUploaded>
 </TelerikUpload>
   </WindowContent>
-</TelerikWindow>
+</ResponsiveWindow>
 
 <PortalNotification @ref="notification" />
 
@@ -130,4 +127,4 @@
     </WindowContent>
 </TelerikWindow>
 
-<TelerikMediaQuery Media="@_mediaQuery" OnChange="@((doesMatch) => _isSmallScreen = doesMatch)"></TelerikMediaQuery>
+<TelerikMediaQuery Media="@MediaQuery" OnChange="@((doesMatch) => IsSmallScreen = doesMatch)"></TelerikMediaQuery>

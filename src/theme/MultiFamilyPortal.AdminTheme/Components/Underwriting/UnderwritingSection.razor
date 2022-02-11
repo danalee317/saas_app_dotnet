@@ -97,11 +97,7 @@
 </TelerikGrid>
 
 <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
-  <TelerikWindow Modal="true"
-                 Visible=@(NewItem != null)
-                 Centered="true"
-                 Draggable="false"
-                 Class="responsive-window">
+  <ResponsiveWindow Visible=@(NewItem != null)>
     <WindowTitle>Add @Type Item</WindowTitle>
     <WindowActions>
         <WindowAction Name="Close" OnClick=@(() => NewItem = null) />
@@ -168,14 +164,10 @@
         </div>
       </div>
     </WindowContent>
-  </TelerikWindow>
+  </ResponsiveWindow>
 
 
-  <TelerikWindow Modal="true"
-                 Visible=@(EditItem != null)
-                 Draggable="false"
-                 Centered="true"
-                 Class="responsive-window">
+  <ResponsiveWindow Visible=@(EditItem != null)>
     <WindowTitle>Edit @Type Item</WindowTitle>
     <WindowActions>
         <WindowAction Name="Close" OnClick=@(() => EditItem = null) />
@@ -239,7 +231,7 @@
         </div>
       </div>
     </WindowContent>
-  </TelerikWindow>
+  </ResponsiveWindow>
 </AuthorizedPolicy>
 
 <PortalNotification @ref="notification" />

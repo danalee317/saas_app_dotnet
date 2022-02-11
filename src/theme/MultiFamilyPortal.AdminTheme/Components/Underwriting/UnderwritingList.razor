@@ -64,11 +64,7 @@
   </div>
 </div>
 
-<TelerikWindow Modal="true"
-               Centered="true"
-               Draggable="false"
-               Class="responsive-window"
-               Visible="@(NewProspect != null)">
+<ResponsiveWindow Visible="@(NewProspect != null)">
   <WindowTitle>Create Property</WindowTitle>
   <WindowActions>
       <WindowAction Name="Close" OnClick="@(() => NewProspect = null)" />
@@ -162,6 +158,6 @@
     </div>
     </form>
   </WindowContent>
-</TelerikWindow>
+</ResponsiveWindow >
 
 <PortalNotification @ref="notification" />

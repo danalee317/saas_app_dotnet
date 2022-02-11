@@ -25,8 +25,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
         private bool _editable;
         private DisplayUnit _newUnit = null;
         private UnderwritingAnalysisModel _floor = null;
-        private bool _isSmallScreen { get; set; }
-        private string _mediaQuery { get; set; } = "(max-width: 576px)";
 
         protected override void OnInitialized()
         {

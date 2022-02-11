@@ -23,8 +23,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Financials
         private PortalNotification _notification;
         private UnderwritingGuidance _selected;
         private bool showSelectedGuidance = false;
-        private bool _isSmallScreen { get; set; }
-        private string _mediaQuery { get; set; } = "(max-width: 576px)";
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {

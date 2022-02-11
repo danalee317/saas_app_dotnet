@@ -1,7 +1,9 @@
 ﻿@using Data.Models
+@inherits ResponsiveCheckerBase
+
 <TelerikGrid Data=@_rules>
   <GridColumns>
-    <GridColumn Field="Market" Groupable="true" Width=@(_isSmallScreen ? "150px" : "15%")>
+    <GridColumn Field="Market" Groupable="true" Width=@(IsSmallScreen ? "150px" : "15%")>
       <Template>
         @{ var guidance = context as UnderwritingGuidance; }
         @if(string.IsNullOrEmpty(guidance.Market))
@@ -14,13 +16,13 @@
         }
       </Template>
     </GridColumn>
-    <GridColumn Field="Category" Groupable="false" Width=@(_isSmallScreen ? "150px" : "15%")>
+    <GridColumn Field="Category" Groupable="false" Width=@(IsSmallScreen ? "150px" : "15%")>
       <Template>
         @{ var guidance = context as UnderwritingGuidance; }
           <span>@guidance.Category.Humanize(LetterCasing.Title)</span>
       </Template>
     </GridColumn>
-    <GridColumn Title="Amount" TextAlign=@ColumnTextAlign.Center Width=@(_isSmallScreen ? "150px" : "15%")>
+    <GridColumn Title="Amount" TextAlign=@ColumnTextAlign.Center Width=@(IsSmallScreen ? "150px" : "15%")>
       <Template>
         @{ var guidance = context as UnderwritingGuidance; }
         @if(guidance.Type == CostType.PerDoor)
@@ -44,7 +46,7 @@
         }
       </Template>
     </GridColumn>
-    <GridColumn Title="Total" TextAlign=@ColumnTextAlign.Center Width=@(_isSmallScreen ? "150px" : "15%")>
+    <GridColumn Title="Total" TextAlign=@ColumnTextAlign.Center Width=@(IsSmallScreen ? "150px" : "15%")>
       <Template>
         @{ var guidance = context as UnderwritingGuidance; }
         @if(guidance.Type == CostType.PerDoor)
@@ -77,7 +79,7 @@
         <UnderwritingExpenseStatus Guidance=@guidance Property=@Property />
       </Template>
     </GridColumn>
-    <GridCommandColumn Width=@(_isSmallScreen ? "150px" : "20%")>
+    <GridCommandColumn Width=@(IsSmallScreen ? "150px" : "20%")>
       <div class="text-center">
         @{ var guidance = context as UnderwritingGuidance; }
         <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
@@ -98,4 +100,4 @@
                                      UpdateCurrent=@UpdateExpense />
 
 <PortalNotification @ref="_notification" />
-<TelerikMediaQuery Media="@_mediaQuery" OnChange="@((doesMatch) => _isSmallScreen = doesMatch)"></TelerikMediaQuery>
+<TelerikMediaQuery Media="@MediaQuery" OnChange="@((doesMatch) => IsSmallScreen = doesMatch)"></TelerikMediaQuery>

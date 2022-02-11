@@ -1,13 +1,14 @@
 .responsive-window{
-    max-width: 600px;
+    max-width: 550px;
+    min-width: 400px;
 }
 .responsive-window-lg{
-    width: 900px;
+    max-width: 900px;
 }
 
 @media only screen and (min-width: 576px) and (max-width: 992px) {
 .responsive-window {
-    width: 500px;
+    max-width: 550px;
    }
 .responsive-window-lg{
     max-width: 700px;

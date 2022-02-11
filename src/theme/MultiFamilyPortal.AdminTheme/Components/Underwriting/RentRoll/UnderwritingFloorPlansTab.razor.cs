@@ -17,11 +17,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
         private bool _editable;
 
         private UnderwritingAnalysisModel _floorPlan;
-
-        private bool _isSmallScreen { get; set; }
-        
-        private string _mediaQuery { get; set; } = "(max-width: 576px)";
-
         protected override void OnInitialized()
         {
             _editable = _user.IsAuthorizedInPolicy(PortalPolicy.Underwriter);

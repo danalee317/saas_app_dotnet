@@ -1,3 +1,4 @@
+@inherits ResponsiveCheckerBase
 <TelerikGrid Data="@_filteredUnits"
              Height="600px"
              Sortable="true"
@@ -14,30 +15,30 @@
     }
   </GridToolBar>
   <GridColumns>
-    <GridColumn Field="@(nameof(DisplayUnit.UnitName))" Title="Unit" Width=@(_isSmallScreen ? "150px" : "12%")/>
-    <GridColumn Field="@(nameof(DisplayUnit.Renter))" Title="Tenant Name" Width=@(_isSmallScreen ? "150px" : "15%")>
+    <GridColumn Field="@(nameof(DisplayUnit.UnitName))" Title="Unit" Width=@(IsSmallScreen ? "150px" : "12%")/>
+    <GridColumn Field="@(nameof(DisplayUnit.Renter))" Title="Tenant Name" Width=@(IsSmallScreen ? "150px" : "15%")>
       <Template>
         @{ var unit = context as DisplayUnit; }
         @(string.IsNullOrEmpty(unit.Renter) ? "N/A" : unit.Renter)
       </Template>
     </GridColumn>
-    <GridColumn Field="@(nameof(DisplayUnit.FloorPlanName))" Title="Floor Plan" Width=@(_isSmallScreen ? "150px" : "10%")/>
-    <GridColumn Field="@(nameof(DisplayUnit.Rent))" Title="Monthly Rent ($)" DisplayFormat="{0:C}" Width=@(_isSmallScreen ? "150px" : "10%")/>
-    <GridColumn Field="@(nameof(DisplayUnit.Balance))" Title="Balance ($)" DisplayFormat="{0:C}"Width=@(_isSmallScreen ? "150px" : "10%") />
-    <GridColumn Field="@(nameof(DisplayUnit.DepositOnHand))" Title="Deposit ($)" DisplayFormat="{0:C}" Width=@(_isSmallScreen ? "150px" : "10%")/>
-    <GridColumn Field="@(nameof(DisplayUnit.LeaseStart))" Title="Lease Start" Width=@(_isSmallScreen ? "150px" : "10%")>
+    <GridColumn Field="@(nameof(DisplayUnit.FloorPlanName))" Title="Floor Plan" Width=@(IsSmallScreen ? "150px" : "10%")/>
+    <GridColumn Field="@(nameof(DisplayUnit.Rent))" Title="Monthly Rent ($)" DisplayFormat="{0:C}" Width=@(IsSmallScreen ? "150px" : "10%")/>
+    <GridColumn Field="@(nameof(DisplayUnit.Balance))" Title="Balance ($)" DisplayFormat="{0:C}"Width=@(IsSmallScreen ? "150px" : "10%") />
+    <GridColumn Field="@(nameof(DisplayUnit.DepositOnHand))" Title="Deposit ($)" DisplayFormat="{0:C}" Width=@(IsSmallScreen ? "150px" : "10%")/>
+    <GridColumn Field="@(nameof(DisplayUnit.LeaseStart))" Title="Lease Start" Width=@(IsSmallScreen ? "150px" : "10%")>
       <Template>
         @{ var unit = context as DisplayUnit; }
         @(unit.LeaseStart.HasValue ? unit.LeaseStart.Value.ToString($"MM/yyyy") : "N/A")
       </Template>
     </GridColumn>
-    <GridColumn Field="@(nameof(DisplayUnit.LeaseEnd))" Title="Lease End" Width=@(_isSmallScreen ? "150px" : "10%")>
+    <GridColumn Field="@(nameof(DisplayUnit.LeaseEnd))" Title="Lease End" Width=@(IsSmallScreen ? "150px" : "10%")>
       <Template>
         @{ var unit = context as DisplayUnit; }
         @(unit.LeaseEnd.HasValue ? unit.LeaseEnd.Value.ToString($"MM/yyyy") : "N/A")
       </Template>
     </GridColumn>
-    <GridCommandColumn Width=@(_isSmallScreen ? "150px" : "10%")>
+    <GridCommandColumn Width=@(IsSmallScreen ? "150px" : "10%")>
       <div class="text-center">
         <GridCommandButton OnClick="UpdateUnit" Icon="edit">
           Edit
@@ -49,10 +50,7 @@
 
 @if (_unit != null)
 {
-  <TelerikWindow Centered="true"
-                 Modal="true"
-                 Visible=@(_unit != null)
-                 Class="responsive-window">
+  <ResponsiveWindow Visible=@(_unit != null)>
     <WindowTitle>
       <strong>Edit @_unit?.UnitName</strong>
     </WindowTitle>
@@ -62,15 +60,12 @@
     <WindowContent>
       <UnderwritingRollUnitsControls @bind-Unit=@_unit />
     </WindowContent>
-  </TelerikWindow>
+  </ResponsiveWindow>
 }
 
 @if (_showAddUnit)
 {
-  <TelerikWindow Centered="true"
-                 Modal="true"
-                 Visible=@_showAddUnit
-                 Class="responsive-window">
+  <ResponsiveWindow Visible=@_showAddUnit>
     <WindowTitle>
       <strong>Add New Unit(s)</strong>
     </WindowTitle>
@@ -98,6 +93,6 @@
         }
       </Animation>
     </WindowContent>
-  </TelerikWindow>
+  </ResponsiveWindow>
 }
-<TelerikMediaQuery Media="@_mediaQuery" OnChange="@((doesMatch) => _isSmallScreen = doesMatch)"></TelerikMediaQuery>
+<TelerikMediaQuery Media="@MediaQuery" OnChange="@((doesMatch) => IsSmallScreen = doesMatch)"></TelerikMediaQuery>

@@ -1,4 +1,6 @@
-﻿<div class="row g-3">
+﻿@inherits ResponsiveCheckerBase
+
+<div class="row g-3">
   <label for="PurchasePrice" class="col-sm-2 col-form col-form-label">Purchase Price</label>
   <div class="col-sm-4">
     <TelerikNumericTextBox @bind-Value=@Property.PurchasePrice
@@ -64,7 +66,7 @@
         <GridColumn Field="@(nameof(UnderwritingAnalysisMortgage.LoanAmount))"
                     TextAlign="ColumnTextAlign.Center"
                     Title="Loan Amount"
-                     Width=@(_isSmallScreen ? "150px" : "20%")
+                     Width=@(IsSmallScreen ? "150px" : "20%")
                     DisplayFormat="{0:C}">
           <FooterTemplate>
             <div class="text-center">
@@ -74,7 +76,7 @@
         </GridColumn>
         <GridColumn Field="@(nameof(UnderwritingAnalysisMortgage.InterestRate))"
                     TextAlign="ColumnTextAlign.Center"
-                    Width=@(_isSmallScreen ? "150px" : "20%")
+                    Width=@(IsSmallScreen ? "150px" : "20%")
                     Title="Rate"
                     DisplayFormat="{0:P3}" />
         <GridColumn Field="@(nameof(UnderwritingAnalysisMortgage.TermInYears))"
@@ -100,7 +102,7 @@
         </GridColumn>
         <GridColumn Field="@(nameof(UnderwritingAnalysisMortgage.PointCost))"
                     TextAlign="ColumnTextAlign.Center"
-                     Width=@(_isSmallScreen ? "150px" : "20%")
+                     Width=@(IsSmallScreen ? "150px" : "20%")
                     Title="Point Cost"
                     DisplayFormat="{0:C}">
           <FooterTemplate>
@@ -111,7 +113,7 @@
         </GridColumn>
         <GridColumn Field="@(nameof(UnderwritingAnalysisMortgage.BalloonMonths))"
                     TextAlign="ColumnTextAlign.Center"
-                    Width=@(_isSmallScreen ? "150px" : "20%")
+                    Width=@(IsSmallScreen ? "150px" : "20%")
                     Title="Balloon Months"
                     DisplayFormat="{0:G}" />
         <GridColumn Field="@(nameof(UnderwritingAnalysisMortgage.AnnualDebtService))"
@@ -125,7 +127,7 @@
           </FooterTemplate>
         </GridColumn>
         <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
-          <GridCommandColumn  Width=@(_isSmallScreen ? "150px" : "20%")>
+          <GridCommandColumn  Width=@(IsSmallScreen ? "150px" : "20%")>
             <div class="text-center">
               <GridCommandButton Command="CustomEdit" Icon="edit" Title="Edit" OnClick=@OnEdit>Edit</GridCommandButton>
               @if(Property.LoanType != Data.Models.UnderwritingLoanType.Automatic)
@@ -155,4 +157,4 @@
                               Update="true"
                               OnSave=@OnUpdateMortgage />
 </AuthorizedPolicy>
-<TelerikMediaQuery Media="@_mediaQuery" OnChange="@((doesMatch) => _isSmallScreen = doesMatch)"></TelerikMediaQuery>
+<TelerikMediaQuery Media="@MediaQuery" OnChange="@((doesMatch) => IsSmallScreen = doesMatch)"></TelerikMediaQuery>

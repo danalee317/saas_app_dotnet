@@ -3,6 +3,7 @@
 @using MultiFamilyPortal.AdminTheme.Components.Underwriting.Wizard
 @inherits ResponsiveComponent
 
+@{ base.BuildRenderTree(__builder); }
 @if(Property is null)
 {
   <SiteTitle Title="Underwriting" />
@@ -103,7 +104,6 @@ else
       </div>
     </div>
   </Animation>
-  @{ base.BuildRenderTree(__builder); }
 }
 
 <PortalNotification @ref="notification" />

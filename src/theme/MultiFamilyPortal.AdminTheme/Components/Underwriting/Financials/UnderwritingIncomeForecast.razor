@@ -1,6 +1,7 @@
 ﻿@using MultiFamilyPortal.Data.Models
-@inherits ResponsiveCheckerBase
+@inherits ResponsiveComponent
 
+@{ base.BuildRenderTree(__builder); }
 <div class="row g-3 pt-3 pb-4">
   <label for="HoldYears" class="col-sm-2 col-form col-form-label">Hold Period (Yrs)</label>
   <div class="col-sm-4">
@@ -181,4 +182,3 @@
     </GridCommandColumn>
   </GridColumns>
 </TelerikGrid>
-<TelerikMediaQuery Media="@MediaQuery" OnChange="@((doesMatch) => IsSmallScreen = doesMatch)"></TelerikMediaQuery>

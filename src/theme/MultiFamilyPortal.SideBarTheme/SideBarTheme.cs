@@ -8,8 +8,11 @@ namespace MultiFamilyPortal.SideBarTheme
         protected SideBarTheme()
         {
             Assemblies = new[] { GetType().Assembly };
-            RequiredStyles = new[] { "_content/MultiFamilyPortal.SideBarTheme/css/site.css",
-            "_content/MultiFamilyPortal.CoreUI/css/responsive.css" };
+            RequiredStyles = new[] 
+            {
+                "_content/MultiFamilyPortal.SideBarTheme/css/site.css",
+                "_content/MultiFamilyPortal.CoreUI/css/responsive.css" 
+            };
         }
 
         public Type Layout { get; } = typeof(Layouts.MainLayout);

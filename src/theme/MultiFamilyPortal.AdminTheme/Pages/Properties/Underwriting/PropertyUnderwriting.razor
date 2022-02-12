@@ -1,7 +1,7 @@
 @page "/admin/underwriting/property/{propertyId:guid}"
 @using MultiFamilyPortal.AdminTheme.Components.Underwriting
 @using MultiFamilyPortal.AdminTheme.Components.Underwriting.Wizard
-@inherits ResponsiveCheckerBase;
+@inherits ResponsiveComponent
 
 @if(Property is null)
 {
@@ -103,8 +103,7 @@ else
       </div>
     </div>
   </Animation>
-
-<TelerikMediaQuery Media="@MediaQuery" OnChange="@((doesMatch) => IsSmallScreen = doesMatch)"></TelerikMediaQuery>
+  @{ base.BuildRenderTree(__builder); }
 }
 
 <PortalNotification @ref="notification" />

@@ -1,5 +1,6 @@
-﻿@inherits ResponsiveCheckerBase
+﻿@inherits ResponsiveComponent
 
+@{ base.BuildRenderTree(__builder); }
 <div class="row g-3">
   <label for="PurchasePrice" class="col-sm-2 col-form col-form-label">Purchase Price</label>
   <div class="col-sm-4">
@@ -66,7 +67,7 @@
         <GridColumn Field="@(nameof(UnderwritingAnalysisMortgage.LoanAmount))"
                     TextAlign="ColumnTextAlign.Center"
                     Title="Loan Amount"
-                     Width=@(IsSmallScreen ? "150px" : "20%")
+                    Width=@(IsSmallScreen ? "150px" : "20%")
                     DisplayFormat="{0:C}">
           <FooterTemplate>
             <div class="text-center">
@@ -102,7 +103,7 @@
         </GridColumn>
         <GridColumn Field="@(nameof(UnderwritingAnalysisMortgage.PointCost))"
                     TextAlign="ColumnTextAlign.Center"
-                     Width=@(IsSmallScreen ? "150px" : "20%")
+                    Width=@(IsSmallScreen ? "150px" : "20%")
                     Title="Point Cost"
                     DisplayFormat="{0:C}">
           <FooterTemplate>
@@ -127,7 +128,7 @@
           </FooterTemplate>
         </GridColumn>
         <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
-          <GridCommandColumn  Width=@(IsSmallScreen ? "150px" : "20%")>
+          <GridCommandColumn Width=@(IsSmallScreen ? "150px" : "20%")>
             <div class="text-center">
               <GridCommandButton Command="CustomEdit" Icon="edit" Title="Edit" OnClick=@OnEdit>Edit</GridCommandButton>
               @if(Property.LoanType != Data.Models.UnderwritingLoanType.Automatic)
@@ -157,4 +158,3 @@
                               Update="true"
                               OnSave=@OnUpdateMortgage />
 </AuthorizedPolicy>
-<TelerikMediaQuery Media="@MediaQuery" OnChange="@((doesMatch) => IsSmallScreen = doesMatch)"></TelerikMediaQuery>

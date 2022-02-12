@@ -1,6 +1,7 @@
 ﻿@using Data.Models
-@inherits ResponsiveCheckerBase
+@inherits ResponsiveComponent
 
+@{ base.BuildRenderTree(__builder); }
 <TelerikGrid Data=@_rules>
   <GridColumns>
     <GridColumn Field="Market" Groupable="true" Width=@(IsSmallScreen ? "150px" : "15%")>
@@ -100,4 +101,3 @@
                                      UpdateCurrent=@UpdateExpense />
 
 <PortalNotification @ref="_notification" />
-<TelerikMediaQuery Media="@MediaQuery" OnChange="@((doesMatch) => IsSmallScreen = doesMatch)"></TelerikMediaQuery>

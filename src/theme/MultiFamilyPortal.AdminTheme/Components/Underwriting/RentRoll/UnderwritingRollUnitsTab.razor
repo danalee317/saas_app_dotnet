@@ -1,4 +1,6 @@
-@inherits ResponsiveCheckerBase
+@inherits ResponsiveComponent
+
+@{ base.BuildRenderTree(__builder); }
 <TelerikGrid Data="@_filteredUnits"
              Height="600px"
              Sortable="true"
@@ -95,4 +97,3 @@
     </WindowContent>
   </ResponsiveWindow>
 }
-<TelerikMediaQuery Media="@MediaQuery" OnChange="@((doesMatch) => IsSmallScreen = doesMatch)"></TelerikMediaQuery>

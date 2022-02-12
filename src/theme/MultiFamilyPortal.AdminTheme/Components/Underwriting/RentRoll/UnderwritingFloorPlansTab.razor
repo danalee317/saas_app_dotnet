@@ -1,4 +1,6 @@
-@inherits ResponsiveCheckerBase
+@inherits ResponsiveComponent
+
+@{ base.BuildRenderTree(__builder); }
 <TelerikGrid Data="@Property.Models"
              Height="600px"
              Sortable="true"
@@ -68,4 +70,3 @@
   <UnderwritingFloorPlansEditWindow Property=@Property
                                     @bind-FloorPlan=@_floorPlan />
 }
-<TelerikMediaQuery Media="@MediaQuery" OnChange="@((doesMatch) => IsSmallScreen = doesMatch)"></TelerikMediaQuery>

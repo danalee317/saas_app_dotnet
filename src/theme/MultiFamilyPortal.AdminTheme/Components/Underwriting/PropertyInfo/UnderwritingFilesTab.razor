@@ -1,5 +1,6 @@
-﻿@inherits ResponsiveCheckerBase
+﻿@inherits ResponsiveComponent
 
+@{ base.BuildRenderTree(__builder); }
 <TelerikGrid Data=@_files
              ConfirmDelete=@true
              Width="100%"
@@ -126,5 +127,3 @@
       <DocumentViewer Link="@_selectedFile.DownloadLink" Type=@(Path.GetExtension(_selectedFile.Name).ToLower() == ".pdf" ? DocumentType.PDF : DocumentType.Image) />
     </WindowContent>
 </TelerikWindow>
-
-<TelerikMediaQuery Media="@MediaQuery" OnChange="@((doesMatch) => IsSmallScreen = doesMatch)"></TelerikMediaQuery>

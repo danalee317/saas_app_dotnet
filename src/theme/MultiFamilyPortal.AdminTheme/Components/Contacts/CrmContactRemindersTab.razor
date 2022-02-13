@@ -1,42 +1,57 @@
 ﻿<div class="row mb-3">
-  <div class="col-md-4 my-1">
-    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+  <div class="col-md-4 my-1" @onkeydown="KeyboardEventHandler">
+    <input type="text" 
+           class="form-control" 
+           id="search" 
+           aria-describedby="search" 
+           placeholder="Search ..."
+           @onchange="OnSearch">
   </div>
-  <div class="col-md-4 my-1">
-    <select class="form-select" aria-label="Default select example">
-      <option selected>Open this select menu</option>
-      <option value="1">One</option>
-      <option value="2">Two</option>
-      <option value="3">Three</option>
+  <div class="col-md-2 my-1">
+    <select class="form-select" aria-label="Select Time" @onchange="FilterByTime">
+      @foreach (var time in _times)
+      {
+        <option value="@time" selected=@(time==_time)>@time</option>
+      }
     </select>
   </div>
-  <div class="col-md-4 my-1">
+  <div class="col-md-2 my-1">
+    <select class="form-select" aria-label="Select Status" @onchange="FilterByStatus">
+      @foreach (var status in _statuses)
+      {
+        <option value="@status" selected=@(status==_status)>@status</option>
+      }
+    </select>
+  </div>
+  <div class="col-md-2 my-1">
+    <select class="form-select" aria-label="Select Type" @onchange="FilterByType">
+      @foreach (var type in _types)
+      {
+        <option value="@type" selected=@(type==_type)>@type</option>
+      }
+    </select>
+  </div>
+  <div class="col-md-2 my-1">
     <TelerikButton OnClick="@showReminder">Add</TelerikButton>
   </div>
 </div>
 
-@if (Contact.Reminders is not null && Contact.Reminders.Any())
+@if (_reminders is not null && _reminders.Any())
 {
+  var pageData = _reminders.Skip((_page - 1) * _pageSize).Take(_pageSize).ToList();
   <div class="row row-cols-1 row-cols-md-2 g-2">
-  @foreach (var reminder in Contact.Reminders)
+  @foreach (var reminder in pageData)
     {
       <div class="col" @onclick=@(() => EditLoop(reminder))>
-        <div class="row border m-3 mp-1 p-3">
-          <div class="col-md-8 md-border-end">
-            <span class="text-muted my-auto">@reminder.Description
-            </span>
-          </div>
-          <div class="col my-auto">
-            @reminder.Date.ToString("MMM dd, yyyy") <br>
-            @if (reminder.Date.Date != DateTime.Now.Date)
-            {
-              <small class="form-text">@reminder.Date.Humanize()</small>
-            }
-          </div>
-        </div>
+        <ContactReminder reminder=@reminder />
       </div>
     }
   </div>
+
+  if (_reminders.Count() > _pageSize)
+  {
+    <TelerikPager Total="@_reminders.Count()" PageSize="@_pageSize" @bind-Page="@_page" />
+  }
 }
 else
 {
@@ -46,7 +61,11 @@ else
 }
 
 
-<TelerikWindow Visible="@(_newReminder != null)" Width="400px" Draggable="false" Centered="true" Modal="true">
+<TelerikWindow Visible="@(_newReminder != null)" 
+               Width="400px" 
+               Draggable="false" 
+               Centered="true" 
+               Modal="true">
   <WindowTitle>
     <strong>Add New Reminder</strong>
   </WindowTitle>
@@ -71,8 +90,11 @@ else
   </WindowActions>
 </TelerikWindow>
 
-
-<TelerikWindow Visible="@(_selectedReminder != null)" Width="400px" Draggable="false" Centered="true" Modal="true">
+<TelerikWindow Visible="@(_selectedReminder != null)" 
+               Width="400px" 
+               Draggable="false" 
+               Centered="true" 
+               Modal="true">
   <WindowTitle>
     <strong>Edit Reminder</strong>
   </WindowTitle>
@@ -89,12 +111,12 @@ else
         <label for="reminderDescriptionEdit">Description</label>
       </div>
       <div class="row">
-         <div class="col-9 mb-3">
-           <b>Dismiss</b>
-         </div>
-         <div class="col-3 mb-3">
-           <TelerikSwitch @bind-Value="@_selectedReminder.Dismissed" OnLabel="Active" Size="sm" OffLabel="Dismissed" />
-         </div>
+        <div class="col-9 mb-3">
+          <b>Dismiss</b>
+        </div>
+        <div class="col-3 mb-3">
+          <TelerikSwitch @bind-Value="@_selectedReminder.Dismissed" OnLabel="Active" Size="sm" OffLabel="Dismissed" />
+        </div>
       </div>
       <div class="my-1">
         <div class="row">

@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.Data.Models;
 
@@ -14,11 +16,14 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
         [Inject]
         private NavigationManager _navigationManager { get; set; }
 
+        [Inject]
+        private ProtectedLocalStorage _protectedLocalStorage { get; set; }
+
         private IEnumerable<CRMContact> _allContacts;
         private readonly ObservableRangeCollection<CRMContact> _contacts = new();
         private readonly ObservableRangeCollection<CRMContactRole> _roles = new();
         private readonly ObservableRangeCollection<string> _markets = new ();
-        private bool _showList = true;
+        private bool _showList {get; set;} = true;
         private CRMContact _newContact = null;
         private string _query;
         private string _selectedRole;
@@ -38,6 +43,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
             _roles.AddRange(roles);
             _selectedRole = _roles.First().Name;
             await UpdateContacts();
+            await GetTabAsync();
         }
 
         private async Task UpdateContacts()
@@ -93,6 +99,20 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
                 filtered = filtered.Where(x => x.Markets.Any(m => m.Name == _selectedMarket));
 
             _contacts.ReplaceRange(filtered.OrderBy(x => x.LastName));
+        }
+
+        private async Task HandleViewAsync(bool isList)
+        {
+            _showList = isList;
+            await SetTabAsync();
+        }
+
+        private async Task SetTabAsync() => await _protectedLocalStorage.SetAsync(nameof(_showList), _showList);
+
+        private async Task GetTabAsync()
+        {
+            var isCard = await _protectedLocalStorage.GetAsync<bool>(nameof(_showList));
+            _showList = isCard.Value;
         }
     }
 }

@@ -3,10 +3,10 @@
   {
     <div class="row gt-3 mt-2">
       <div class="col-md-3">
-        <span class="clickable" @onclick=@(() => _showList = true) style="color: @(_showList ? string.Empty : "var(--bs-primary)");">
+        <span class="clickable" @onclick=@(() => HandleViewAsync(true)) style="color: @(_showList ? string.Empty : "var(--bs-primary)");">
           <i class="fa-duotone fa-table-list"></i> List
         </span> |
-        <span class="clickable" @onclick=@(() => _showList = false) style="color: @(_showList ? "var(--bs-primary)" : string.Empty);">
+        <span class="clickable" @onclick=@(() => HandleViewAsync(false)) style="color: @(_showList ? "var(--bs-primary)" : string.Empty);">
           <i class="fa-duotone fa-address-card"></i> Cards
         </span>
       </div>

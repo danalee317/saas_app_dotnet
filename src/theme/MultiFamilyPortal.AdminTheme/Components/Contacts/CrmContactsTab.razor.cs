@@ -17,7 +17,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
         private NavigationManager _navigationManager { get; set; }
 
         [Inject]
-        private ProtectedLocalStorage _protectedLocalStorage { get; set; }
+        private ProtectedSessionStorage _protectedSessionStorage { get; set; }
 
         private IEnumerable<CRMContact> _allContacts;
         private readonly ObservableRangeCollection<CRMContact> _contacts = new();
@@ -107,11 +107,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
             await SetTabAsync();
         }
 
-        private async Task SetTabAsync() => await _protectedLocalStorage.SetAsync(nameof(_showList), _showList);
+        private async Task SetTabAsync() => await _protectedSessionStorage.SetAsync(nameof(_showList), _showList);
 
         private async Task GetTabAsync()
         {
-            var isCard = await _protectedLocalStorage.GetAsync<bool>(nameof(_showList));
+            var isCard = await _protectedSessionStorage.GetAsync<bool>(nameof(_showList));
             _showList = isCard.Value;
         }
     }

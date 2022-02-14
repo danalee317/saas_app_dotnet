@@ -18,11 +18,12 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
         [Inject]
         private ProtectedSessionStorage _protectedSessionStorage { get; set; }
 
+        private const string ShowListSessionStorage = "ShowContactList";
         private IEnumerable<CRMContact> _allContacts;
         private readonly ObservableRangeCollection<CRMContact> _contacts = new();
         private readonly ObservableRangeCollection<CRMContactRole> _roles = new();
         private readonly ObservableRangeCollection<string> _markets = new ();
-        private bool _showList {get; set;} = true;
+        private bool _showList = true;
         private CRMContact _newContact = null;
         private string _query;
         private string _selectedRole;
@@ -106,12 +107,13 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
             await SetTabAsync();
         }
 
-        private async Task SetTabAsync() => await _protectedSessionStorage.SetAsync(nameof(_showList), _showList);
+        private async Task SetTabAsync() => await _protectedSessionStorage.SetAsync(ShowListSessionStorage, _showList);
 
         private async Task GetTabAsync()
         {
-            var isCard = await _protectedSessionStorage.GetAsync<bool>(nameof(_showList));
-            _showList = isCard.Value;
+            var isCard = await _protectedSessionStorage.GetAsync<bool>(ShowListSessionStorage);
+            if(isCard.Success)
+               _showList = isCard.Value;
         }
     }
 }

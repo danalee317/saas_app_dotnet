@@ -25,15 +25,15 @@
   <table class="table table-striped table-hover table-borderless align-middle">
     <thead>
       <tr>
-        <th scope="col" class="text-center">Year</th>
-        <th scope="col" class="text-center">Increase Type</th>
-        <th scope="col" class="text-center">Per Unit Increase</th>
-        <th scope="col" class="text-center">Units Applied To</th>
-        <th scope="col" class="text-center">Increase On Remaining Units</th>
-        <th scope="col" class="text-center">Vacancy</th>
-        <th scope="col" class="text-center">Other Losses Percent</th>
-        <th scope="col" class="text-center">Utility Increases</th>
-        <th scope="col" class="text-center">Other Income Percent</th>
+        <th scope="col" class="text-center col-width">Year</th>
+        <th scope="col" class="text-center col-width">Increase Type</th>
+        <th scope="col" class="text-center col-width">Per Unit Increase</th>
+        <th scope="col" class="text-center col-width">Units Applied To</th>
+        <th scope="col" class="text-center col-width">Increase On Remaining Units</th>
+        <th scope="col" class="text-center col-width">Vacancy</th>
+        <th scope="col" class="text-center col-width">Other Losses Percent</th>
+        <th scope="col" class="text-center col-width">Utility Increases</th>
+        <th scope="col" class="text-center col-width">Other Income Percent</th>
       </tr>
     </thead>
     <tbody>
@@ -55,18 +55,22 @@
                                  @bind-Value=@forecast.IncreaseType
                                  Width="100%" 
                                  Context="fContext">
-                <ItemTemplate>
-                  @{ var type = (IncomeForecastIncreaseType)fContext; }
-                  @type.Humanize(LetterCasing.Title)
-                </ItemTemplate>
-                <ValueTemplate>
-                  @{var type = (IncomeForecastIncreaseType)fContext; }
-                  @type.Humanize(LetterCasing.Title)
-                </ValueTemplate>
-             </TelerikDropDownList>
-          </td>
-          <td>
-            @if (forecast.IncreaseType == IncomeForecastIncreaseType.Percent)
+              <ItemTemplate>
+                @{
+                  var type = (IncomeForecastIncreaseType)fContext; 
+                    }
+                    @type.Humanize(LetterCasing.Title)
+                  </ItemTemplate>
+                  <ValueTemplate>
+                    @{
+                  var type = (IncomeForecastIncreaseType)fContext; 
+                    }
+                    @type.Humanize(LetterCasing.Title)
+                  </ValueTemplate>
+                </TelerikDropDownList>
+              </td>
+              <td>
+                @if (forecast.IncreaseType == IncomeForecastIncreaseType.Percent)
             {
               <PercentageInput @bind-Value=@forecast.PerUnitIncrease />
             }

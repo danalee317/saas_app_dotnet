@@ -71,10 +71,7 @@
 </div>
 
 <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
-  <TelerikWindow Visible="@(NewNote != null)"
-                 Width="600px"
-                 Modal="true"
-                 Height="600px">
+  <ResponsiveWindow Visible="@(NewNote != null)">
     <WindowTitle>
       Add Note
     </WindowTitle>
@@ -96,12 +93,9 @@
     <WindowActions>
       <WindowAction Name="Close" OnClick=@(() => NewNote = null)></WindowAction>
     </WindowActions>
-  </TelerikWindow>
+  </ResponsiveWindow>
 
-  <TelerikWindow Visible="@(UpdateNote != null)"
-                 Width="600px"
-                 Modal="true"
-                 Height="600px">
+  <ResponsiveWindow Visible="@(UpdateNote != null)">
     <WindowTitle>
       Update Note
     </WindowTitle>
@@ -123,7 +117,7 @@
     <WindowActions>
       <WindowAction Name="Close" OnClick=@(() => UpdateNote = null)></WindowAction>
     </WindowActions>
-  </TelerikWindow>
+  </ResponsiveWindow>
 </AuthorizedPolicy>
 
 <PortalNotification @ref="notification" />

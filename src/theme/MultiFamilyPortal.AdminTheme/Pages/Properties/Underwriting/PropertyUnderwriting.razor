@@ -1,7 +1,9 @@
 @page "/admin/underwriting/property/{propertyId:guid}"
 @using MultiFamilyPortal.AdminTheme.Components.Underwriting
 @using MultiFamilyPortal.AdminTheme.Components.Underwriting.Wizard
+@inherits ResponsiveComponent
 
+@{ base.BuildRenderTree(__builder); }
 @if(Property is null)
 {
   <SiteTitle Title="Underwriting" />
@@ -49,31 +51,31 @@ else
             <WizardStepperSettings Linear=@false />
           </WizardSettings>
           <WizardSteps>
-            <WizardStep Label="@(_isSmallScreen ? null : "Property Info")"
+            <WizardStep Label="@(IsSmallScreen? null : "Property Info")"
                         IconClass="fa-duotone fa-city">
               <Content>
                 <PropertyInfoWizardStep Property=@Property />
               </Content>
             </WizardStep>
-            <WizardStep Label="@(_isSmallScreen ? null : "Financials")"
+            <WizardStep Label="@(IsSmallScreen? null : "Financials")"
                         IconClass="fa-duotone fa-money-bills">
               <Content>
                 <FinancialsWizardStep Property=@Property ExpensesUpdated=@OnExpensesUpdated />
               </Content>
             </WizardStep>
-            <WizardStep Label="@(_isSmallScreen ? null : "Closing")"
+            <WizardStep Label="@(IsSmallScreen? null : "Closing")"
                         IconClass="fa-duotone fa-piggy-bank">
               <Content>
                 <ClosingWizardStep Property=@Property />
               </Content>
             </WizardStep>
-            <WizardStep Label="@(_isSmallScreen ? null : "Rent Roll")"
+            <WizardStep Label="@(IsSmallScreen? null : "Rent Roll")"
                         IconClass="fa-duotone fa-list">
               <Content>
                 <RentRollWizardStep Property=@Property />
               </Content>
             </WizardStep>
-            <WizardStep Label="@(_isSmallScreen ? null : "Reports")"
+            <WizardStep Label="@(IsSmallScreen? null : "Reports")"
                         IconClass="fa-duotone fa-file-chart-column">
               <Content>
                 <ReportsWizardStep Property=@Property />
@@ -102,8 +104,6 @@ else
       </div>
     </div>
   </Animation>
-
-<TelerikMediaQuery Media="@_mediaQuery" OnChange="@((doesMatch) => _isSmallScreen = doesMatch)"></TelerikMediaQuery>
 }
 
 <PortalNotification @ref="notification" />

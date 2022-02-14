@@ -21,7 +21,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Closing
         private UnderwritingAnalysisMortgage EditMortgage;
         private bool showBalloon;
         private bool _editable;
-
         protected override void OnInitialized()
         {
             _editable = _user.IsAuthorizedInPolicy(PortalPolicy.Underwriter);

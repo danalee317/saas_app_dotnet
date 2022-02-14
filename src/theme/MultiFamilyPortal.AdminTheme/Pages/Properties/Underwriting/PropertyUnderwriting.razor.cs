@@ -31,11 +31,8 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Properties.Underwriting
         private int currentIndex = 0;
         private bool showPrevious => currentIndex > 0;
         private bool showNext => currentIndex < 4;
-
         private PortalNotification notification { get; set; }
         private bool _editable;
-        private bool _isSmallScreen { get; set; }
-        private string _mediaQuery { get; set; } = "(max-width: 767px)";
 
         private readonly IEnumerable<UnderwritingStatus> AvailableStatus = Enum.GetValues<UnderwritingStatus>();
 

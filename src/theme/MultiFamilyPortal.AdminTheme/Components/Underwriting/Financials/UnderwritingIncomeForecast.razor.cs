@@ -16,7 +16,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Financials
         private ClaimsPrincipal _user { get; set; }
 
         private bool _editable;
-
         private int _index = -1;
 
         protected override void OnInitialized()

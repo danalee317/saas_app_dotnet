@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 using MultiFamilyPortal.Themes;
 
 namespace MultiFamilyPortal.SideBarTheme
@@ -13,7 +8,11 @@ namespace MultiFamilyPortal.SideBarTheme
         protected SideBarTheme()
         {
             Assemblies = new[] { GetType().Assembly };
-            RequiredStyles = new[] { "_content/MultiFamilyPortal.SideBarTheme/css/site.css" };
+            RequiredStyles = new[] 
+            {
+                "_content/MultiFamilyPortal.SideBarTheme/css/site.css",
+                "_content/MultiFamilyPortal.CoreUI/css/responsive.css" 
+            };
         }
 
         public Type Layout { get; } = typeof(Layouts.MainLayout);

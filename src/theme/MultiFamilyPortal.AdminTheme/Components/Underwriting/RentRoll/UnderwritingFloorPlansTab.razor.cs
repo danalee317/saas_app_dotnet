@@ -17,7 +17,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
         private bool _editable;
 
         private UnderwritingAnalysisModel _floorPlan;
-
         protected override void OnInitialized()
         {
             _editable = _user.IsAuthorizedInPolicy(PortalPolicy.Underwriter);

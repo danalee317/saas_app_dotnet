@@ -22,7 +22,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.PropertyInfo
 
         private ObservableRangeCollection<UnderwritingAnalysisFile> _files = new();
         private UnderwritingAnalysisFile _selectedFile;
-
         private readonly IEnumerable<string> fileTypes = Enum.GetValues<UnderwritingProspectFileType>()
             .Select(x => x.Humanize(LetterCasing.Title));
         private string selectedFileType = UnderwritingProspectFileType.OfferMemorandum.Humanize(LetterCasing.Title);

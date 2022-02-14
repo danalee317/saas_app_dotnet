@@ -87,13 +87,13 @@
     <div class="col-md-3 offset-md-2">
     @if (FloorPlan.Id == default)
     {
-      <button class="btn btn-secondary w-100" @onclick="@CloseAsync">
+      <button class="btn btn-secondary w-100 my-2" @onclick="@CloseAsync">
         Close
       </button>
     }
     else
     {
-      <button class="btn btn-danger w-100" @onclick="@DeleteFloorAsync">
+      <button class="btn btn-danger w-100 my-2" @onclick="@DeleteFloorAsync">
         Remove
       </button>
     }
@@ -101,13 +101,13 @@
     <div class="col-md-3 offset-md-2">
     @if (FloorPlan.Id == default)
     {
-      <button class="btn btn-primary w-100" @onclick="AddFloorAsync">
+      <button class="btn btn-primary w-100 my-2" @onclick="AddFloorAsync">
         Add
       </button>
     }
     else
     {
-      <button class="btn btn-success w-100" @onclick="@EditFloorAsync">
+      <button class="btn btn-success w-100 my-2" @onclick="@EditFloorAsync">
         Save
       </button>
     }

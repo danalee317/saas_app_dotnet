@@ -1,5 +1,9 @@
-﻿<TelerikGrid Data=@_files
+﻿@inherits ResponsiveComponent
+
+@{ base.BuildRenderTree(__builder); }
+<TelerikGrid Data=@_files
              ConfirmDelete=@true
+             Width="100%"
              OnDelete=@OnDelete>
   <GridToolBar>
     <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
@@ -15,7 +19,7 @@
     <GridColumn Field=@nameof(UnderwritingAnalysisFile.Icon)
                 Title=" "
                 TextAlign=@ColumnTextAlign.Center
-                Width="60px">
+                Width="10%">
       <Template>
         @{ var file = context as UnderwritingAnalysisFile; }
         <i class="@file.Icon" aria-hidden="true" style="color: @FileTypeLookup.GetColorFromIcon(file.Icon);"></i>
@@ -23,7 +27,10 @@
     </GridColumn>
     <GridColumn Field=@nameof(UnderwritingAnalysisFile.Type) />
     <GridColumn Field=@nameof(UnderwritingAnalysisFile.Name) />
-    <GridColumn Field=@nameof(UnderwritingAnalysisFile.Description) />
+      @if(!IsSmallScreen)
+      {
+        <GridColumn Field=@nameof(UnderwritingAnalysisFile.Description) />
+      }
     <GridCommandColumn>
       <div class="text-center">
         @{
@@ -36,29 +43,38 @@
                              IconClass="fa-duotone fa-eye"
                              ThemeColor="primary"
                              Class="my-1"
-                             OnClick=@OnPreview>Preview
+                             OnClick=@OnPreview> 
+                             @if(!IsSmallScreen)
+                             {
+                              <span>Preview</span>
+                             }
           </GridCommandButton>
         }
 
         @{ var file = context as UnderwritingAnalysisFile; }
         <a href="@file.DownloadLink" target="_blank" role="button" class="btn btn-secondary text-center my-1">
           <span style="color: #FFFFFF;">
-            <i class="fa-duotone fa-download"></i> Download
-          </span>
+            <i class="fa-duotone fa-download"></i>
+             @if(!IsSmallScreen)
+             {
+               <span>Download</span>
+             }
+          </span>  
         </a>
         <AuthorizedPolicy Policy=@PortalPolicy.Underwriter>
-          <GridCommandButton Command="Delete" Title="Delete" Class="my-1" Icon="delete">Delete</GridCommandButton>
+          <GridCommandButton Command="Delete" Title="Delete" Class="my-1" Icon="delete">
+              @if(!IsSmallScreen)
+              {
+                <span>Delete</span>
+              }
+            </GridCommandButton>
         </AuthorizedPolicy>
       </div>
     </GridCommandColumn>
   </GridColumns>
 </TelerikGrid>
 
-<TelerikWindow Visible=@showUploadFile
-               Modal=@true
-               Width="600px"
-               Draggable=@false
-               Height="410px">
+<ResponsiveWindow Visible=@showUploadFile>
   <WindowTitle>Upload</WindowTitle>
   <WindowActions>
     <WindowAction Name="Close" OnClick=@CloseUpload />
@@ -93,7 +109,7 @@
                OnSuccess=@OnFileUploaded>
 </TelerikUpload>
   </WindowContent>
-</TelerikWindow>
+</ResponsiveWindow>
 
 <PortalNotification @ref="notification" />
 

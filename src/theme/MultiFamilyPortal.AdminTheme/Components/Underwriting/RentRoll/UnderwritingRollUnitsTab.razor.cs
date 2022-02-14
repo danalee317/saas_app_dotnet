@@ -24,7 +24,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
         private bool _showAddUnit = false;
         private bool _editable;
         private DisplayUnit _newUnit = null;
-
         private UnderwritingAnalysisModel _floor = null;
 
         protected override void OnInitialized()

@@ -18,17 +18,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
         private string _type;
         private int _pageSize = 10;
         private int _page = 1;
-        private readonly string[] _times = new[] { "All Time", "Today", "This Week", "This Month" };
-        private readonly string[] _statuses = new[] { "All", "Active", "Dismissed" };
-        private readonly string[] _types = new[] { "All", "Mine", "System" };
-
-        protected override void OnParametersSet()
-        {
-            _time = _times[0];
-            _status = _statuses[1];
-            _type = _types[0];
-            Filter();
-        }
+        protected override void OnParametersSet() => GetReminders();
 
         private void showReminder()
         {
@@ -48,7 +38,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
                 Contact.Reminders.Add(_newReminder);
 
             _newReminder = null;
-            _reminders = Contact.Reminders?.ToList();
+            GetReminders();
         }
 
         private void EditLoop(CRMContactReminder reminder)
@@ -60,7 +50,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
             _tempReminder.Description = _selectedReminder.Description;
         }
 
-        private void HandleValidEdit() => _selectedReminder = null;
+        private void HandleValidEdit()
+        {
+             _selectedReminder = null;
+             GetReminders();
+        }
 
         private void HandleOnCancel()
         {
@@ -73,7 +67,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
         private void RemoveReminder()
         {
             Contact.Reminders.Remove(_selectedReminder);
-            _reminders = Contact.Reminders?.ToList();
+            GetReminders();
             _selectedReminder = null;
         }
 
@@ -81,68 +75,24 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
         {
             if (!string.IsNullOrEmpty(args.Value.ToString()))
             {
-                _reminders = Contact.Reminders?.Where(r => r.Description.ToLower().Contains(args.Value.ToString().ToLower())).ToList();
+                GetReminders();
+                _reminders = _reminders.Where(r => r.Description.ToLower().Contains(args.Value.ToString().ToLower())).ToList();
             }
             else
             {
-                _reminders = Contact.Reminders?.ToList();
+                GetReminders();
             }
         }
 
         private void KeyboardEventHandler(KeyboardEventArgs args)
         {
             if (args.Code == "Escape")
-                _reminders = Contact.Reminders?.ToList();
+                GetReminders();
         }
 
-        private void FilterByTime(ChangeEventArgs args)
+        private void GetReminders()
         {
-            _time = args.Value.ToString();
-            Filter();
-        }
-        private void FilterByStatus(ChangeEventArgs args)
-        {
-            _status = args.Value.ToString();
-            Filter();
-        }
-
-        private void FilterByType(ChangeEventArgs args)
-        {
-            _type = args.Value.ToString();
-            Filter();
-        }
-
-        private void Filter()
-        {
-            var date = DateTime.Now.Date;
-            switch (_time)
-            {
-                case "All Time":
-                    _reminders = Contact.Reminders?.ToList();
-                    break;
-
-                case "Today":
-                    _reminders = Contact.Reminders?.Where(r => r.Date.Date == date).ToList();
-                    break;
-
-                case "This Week":
-                    _reminders = Contact.Reminders?.Where(r => r.Date >= date.AddDays(-(int)date.DayOfWeek) && r.Date < date.AddDays(-(int)date.DayOfWeek).AddDays(7)).ToList();
-                    break;
-
-                case "This Month":
-                    _reminders = Contact.Reminders?.Where(r => r.Date.Month == date.Month && r.Date.Year == date.Year).ToList();
-                    break;
-            }
-
-            if (_status == "Active")
-                _reminders = _reminders?.Where(r => r.Dismissed == false).ToList();
-            else if (_status == "Dismissed")
-                _reminders = _reminders?.Where(r => r.Dismissed == true).ToList();
-
-            if (_type == "Mine")
-                _reminders = _reminders?.Where(r => r.SystemGenerated == false).ToList();
-            else if (_type == "System")
-                _reminders = _reminders?.Where(r => r.SystemGenerated == true).ToList();
+            _reminders = Contact.Reminders.Where(r => r.Date.Date >= DateTime.Now.Date  && r.Dismissed == false || r.Dismissed == false && r.Date.Date < DateTime.Now.Date ).OrderBy(x => x.Date).ToList();
         }
     }
 }

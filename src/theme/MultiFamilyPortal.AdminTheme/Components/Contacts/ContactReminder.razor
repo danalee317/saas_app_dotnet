@@ -1,13 +1,30 @@
-<div class="row border m-3 mp-1 p-3">
-  <div class="col-md-8 border-md-end">
-    <span class="text-muted my-auto">@Reminder.Description
+<td scope="row">
+  @Reminder.Date.ToString("MMM dd, yyyy")
+</td>
+<td class="text-secondary">
+  @Reminder.Description
+</td>
+<td>
+  @if (Reminder.SystemGenerated == true)
+  {
+    <span class="text-primary">
+      <i class="fa-solid fa-message-bot"></i>
     </span>
-  </div>
-  <div class="col my-auto">
-    @Reminder.Date.ToString("MMM dd, yyyy") <br>
-    @if (Reminder.Date.Date != DateTime.Now.Date)
-    {
-      <small class="form-text">@Reminder.Date.Humanize()</small>
-    }
-  </div>
-</div>
+  }
+  else
+  {
+    <span class="text-success">
+      <i class="fa-solid fa-user-hair"></i>
+    </span>
+  }
+</td>
+<td>
+  @if (Reminder.Date.Date != DateTime.Now.Date)
+  {
+    <span class="text-muted">@Reminder.Date.Humanize()</span>
+  }
+  else
+  {
+    <span class="text-muted">Today</span>
+  }
+</td>

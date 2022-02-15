@@ -21,164 +21,96 @@
   </div>
 </div>
 
-<TelerikGrid Data=@Property.IncomeForecast
-             EditMode=@GridEditMode.Inline
-             OnEdit=@OnForecastEditing
-             OnUpdate=@OnForecastUpdated>
-  <GridColumns>
-    <GridColumn Field="Year" Editable=@false TextAlign=@ColumnTextAlign.Center Width=@(IsSmallScreen ? "150px" : "16%")>
-      <HeaderTemplate>
-        <span class="table-header">Year</span>
-      </HeaderTemplate>
-      <Template>
-        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
-        @if(forecast.Year == 0)
-        {
-          <span>Start Year*: @Property.StartDate.Year</span>
-        }
-        else
-        {
-          <span>Year @(forecast.Year): @(Property.StartDate.Year + forecast.Year)</span>
-        }
-      </Template>
-    </GridColumn>
-    <GridColumn Field="IncreaseType" 
-                TextAlign=@ColumnTextAlign.Center 
-                Width=@(IsSmallScreen ? "150px" : "16.7%")>
-      <HeaderTemplate>
-        <span class="table-header">Increase Type</span>
-      </HeaderTemplate>
-      <Template>
-        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
-        @forecast.IncreaseType.Humanize(LetterCasing.Title)
-      </Template>
-      <EditorTemplate>
-        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
-        <TelerikDropDownList Data=@(Enum.GetValues<IncomeForecastIncreaseType>())
-                             @bind-Value=@forecast.IncreaseType
-                             Width="100%"
-                             Context="fContext">
-          <ItemTemplate>
-            @{ var type = (IncomeForecastIncreaseType)fContext; }
-            @type.Humanize(LetterCasing.Title)
-          </ItemTemplate>
-          <ValueTemplate>
-            @{ var type = (IncomeForecastIncreaseType)fContext; }
-            @type.Humanize(LetterCasing.Title)
-          </ValueTemplate>
-        </TelerikDropDownList>
-      </EditorTemplate>
-    </GridColumn>
-    <GridColumn Field="PerUnitIncrease" 
-                TextAlign=@ColumnTextAlign.Center 
-                Width=@(IsSmallScreen ? "150px" : "16%")>
-      <HeaderTemplate>
-        <span class="table-header">Per Unit<br />Increase</span>
-      </HeaderTemplate>
-      <Template>
-        @{
-            var forecast = context as UnderwritingAnalysisIncomeForecast;
-            var format = forecast.IncreaseType == IncomeForecastIncreaseType.Percent ? "P" : "C";
-        }
-        @forecast.PerUnitIncrease.ToString(format)
-      </Template>
-      <EditorTemplate>
-        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
-        @if(forecast.IncreaseType == IncomeForecastIncreaseType.Percent)
-        {
-          <PercentageInput @bind-Value=@forecast.PerUnitIncrease />
-        }
-        else
-        {
-          <TelerikNumericTextBox @bind-Value=@forecast.PerUnitIncrease
-                                 Format="C"
-                                 Arrows=@false
-                                 Class="form-control" />
-        }
-      </EditorTemplate>
-    </GridColumn>
-    <GridColumn Field="UnitsAppliedTo" Title="Units Applied To" TextAlign=@ColumnTextAlign.Center Width=@(IsSmallScreen ? "150px" : "16%")/>
-    <GridColumn Field="FixedIncreaseOnRemainingUnits"
-                DisplayFormat="{0:C}"
-                TextAlign=@ColumnTextAlign.Center>
-      <HeaderTemplate>
-        <span class="table-header">Increase on<br />Remaining Units</span>
-      </HeaderTemplate>
-      <EditorTemplate>
-        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
-        <TelerikNumericTextBox @bind-Value=@forecast.FixedIncreaseOnRemainingUnits
-                               Format="C"
-                               Arrows=@false
-                               Class="form-control" />
-      </EditorTemplate>
-    </GridColumn>
-    <GridColumn Field="Vacancy"
-                Width=@(IsSmallScreen ? "150px" : "16%")
-                DisplayFormat="{0:P}"
-                TextAlign=@ColumnTextAlign.Center>
-      <HeaderTemplate>
-        <span class="table-header">Vacancy</span>
-      </HeaderTemplate>
-      <EditorTemplate>
-        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
-        <PercentageInput @bind-Value=@forecast.Vacancy />
-      </EditorTemplate>
-    </GridColumn>
-    <GridColumn Field="OtherLossesPercent"
-                DisplayFormat="{0:P}"
-                TextAlign=@ColumnTextAlign.Center>
-      <HeaderTemplate>
-        <span class="table-header">Other Losses<br />Percent</span>
-      </HeaderTemplate>
-      <EditorTemplate>
-        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
-        <PercentageInput @bind-Value=@forecast.OtherLossesPercent />
-      </EditorTemplate>
-    </GridColumn>
-    <GridColumn Field="UtilityIncreases"
-                DisplayFormat="{0:C}"
-                Width=@(IsSmallScreen ? "150px" : "16%")
-                TextAlign=@ColumnTextAlign.Center>
-      <HeaderTemplate>
-        <span class="table-header">Utility Increases</span>
-      </HeaderTemplate>
-      <EditorTemplate>
-        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
-        <TelerikNumericTextBox @bind-Value=@forecast.UtilityIncreases
-                               Format="C"
-                               Arrows=@false
-                               Class="form-control" />
-      </EditorTemplate>
-    </GridColumn>
-    <GridColumn Field="OtherIncomePercent"
-                DisplayFormat="{0:P}"
-                Width=@(IsSmallScreen ? "150px" : "16%")
-                TextAlign=@ColumnTextAlign.Center>
-      <HeaderTemplate>
-        <span class="table-header">Other Income<br />Percent</span>
-      </HeaderTemplate>
-      <EditorTemplate>
-        @{ var forecast = context as UnderwritingAnalysisIncomeForecast; }
-        <PercentageInput @bind-Value=@forecast.OtherIncomePercent />
-      </EditorTemplate>
-    </GridColumn>
-    <GridCommandColumn>
-      <div class="text-center">
-        @if(_editable)
-        {
-          <GridCommandButton Command="Edit"
-                             IconClass="fa-duotone fa-pencil"
-                             Title="Edit" />
-          <GridCommandButton Command="Cancel"
-                             Icon="cancel"
-                             Title="Cancel"
-                             ShowInEdit=@true />
-          <GridCommandButton Command="Save"
-                             IconClass="fa-duotone fa-floppy-disk"
-                             Title="Save"
-                             ShowInEdit=@true />
-        }
-      </div>
-    </GridCommandColumn>
-  </GridColumns>
-</TelerikGrid>
+<div class="table-responsive">
+  <table class="table table-striped table-hover table-borderless align-middle">
+    <thead>
+      <tr>
+        <th scope="col" class="text-center col-width">Year</th>
+        <th scope="col" class="text-center col-width">Increase Type</th>
+        <th scope="col" class="text-center col-width">Per Unit Increase</th>
+        <th scope="col" class="text-center col-width">Units Applied To</th>
+        <th scope="col" class="text-center col-width">Increase On Remaining Units</th>
+        <th scope="col" class="text-center col-width">Vacancy</th>
+        <th scope="col" class="text-center col-width">Other Losses Percent</th>
+        <th scope="col" class="text-center col-width">Utility Increases</th>
+        <th scope="col" class="text-center col-width">Other Income Percent</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach (var forecast in Property.IncomeForecast)
+      {
+        <tr class="">
+          <th scope="row">
+            @if (forecast.Year == 0)
+            {
+              <span>Start Year*: @Property.StartDate.Year</span>
+            }
+            else
+            {
+              <span>Year @(forecast.Year): @(Property.StartDate.Year + forecast.Year)</span>
+            }
+          </th>
+          <td>
+            <TelerikDropDownList Data=@(Enum.GetValues<IncomeForecastIncreaseType>()) 
+                                 @bind-Value=@forecast.IncreaseType
+                                 Width="100%" 
+                                 Context="fContext">
+              <ItemTemplate>
+                @{
+                  var type = (IncomeForecastIncreaseType)fContext; 
+                    }
+                    @type.Humanize(LetterCasing.Title)
+                  </ItemTemplate>
+                  <ValueTemplate>
+                    @{
+                  var type = (IncomeForecastIncreaseType)fContext; 
+                    }
+                    @type.Humanize(LetterCasing.Title)
+                  </ValueTemplate>
+                </TelerikDropDownList>
+              </td>
+              <td>
+                @if (forecast.IncreaseType == IncomeForecastIncreaseType.Percent)
+            {
+              <PercentageInput @bind-Value=@forecast.PerUnitIncrease />
+            }
+            else
+            {
+              <TelerikNumericTextBox @bind-Value=@forecast.PerUnitIncrease 
+                                     Format="C" 
+                                     Arrows=@false 
+                                     Class="form-control" />
+            }
+          </td>
+          <td>
+            <TelerikNumericTextBox @bind-Value=@forecast.UnitsAppliedTo 
+                                   Format="N0"
+                                   Arrows=@false
+                                   Class="form-control" />
+          </td>
+          <td>
+            <TelerikNumericTextBox @bind-Value=@forecast.FixedIncreaseOnRemainingUnits
+                                   Format="C"
+                                   Arrows=@false
+                                   Class="form-control" />
+          </td>
+          <td>
+            <PercentageInput @bind-Value=@forecast.Vacancy />
+          </td>
+          <td>
+            <PercentageInput @bind-Value=@forecast.OtherLossesPercent />
+          </td>
+          <td>
+            <TelerikNumericTextBox @bind-Value=@forecast.UtilityIncreases 
+                                   Format="C"
+                                   Arrows=@false
+                                   Class="form-control" />
+          </td>
+          <td>
+            <PercentageInput @bind-Value=@forecast.OtherIncomePercent />
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

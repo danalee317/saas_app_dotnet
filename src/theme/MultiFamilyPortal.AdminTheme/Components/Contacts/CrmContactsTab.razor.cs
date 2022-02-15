@@ -1,8 +1,9 @@
-using System.Collections.ObjectModel;
-using System.Net.Http.Json;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Components;
 using MultiFamilyPortal.Collections;
 using MultiFamilyPortal.Data.Models;
+using System.Collections.ObjectModel;
+using System.Net.Http.Json;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Contacts
 {
@@ -14,6 +15,10 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
         [Inject]
         private NavigationManager _navigationManager { get; set; }
 
+        [Inject]
+        private ProtectedSessionStorage _protectedSessionStorage { get; set; }
+
+        private const string ShowListSessionStorage = "ShowContactList";
         private IEnumerable<CRMContact> _allContacts;
         private readonly ObservableRangeCollection<CRMContact> _contacts = new();
         private readonly ObservableRangeCollection<CRMContactRole> _roles = new();
@@ -38,6 +43,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
             _roles.AddRange(roles);
             _selectedRole = _roles.First().Name;
             await UpdateContacts();
+            await GetTabAsync();
         }
 
         private async Task UpdateContacts()
@@ -93,6 +99,21 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
                 filtered = filtered.Where(x => x.Markets.Any(m => m.Name == _selectedMarket));
 
             _contacts.ReplaceRange(filtered.OrderBy(x => x.LastName));
+        }
+
+        private async Task HandleViewAsync(bool isList)
+        {
+            _showList = isList;
+            await SetTabAsync();
+        }
+
+        private async Task SetTabAsync() => await _protectedSessionStorage.SetAsync(ShowListSessionStorage, _showList);
+
+        private async Task GetTabAsync()
+        {
+            var isCard = await _protectedSessionStorage.GetAsync<bool>(ShowListSessionStorage);
+            if(isCard.Success)
+               _showList = isCard.Value;
         }
     }
 }

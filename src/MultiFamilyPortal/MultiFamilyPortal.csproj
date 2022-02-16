@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AvantiPoint.MultiFamilyPortal.SaaS.Authentication" Version="1.0.586" />
+    <PackageReference Include="AvantiPoint.MultiFamilyPortal.SaaS.Authentication" Version="1.0.591" />
     <PackageReference Include="Microsoft.SyndicationFeed.ReaderWriter" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.2" />

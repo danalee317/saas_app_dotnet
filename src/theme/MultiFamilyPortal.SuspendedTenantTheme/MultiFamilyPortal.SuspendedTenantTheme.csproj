@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AvantiPoint.MultiFamilyPortal.Themes" Version="1.0.586" />
+    <PackageReference Include="AvantiPoint.MultiFamilyPortal.Themes" Version="1.0.591" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.2" />
   </ItemGroup>
 

@@ -13,9 +13,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Contacts
         private CRMContactReminder _selectedReminder = null;
         private CRMContactReminder _tempReminder = null;
         private bool _confirmation = false;
-        private string _time;
-        private string _status;
-        private string _type;
         private int _pageSize = 10;
         private int _page = 1;
         protected override void OnParametersSet() => GetReminders();

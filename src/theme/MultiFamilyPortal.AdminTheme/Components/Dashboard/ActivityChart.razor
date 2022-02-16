@@ -6,11 +6,11 @@
                  Data="@_pieData" 
                  Field="@nameof(MyPieChartModel.SegmentValue)"
                  CategoryField="@nameof(MyPieChartModel.SegmentName)">
-                 <ChartSeriesTooltip Visible="true" Context="item">
-                <Template>
-                    @TimeSpan.FromMinutes(double.Parse(item.FormattedValue)).ToString(@"hh\:mm")
-                </Template>
-            </ChartSeriesTooltip>
+      <ChartSeriesTooltip Visible="true" Context="item">
+        <Template>
+          @TimeSpan.FromMinutes(double.Parse(item.FormattedValue)).ToString(@"hh\:mm")
+        </Template>
+      </ChartSeriesTooltip>
     </ChartSeries>
   </ChartSeriesItems>
 

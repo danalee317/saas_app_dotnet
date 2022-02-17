@@ -61,6 +61,5 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
         }
 
         private void CornfirmReminder(ContactReminder selectedReminder) => _selectedReminder = selectedReminder;
-
     }
 }

@@ -1,52 +1,96 @@
 <div class="border" style="height: 12%">
-    <div class="text-secondary m-2">
-        <b>Reminders</b>
-    </div>
-    </div>
-    <div class="" style="height: 87%">
-    <div id="body">
-        @if (true)
-        {
-            <Animation Effect="@Effect.FadeIn" Speed="@Speed.Slow">
-                @foreach (var i in Enumerable.Range(1, 3))
-                {
-                    <div class="row border my-3 mx-1 p-3">
-                        <div class="col-10">
-                            <small> Reminder, the title of the reminder. Lorem, ipsum dolor sit amet elit.</small>
-                        </div>
-                        <div class="col-2 text-end">
-                            <span class="text-dark"><i class="fa-solid fa-times"></i></span>
-                        </div>
-                        <div class="col-1">
-                            @if (i % 2 == 0)
-                            {
-                                <span class="text-primary"><i class="fa-solid fa-message-bot"></i></span>
-                            }
-                            else
-                            {
-                                <span class="text-success"><i class="fa-solid fa-user-hair"></i></span>
-                            }
-                        </div>
-                        <div class="col-5">
-                            <small class="text-secondary">John Doe</small>
-                        </div>
-                        <div class="col-4">
-                            <small class="text-secondary">@DateTime.Now.ToString("MMM dd, yyyy") </small>
-                        </div>
-                        <div class="col-2">
-                            <span class="text-secondary"><i class="fa-duotone fa-up-right-from-square"></i></span>
-                        </div>
-                    </div>
-                }
-            </Animation>
-        }
-        else
-        {
-            <div class="row text-center" style="height: 400px;">
-                <div class="text-secondary my-auto">
-                    No New Reminders Yet.
-                </div>
-            </div>
-        }
-    </div>
+  <div class="text-secondary m-2">
+    <b>Reminders</b>
+  </div>
 </div>
+<div class="" style="height: 87%">
+  <div id="body">
+    @if (_reminders != null && _reminders.Count() > 0)
+    {
+      <Animation Effect="@Effect.FadeIn" Speed="@Speed.Slower">
+        @foreach (var reminder in _reminders)
+        {
+          <div class="row border my-3 mx-1 p-3">
+            <div class="col-10">
+              <small>
+                @if (reminder.Description.Length <= 80)
+                {
+                  @reminder.Description
+                }
+                else
+                {
+                  @(reminder.Description.Substring(0, 80) + "...")
+                  ;
+                }
+              </small>
+            </div>
+            <div class="col-2 text-end">
+              <span class="text-dark clickable" @onclick=@(() => CornfirmReminder(reminder))>
+                <i class="fa-solid fa-times"></i>
+              </span>
+            </div>
+            <div class="col-1">
+              @if (reminder.SystemGenerated)
+              {
+                <span class="text-primary">
+                  <i class="fa-solid fa-message-bot"></i>
+                </span>
+              }
+              else
+              {
+                <span class="text-success">
+                  <i class="fa-solid fa-user-hair"></i>
+                </span>
+              }
+            </div>
+            <div class="col-5">
+              <small class="text-secondary">
+                @reminder.Contact?.FirstName @reminder.Contact?.LastName
+              </small>
+            </div>
+            <div class="col-4">
+              <small class="text-secondary">
+                @reminder.Date.ToString("MMM dd, yyyy")
+              </small>
+            </div>
+            <div class="col-2">
+              <span class="text-secondary clickable" @onclick=@(() => RedictToContact(reminder.ContactId))>
+                <i class="fa-duotone fa-up-right-from-square"></i>
+              </span>
+            </div>
+          </div>
+        }
+      </Animation>
+    }
+    else
+    {
+      <div class="row text-center" style="height: 400px;">
+        <div class="text-secondary lead my-auto">
+          No New Reminders Yet.
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<ResponsiveWindow Visible="@(_selectedReminder != null)">
+  <WindowTitle>
+    <strong>Dimiss Reminder?</strong>
+  </WindowTitle>
+  <WindowContent>
+    For  @_selectedReminder.Date.ToString("MMM dd, yyyy"), Are sure you want to dismiss :
+    <div class="my-2">
+      @_selectedReminder.Description
+    </div>
+    <small class="text-danger">Please note that this action cannot be undone.</small>
+    <hr />
+    <div class="text-end">
+      <TelerikButton OnClick="@DismissReminderAsync" ThemeColor="error">Dismiss</TelerikButton>
+    </div>
+  </WindowContent>
+  <WindowActions>
+    <WindowAction Name="Close" OnClick=@(() => _selectedReminder = null) />
+  </WindowActions>
+</ResponsiveWindow>
+
+<PortalNotification @ref="notification" />

@@ -9,6 +9,7 @@ env:
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x
   WORKING_DIRECTORY: src\MultiFamilyPortal
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
 jobs:
   build:
@@ -21,7 +22,7 @@ jobs:
         dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
     - name: NuGet Restore
       run: |
-        dotnet nuget add source ${{ secrets.IN_HOUSE_NUGET_FEED }} --name InHouse --username ${{ secrets.IN_HOUSE_NUGET_USER }} --password ${{ secrets.IN_HOUSE_API_KEY }}
+        dotnet nuget add source ${{ secrets.IN_HOUSE_NUGET_FEED }} --name InHouse --username ${{ secrets.IN_HOUSE_NUGET_USER }} --password ${{ secrets.IN_HOUSE_API_KEY }} --store-password-in-clear-text
         dotnet restore "${{ env.WORKING_DIRECTORY }}"
     - name: Build
       run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore

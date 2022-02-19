@@ -137,7 +137,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                    .Include(x => x.Contact)
                    .Where(x => (x.Date.Date >= DateTime.Now.Date && x.Dismissed == false) || (x.Date.Date <DateTime.Now.Date && x.Dismissed == false ))
                    .AsNoTracking()
-                   .Take(3)
+                   .Take(8)
                    .Select(contact => new ContactReminder
                    {
                        Id = contact.Id,

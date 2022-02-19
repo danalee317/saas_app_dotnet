@@ -1,96 +1,66 @@
-<div class="border" style="height: 12%">
-  <div class="text-secondary m-2">
-    <b>Reminders</b>
-  </div>
+<div class="border" style="min-height: 13%;">
+    <div class="text-secondary m-2">
+        <b>Reminders</b>
+    </div>
 </div>
-<div class="" style="height: 87%">
-  <div id="body">
+<div style="height: 87%">
     @if (_reminders != null && _reminders.Count() > 0)
     {
-      <Animation Effect="@Effect.FadeIn" Speed="@Speed.Slower">
-        @foreach (var reminder in _reminders)
-        {
-          <div class="row border my-3 mx-1 p-3">
-            <div class="col-10">
-              <small>
-                @if (reminder.Description.Length <= 80)
-                {
-                  @reminder.Description
-                }
-                else
-                {
-                  @(reminder.Description.Substring(0, 80) + "...")
-                  ;
-                }
-              </small>
-            </div>
-            <div class="col-2 text-end">
-              <span class="text-dark clickable" @onclick=@(() => CornfirmReminder(reminder))>
-                <i class="fa-solid fa-times"></i>
-              </span>
-            </div>
-            <div class="col-1">
-              @if (reminder.SystemGenerated)
-              {
-                <span class="text-primary">
-                  <i class="fa-solid fa-message-bot"></i>
-                </span>
-              }
-              else
-              {
-                <span class="text-success">
-                  <i class="fa-solid fa-user-hair"></i>
-                </span>
-              }
-            </div>
-            <div class="col-5">
-              <small class="text-secondary">
-                @reminder.Contact?.FirstName @reminder.Contact?.LastName
-              </small>
-            </div>
-            <div class="col-4">
-              <small class="text-secondary">
-                @reminder.Date.ToString("MMM dd, yyyy")
-              </small>
-            </div>
-            <div class="col-2">
-              <span class="text-secondary clickable" @onclick=@(() => RedictToContact(reminder.ContactId))>
-                <i class="fa-duotone fa-up-right-from-square"></i>
-              </span>
-            </div>
-          </div>
-        }
-      </Animation>
+        <Animation Effect="@Effect.FadeIn" Speed="@Speed.Slower">
+            <table class="table table-borderless">
+                <tbody>
+                    @foreach (var reminder in _reminders)
+                    {
+                        <tr data-bs-toggle="tooltip"  data-bs-placement="top" title="@reminder.Description" style="cursor: default">
+                            <td>
+                                <small class="text-secondary">
+                                    @reminder.Date.ToString("MMM dd, yyyy")
+                                </small>
+                            </td>
+                            <td class="text-center">
+                                @if (reminder.SystemGenerated)
+                                {
+                                    <span class="text-primary">
+                                        <i class="fa-solid fa-message-bot"></i>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-success">
+                                        <i class="fa-solid fa-user-hair"></i>
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                <small class="text-secondary">
+                                    @reminder.Contact?.FirstName @reminder.Contact?.LastName
+                                </small>
+                            </td>
+                            <td>
+                                <TelerikCheckBox Id="myCheckBox"
+                                                 Class="mb-1"
+                                                 Value="@reminder.Dismissed"
+                                                 ValueChanged="@((bool value) => DismissReminder(reminder,value))" />
+                            </td>
+                            <td>
+                                <span class="text-secondary clickable" @onclick=@(() => RedictToContact(reminder.ContactId))>
+                                    <i class="fa-duotone fa-up-right-from-square"></i>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </Animation>
     }
     else
     {
-      <div class="row text-center" style="height: 400px;">
-        <div class="text-secondary lead my-auto">
-          No New Reminders Yet.
+        <div class="row text-center">
+            <div class="text-secondary lead my-5">
+                No New Reminders Yet.
+            </div>
         </div>
-      </div>
     }
-  </div>
 </div>
-
-<ResponsiveWindow Visible="@(_selectedReminder != null)">
-  <WindowTitle>
-    <strong>Dimiss Reminder?</strong>
-  </WindowTitle>
-  <WindowContent>
-    For  @_selectedReminder.Date.ToString("MMM dd, yyyy"), Are sure you want to dismiss :
-    <div class="my-2">
-      @_selectedReminder.Description
-    </div>
-    <small class="text-danger">Please note that this action cannot be undone.</small>
-    <hr />
-    <div class="text-end">
-      <TelerikButton OnClick="@DismissReminderAsync" ThemeColor="error">Dismiss</TelerikButton>
-    </div>
-  </WindowContent>
-  <WindowActions>
-    <WindowAction Name="Close" OnClick=@(() => _selectedReminder = null) />
-  </WindowActions>
-</ResponsiveWindow>
 
 <PortalNotification @ref="notification" />

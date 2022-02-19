@@ -43,9 +43,10 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
             _navigationManager.NavigateTo($"/admin/contacts/detail/{id}");
         }
 
-        private async Task DismissReminderAsync()
+        public async Task DismissReminder(ContactReminder reminder, bool state)
         {
-            _selectedReminder.Dismissed = true;
+            _selectedReminder = reminder;
+            _selectedReminder.Dismissed = state;
             try
             {
                await _client.PutAsJsonAsync($"/api/admin/dashboard/reminders/{_selectedReminder.Id}", _selectedReminder);
@@ -56,10 +57,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
                 _logger.LogError(ex, "Error dismissing reminder : " + DateTimeOffset.UtcNow);
                 notification.ShowError("failed to dismiss reminder");
             }
-            await GetRemindersAsync();
             _selectedReminder = null;
         }
-
-        private void CornfirmReminder(ContactReminder selectedReminder) => _selectedReminder = selectedReminder;
     }
 }

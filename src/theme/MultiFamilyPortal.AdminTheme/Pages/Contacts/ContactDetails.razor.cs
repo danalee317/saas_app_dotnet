@@ -17,7 +17,6 @@ namespace MultiFamilyPortal.AdminTheme.Pages.Contacts
         private NavigationManager _navigationManager { get; set; }
 
         private CRMContact _contact;
-        private bool _showMarketInfo;
         private PortalNotification _notification;
 
         protected override async Task OnInitializedAsync()

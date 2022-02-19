@@ -53,7 +53,7 @@ else
     <EditForm Model="@_newReminder" OnValidSubmit="@HandleValidSubmit">
       <DataAnnotationsValidator />
       <div class="form-floating mb-3">
-        <InputDate class="form-control" id="reminderDate" @bind-Value="@_newReminder.Date" required />
+        <TelerikDatePicker  @bind-Value="@_newReminder.Date" Class="form-control" Id="reminderDate" Min="@DateTime.Now" />
         <label for="reminderDate">Date</label>
       </div>
       <div class="form-floating mb-3">
@@ -82,7 +82,7 @@ else
     <EditForm Model="@_selectedReminder" OnValidSubmit="@HandleValidEdit">
       <DataAnnotationsValidator />
       <div class="form-floating mb-3">
-        <InputDate class="form-control" id="reminderDateEdit" @bind-Value="@_selectedReminder.Date" required />
+        <TelerikDatePicker @bind-Value="_selectedReminder.Date" Class="form-control" Id="reminderDateEdit" Min="@DateTime.Now" />
         <label for="reminderDateEdit">Date</label>
       </div>
       <div class="form-floating mb-3">

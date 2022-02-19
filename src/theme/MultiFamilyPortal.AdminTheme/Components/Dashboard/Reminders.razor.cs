@@ -19,8 +19,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
 
         private IEnumerable<ContactReminder> _reminders = Array.Empty<ContactReminder>();
         private ContactReminder _selectedReminder;
-        private PortalNotification notification { get; set; }
-
+   
         protected override async Task OnInitializedAsync()
         {
             await GetRemindersAsync();
@@ -50,12 +49,10 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
             try
             {
                await _client.PutAsJsonAsync($"/api/admin/dashboard/reminders/{_selectedReminder.Id}", _selectedReminder);
-               notification.ShowSuccess("Reminder dismissed.");
             }
             catch (HttpRequestException ex)
             {
                 _logger.LogError(ex, "Error dismissing reminder : " + DateTimeOffset.UtcNow);
-                notification.ShowError("failed to dismiss reminder");
             }
             _selectedReminder = null;
         }

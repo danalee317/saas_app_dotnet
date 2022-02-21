@@ -155,6 +155,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         {
             var contact = await _dbContext.CrmContacts
                 .Include(x => x.Addresses)
+                .Include(x => x.Reminders)
                 .Include(x => x.Emails)
                 .Include(x => x.Logs)
                 .Include(x => x.Markets)
@@ -274,6 +275,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
 
             var contact = await _dbContext.CrmContacts
                 .Include(x => x.Addresses)
+                .Include(x => x.Reminders)
                 .Include(x => x.Emails)
                 .Include(x => x.Phones)
                 .Include(x => x.Logs)
@@ -552,6 +554,50 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
                     };
                     await _dbContext.CrmContactLogs.AddAsync(newLog);
                 }
+            }
+
+            if (updatedContact.Reminders?.Any() ?? false)
+            {
+                var newReminders = updatedContact.Reminders.Where(x => x.Id == default);
+                var existingReminders = updatedContact.Reminders.Where(x => x.Id != default);
+                var deletedReminders = contact.Reminders.Where(x => !updatedContact.Reminders.Any(e => e.Id == x.Id));
+
+                if (deletedReminders?.Any() ?? false)
+                {
+                    _dbContext.CrmContactReminders.RemoveRange(deletedReminders);
+                }
+
+                foreach (var updated in existingReminders)
+                {
+                    var reminder = contact.Reminders.FirstOrDefault(x => x.Id == updated.Id);
+                    if (reminder is null)
+                        continue;
+
+                    reminder.Date = updated.Date;
+                    reminder.Description = updated.Description.Trim();
+                    reminder.Dismissed = updated.Dismissed;
+                    reminder.SystemGenerated = updated.SystemGenerated;
+                    reminder.ContactId = contact.Id;
+                    _dbContext.CrmContactReminders.Update(reminder);
+                }
+
+                foreach (var added in newReminders)
+                {
+                    var newReminder = new CRMContactReminder
+                    {
+                        ContactId = contact.Id,
+                        Date = added.Date,
+                        Description = added.Description.Trim(),
+                        Dismissed = added.Dismissed,
+                        SystemGenerated = added.SystemGenerated
+                    };
+
+                    await _dbContext.CrmContactReminders.AddAsync(newReminder);
+                }
+            }
+            else
+            {
+                contact.Reminders = null;
             }
 
             _dbContext.CrmContacts.Update(contact);

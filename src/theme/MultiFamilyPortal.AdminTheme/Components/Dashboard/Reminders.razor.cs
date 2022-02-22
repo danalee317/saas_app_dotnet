@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using MultiFamilyPortal.AdminTheme.Models;
-using MultiFamilyPortal.CoreUI;
 using System.Net.Http.Json;
 
 namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
@@ -42,7 +41,7 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
             _navigationManager.NavigateTo($"/admin/contacts/detail/{id}");
         }
 
-        public async Task DismissReminder(ContactReminder reminder, bool state)
+        private async Task DismissReminder(ContactReminder reminder, bool state)
         {
             _selectedReminder = reminder;
             _selectedReminder.Dismissed = state;
@@ -55,6 +54,11 @@ namespace MultiFamilyPortal.AdminTheme.Components.Dashboard
                 _logger.LogError(ex, "Error dismissing reminder : " + DateTimeOffset.UtcNow);
             }
             _selectedReminder = null;
+        }
+         
+        private string GetFullName(ContactReminder reminder)
+        {
+            return reminder.Contact?.FirstName + " " + reminder.Contact?.LastName;
         }
     }
 }

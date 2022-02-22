@@ -7,17 +7,17 @@
     @if (_reminders != null && _reminders.Count() > 0)
     {
         <Animation Effect="@Effect.FadeIn" Speed="@Speed.Slower">
-            <table class="table table-borderless">
+            <table class="table  align-middle">
                 <tbody>
                     @foreach (var reminder in _reminders)
                     {
-                        <tr data-bs-toggle="tooltip"  data-bs-placement="top" title="@reminder.Description" style="cursor: default">
+                        <tr data-bs-toggle="tooltip" data-bs-placement="top" title="@GetFullName(reminder)" style="cursor: default">
                             <td>
                                 <small class="text-secondary">
                                     @reminder.Date.ToString("MMM dd, yyyy")
                                 </small>
                             </td>
-                            <td class="text-center">
+                            <td class="text-center my-auto">
                                 @if (reminder.SystemGenerated)
                                 {
                                     <span class="text-primary">
@@ -32,8 +32,15 @@
                                 }
                             </td>
                             <td>
-                                <small class="text-secondary">
-                                    @reminder.Contact?.FirstName @reminder.Contact?.LastName
+                                <small>
+                                    @if (reminder.Description?.Length <= 40)
+                                    {
+                                        @reminder.Description
+                                    }
+                                    else
+                                    {
+                                        @(reminder.Description?.Substring(0, 40) + "...")
+                                    }
                                 </small>
                             </td>
                             <td>

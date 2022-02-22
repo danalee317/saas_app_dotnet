@@ -13,6 +13,12 @@
                     {
                         <tr data-bs-toggle="tooltip" data-bs-placement="top" title="@GetFullName(reminder)" style="cursor: default">
                             <td>
+                                <TelerikCheckBox Id="myCheckBox"
+                                                 Class="mb-1"
+                                                 Value="@reminder.Dismissed"
+                                                 ValueChanged="@((bool value) => DismissReminder(reminder,value))" />
+                            </td>
+                            <td>
                                 <small class="text-secondary">
                                     @reminder.Date.ToString("MMM dd, yyyy")
                                 </small>
@@ -31,7 +37,7 @@
                                     </span>
                                 }
                             </td>
-                            <td>
+                            <td style="width : 60%">
                                 <small>
                                     @if (reminder.Description?.Length <= 40)
                                     {
@@ -42,12 +48,6 @@
                                         @(reminder.Description?.Substring(0, 40) + "...")
                                     }
                                 </small>
-                            </td>
-                            <td>
-                                <TelerikCheckBox Id="myCheckBox"
-                                                 Class="mb-1"
-                                                 Value="@reminder.Dismissed"
-                                                 ValueChanged="@((bool value) => DismissReminder(reminder,value))" />
                             </td>
                             <td>
                                 <span class="text-secondary clickable" @onclick=@(() => RedictToContact(reminder.ContactId))>

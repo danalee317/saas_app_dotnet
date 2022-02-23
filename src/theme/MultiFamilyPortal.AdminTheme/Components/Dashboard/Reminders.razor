@@ -18,11 +18,6 @@
                                                  Value="@reminder.Dismissed"
                                                  ValueChanged="@((bool value) => DismissReminder(reminder,value))" />
                             </td>
-                            <td>
-                                <small class="text-secondary">
-                                    @reminder.Date.ToString("MMM dd, yyyy")
-                                </small>
-                            </td>
                             <td class="text-center my-auto">
                                 @if (reminder.SystemGenerated)
                                 {
@@ -47,6 +42,11 @@
                                     {
                                         @(reminder.Description?.Substring(0, 40) + "...")
                                     }
+                                </small>
+                            </td>
+                            <td>
+                                <small class="text-secondary">
+                                    @reminder.Date.ToString("MMM dd, yyyy")
                                 </small>
                             </td>
                             <td>

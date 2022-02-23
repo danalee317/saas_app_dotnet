@@ -1,7 +1,4 @@
-<TelerikWindow Visible="@(Investor != null)" 
-               Modal="true"
-               Height="560px"
-               Width="600px">
+<ResponsiveWindow Visible="@(Investor != null)">
   <WindowTitle>
     <strong>Investor Prospect</strong>
   </WindowTitle>
@@ -75,4 +72,4 @@
   <WindowActions>
     <WindowAction Name="Close" OnClick="@(() => Investor = null)"/>
   </WindowActions>
-</TelerikWindow>
+</ResponsiveWindow>

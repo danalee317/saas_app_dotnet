@@ -17,13 +17,16 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
         private IMFPContext _dbContext { get; }
 
         private IBlogContext _context { get; }
+        
+        private ICRMContext _contextdb { get; }
 
         private ILogger<DashboardController> _logger { get; }
 
-        public DashboardController(IMFPContext dbContext, IBlogContext context, ILoggerFactory loggerFactory)
+        public DashboardController(IMFPContext dbContext, IBlogContext context, ICRMContext contextdb, ILoggerFactory loggerFactory)
         {
             _dbContext = dbContext;
             _context = context;
+            _contextdb = contextdb;
             _logger = loggerFactory.CreateLogger<DashboardController>();
         }
 
@@ -96,7 +99,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             var dashboardInvestors = await _dbContext.InvestorProspects
                 .Where(x => x.Contacted == false)
                 .AsNoTracking()
-                .Take(8)
+                .Take(3)
                 .Select(investor => new DashboardInvestor
                 {
                     Id = investor.Id,
@@ -123,6 +126,54 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             };
 
             return Ok(result);
+        }
+
+        [HttpGet("reminders")]
+        public async Task<IActionResult> ContactReminders()
+        {
+            try
+            {
+                var reminders = await _contextdb.CrmContactReminders.OrderBy(x => x.Date)
+                   .Include(x => x.Contact)
+                   .Where(x => (x.Date.Date >= DateTime.Now.Date && x.Dismissed == false) || (x.Date.Date <DateTime.Now.Date && x.Dismissed == false ))
+                   .AsNoTracking()
+                   .Take(7)
+                   .Select(contact => new ContactReminder
+                   {
+                       Id = contact.Id,
+                       Date = contact.Date,
+                       Description = contact.Description,
+                       Dismissed = contact.Dismissed,
+                       SystemGenerated = contact.SystemGenerated,
+                       ContactId = contact.ContactId,
+                       Contact = contact.Contact,
+                   })
+                   .ToListAsync();
+
+               return Ok(reminders);
+            } 
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("reminders/{id}")]
+        public async Task<IActionResult> ContactRemindersUpdate(Guid id, [FromBody] ContactReminder reminder)
+        {
+            if(id == default || id != reminder.Id)
+               return BadRequest();
+
+            var singleReminder = await _contextdb.CrmContactReminders.FirstOrDefaultAsync(x => x.Id == id);
+
+            if(singleReminder is null)
+               return NotFound();
+
+            singleReminder.Dismissed = reminder.Dismissed;
+            await _dbContext.SaveChangesAsync();
+
+            return Ok();
         }
 
         [HttpPut("investors/{id:guid}")]

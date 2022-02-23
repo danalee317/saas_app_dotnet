@@ -19,7 +19,6 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.Closing
 
         private UnderwritingAnalysisMortgage AddMortgage;
         private UnderwritingAnalysisMortgage EditMortgage;
-        private bool showBalloon;
         private bool _editable;
         protected override void OnInitialized()
         {

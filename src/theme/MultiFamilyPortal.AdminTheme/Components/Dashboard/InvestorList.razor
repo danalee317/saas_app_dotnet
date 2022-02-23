@@ -2,18 +2,18 @@
   <div class="text-secondary m-2">
     <b>@Title</b>
   </div>
-  <hr />
-  <div id="body" class="my-2">
+  <div class="w-100 border-bottom my-3"></div>
+  <div id="body">
     @if (Investors is not null && Investors.Count() > 0)
     {
       <Animation Effect="@Effect.FadeIn" Speed="@Speed.Slow">
         @foreach (var investor in Investors.OrderBy(x => x.Timestamp))
         {
-          <div class="row my-3">
-            <div class="col-5 my-auto">
+          <div class="row my-2">
+            <div class="col-4 my-auto">
               <small class="ms-2">@investor.FirstName @investor.LastName</small>
             </div>
-            <div class="col-5 my-auto">
+            <div class="col-6 my-auto">
               <small>@investor.Email</small>
             </div>
             <div class="col-2 my-auto text-center">
@@ -24,7 +24,7 @@
           </div>
           @if(investor != Investors.OrderBy(x => x.Timestamp).Last())
           {
-            <hr />
+            <div class="w-100 border-bottom my-1"></div>
           }
         }
       </Animation>

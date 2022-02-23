@@ -14,19 +14,16 @@ namespace MultiFamilyPortal.AdminTheme.Components.Underwriting.RentRoll
         [Parameter]
         public EventCallback<UnderwritingAnalysisModel> FloorPlanChanged { get; set; }
 
-        private string _height;
         private string _title;
 
         protected override void OnInitialized()
         {
             if(FloorPlan.Id == default)
             {
-                _height = "590px";
                 _title = "Add Floor Plan";
             }
             else
             {
-                _height = "725px";
                 _title = "Edit Floor Plan";
             }
         }

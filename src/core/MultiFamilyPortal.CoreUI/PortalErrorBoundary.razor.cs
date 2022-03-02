@@ -12,6 +12,10 @@ namespace MultiFamilyPortal.CoreUI
         [Inject]
         private ILogger<PortalErrorBoundary> _logger { get; set; }
 
+        [Inject]
+        private NavigationManager _navigationManager { get; set; }
+
+        private int _retryTimes = 0;
         private ErrorBoundary _errorBoundary;
         private void RecoverFromError()
         {
@@ -21,6 +25,18 @@ namespace MultiFamilyPortal.CoreUI
         private void HandleError(Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception caught by Error Boundary");
+
+            if (_retryTimes > 3)
+                ReportError(ex);
+
+            _retryTimes++;
+        }
+
+        private void ReportError(Exception ex)
+        {
+            // TODO: Report error to your error reporting service #182
+            _retryTimes = 0;
+            _navigationManager.NavigateTo("/");
         }
     }
 }

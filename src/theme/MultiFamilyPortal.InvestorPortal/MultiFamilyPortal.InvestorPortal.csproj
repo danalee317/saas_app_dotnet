@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\core\MultiFamilyPortal.CoreUI\MultiFamilyPortal.CoreUI.csproj" />
     <ProjectReference Include="..\MultiFamilyPortal.SideBarTheme\MultiFamilyPortal.SideBarTheme.csproj" />
   </ItemGroup>
 

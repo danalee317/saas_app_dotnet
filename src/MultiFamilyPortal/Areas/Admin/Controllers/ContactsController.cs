@@ -23,7 +23,7 @@ namespace MultiFamilyPortal.Areas.Admin.Controllers
             _dbContext = dbContext;
         }
 
-        [HttpGet("userImage/{id}")]
+        [HttpGet("userImage/{id?}")]
         public async Task<IActionResult> GetUserImage(string id)
         {
             if(!string.IsNullOrEmpty(id))

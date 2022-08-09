@@ -10,8 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AvantiPoint.MultiFamilyPortal.Themes" Version="1.0.591" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.2" />
+    <PackageReference Include="AvantiPoint.MultiFamilyPortal.Themes" Version="1.0.595" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.8" />
   </ItemGroup>
 
   <ItemGroup>

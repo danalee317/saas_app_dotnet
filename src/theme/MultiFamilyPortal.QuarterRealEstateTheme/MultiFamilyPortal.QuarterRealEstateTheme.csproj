@@ -10,16 +10,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AvantiPoint.MultiFamilyPortal.Themes" Version="1.0.591" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.2" />
+    <PackageReference Include="AvantiPoint.MultiFamilyPortal.Themes" Version="1.0.595" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.8" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\core\MultiFamilyPortal.CoreUI\MultiFamilyPortal.CoreUI.csproj" />
   </ItemGroup>
 
-  <Target Name="RestoreNodePackages"
-          BeforeTargets="Build">
+  <Target Name="RestoreNodePackages" BeforeTargets="Build">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
@@ -31,8 +30,7 @@
       <NpmDependencyFile Include="node_modules\**\*" />
     </ItemGroup>
 
-    <Copy SourceFiles="@(NpmDependencyFile)"
-          DestinationFiles="@(NpmDependencyFile -> 'wwwroot\lib\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(NpmDependencyFile)" DestinationFiles="@(NpmDependencyFile -> 'wwwroot\lib\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 
 </Project>

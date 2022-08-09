@@ -7,6 +7,7 @@
 <TelerikGrid Data=@_users
              Reorderable=@true
              RowDraggable=@true
+             TItem="Models.HighlightableUser"
              OnRowDrop="@((GridRowDropEventArgs<Models.HighlightableUser> args) => OnRowDropHandler(args))">
   <GridToolBar>
     <div class="row">

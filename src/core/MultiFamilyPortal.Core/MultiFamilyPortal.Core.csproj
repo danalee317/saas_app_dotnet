@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>MultiFamilyPortal</RootNamespace>
     <!--<Nullable>enable</Nullable>-->
@@ -17,13 +17,13 @@
     <PackageReference Include="AvantiPoint.FileStorage.AzureBlobStorage" Version="3.0.45" />
     <PackageReference Include="AvantiPoint.FileStorage.FileSystem" Version="3.0.45" />
     <PackageReference Include="AvantiPoint.MultiFamilyPortal.DataContracts" Version="1.0.595" />
-    <PackageReference Include="BlazorAnimation" Version="2.1.0" />
+    <PackageReference Include="BlazorAnimation" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
-    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.3" />
     <PackageReference Include="UAParser" Version="3.1.47" />
-    <PackageReference Include="SkiaSharp" Version="2.88.0" />
-    <PackageReference Include="SkiaSharp.QrCode" Version="0.4.1" />
+    <PackageReference Include="SkiaSharp" Version="2.88.7" />
+    <PackageReference Include="SkiaSharp.QrCode" Version="0.7.0" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.0-preview.145" Condition="$([MSBuild]::IsOsPlatform('OSX'))" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.0-preview.145" Condition="$([MSBuild]::IsOsPlatform('OSX'))" />
     <PackageReference Include="Telerik.Documents.Core" Version="2022.2.613" />

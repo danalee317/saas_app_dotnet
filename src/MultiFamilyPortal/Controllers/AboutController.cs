@@ -7,7 +7,7 @@ using MultiFamilyPortal.Dtos;
 using MultiFamilyPortal.Services;
 using vCardLib.Enums;
 using vCardLib.Models;
-using vCardLib.Serializers;
+using vCardLib.Serialization;
 
 namespace MultiFamilyPortal.Controllers
 {
@@ -93,29 +93,33 @@ namespace MultiFamilyPortal.Controllers
 
             var ipData = await _ipLookup.LookupAsync(HttpContext.Connection.RemoteIpAddress, Request.Host.Value);
 
-            var card = new vCard
+            var card = new vCard(vCardVersion.v3)
             {
-                Version = vCardVersion.V3,
-                Organization = _dbContext.GetSetting<string>(PortalSetting.LegalBusinessName),
+                Organization = new Organization()
+                {
+                    Name = _dbContext.GetSetting<string>(PortalSetting.LegalBusinessName)
+                },
                 Title = profile.Title,
-                Kind = ContactType.Individual,
-                Language = "en-US",
+                Kind = ContactKind.Individual,
+                Language = new Language() { Locale = "en-US" },
                 EmailAddresses = new List<EmailAddress>
                 {
                     new EmailAddress{ Value = profile.Email, Type = EmailAddressType.Work }
                 },
-                GivenName = profile.FirstName,
-                FamilyName = profile.LastName,
+                Name = new Name() {
+                    GivenName = profile.FirstName,
+                    FamilyName = profile.LastName
+                },
                 Note = @$"Contact added {DateTime.Now:D}
 Added from {ipData.Ip}
 On or near: {ipData.City}, {ipData.Region}",
-                Pictures = new List<Photo>
+                Photos = new List<Photo>
                 {
                     new()
                     {
-                        Encoding = PhotoEncoding.JPEG,
-                        Type = PhotoType.URL,
-                        PhotoURL = GravatarHelper.GetUri(profile.Email, 180, DefaultGravatar.MysteryPerson)
+                        Encoding = "JPEG",
+                        Type = "URL",
+                        Value = GravatarHelper.GetUri(profile.Email, 180, DefaultGravatar.MysteryPerson)
                     }
                 },
                 CustomFields = new List<KeyValuePair<string, string>>()
@@ -129,7 +133,7 @@ On or near: {ipData.City}, {ipData.Region}",
             }
 
             var fileName = $"{profile.FirstName}{profile.LastName}.vcf".Replace(" ", "").Trim();
-            var data = Encoding.Default.GetBytes(Serializer.Serialize(card));
+            var data = Encoding.Default.GetBytes(vCardSerializer.Serialize(card));
             return File(data, "text/x-vcard", fileName);
         }
 

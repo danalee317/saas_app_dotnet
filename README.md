@@ -1,6 +1,6 @@
-# MultiFamilyPortal
+# SaaS App
 
-The MultiFamilyPortal is configured as a Multi-Tenant SaaS application. This means that there is a single deployed instance of the application, with a unique database connection for each tenant. To facilitate this, the MultiFamilyPortal relies on two Database Connections:
+This is configured as a Multi-Tenant SaaS application. This means that there is a single deployed instance of the application, with a unique database connection for each tenant. To facilitate this, the MultiFamilyPortal relies on two Database Connections:
 
 - The Default Connection: This is a templated connection string in which the Initial Catalog or Database name must be provided as `{0}`. The name of the database configured for the tenant will be substituted for each tenant.
 - The Tenant Connection: This is database that controls allowed tenants.
